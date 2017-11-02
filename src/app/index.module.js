@@ -1,7 +1,18 @@
 (function() {
-  'use strict';
+  "use strict";
 
-  angular
-    .module('bidirApp', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngMessages', 'ngAria', 'ngResource', 'ui.router', 'ui.bootstrap']);
-
+  angular.module("bidirApp", [
+    "ngAnimate",
+    "ngCookies",
+    "ngTouch",
+    "ngSanitize",
+    "ngMessages",
+    "ngAria",
+    "ngResource",
+    "ui.router",
+    "ui.bootstrap",
+    "angular-loading-bar",
+    "bidirApp.core",
+    "bidirApp.components"
+  ]);
 })();

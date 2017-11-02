@@ -19,13 +19,8 @@
         templateUrl: "app/main/main.html",
         data: { pageTitle: 'Example view' }
       })
-      .state('index.minor', {
-        url: "/minor",
-        templateUrl: "app/minor/minor.html",
-        data: { pageTitle: 'Example view' }
-      });
 
-    $urlRouterProvider.otherwise('/index/main');
+    //$urlRouterProvider.otherwise('/index/main');
   }
 
 })();
