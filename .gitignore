@@ -1,0 +1,9 @@
+.idea/
+html/
+node_modules/
+.vendor/bower
+bower_components/
+.tmp/
+.vscode/
+build/
+node_module/
