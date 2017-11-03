@@ -26,7 +26,8 @@
         var login = {
             url: '/login',
             title: 'login',
-            templateUrl: 'app/components/auth/login/login.html'
+            component: 'login',
+            data: { pageTitle: 'Login', specialClass: 'gray-bg' }
         };
 
         $stateProvider

@@ -18,7 +18,7 @@
         url: "/main",
         templateUrl: "app/main/main.html",
         data: { pageTitle: 'Example view' }
-      })
+      });
 
     //$urlRouterProvider.otherwise('/index/main');
   }
