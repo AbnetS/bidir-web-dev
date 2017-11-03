@@ -12,7 +12,8 @@
     "ui.router",
     "ui.bootstrap",
     "angular-loading-bar",
-    "bidirApp.core",
-    "bidirApp.components"
+
+    "core",
+    "components"
   ]);
 })();

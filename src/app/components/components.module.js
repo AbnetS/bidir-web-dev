@@ -1,8 +1,8 @@
 (function(angular) {
     'use strict';
 
-    angular.module('bidirApp.components', [ 
-        'bidirApp.components.auth'
+    angular.module('components', [
+        'components.auth'
     ]);
 
 })(window.angular);

@@ -1,7 +1,7 @@
 (function(angular) {
     'use strict';
 
-    angular.module('bidirApp.core')
+    angular.module('core')
         .constant('APP_CONSTANTS', {
             USER_ROLES: {
                 ALL: '*',

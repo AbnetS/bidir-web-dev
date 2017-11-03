@@ -1,7 +1,7 @@
 (function(angular) {
     'use strict';
 
-    angular.module('bidirApp.core', [])
+    angular.module('core', [])
         .config(routeConfig);
 
     /**@ngInject */

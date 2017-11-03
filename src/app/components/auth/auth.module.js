@@ -1,7 +1,7 @@
 (function(angular) {
     'use strict';
 
-    angular.module('bidirApp.components.auth', [
+    angular.module('components.auth', [
         'ui.router'
     ]);
 

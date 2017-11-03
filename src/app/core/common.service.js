@@ -1,8 +1,8 @@
 (function(angular) {
-    
+
     'use strict';
-    
-    angular.module('bidirApp.core')
+
+    angular.module('core')
         .factory('commonService', commonService);
 
     /**@ngInject */
