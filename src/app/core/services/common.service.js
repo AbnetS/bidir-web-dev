@@ -3,10 +3,10 @@
     'use strict';
 
     angular.module('core')
-        .factory('commonService', commonService);
+        .factory('CommonService', CommonService);
 
     /**@ngInject */
-    function commonService() {
+    function CommonService() {
 
         var factory = {
             buildUrl: _buildUrl,

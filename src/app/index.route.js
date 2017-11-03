@@ -17,7 +17,7 @@
       .state('index.main', {
         url: "/main",
         templateUrl: "app/main/main.html",
-        data: { pageTitle: 'Example view' }
+        data: { pageTitle: 'Home Page' }
       });
 
     //$urlRouterProvider.otherwise('/index/main');

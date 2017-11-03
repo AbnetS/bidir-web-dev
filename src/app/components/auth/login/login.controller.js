@@ -5,11 +5,12 @@
         .controller('LoginController', LoginController);
 
     /**@ngInject */
-    function LoginController() {
+    function LoginController(AuthService,$state) {
         var vm = this;
+        vm.user = {};
 
-        vm.login = function() {
-            console.log("login test");
+        vm.loginUser = function() {
+          $state.go('index.main');
         };
 
 

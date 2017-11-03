@@ -5,16 +5,16 @@
     .service('AuthService', AuthService);
 
     /**@ngInject */
-    function AuthService($http, StorageService, commonService, APP_CONSTANTS, $rootScope, $state) {
+    function AuthService($http, StorageService, CommonService, APP_CONSTANTS, $rootScope, $state) {
 
         var service = {
-            authenticateUser: _login,
-            logout: logout,
-            GetCredentials: getCredentials,
-            SetCredentials: setCredentials,
-            GetToken: getToken,
-            IsAuthenticated: isAuthenticated,
-            IsAuthorized: isAuthorized
+            login: _login//,
+            // logout: logout,
+            // GetCredentials: getCredentials,
+            // SetCredentials: setCredentials,
+            // GetToken: getToken,
+            // IsAuthenticated: isAuthenticated,
+            // IsAuthorized: isAuthorized
         };
 
         return service;
@@ -49,7 +49,7 @@
         }
 
         function _login(user) {
-            return $http.post(commonService.buildUrl(API.Methods.Auth.POST.Login), user);
+          return $http.post(CommonService.buildUrl(API.Methods.Auth.Login), user);
         }
 
         function logout() {

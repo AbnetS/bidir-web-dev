@@ -21,7 +21,8 @@
         var auth = {
             redirectTo: 'auth.login',
             url: '/auth',
-            template: '<div ui-view></div>'
+            template: '<div ui-view></div>',
+            data: { pageTitle: 'Login', specialClass: 'gray-bg' }
         };
         var login = {
             url: '/login',
