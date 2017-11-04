@@ -20,7 +20,6 @@
         data: { pageTitle: 'Home Page' }
       });
 
-    //$urlRouterProvider.otherwise('/index/main');
   }
 
 })();

@@ -12,6 +12,7 @@
     "ui.router",
     "ui.bootstrap",
     "angular-loading-bar",
+    "oitozero.ngSweetAlert",
 
     "core",
     "components"
