@@ -6,7 +6,7 @@
         <uib-tabset>
           <uib-tab heading="Create MFI">
             <div class="panel-body">
-              <form id="form" action="#" class="wizard-big">
+              <form id="form" name ="MFIForm" class="wizard-big">
                 <fieldset>
                   <div class="row">
                     <div class="col-lg-6">
@@ -32,13 +32,13 @@
                         </div>
                       </div>
                       <div class="form-group">
-                        <label class="font-normal">Establishment Year *</label>
-                        <div class="input-group date">
-                          <input type="datetime" class="form-control" date-time ng-model="sampleDate" view="year" auto-close="true">
-                          <span class="input-group-addon">
-                            <i class="fa fa-calendar"></i>
+                        <label>Establishment Year *</label>
+                        <p class="input-group">
+                          <input type="text" class="form-control" uib-datepicker-popup ng-model="dt" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+                          <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
                           </span>
-                        </div>
+                        </p>
                       </div>
                     </div>
                     <div class="col-lg-6">
@@ -63,7 +63,7 @@
                   </div>
                   <div class="row">
                     <div class="col-sm-12">
-                      <button class="btn btn-primary pull-right" type="submit">Save changes</button>
+                      <a class="btn btn-primary pull-right" type="button" ng-click="vm.saveChanges()">Save changes</a>
                     </div>
                   </div>
                 </fieldset>
@@ -75,8 +75,9 @@
               <h2>Branches</h2>
               <p>
                 You have successfully created an MFI. Head Office branch is created by default. Click on Add branch to add more.
-                <button type="button" class="btn btn btn-primary pull-right">
-                  <i class="fa fa-plus"></i> Add branch</button>
+                <button ng-click="vm.createBranch()" type="button" class="btn btn btn-primary pull-right">
+                  <i class="fa fa-plus"></i> Add branch
+                </button>
               </p>
 
               <div class="clients-list">

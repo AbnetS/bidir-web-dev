@@ -8,13 +8,13 @@
     function AuthService($http, StorageService, CommonService, APP_CONSTANTS, $rootScope, $state) {
 
         var service = {
-            login: _login//,
-            // logout: logout,
-            // GetCredentials: getCredentials,
-            // SetCredentials: setCredentials,
-            // GetToken: getToken,
-            // IsAuthenticated: isAuthenticated,
-            // IsAuthorized: isAuthorized
+            login: _login,
+            logout: logout,
+            GetCredentials: getCredentials,
+            SetCredentials: setCredentials,
+            GetToken: getToken,
+            IsAuthenticated: isAuthenticated,
+            IsAuthorized: isAuthorized
         };
 
         return service;

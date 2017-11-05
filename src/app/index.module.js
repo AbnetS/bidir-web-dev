@@ -15,6 +15,7 @@
     "oitozero.ngSweetAlert",
 
     "core",
-    "components"
+    "components",
+    "home"
   ]);
 })();

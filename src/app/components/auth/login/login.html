@@ -11,7 +11,7 @@
             <div class="form-group">
                 <input type="password" name="password" class="form-control" ng-model="vm.user.password" placeholder="Password" required="required">
             </div>
-            <button type="submit" ng-click="vm.loginUser()" class="btn btn-primary block full-width m-b">Login</button>
+            <button type="button" ng-click="vm.loginUser()" class="btn btn-primary block full-width m-b">Login</button>
 
             <div ng-if="vm.message" class="message error">
               {{ vm.message }}
