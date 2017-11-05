@@ -9,14 +9,16 @@ angular.module('bidirApp')
     console.log("main controller");
     vm.userName = 'Yonas Tesfaye';
     vm.helloText = 'Welcome';
-    MainService.GetMFI()
-    .then(function(response) {
-      console.log("response", response);
-    }, function(error) {
-        console.log("error", error);
-    });
+
+    // MainService.MFI.query(
+    //   function(response) {
+    //   console.log("response", response);
+    //     }, function(error) {
+    //     console.log("error", error);
+    // });
 
     vm.saveChanges =function(){
+      console.log("MFI",vm.MFI);
       AlertService.showSuccess('Information saved successfully', "Info");
     };
 

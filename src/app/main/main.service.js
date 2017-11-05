@@ -8,13 +8,14 @@
   function MainService($resource,StorageService, CommonService, APP_CONSTANTS, $rootScope, $state) {
 
       var service = {
-        getMFI: _getMFI
+        getMFI: _getMFI,
+        MFI: $resource(CommonService.buildUrl(API.Methods.MFI), { id: "@id" }, ResourceMethods.All)
       };
 
       return service;
 
       function _getMFI(){
-        return $resource(commonService.buildUrl(API.Methods.MFI), {}, GETObject).get().$promise;
+        return $resource(CommonService.buildUrl(API.Methods.MFI), { id: "@id" }, ResourceMethods.All);
       }
   }
 

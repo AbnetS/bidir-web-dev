@@ -16,7 +16,7 @@
       })
       .state('index.main', {
         url: "/main",
-        templateUrl: "app/main/main.html",
+        component:'main',
         data: { pageTitle: 'Home Page' }
       });
 
