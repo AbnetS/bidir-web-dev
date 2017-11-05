@@ -2,21 +2,22 @@
   'use strict';
 
   function BranchController() {
-      var vm = this;
-      console.log("ok clicked on branch controller");
+      var ctrl = this;
+      ctrl.branch = ctrl.resolve.branch;
 
-      vm.$onInit = function() {
+      ctrl.$onInit = function() {
         console.log("branch init");
       };
 
-      vm.ok = function() {
+      ctrl.ok = function() {
+
         console.log("ok clicked on branch controller");
-          vm.close({ $value: vm });
+        ctrl.close({ $value: ctrl });
 
       };
 
-      vm.cancel = function() {
-          vm.dismiss({ $value: 'cancel' });
+      ctrl.cancel = function() {
+        ctrl.dismiss({ $value: 'cancel' });
       };
   }
 

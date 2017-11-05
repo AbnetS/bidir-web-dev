@@ -72,47 +72,58 @@
               </form>
             </div>
           </uib-tab>
+
           <uib-tab heading="Create Branches">
+
             <div class="panel-body">
               <h2>Branches</h2>
               <p>
                 You have successfully created an MFI. Head Office branch is created by default. Click on Add branch to add more.
                 <button ng-click="vm.addBranch()" type="button" class="btn btn btn-primary pull-right">
-                  <i class="fa fa-plus"></i> Add branch
-                </button>
+                  <i class="fa fa-plus"></i> Add
+                         </button>
               </p>
-
               <div class="clients-list">
                 <div class="full-height-scroll" full-scroll>
                   <div class="table-responsive">
                     <table class="table table-striped table-hover">
                       <thead>
                         <tr>
+                            <div class="input-group">
+                                <input type="text" placeholder="Search branches " class="input form-control">
+                                        <span class="input-group-btn">
+                                                <button type="button" class="btn btn btn-primary"> <i class="fa fa-search"></i> Search</button>
+                                        </span>
+                            </div>
+                        </tr>
+                        <tr>
                           <th>Id</th>
                           <th>Name</th>
                           <th>Location</th>
                           <th>Opening Date</th>
                           <th>Branch Type</th>
-                          <th>No. Of Users</th>
+                          <th>Phone</th>
                           <th></th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
+                        <tr ng-repeat="branch in vm.branches">
                           <td>
-                            <a class="client-link">1</a>
+                            <a class="client-link">{{$index + 1}}</a>
                           </td>
-                          <td>Bole Branch</td>
-                          <td> Somewhere in the world</td>
-                          <td>October 22,2017</td>
-                          <td>Head Office</td>
-                          <td> 8</td>
+                          <td>{{branch.name}}</td>
+                          <td>{{branch.location}}</td>
+                          <td>{{branch.date_created | date}}</td>
+                          <td>{{branch.branch_type}}</td>
+                          <td>{{branch.phone}}</td>
                           <td>
-                            <a ng-click="vm.edit()">
+                            <a ng-click="vm.editBranch(branch)">
                               <i class="fa fa-edit"></i>
+                              EDIT
                             </a>
-                            <a>
+                            <a ng-click="vm.editBranch(branch)">
                               <i class="fa fa-trash"></i>
+                              DEL
                             </a>
                           </td>
                         </tr>

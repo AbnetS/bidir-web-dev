@@ -7,8 +7,7 @@
           dismiss: '&'
       },
       templateUrl: 'app/main/branches/branch.html',
-      controller: 'BranchController',
-      controllerAs: 'vm'
+      controller: 'BranchController'
   };
 
   angular.module('bidirApp')

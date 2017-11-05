@@ -3,18 +3,28 @@
 
   angular.module('bidirApp').controller("MainController", MainController);
   /**@ngInject */
-  function MainController($state, AlertService, $scope, MainService, $uibModal) {
+  function MainController($state, AlertService, $scope, MainService, $uibModal,$log) {
     var vm = this;
     vm.saveChanges = saveChanges;
     vm.addBranch = addBranch;
+    vm.editBranch = _editBranch;
+
     init();
+    getBranches();
+
+    function getBranches(){
+      MainService.branches.query(function(result, responseHeaders) {
+        vm.branches =result;
+    },
+    function(httpResponse) {
+        console.log('Error while fetching branches', httpResponse);
+    });
+    }
 
     function addBranch(size) {
       var modalInstance = $uibModal.open({
-        // component: "branch", ///need to upgrade angular ui to support components
-        templateUrl: 'app/main/branches/branch.html',
-        size: "md",
-        controllerAs: 'vm',
+        component: "branch",
+        size: "md"
       });
 
       modalInstance.result.then(
@@ -26,6 +36,38 @@
         }
       );
     }
+    function _editBranch(selectedBranch) {
+
+                  var modalInstance = $uibModal.open({
+                      component: 'branch',
+                      size: 'md',
+                      resolve: {
+                          branch: function(){
+                            return selectedBranch;
+                          }
+                      }
+                  });
+
+                  modalInstance.result.then(function(updatedBranch) {
+
+                      var upBranch = {
+                          "name": updatedBranch.name,
+                          "location": updatedBranch.location,
+                          "opening_date": updatedBranch.opening_date,
+                          "email": updatedBranch.email,
+                          "phone": updatedBranch.phone
+                      };
+
+                      MainService.UpdateBranch.then(function(response) {
+                        console.log('updated successfully', response);
+                    }, function(error) {
+                        console.log('could not be updated', error);
+                    });
+
+                  }, function() {
+                      $log.info('modal-component dismissed without any change');
+                  });
+              }
 
     function saveChanges() {
       if (_.isUndefined(vm.MFI._id)) {

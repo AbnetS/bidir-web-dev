@@ -8,7 +8,8 @@ var API = {
         Auth: {
                 Login: 'users/login'
             },
-            MFI:'/MFIs/'
+            MFI:'/MFIs/',
+            Branch:'/branches/'
         }
 
 };

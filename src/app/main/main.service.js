@@ -11,11 +11,19 @@
         GetMFI: _getMFI,
         UpdateMFI: _updateMFI,
         CreateMFI:_createMFI,
-        MFI: $resource(CommonService.buildUrl(API.Methods.MFI), {  }, ResourceMethods.All)
+        UpdateBranch: _updateBranch,
+        CreateBranch:_createBranch,
+        MFI: $resource(CommonService.buildUrl(API.Methods.MFI), {  }, ResourceMethods.All),
+        branches: $resource(CommonService.buildUrl(API.Methods.Branch) + '/:id', {id:"@id"}, ResourceMethods.All)
       };
 
       return service;
-
+      function _updateBranch(branch){
+        return $http.put(CommonService.buildUrl(API.Methods.Branch) + '/' + branch._id, branch);
+      }
+      function _createBranch(branch){
+        return $http.post(CommonService.buildUrl(API.Methods.Branch), branch);
+      }
       function _getMFI(){
         return $http.get(CommonService.buildUrl(API.Methods.MFI));
       }
@@ -45,7 +53,6 @@
           transformRequest: angular.identity
       });
       }
-
       function _createMFI(mfi,picFile){
         var mfiData = new FormData();
         mfiData.append("name", mfi.name);

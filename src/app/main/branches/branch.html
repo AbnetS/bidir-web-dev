@@ -9,27 +9,34 @@
                     <label for="inputName" class="col-sm-3 control-label">Name</label>
 
                     <div class="col-sm-9">
-                        <input name="inputName" ng-model="vm.branch.name"  placeholder="" type="text" class="form-control" required>
+                        <input name="inputName" ng-model="$ctrl.branch.name"  placeholder="" type="text" class="form-control" required>
                     </div>
                 </div>
                 <div class="form-group row clearfix">
-                    <label for="inputLocation" class="col-sm-3 control-label">Last Name</label>
+                    <label for="inputLocation" class="col-sm-3 control-label">Location</label>
 
                     <div class="col-sm-9">
-                        <input type="text" name="inputLocation" ng-model="vm.branch.location" class="form-control"  required>
+                        <input type="text" name="inputLocation" ng-model="$ctrl.branch.location" class="form-control"  required>
                     </div>
                 </div>
                 <div class="form-group row clearfix">
                     <label for="inputPhone" class="col-sm-3 control-label">Phone</label>
 
                     <div class="col-sm-9">
-                        <input type="number" ng-model="vm.branch.phone" class="form-control" name="inputPhone" placeholder="eg. 251 000 000 000" ng-minlength="10" ng-maxlength="13" required>
+                        <input type="text" ng-model="$ctrl.branch.phone" class="form-control" name="inputPhone" placeholder="eg. 251 000 000 000" ng-minlength="10" ng-maxlength="13" required>
+                    </div>
+                </div>
+                <div class="form-group row clearfix">
+                    <label for="inputEmail" class="col-sm-3 control-label">Email</label>
+
+                    <div class="col-sm-9">
+                        <input type="email" ng-model="$ctrl.branch.email" class="form-control" name="inputEmail" required>
                     </div>
                 </div>
                 <div class="form-group row clearfix">
                     <label class="col-sm-3 control-label">Branch Type:</label>
                     <div class="col-sm-9">
-                        <select ng-model="vm.branch.branch_type" class="form-control">
+                        <select ng-model="$ctrl.branch.branch_type" class="form-control">
                             <option value="Rural Service">Rural Service</option>
                             <option value="Head Office">Head Office</option>
                         </select>
@@ -41,6 +48,6 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-success" type="button" ng-disabled="branchForm.$invalid" ng-click="vm.ok()">Save</button>
-    <button class="btn btn-danger" type="button" ng-click="vm.cancel()">Cancel</button>
+    <button class="btn btn-success" type="button" ng-click="$ctrl.ok()">Save</button>
+    <button class="btn btn-danger" type="button" ng-click="$ctrl.cancel()">Cancel</button>
 </div>
