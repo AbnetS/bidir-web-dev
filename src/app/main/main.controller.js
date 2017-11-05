@@ -6,31 +6,39 @@ angular.module('bidirApp')
   /**@ngInject */
   function MainController ($state,AlertService,$scope,MainService,$http) {
     var vm = this;
-    console.log("main controller");
-    vm.userName = 'Yonas Tesfaye';
-    vm.helloText = 'Welcome';
-    // $http.get('http://35.185.118.191:18199/MFIs').then(function(data){
-    //   console.log(data);
-    // });
 
-
-
-    // MainService.MFI.query(
-    //   function(response) {
-    //   console.log("response", response);
-    //     }, function(error) {
-    //     console.log("error", error);
-    // });
+    MainService.GetMFI()
+    .then(
+    function(response) {
+      vm.MFI = response.data[0];
+    console.log("response", response);
+      }, function(error) {
+      console.log("error", error);
+  });
 
     vm.saveChanges =function(){
-      console.log("MFI",vm.MFI);
-       AlertService.showSuccess('Information saved successfully', "Info");
+if(_.isUndefined(vm.MFI._id)){
+  MainService.CreateMFI(vm.MFI,vm.picFile).then(
+    function(response) {
+      AlertService.showSuccess('MFI Information created successfully', "Information");
+    console.log("response", response);
+      }, function(error) {
+        AlertService.showError('Failed to create MFI!, Pleast try again', "Information");
+      console.log("error", error);
+  });
+}else{
+  MainService.UpdateMFI(vm.MFI,vm.picFile).then(
+    function(response) {
+      AlertService.showSuccess('MFI Information updated successfully', "Information");
+    console.log("response", response);
+      }, function(error) {
+        AlertService.showError('MFI Information update failed', "Information");
+      console.log("error", error);
+  });
+}
     };
 
-    $scope.today = function() {
-      $scope.dt = new Date();
-    };
-    $scope.today();
+
 
     $scope.clear = function() {
       $scope.dt = null;

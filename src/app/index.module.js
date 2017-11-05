@@ -15,7 +15,7 @@
     "oitozero.ngSweetAlert",
     "ngStorage",
     "toastr",
-
+    "ngFileUpload",
     "bidirApp.core",
     "components",
     "bidirApp.home"

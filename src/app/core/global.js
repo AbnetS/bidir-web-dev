@@ -7,9 +7,10 @@ var API = {
     Methods: {
         Auth: {
                 Login: 'users/login'
-            }
-        },
-        MFI:'/MFIs/'
+            },
+            MFI:'/MFIs/'
+        }
+
 };
 var ResourceMethods = {
   All: {
