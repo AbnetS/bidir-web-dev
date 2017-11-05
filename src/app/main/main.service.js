@@ -9,13 +9,13 @@
 
       var service = {
         getMFI: _getMFI,
-        MFI: $resource(CommonService.buildUrl(API.Methods.MFI), { id: "@id" }, ResourceMethods.All)
+        MFI: $resource(CommonService.buildUrl(API.Methods.MFI), {  }, ResourceMethods.All)
       };
 
       return service;
 
       function _getMFI(){
-        return $resource(CommonService.buildUrl(API.Methods.MFI), { id: "@id" }, ResourceMethods.All);
+        return $resource(CommonService.buildUrl(API.Methods.MFI), { id: "@id" }, ResourceMethods.All)
       }
   }
 

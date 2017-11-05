@@ -5,7 +5,7 @@
         .controller('LoginController', LoginController);
 
     /**@ngInject */
-    function LoginController(AuthService,$scope,$state,$rootScope,APP_CONSTANTS,toastr,AlertService) {
+    function LoginController(AuthService,$scope,$state,$rootScope,APP_CONSTANTS,toastr,AlertService,_) {
         var vm = this;
         vm.userValidator = {
           usernameMin: 4,
@@ -19,8 +19,11 @@
             if(AuthService.login(vm.user)){
               $state.go('index.main');
             }else{
+              console.log(vm.user);
+              _.isEmpty(vm.user)?
+                  toastr.error('username and password is required!','ERROR!'):
+                  toastr.error('The username or password is incorrect! Please try again.','ERROR!');
               // AlertService.showError('The username or password is incorrect','Error');
-              toastr.error('The username or password is incorrect! Please try again.','ERROR!');
             }
           // AuthService.login(vm.user)
           // .then(function(response) {
