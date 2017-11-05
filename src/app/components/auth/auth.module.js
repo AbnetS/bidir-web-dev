@@ -11,10 +11,12 @@
  *
  **/
 (function(angular) {
-    'use strict';
+  "use strict";
 
-    angular.module('components.auth', [
-        'ui.router'
-    ]);
+  angular.module("components.auth", ["ui.router","toastr"]).run(runBlock);
 
+  /** @ngInject */
+  function runBlock() {
+    console.log("auth run");
+  }
 })(window.angular);

@@ -1,12 +1,14 @@
 (function(angular) {
-    'use strict';
+  "use strict";
 
-    angular.module('core', [
-      'ngStorage'
-    ])
-        .config(routeConfig);
-
-    /**@ngInject */
-    function routeConfig($locationProvider, $urlRouterProvider, $httpProvider) {}
-
+  angular
+    .module("bidirApp.core", ["ngStorage"])
+    .run(runBlock)
+    .config(routeConfig);
+  /** @ngInject */
+  function runBlock() {
+    console.log("core run");
+  }
+  /**@ngInject */
+  function routeConfig($locationProvider, $urlRouterProvider, $httpProvider) {}
 })(window.angular);

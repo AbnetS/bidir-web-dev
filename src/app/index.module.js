@@ -13,9 +13,17 @@
     "ui.bootstrap",
     "angular-loading-bar",
     "oitozero.ngSweetAlert",
+    "ngStorage",
+    "toastr",
 
-    "core",
+    "bidirApp.core",
     "components",
-    "home"
-  ]);
+    "bidirApp.home"
+  ]).run(runBlock);
+
+    /** @ngInject */
+    function runBlock($log) {
+        console.log("bidirApp run")
+      $log.debug('runBlock end');
+    }
 })();

@@ -1,7 +1,7 @@
 (function(angular) {
     'use strict';
 
-    angular.module('core')
+    angular.module('bidirApp.core')
         .service('StorageService', StorageService);
 
     /**@ngInject */

@@ -4,18 +4,21 @@
 
         <p>Login in. To see it in action.</p>
 
-        <form name="authForm" class="m-t" role="form" novalidate >
-            <div class="form-group">
-                <input type="text" name="username" class="form-control" ng-model="vm.user.username" placeholder="Username" required="required">
-            </div>
-            <div class="form-group">
-                <input type="password" name="password" class="form-control" ng-model="vm.user.password" placeholder="Password" required="required">
-            </div>
-            <button type="button" ng-click="vm.loginUser()" class="btn btn-primary block full-width m-b">Login</button>
+        <form name="authForm"  ng-submit="vm.loginUser()" class="m-t" role="form" novalidate >
+            <div class="form-group" ng-class="{ 'has-error' : authForm.username.$invalid && !authForm.username.$pristine }">
 
-            <div ng-if="vm.message" class="message error">
-              {{ vm.message }}
+                <input ng-model="vm.user.username" ng-minlength="vm.userValidator.usernameMin" ng-maxlength="vm.userValidator.usernameMax" type="text" name="username" class="form-control" placeholder="Username" required>
+                <p ng-show="authForm.username.$error.minlength" class="help-block">username is too short.</p>
+                <p ng-show="authForm.username.$error.maxlength" class="help-block">username is too long.</p>
             </div>
+            <div class="form-group" ng-class="{ 'has-error' : authForm.password.$invalid && !authForm.password.$pristine }">
+                <input id="inputPassword" ng-model="vm.user.password" ng-minlength="vm.userValidator.passwordMin" ng-maxlength="vm.userValidator.passwordMax" type="password" name="password" class="form-control" placeholder="Password" required>
+                <p ng-show="authForm.password.$error.minlength" class="help-block">password is too short.</p>
+                <p ng-show="authForm.password.$error.maxlength" class="help-block">password is too long.</p>
+            </div>
+            <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
+
+
         </form>
     </div>
 </div>

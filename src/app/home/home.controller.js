@@ -1,18 +1,13 @@
 (function(angular) {
 'use strict';
 
-angular.module('home')
-  .controller('MainController', MainController);
+angular.module('bidirApp.home')
+  .controller('HomeController', HomeController);
 
   /**@ngInject */
-  function MainController ($state,AlertService,$scope) {
+  function HomeController ($state,AlertService,$scope) {
     var vm = this;
-    vm.userName = 'Yonas Tesfaye';
-    vm.helloText = 'Welcome';
-
-    vm.saveChanges =function(){
-      console.log("save clicked");
-    };
+    console.log("home controller");
 
 
   }

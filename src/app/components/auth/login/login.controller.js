@@ -5,11 +5,23 @@
         .controller('LoginController', LoginController);
 
     /**@ngInject */
-    function LoginController(AuthService,$scope,$state,$rootScope,APP_CONSTANTS) {
+    function LoginController(AuthService,$scope,$state,$rootScope,APP_CONSTANTS,toastr,AlertService) {
         var vm = this;
+        vm.userValidator = {
+          usernameMin: 4,
+          usernameMax: 20,
+          passwordMin: 6
+      };
         vm.user = {};
+        console.log("login controller");
 
         vm.loginUser = function() {
+            if(AuthService.login(vm.user)){
+              $state.go('index.main');
+            }else{
+              // AlertService.showError('The username or password is incorrect','Error');
+              toastr.error('The username or password is incorrect! Please try again.','ERROR!');
+            }
           // AuthService.login(vm.user)
           // .then(function(response) {
           //     console.log(result);
@@ -26,7 +38,7 @@
           //     // toastr.error('ERROR! ' + errorMessage.messagee);
           //     $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
           // });
-          $state.go('index.main');
+
         };
 
 

@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('core').factory('AlertService', AlertService);
+    angular.module('bidirApp.core').factory('AlertService', AlertService);
 
     /**@ngInject */
     function AlertService($q) {

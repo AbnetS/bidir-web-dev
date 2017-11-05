@@ -2,11 +2,11 @@
   'use strict';
   var home = {
       templateUrl: 'app/home/home.html',
-      controller: 'MainController',
+      controller: 'HomeController',
       controllerAs: 'vm'
   };
 
-  angular.module('home')
+  angular.module('bidirApp.home')
       .component('home', home)
       .config(routeConfig);
 

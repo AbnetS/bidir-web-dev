@@ -49,7 +49,8 @@
         }
 
         function _login(user) {
-          return $http.post(CommonService.buildUrl(API.Methods.Auth.Login), user);
+          return user.username === 'super@mfi.com' && user.password === 'mfipassword';
+          //return $http.post(CommonService.buildUrl(API.Methods.Auth.Login), user);
         }
 
         function logout() {

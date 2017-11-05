@@ -6,6 +6,7 @@ angular.module('bidirApp')
   /**@ngInject */
   function MainController ($state,AlertService,$scope,MainService) {
     var vm = this;
+    console.log("main controller");
     vm.userName = 'Yonas Tesfaye';
     vm.helloText = 'Welcome';
     MainService.GetMFI()
