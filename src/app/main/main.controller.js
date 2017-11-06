@@ -3,7 +3,7 @@
 
   angular.module('bidirApp').controller("MainController", MainController);
   /**@ngInject */
-  function MainController($state, AlertService, $scope, MainService, $uibModal,$log) {
+  function MainController($state, AlertService, $scope, MainService, $uibModal,$log,$http) {
     var vm = this;
     vm.saveChanges = saveChanges;
     vm.addBranch = addBranch;
@@ -27,15 +27,19 @@
         size: "md"
       });
 
-      modalInstance.result.then(
-        function(branch) {
-          console.log("branch", branch);
-        },
-        function() {
+      modalInstance.result.then(function(branch) {
+          console.log("add branch", branch);
+
+          MainService.branches.save(branch, function(data) {
+              console.log("saved successfully", data);
+            }, function(error) {
+              console.log("could not be saved", error);
+            });
+        }, function() {
           $log.info("modal-component dismissed at: " + new Date());
-        }
-      );
+        });
     }
+
     function _editBranch(selectedBranch) {
 
                   var modalInstance = $uibModal.open({
@@ -51,6 +55,7 @@
                   modalInstance.result.then(function(updatedBranch) {
 
                       var upBranch = {
+                          "_id":updatedBranch._id,
                           "name": updatedBranch.name,
                           "location": updatedBranch.location,
                           "opening_date": updatedBranch.opening_date,
@@ -58,7 +63,8 @@
                           "phone": updatedBranch.phone
                       };
 
-                      MainService.UpdateBranch.then(function(response) {
+                      MainService.UpdateBranch(upBranch)
+                      .then(function(response) {
                         console.log('updated successfully', response);
                     }, function(error) {
                         console.log('could not be updated', error);
@@ -66,10 +72,12 @@
 
                   }, function() {
                       $log.info('modal-component dismissed without any change');
+
                   });
               }
 
-    function saveChanges() {
+
+              function saveChanges() {
       if (_.isUndefined(vm.MFI._id)) {
         MainService.CreateMFI(vm.MFI, vm.picFile).then(
           function(response) {

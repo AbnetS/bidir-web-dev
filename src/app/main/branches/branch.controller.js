@@ -10,9 +10,7 @@
       };
 
       ctrl.ok = function() {
-
-        console.log("ok clicked on branch controller");
-        ctrl.close({ $value: ctrl });
+        ctrl.close({ $value: ctrl.branch });
 
       };
 

@@ -14,12 +14,12 @@
         UpdateBranch: _updateBranch,
         CreateBranch:_createBranch,
         MFI: $resource(CommonService.buildUrl(API.Methods.MFI), {  }, ResourceMethods.All),
-        branches: $resource(CommonService.buildUrl(API.Methods.Branch) + '/:id', {id:"@id"}, ResourceMethods.All)
+        branches: $resource(CommonService.buildUrl(API.Methods.Branch), {id:"@id"}, ResourceMethods.All)
       };
 
       return service;
-      function _updateBranch(branch){
-        return $http.put(CommonService.buildUrl(API.Methods.Branch) + '/' + branch._id, branch);
+      function _updateBranch(updated_branch){
+        return $http.put(CommonService.buildUrl(API.Methods.Branch) + '/' + updated_branch._id, updated_branch);
       }
       function _createBranch(branch){
         return $http.post(CommonService.buildUrl(API.Methods.Branch), branch);
