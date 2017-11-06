@@ -13,6 +13,7 @@
         CreateMFI:_createMFI,
         UpdateBranch: _updateBranch,
         CreateBranch:_createBranch,
+        ChangeStatus:_changeBranchStatus,
         MFI: $resource(CommonService.buildUrl(API.Methods.MFI), {  }, ResourceMethods.All),
         branches: $resource(CommonService.buildUrl(API.Methods.Branch), {id:"@id"}, ResourceMethods.All)
       };
@@ -23,6 +24,9 @@
       }
       function _createBranch(branch){
         return $http.post(CommonService.buildUrl(API.Methods.Branch), branch);
+      }
+      function _changeBranchStatus(branchStatus){
+        return $http.put(CommonService.buildUrl(API.Methods.Branch) + '/' +branchStatus._id,branchStatus);
       }
       function _getMFI(){
         return $http.get(CommonService.buildUrl(API.Methods.MFI));
@@ -73,6 +77,7 @@
           //prevents serializing data.  don't do it.
           transformRequest: angular.identity
       });
+
       }
   }
 

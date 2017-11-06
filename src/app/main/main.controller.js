@@ -8,6 +8,7 @@
     vm.saveChanges = saveChanges;
     vm.addBranch = addBranch;
     vm.editBranch = _editBranch;
+    vm.changeStatus = _changeStatus;
 
     init();
     getBranches();
@@ -114,6 +115,15 @@
           }
         );
       }
+    }
+    function _changeStatus(ChangeStatus){
+      ChangeStatus.status = ChangeStatus.status === 'active'?'inactive':'active';
+      MainService.ChangeStatus(ChangeStatus)
+      .then(function(response) {
+        console.log('updated successfully', response);
+    }, function(error) {
+        console.log('could not be updated', error);
+    });
     }
 
     function init() {

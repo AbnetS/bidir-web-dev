@@ -98,10 +98,11 @@
                         <th st-sort="branch_type">Branch Type</th>
                         <th st-sort="phone">Phone</th>
                         <th st-sort="email">email</th>
+                        <th st-sort="status">status</th>
                         <th></th>
                       </tr>
                       <tr>
-                        <th colspan="8">
+                        <th colspan="9">
                           <input st-search="" class="form-control" placeholder="search ..." type="text" />
                         </th>
                       </tr>
@@ -118,13 +119,16 @@
                         <td>{{branch.phone}}</td>
                         <td>{{branch.email}}</td>
                         <td>
+                          <span class="badge " ng-class="branch.status==='active'?'badge-primary':'badge-default'" >{{branch.status}}</span>
+                        </td>
+                        <td>
                           <a ng-click="vm.editBranch(branch)">
                             <i class="fa fa-edit"></i>
                             EDIT
                           </a>
-                          <a ng-click="vm.editBranch(branch)">
-                            <i class="fa fa-trash"></i>
-                            DEL
+                          <a ng-click="vm.changeStatus(branch)">
+                            <i class="fa fa-trash-o fa-fw"></i>
+                            {{branch.status=== 'active'? "Deactivate":"Activate"}}
                           </a>
                         </td>
                       </tr>

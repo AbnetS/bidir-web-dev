@@ -11,7 +11,6 @@
 
       ctrl.ok = function() {
         ctrl.close({ $value: ctrl.branch });
-
       };
 
       ctrl.cancel = function() {
