@@ -16,6 +16,9 @@
     "ngStorage",
     "toastr",
     "ngFileUpload",
+    'smart-table',
+
+
     "bidirApp.core",
     "components",
     "bidirApp.home"

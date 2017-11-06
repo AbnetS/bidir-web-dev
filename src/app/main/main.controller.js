@@ -15,6 +15,7 @@
     function getBranches(){
       MainService.branches.query(function(result, responseHeaders) {
         vm.branches =result;
+        vm.branchesCopy = [].concat(vm.branches);
     },
     function(httpResponse) {
         console.log('Error while fetching branches', httpResponse);
@@ -119,7 +120,8 @@
       MainService.GetMFI().then(
         function(response) {
           vm.MFI = response.data[0];
-          console.log("response", response);
+          var dt = new Date(vm.MFI.establishment_year);
+          vm.MFI.establishment_year = dt;
         },
         function(error) {
           console.log("error", error);

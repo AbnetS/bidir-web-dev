@@ -37,7 +37,7 @@
         mfiData.append("website_link", mfi.website_link);
         mfiData.append("establishment_year", mfi.establishment_year);
 
-        if(!_.isUndefined(picFile.name)){
+        if(!_.isUndefined(picFile)){
           mfiData.append("logo", picFile);
         }
 
