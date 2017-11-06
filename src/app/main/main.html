@@ -97,7 +97,7 @@
                         <th st-sort="opening_date">Opening Date</th>
                         <th st-sort="branch_type">Branch Type</th>
                         <th st-sort="phone">Phone</th>
-                        <th st-sort="email">email</th>
+                        <!-- <th st-sort="email">email</th> -->
                         <th st-sort="status">status</th>
                         <th></th>
                       </tr>
@@ -117,7 +117,7 @@
                         <td>{{branch.date_created | date}}</td>
                         <td>{{branch.branch_type}}</td>
                         <td>{{branch.phone}}</td>
-                        <td>{{branch.email}}</td>
+                        <!-- <td>{{branch.email}}</td> -->
                         <td>
                           <span class="badge " ng-class="branch.status==='active'?'badge-primary':'badge-default'" >{{branch.status}}</span>
                         </td>
