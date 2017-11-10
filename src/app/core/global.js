@@ -1,8 +1,10 @@
 var API = {
     Config: {
-        BaseUrl: "http://35.185.118.191:18199" //REMOTE API
-        //BaseUrl: "http://localhost:8000/" //LOCAL API
-
+        BaseUrl: "http://api.bidir.staging.gebeya.io/" //REMOTE API
+    },
+    Service: {
+      MFI: 'mfi',
+      Auth: 'auth'
     },
     Methods: {
         Auth: {

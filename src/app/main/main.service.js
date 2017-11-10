@@ -5,8 +5,8 @@
   .service('MainService', MainService);
 
   /**@ngInject */
-  function MainService($resource,$http, CommonService, API_CONFIG) {
-      var  mfiUrl = "http://35.185.118.191:18199/MFIs/";
+  function MainService($resource,$http, CommonService) {
+
       var service = {
         GetMFI: _getMFI,
         UpdateMFI: _updateMFI,
@@ -14,22 +14,22 @@
         UpdateBranch: _updateBranch,
         CreateBranch:_createBranch,
         ChangeStatus:_changeBranchStatus,
-        MFI: $resource(CommonService.buildUrl(API.Methods.MFI), {  }, ResourceMethods.All),
-        branches: $resource(CommonService.buildUrl(API.Methods.Branch), {id:"@id"}, ResourceMethods.All)
+        MFI: $resource(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI), {  }, ResourceMethods.All),
+        branches: $resource(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch), {id:"@id"}, ResourceMethods.All)
       };
 
       return service;
       function _updateBranch(updated_branch){
-        return $http.put(CommonService.buildUrl(API.Methods.Branch) + '/' + updated_branch._id, updated_branch);
+        return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,updated_branch._id), updated_branch);
       }
       function _createBranch(branch){
-        return $http.post(CommonService.buildUrl(API.Methods.Branch), branch);
+        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch), branch);
       }
       function _changeBranchStatus(branchStatus){
-        return $http.put(CommonService.buildUrl(API.Methods.Branch) + '/' +branchStatus._id,branchStatus);
+        return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,branchStatus._id,branchStatus) );
       }
       function _getMFI(){
-        return $http.get(CommonService.buildUrl(API.Methods.MFI));
+        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI));
       }
       function _updateMFI(mfi,picFile){
         var mfiData = new FormData();

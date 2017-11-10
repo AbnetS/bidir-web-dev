@@ -6,7 +6,7 @@
         .factory('CommonService', CommonService);
 
     /**@ngInject */
-    function CommonService(API_CONFIG) {
+    function CommonService() {
 
         var factory = {
             buildUrl: _buildUrl,
@@ -15,12 +15,12 @@
 
         return factory;
 
-        function _buildUrl(url) {
-            return API_CONFIG.Config.BaseUrl + url;
+        function _buildUrl(service,url) {
+            return API.Config.BaseUrl + service +'/' + url;
         }
 
-        function _buildUrlWithParam(url, id) {
-            return API_CONFIG.Config.BaseUrl + url + '/' + id;
+        function _buildUrlWithParam(url,service, id) {
+            return API.Config.BaseUrl + service +'/'+ url + '/' + id;
         }
     }
 })(window.angular);
