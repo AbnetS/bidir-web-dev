@@ -13,6 +13,7 @@
         abstract: true,
         url: "/index",
         templateUrl: "app/components/common/content.html"
+        // template: '<div ui-view></div>'
       })
       .state('index.main', {
         url: "/main",

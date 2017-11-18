@@ -1,0 +1,72 @@
+<div class="wrapper wrapper-content  animated fadeInRight">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="tabs-container">
+            <div class="panel-body">
+                <h2>Branches</h2>
+                <p>
+                  You have successfully created an MFI. Head Office branch is created by default. Click on Add branch to add more.
+                  <button ng-click="vm.addBranch()" type="button" class="btn btn btn-primary pull-right">
+                    <i class="fa fa-plus"></i> Add
+                  </button>
+                </p>
+                <div class="clients-list">
+                  <div class="full-height-scroll" full-scroll>
+
+                    <table st-table="vm.branches" st-safe-src="vm.branchesCopy" class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th st-sort="name">#</th>
+                          <th st-sort="name">Name</th>
+                          <th st-sort="location">Location</th>
+                          <th st-sort="opening_date">Opening Date</th>
+                          <th st-sort="branch_type">Branch Type</th>
+                          <th st-sort="phone">Phone</th>
+                          <!-- <th st-sort="email">email</th> -->
+                          <th st-sort="status">status</th>
+                          <th></th>
+                        </tr>
+                        <tr>
+                          <th colspan="9">
+                            <input st-search="" class="form-control" placeholder="search ..." type="text" />
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="branch in vm.branches">
+                          <td>
+                            <a class="client-link">{{$index + 1}}</a>
+                          </td>
+                          <td>{{branch.name}}</td>
+                          <td>{{branch.location}}</td>
+                          <td>{{branch.date_created | date}}</td>
+                          <td>{{branch.branch_type}}</td>
+                          <td>{{branch.phone}}</td>
+                          <!-- <td>{{branch.email}}</td> -->
+                          <td>
+                            <span class="badge " ng-class="branch.status==='active'?'badge-primary':'badge-default'" >{{branch.status}}</span>
+                          </td>
+                          <td>
+                            <a ng-click="vm.editBranch(branch)">
+                              <i class="fa fa-edit"></i>
+                              EDIT
+                            </a>
+                            <a ng-click="vm.changeStatus(branch)">
+                              <i class="fa fa-trash-o fa-fw"></i>
+                              {{branch.status=== 'active'? "Deactivate":"Activate"}}
+                            </a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+
+                  </div>
+
+                </div>
+              </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
