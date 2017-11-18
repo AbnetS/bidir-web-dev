@@ -13,7 +13,6 @@
           passwordMin: 6
       };
         vm.user = {};
-        console.log("login controller");
 
         vm.loginUser = function() {
           AuthService.login(vm.user)
@@ -24,7 +23,6 @@
         $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
         AuthService.SetCredentials(result);
         toastr.success('Welcome ' + vm.user.admin.first_name +' '+ vm.user.admin.last_name+ ' to Bidir Web App','Success');
-        $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
         console.log(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
         $state.go('index.main');
       }, function(error) {

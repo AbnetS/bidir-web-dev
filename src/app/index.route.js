@@ -16,7 +16,7 @@
       })
       .state('index.main', {
         url: "/main",
-        component:'main',
+        component:'mfi',
         data: { pageTitle: 'Home Page' }
       });
 

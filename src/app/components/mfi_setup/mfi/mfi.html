@@ -1,0 +1,76 @@
+<div class="wrapper wrapper-content  animated fadeInRight">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="tabs-container">
+            <div class="panel-body">
+                <form id="form" name="MFIForm" class="wizard-big">
+                  <fieldset>
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label>MFI Name *</label>
+                          <input id="name" name="name" ng-model="vm.MFI.name" type="text" class="form-control required">
+                        </div>
+                        <div class="form-group">
+                          <label>Location *</label>
+                          <input id="location" name="location" ng-model="vm.MFI.location" type="text" class="form-control required">
+                        </div>
+                        <div class="form-group">
+                          <label>Logo *</label>
+                          <div class="input-group">
+                            <input type="text" class="form-control" placeholder="{{vm.picFile.name?vm.picFile.name:vm.MFI.logo}}" />
+                            <span class="input-group-btn">
+                              <span class="btn btn-secondary btn-file">
+                                <span class="fa fa-picture-o"></span>
+                                <input type="file" ngf-select ng-model="vm.picFile" name="file" accept="image/*" ngf-max-size="2MB" required ngf-model-invalid="errorFile">
+                              </span>
+                            </span>
+
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label>Establishment Year *</label>
+                          <p class="input-group">
+                            <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="vm.MFI.establishment_year" is-open="popup1.opened"
+                              datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats"
+                            />
+                            <span class="input-group-btn">
+                              <button type="button" class="btn btn-default" ng-click="open1()">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                              </button>
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label class="font-normal">Website</label>
+                          <input id="website" name="website" ng-model="vm.MFI.website_link" type="text" class="form-control">
+                        </div>
+                        <div class="form-group">
+                          <label class="font-normal">Contact Person</label>
+                          <input id="contactPerson" name="contactPerson" ng-model="vm.MFI.contact_person" type="text" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                          <label class="font-normal">Email </label>
+                          <input id="email" name="email" type="email" ng-model="vm.MFI.email" class="form-control required email">
+                        </div>
+                        <div class="form-group">
+                          <label class="font-normal">Phone number</label>
+                          <input id="phoneNumber" name="phoneNumber" ng-model="vm.MFI.phone" type="text" class="form-control">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <a class="btn btn-primary pull-right" type="button" ng-click="vm.saveChanges()">Save changes</a>
+                      </div>
+                    </div>
+                  </fieldset>
+                </form>
+              </div>
+        </div>
+      </div>
+    </div>
+  </div>

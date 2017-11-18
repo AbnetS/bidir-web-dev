@@ -2,7 +2,8 @@
     'use strict';
 
     angular.module('components', [
-        'components.auth'
+        'components.auth',
+        'components.mfi',
       ]).run(runBlock);
 
           /** @ngInject */

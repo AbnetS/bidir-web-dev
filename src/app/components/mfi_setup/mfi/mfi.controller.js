@@ -1,9 +1,10 @@
 (function(angular) {
   "use strict";
 
-  angular.module("bidirApp").controller("MainController", MainController);
+  angular.module("components.mfi").controller("MFIController", MFIController);
+
   /**@ngInject */
-  function MainController(
+  function MFIController(
     $state,
     AlertService,
     $scope,
@@ -42,8 +43,7 @@
 
       modalInstance.result.then(
         function(branch) {
-          console.log("add branch", branch);
-
+          //Save new branch API
           MainService.branches.save(
             branch,
             function(data) {
@@ -55,7 +55,7 @@
           );
         },
         function() {
-          $log.info("modal-component dismissed at: " + new Date());
+          // $log.info("modal-component dismissed at: " + new Date());
         }
       );
     }
@@ -81,7 +81,7 @@
             email: updatedBranch.email,
             phone: updatedBranch.phone
           };
-
+          //Update branch api
           MainService.UpdateBranch(upBranch).then(
             function(response) {
               console.log("updated successfully", response);
@@ -92,7 +92,7 @@
           );
         },
         function() {
-          $log.info("modal-component dismissed without any change");
+          // $log.info("modal-component dismissed without any change");
         }
       );
     }

@@ -59,8 +59,8 @@
         }
 
         function logout() {
-            $rootScope.LoggedInUser = {};
             StorageService.Reset();
+            $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.auth-logout-success);
             $state.go('auth.login');
         }
 
