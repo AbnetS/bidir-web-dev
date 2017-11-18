@@ -62,7 +62,8 @@
         }
 
         function success(message, title) {
-            swal({title: title, text: message, type: "success", confirmButtonText: "Ok", showCancelButton: false});
+            // swal({title: title, text: message, type: "success", confirmButtonText: "Ok", showCancelButton: false});
+            swal(title,message, "success");
         }
 
         function errorHandler(response) {
