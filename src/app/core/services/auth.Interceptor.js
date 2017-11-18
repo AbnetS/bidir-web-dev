@@ -4,12 +4,12 @@
       .factory('AuthInterceptor', AuthInterceptor);
 
   /**@ngInject */
-  function AuthInterceptor($window, $q, $rootScope, AuthService, APP_CONSTANTS) {
+  function AuthInterceptor($window, $q, $rootScope, StorageService, APP_CONSTANTS) {
       return {
           request: function(config) {
             console.log("request config",config);
               config.headers = config.headers || {};
-              var token = 'Bearer ' + AuthService.GetToken();
+              var token = 'Bearer ' + StorageService.Get(APP_CONSTANTS.StorageKey.SESSION).token;
               if (token) {
                   console.log("token from AuthInterceptor", token);
                   // config.headers['Authorization'] = token;

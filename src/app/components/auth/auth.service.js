@@ -9,12 +9,13 @@
 
         var service = {
             login: _login,
-            logout: logout,
+            Logout: logout,
             GetCredentials: getCredentials,
             SetCredentials: setCredentials,
             GetToken: getToken,
             IsAuthenticated: isAuthenticated,
-            IsAuthorized: isAuthorized
+            IsAuthorized: isAuthorized,
+            GetCurrentUser:_getCurrentUser
         };
 
         return service;
@@ -35,6 +36,10 @@
             var session = getCredentials();
             var loggedInUser = (_.isUndefined(session) || session === null) ? undefined : session;
             return (!_.isUndefined(loggedInUser));
+        }
+        function _getCurrentUser(){
+          var credential = getCredentials();
+          return _.isUndefined(credential) || credential === null ? null : credential.user;
         }
 
         function isAuthorized(roles) {

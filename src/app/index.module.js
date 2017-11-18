@@ -31,6 +31,6 @@
     }
     /** @ngInject */
     function appConfig($httpProvider){
-      $httpProvider.interceptors.push('AuthInterceptor');
+      // $httpProvider.interceptors.push('AuthInterceptor');
     }
 })();

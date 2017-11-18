@@ -10,14 +10,18 @@
 
         var factory = {
             buildUrl: _buildUrl,
+            buildUrlOld: _buildUrlOld,
             buildUrlWithParam: _buildUrlWithParam
         };
 
         return factory;
 
-        function _buildUrl(service,url) {
-            return API.Config.BaseUrl + service +'/' + url;
+        function _buildUrlOld(url) {
+            return API.Config.BaseUrl+ url;
         }
+        function _buildUrl(service,url) {
+          return API.Config.BaseUrl + service +'/' + url;
+      }
 
         function _buildUrlWithParam(url,service, id) {
             return API.Config.BaseUrl + service +'/'+ url + '/' + id;

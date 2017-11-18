@@ -18,13 +18,11 @@
         vm.loginUser = function() {
           AuthService.login(vm.user)
           .then(function(response) {
-              console.log(response);
               var result = response.data;
-              // console.log(result);
               vm.user = result.user;
 
         $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
-        AuthService.SetCredentials(response);
+        AuthService.SetCredentials(result);
         toastr.success('Welcome ' + vm.user.admin.first_name +' '+ vm.user.admin.last_name+ ' to Bidir Web App','Success');
         $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
         console.log(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);

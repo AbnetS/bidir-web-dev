@@ -1,9 +1,17 @@
 (function(angular) {
   "use strict";
 
-  angular.module('bidirApp').controller("MainController", MainController);
+  angular.module("bidirApp").controller("MainController", MainController);
   /**@ngInject */
-  function MainController($state, AlertService, $scope, MainService, $uibModal,$log,$http) {
+  function MainController(
+    $state,
+    AlertService,
+    $scope,
+    MainService,
+    $uibModal,
+    $log,
+    $http
+  ) {
     var vm = this;
     vm.saveChanges = saveChanges;
     vm.addBranch = addBranch;
@@ -13,14 +21,16 @@
     init();
     getBranches();
 
-    function getBranches(){
-      MainService.branches.query(function(result, responseHeaders) {
-        vm.branches =result;
-        vm.branchesCopy = [].concat(vm.branches);
-    },
-    function(httpResponse) {
-        console.log('Error while fetching branches', httpResponse);
-    });
+    function getBranches() {
+      MainService.GetBranches().then(
+        function(response) {
+          vm.branches = response.data.docs;
+          vm.branchesCopy = [].concat(vm.branches);
+        },
+        function(error) {
+          console.log("error", error);
+        }
+      );
     }
 
     function addBranch(size) {
@@ -29,57 +39,64 @@
         size: "md"
       });
 
-      modalInstance.result.then(function(branch) {
+      modalInstance.result.then(
+        function(branch) {
           console.log("add branch", branch);
 
-          MainService.branches.save(branch, function(data) {
+          MainService.branches.save(
+            branch,
+            function(data) {
               console.log("saved successfully", data);
-            }, function(error) {
+            },
+            function(error) {
               console.log("could not be saved", error);
-            });
-        }, function() {
+            }
+          );
+        },
+        function() {
           $log.info("modal-component dismissed at: " + new Date());
-        });
+        }
+      );
     }
 
     function _editBranch(selectedBranch) {
+      var modalInstance = $uibModal.open({
+        component: "branch",
+        size: "md",
+        resolve: {
+          branch: function() {
+            return selectedBranch;
+          }
+        }
+      });
 
-                  var modalInstance = $uibModal.open({
-                      component: 'branch',
-                      size: 'md',
-                      resolve: {
-                          branch: function(){
-                            return selectedBranch;
-                          }
-                      }
-                  });
+      modalInstance.result.then(
+        function(updatedBranch) {
+          var upBranch = {
+            _id: updatedBranch._id,
+            name: updatedBranch.name,
+            location: updatedBranch.location,
+            opening_date: updatedBranch.opening_date,
+            email: updatedBranch.email,
+            phone: updatedBranch.phone
+          };
 
-                  modalInstance.result.then(function(updatedBranch) {
+          MainService.UpdateBranch(upBranch).then(
+            function(response) {
+              console.log("updated successfully", response);
+            },
+            function(error) {
+              console.log("could not be updated", error);
+            }
+          );
+        },
+        function() {
+          $log.info("modal-component dismissed without any change");
+        }
+      );
+    }
 
-                      var upBranch = {
-                          "_id":updatedBranch._id,
-                          "name": updatedBranch.name,
-                          "location": updatedBranch.location,
-                          "opening_date": updatedBranch.opening_date,
-                          "email": updatedBranch.email,
-                          "phone": updatedBranch.phone
-                      };
-
-                      MainService.UpdateBranch(upBranch)
-                      .then(function(response) {
-                        console.log('updated successfully', response);
-                    }, function(error) {
-                        console.log('could not be updated', error);
-                    });
-
-                  }, function() {
-                      $log.info('modal-component dismissed without any change');
-
-                  });
-              }
-
-
-              function saveChanges() {
+    function saveChanges() {
       if (_.isUndefined(vm.MFI._id)) {
         MainService.CreateMFI(vm.MFI, vm.picFile).then(
           function(response) {
@@ -116,22 +133,28 @@
         );
       }
     }
-    function _changeStatus(ChangeStatus){
-      ChangeStatus.status = ChangeStatus.status === 'active'?'inactive':'active';
-      MainService.ChangeStatus(ChangeStatus)
-      .then(function(response) {
-        console.log('updated successfully', response);
-    }, function(error) {
-        console.log('could not be updated', error);
-    });
+    function _changeStatus(ChangeStatus) {
+      ChangeStatus.status =
+        ChangeStatus.status === "active" ? "inactive" : "active";
+      MainService.ChangeStatus(ChangeStatus).then(
+        function(response) {
+          console.log("updated successfully", response);
+        },
+        function(error) {
+          console.log("could not be updated", error);
+        }
+      );
     }
 
     function init() {
       MainService.GetMFI().then(
         function(response) {
-          vm.MFI = response.data[0];
-          var dt = new Date(vm.MFI.establishment_year);
-          vm.MFI.establishment_year = dt;
+          if (response.data.length > 0) {
+            vm.MFI = response.data[0];
+            var dt = new Date(vm.MFI.establishment_year);
+            vm.MFI.establishment_year = dt;
+          }
+          // console.log("response", response);
         },
         function(error) {
           console.log("error", error);

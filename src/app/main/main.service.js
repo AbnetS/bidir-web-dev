@@ -6,30 +6,40 @@
 
   /**@ngInject */
   function MainService($resource,$http, CommonService) {
-
+var mfiUrl = 'http://api.bidir.staging.gebeya.io/mfis';
       var service = {
         GetMFI: _getMFI,
         UpdateMFI: _updateMFI,
         CreateMFI:_createMFI,
         UpdateBranch: _updateBranch,
+        GetBranches: _getBranches,
         CreateBranch:_createBranch,
         ChangeStatus:_changeBranchStatus,
         MFI: $resource(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI), {  }, ResourceMethods.All),
-        branches: $resource(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch), {id:"@id"}, ResourceMethods.All)
+        // branches: $resource(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch), {id:"@id"}, ResourceMethods.All)
+        branches: $resource(mfiUrl+'/branches', {id:"@id"}, ResourceMethods.All)
       };
 
       return service;
       function _updateBranch(updated_branch){
-        return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,updated_branch._id), updated_branch);
+        // return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,updated_branch._id), updated_branch);
+        return $http.put(mfiUrl+'/branches/' + updated_branch._id, updated_branch);
       }
       function _createBranch(branch){
-        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch), branch);
+        // return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch), branch);
+        return $http.post(mfiUrl+'/branches', branch);
       }
       function _changeBranchStatus(branchStatus){
-        return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,branchStatus._id,branchStatus) );
+        // return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,branchStatus._id,branchStatus) );
+        return $http.put(mfiUrl+'/branches/' + branchStatus._id, branchStatus);
       }
       function _getMFI(){
-        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI));
+        // return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI));
+        return $http.get(mfiUrl);
+      }
+      function _getBranches(){
+        // return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI));
+        return $http.get(mfiUrl+'/branches/paginate?page=1&per_page=100');
       }
       function _updateMFI(mfi,picFile){
         var mfiData = new FormData();
@@ -47,7 +57,7 @@
 
 
         return $http({
-          url: "http://35.185.118.191:18199/MFIs/" + mfi._id,
+          url: mfiUrl + mfi._id,
           method: 'PUT',
           data: mfiData,
           //assigning content-type as undefined,let the browser
@@ -69,7 +79,7 @@
         mfiData.append("logo", picFile);
 
         return $http({
-          url: "http://35.185.118.191:18199/MFIs/",
+          url: mfiUrl,
           method: 'POST',
           data: mfiData,
           //assigning content-type as undefined,let the browser handle it
