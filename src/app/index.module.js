@@ -22,11 +22,15 @@
     "bidirApp.core",
     "components",
     "bidirApp.home"
-  ]).run(runBlock);
+  ]).run(runBlock).config(appConfig);
 
     /** @ngInject */
     function runBlock($log) {
         console.log("bidirApp run")
       $log.debug('runBlock end');
+    }
+    /** @ngInject */
+    function appConfig($httpProvider){
+      $httpProvider.interceptors.push('AuthInterceptor');
     }
 })();

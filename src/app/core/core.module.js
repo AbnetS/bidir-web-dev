@@ -10,5 +10,5 @@
     console.log("core run");
   }
   /**@ngInject */
-  function routeConfig($locationProvider, $urlRouterProvider, $httpProvider) {}
+  function routeConfig($locationProvider, $httpProvider) {}
 })(window.angular);

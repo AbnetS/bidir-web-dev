@@ -16,32 +16,24 @@
         console.log("login controller");
 
         vm.loginUser = function() {
-            if(AuthService.login(vm.user)){
-              $state.go('index.main');
-            }else{
-              console.log(vm.user);
-              _.isEmpty(vm.user)?
-                  toastr.error('username and password is required!','ERROR!'):
-                  toastr.error('The username or password is incorrect! Please try again.','ERROR!');
-              // AlertService.showError('The username or password is incorrect','Error');
-            }
-          // AuthService.login(vm.user)
-          // .then(function(response) {
-          //     console.log(result);
-          //     // vm.user = result.user;
-          //     // $rootScope.session = result;
+          AuthService.login(vm.user)
+          .then(function(response) {
+              console.log(response);
+              var result = response.data;
+              // console.log(result);
+              vm.user = result.user;
 
-          //     // $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
-          //     // console.log(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
-          //     // $state.go('index.main');
-
-          // }, function(error) {
-          //     // var errorMessage = error.data;
-          //     console.log("error",error);
-          //     // toastr.error('ERROR! ' + errorMessage.messagee);
-          //     $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
-          // });
-
+        $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
+        AuthService.SetCredentials(response);
+        toastr.success('Welcome ' + vm.user.admin.first_name +' '+ vm.user.admin.last_name+ ' to Bidir Web App','Success');
+        $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
+        console.log(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
+        $state.go('index.main');
+      }, function(error) {
+        console.log("error",error);
+        toastr.error('The username or password is incorrect! Please try again.','ERROR!');
+        $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
+    });
         };
 
 

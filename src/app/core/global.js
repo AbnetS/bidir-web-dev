@@ -8,12 +8,11 @@ var API = {
     },
     Methods: {
         Auth: {
-                Login: 'users/login'
+                Login: 'login'
             },
             MFI:'/MFIs/',
             Branch:'/branches/'
         }
-
 };
 var ResourceMethods = {
   All: {
