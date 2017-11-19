@@ -6,7 +6,18 @@ EXPOSE_PORT=80
 CONT_PORT=80
 HOST_IP=10.142.0.2
 MONGODB_URL=mongodb://10.142.0.2:27017/bidir
-# Stop running container
+NPM=$(which npm)
+sudo $NPM install -g gulp
+sudo $NPM install bower install
+#BOWER=$(which bower)
+#$BOWER install --root-access
+sudo $NPM install gulp --root-access 
+sudo $NPM install node-build-web-app --save-dev
+sudo $NPM install --no-optional 
+GULP=$(which gulp)
+$GULP --root-access
+
+#Stop running container
 $DOCKER_PATH stop $SERVICE_NAME
 # Remove container
 $DOCKER_PATH rm $SERVICE_NAME
