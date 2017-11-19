@@ -8,14 +8,14 @@ HOST_IP=10.142.0.2
 MONGODB_URL=mongodb://10.142.0.2:27017/bidir
 NPM=$(which npm)
 sudo $NPM install -g gulp
-sudo $NPM install bower install
-#BOWER=$(which bower)
-#$BOWER install --root-access
-sudo $NPM install gulp --root-access 
+sudo $NPM install bower
+BOWER=$(which bower)
+$BOWER install --root-access
+sudo $NPM install gulp 
 sudo $NPM install node-build-web-app --save-dev
 sudo $NPM install --no-optional 
 GULP=$(which gulp)
-$GULP --root-access
+$GULP build 
 
 #Stop running container
 $DOCKER_PATH stop $SERVICE_NAME
