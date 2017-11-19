@@ -2,8 +2,7 @@
   "use strict";
 
   angular.module("components.mfi", [
-    "ui.router",
-    'ui.mask'
+    "ui.router"
   ]).run(runBlock)
   .config(routeConfig);
 

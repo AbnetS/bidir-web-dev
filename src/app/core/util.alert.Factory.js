@@ -18,11 +18,13 @@
         };
 
         function error(message, title) {
-            swal({title: title, text: message, type: "error", confirmButtonText: "Ok", showCancelButton: false});
+            // swal({title: title, text: message, type: "error", confirmButtonText: "Ok", showCancelButton: false});
+            swal(title,message, "error");
         }
 
         function info(message, title) {
-            swal({title: title, text: message, type: "info", confirmButtonText: "Ok"});
+            // swal({title: title, text: message, type: "info", confirmButtonText: "Ok"});
+            swal(title,message, "info");
         }
 
         function warning(message, title) {

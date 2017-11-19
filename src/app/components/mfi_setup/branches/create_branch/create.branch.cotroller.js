@@ -1,7 +1,7 @@
 (function(angular) {
   'use strict';
 
-  function BranchController() {
+  function CreateBranchController() {
       var ctrl = this;
       ctrl.branch = ctrl.resolve.branch;
 
@@ -20,5 +20,5 @@
 
 
   angular.module('bidirApp')
-      .controller('BranchController', BranchController);
+      .controller('CreateBranchController', CreateBranchController);
 })(window.angular);

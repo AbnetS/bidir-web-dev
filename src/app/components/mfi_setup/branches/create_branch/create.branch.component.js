@@ -1,15 +1,15 @@
 (function(angular) {
   'use strict';
-  var branch = {
+  var createbranch = {
       bindings: {
           resolve: '<',
           close: '&',
           dismiss: '&'
       },
       templateUrl: 'app/components/mfi_setup/branches/create_branch/create.branch.html',
-      controller: 'BranchController'
+      controller: 'CreateBranchController'
   };
 
   angular.module('bidirApp')
-      .component('branch', branch);
+      .component('createbranch', createbranch);
 })(window.angular);
