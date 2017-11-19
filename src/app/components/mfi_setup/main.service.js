@@ -45,25 +45,12 @@ var mfiUrl = 'http://api.bidir.staging.gebeya.io/mfis';
         // return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI));
         return $http.get(mfiUrl+'/branches/paginate?page=1&per_page=100');
       }
-      function _updateMFI(mfi,picFile){
-        var mfiData = new FormData();
-        mfiData.append("name", mfi.name);
-        mfiData.append("location", mfi.location);
-        mfiData.append("contact_person", mfi.contact_person);
-        mfiData.append("phone", mfi.phone);
-        mfiData.append("email", mfi.email);
-        mfiData.append("website_link", mfi.website_link);
-        mfiData.append("establishment_year", mfi.establishment_year);
-
-        if(!_.isUndefined(picFile)){
-          mfiData.append("logo", picFile);
-        }
-
-
+      function _updateMFI(data,logo){
+        var updatedMFI = setAttribute(data,logo);
         return $http({
-          url: mfiUrl + mfi._id,
+          url: mfiUrl + data._id,
           method: 'PUT',
-          data: mfiData,
+          data: updatedMFI,
           //assigning content-type as undefined,let the browser
           //assign the correct boundary for us
           headers: { 'Content-Type': undefined},
@@ -71,16 +58,24 @@ var mfiUrl = 'http://api.bidir.staging.gebeya.io/mfis';
           transformRequest: angular.identity
       });
       }
-      function _createMFI(mfi,picFile){
+      function setAttribute(mfi,picFile){
         var mfiData = new FormData();
         mfiData.append("name", mfi.name);
         mfiData.append("location", mfi.location);
-        mfiData.append("contact_person", mfi.contact_person);
-        mfiData.append("phone", mfi.phone);
-        mfiData.append("email", mfi.email);
-        mfiData.append("website_link", mfi.website_link);
         mfiData.append("establishment_year", mfi.establishment_year);
-        mfiData.append("logo", picFile);
+        mfiData.append("contact_person", _.isUndefined(mfi.contact_person)?'':mfi.contact_person);
+        mfiData.append("phone", _.isUndefined(mfi.phone)?'':mfi.phone);
+        mfiData.append("email", _.isUndefined(mfi.email)?'':mfi.email);
+        mfiData.append("website_link", _.isUndefined(mfi.website_link)?'':mfi.website_link);
+        if(!_.isUndefined(picFile)){
+          mfiData.append("logo", picFile);
+        }
+
+        return mfiData;
+      }
+
+      function _createMFI(data,logo){
+        var mfiData = setAttribute(data,logo);
 
         return $http({
           url: mfiUrl,

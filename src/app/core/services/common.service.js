@@ -116,7 +116,7 @@
                           var objValue = referenceObject[objProperty];
                           validationObject[property] = validateSingleObject(objValue);
                       }else{
-                          console.log('Validation failed for: ',objProperty);
+                          // console.log('Validation failed for: ',objProperty);
                           validationObject[property] = false;
                           isValid = false;
                       }
