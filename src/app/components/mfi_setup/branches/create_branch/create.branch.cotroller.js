@@ -26,7 +26,7 @@
         if($scope.branchForm.inputEmail.$error.email){
           toastr.warning("The email address you put is invalid.", "Warning!");
         }else if(ctrl.IsValidData){
-          console.log("ctrl.branch",ctrl.branch);
+          console.log("updated email branch",ctrl.branch);
           ctrl.close({ $value: ctrl.branch });
         } else{
           toastr.warning("Please fill the required fields and try again.", "Warning!");

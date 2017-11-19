@@ -85,6 +85,7 @@
         size: "md",
         resolve: {
           branch: function() {
+            selectedBranch.email = '';
             return selectedBranch;
           }
         }
