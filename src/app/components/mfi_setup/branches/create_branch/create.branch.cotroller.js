@@ -7,6 +7,8 @@
         IsnameValid: true,
         IslocationValid: true
     };
+    ctrl.branchTypes =[  'Satellite office','Rural Service','Satellite office'];
+
       ctrl.branch = ctrl.resolve.branch;
       ctrl.emailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
       ctrl.$onInit = function() {
