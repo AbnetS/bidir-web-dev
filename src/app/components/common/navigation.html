@@ -22,13 +22,16 @@
 
             </li>
 
-            <li ui-sref-active="active">
-                <a ui-sref="index.main"><i class="fa fa-cogs"></i> <span class="nav-label">MFI Setup</span> </a>
+            <li ng-class="{active: $state.includes('index')}">
+                <a href=""><i class="fa fa fa-cogs"></i> <span class="nav-label">{{ 'MFI Setup'}}</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level" ng-class="{in: $state.includes('index')}">
+                    <li ui-sref-active="active"><a ui-sref="index.main"> <i class="fa fa fa-cog"></i>  MFI Setting</a></li>
+                    <li ui-sref-active="active"><a ui-sref="index.branch"> <i class="fa fa fa-building"></i>  Manage Branches</a></li>
+                </ul>
             </li>
-            <li ui-sref-active="active">
-              <a ui-sref="index.branch"><i class="fa fa-building"></i> <span class="nav-label">Manage Branches</span></a>
-          </li>
         </ul>
+
+
 
     </div>
 </nav>
