@@ -13,12 +13,21 @@
         abstract: true,
         url: "/index",
         templateUrl: "app/components/common/content.html"
-        // template: '<div ui-view></div>'
       })
       .state('index.main', {
         url: "/main",
         component:'mfi',
         data: { pageTitle: 'Home Page' }
+      })
+      .state('home', {
+        abstract: true,
+        url: "/home",
+        template: '<div ui-view></div>'
+      })
+      .state('home.mfi', {
+        url: "/mfi",
+        component:'main',
+        data: { pageTitle: 'MFI Registration' }
       });
 
   }

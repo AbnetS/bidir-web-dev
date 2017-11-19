@@ -1,38 +1,77 @@
 (function(angular) {
-    'use strict';
+  "use strict";
 
-    angular.module('components.auth')
-        .controller('LoginController', LoginController);
+  angular
+    .module("components.auth")
+    .controller("LoginController", LoginController);
 
-    /**@ngInject */
-    function LoginController(AuthService,$scope,$state,$rootScope,APP_CONSTANTS,toastr,AlertService,_) {
-        var vm = this;
-        vm.userValidator = {
-          usernameMin: 4,
-          usernameMax: 20,
-          passwordMin: 6
-      };
-        vm.user = {};
+  /**@ngInject */
+  function LoginController(
+    AuthService,
+    $scope,
+    $state,
+    $rootScope,
+    APP_CONSTANTS,
+    toastr,
+    AlertService,
+    MainService,
+    _
+  ) {
+    var vm = this;
+    vm.userValidator = {
+      usernameMin: 4,
+      usernameMax: 20,
+      passwordMin: 6
+    };
+    vm.user = {};
 
-        vm.loginUser = function() {
-          AuthService.login(vm.user)
-          .then(function(response) {
-              var result = response.data;
-              vm.user = result.user;
+    vm.loginUser = function() {
+      AuthService.login(vm.user).then(
+        function(response) {
+          var result = response.data;
+          vm.user = result.user;
 
-        $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
-        AuthService.SetCredentials(result);
-        toastr.success('Welcome ' + vm.user.admin.first_name +' '+ vm.user.admin.last_name+ ' to Bidir Web App','Success');
-        console.log(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
-        $state.go('index.main');
-      }, function(error) {
-        console.log("error",error);
-        toastr.error('The username or password is incorrect! Please try again.','ERROR!');
-        $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
-    });
-        };
+          $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
+          AuthService.SetCredentials(result);
+          toastr.success(
+            "Welcome " +
+              vm.user.admin.first_name +
+              " " +
+              vm.user.admin.last_name +
+              " to Bidir Web App",
+            "Success"
+          );
+          console.log(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
+          CheckMFIAndRedirect();
+        },
+        function(error) {
+          console.log("error", error);
+          toastr.error(
+            "The username or password is incorrect! Please try again.",
+            "ERROR!"
+          );
+          $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
+        }
+      );
 
-
-
+function CheckMFIAndRedirect(){
+  MainService.GetMFI().then(
+    function(response) {
+      if (response.data.length > 0) {
+        $state.go("index.branch");
+      }else{
+        $state.go("home.mfi");
+      }
+    },
+    function(error) {
+      console.log("error", error);
+      toastr.error(
+        "Error occured while trying to connect! Please try again.",
+        "ERROR!"
+      );
     }
+  );
+}
+    };
+  }
 })(window.angular);
