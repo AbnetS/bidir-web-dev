@@ -31,7 +31,7 @@
 
                   <div class="col-sm-9">
                       <input type="email" pattern="$ctrl.emailValidator" ng-model="$ctrl.branch.email" class="form-control" name="inputEmail">
-                      <span class="form-text text-muted" ng-show="branchForm.inputEmail.$error.pattern">Invalid Email Address</span>
+                      <span ng-show="branchForm.inputEmail.$error.email" class="form-text text-muted">Invalid Email Address</span>
                   </div>
               </div>
               <div class="form-group row clearfix">

@@ -15,7 +15,6 @@
   </div>
 </div>
 
-
 <div class="wrapper wrapper-content">
     <div class="row">
       <div class="col-sm-12">
@@ -76,7 +75,8 @@
 
                         <div class="form-group">
                           <label class="font-normal">Email </label>
-                          <input id="email" name="email" type="email" ng-model="vm.MFI.email" class="form-control required email">
+                          <input id="email" name="inputEmail" type="email" ng-model="vm.MFI.email" class="form-control required email">
+                          <span ng-show="MFIForm.inputEmail.$error.email" class="form-text text-muted">Invalid Email Address</span>
                         </div>
                         <div class="form-group">
                           <label class="font-normal">Phone number</label>
