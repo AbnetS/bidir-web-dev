@@ -18,7 +18,7 @@
     vm.changeStatus = _changeStatus;
     vm.search ='';
     vm.refresh =_refreshBranches;
-    vm.searchBranch = _searchBranches
+    vm.searchBranch = _searchBranches;
 
     function _refreshBranches(){
       vm.search ='';
@@ -98,7 +98,8 @@
             location: updatedBranch.location,
             opening_date: updatedBranch.opening_date,
             email: updatedBranch.email,
-            phone: updatedBranch.phone
+            phone: updatedBranch.phone,
+            branch_type: updatedBranch.branch_type
           };
           //Update branch api
           MainService.UpdateBranch(upBranch).then(
