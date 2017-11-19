@@ -5,14 +5,14 @@
 <div class="modal-body" id="modal-body">
   <form name="branchForm" novalidate>
 
-              <div class="form-group row clearfix">
+              <div class="form-group row clearfix required"
+                  ng-class="{false:'has-error'}[$ctrl.MFIBranchForm.IsnameValid]">
                   <label for="inputName" class="col-sm-3 control-label">Name</label>
-
                   <div class="col-sm-9">
                       <input name="inputName" ng-model="$ctrl.branch.name"  placeholder="" type="text" class="form-control" required>
                   </div>
               </div>
-              <div class="form-group row clearfix">
+              <div class="form-group row clearfix required"  ng-class="{false:'has-error'}[$ctrl.MFIBranchForm.IslocationValid]">
                   <label for="inputLocation" class="col-sm-3 control-label">Location</label>
 
                   <div class="col-sm-9">
@@ -23,14 +23,15 @@
                   <label for="inputPhone" class="col-sm-3 control-label">Phone</label>
 
                   <div class="col-sm-9">
-                      <input type="text" ng-model="$ctrl.branch.phone" class="form-control" name="inputPhone" placeholder="eg. 251 000 000 000" ng-minlength="10" ng-maxlength="13" required>
+                      <input type="text" ng-model="$ctrl.branch.phone" class="form-control" name="inputPhone" ui-mask="(999) 999-9999"  ui-mask-placeholder ui-mask-placeholder-char="_">
                   </div>
               </div>
               <div class="form-group row clearfix">
                   <label for="inputEmail" class="col-sm-3 control-label">Email</label>
 
                   <div class="col-sm-9">
-                      <input type="email" ng-model="$ctrl.branch.email" class="form-control" name="inputEmail" required>
+                      <input type="email" pattern="$ctrl.emailValidator" ng-model="$ctrl.branch.email" class="form-control" name="inputEmail">
+                      <span class="form-text text-muted" ng-show="branchForm.inputEmail.$error.pattern">Invalid Email Address</span>
                   </div>
               </div>
               <div class="form-group row clearfix">

@@ -12,6 +12,7 @@
     SweetAlert
   ) {
     var vm = this;
+
     vm.addBranch = addBranch;
     vm.editBranch = _editBranch;
     vm.changeStatus = _changeStatus;
@@ -68,6 +69,7 @@
             },
             function(error) {
               console.log("could not be saved", error);
+              toastr.error(error, "ERROR!");
             }
           );
         },

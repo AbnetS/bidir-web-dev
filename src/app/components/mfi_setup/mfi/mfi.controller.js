@@ -50,7 +50,7 @@
             });
         }
       } else {
-        toastr.error("Please fill the required fields and try again.", "ERROR!");
+        toastr.warning("Please fill the required fields and try again.", "Warning!");
       }
     }
 

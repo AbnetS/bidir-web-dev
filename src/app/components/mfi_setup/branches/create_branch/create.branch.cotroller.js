@@ -1,16 +1,25 @@
 (function(angular) {
   'use strict';
-
-  function CreateBranchController() {
+  /**@ngInject */
+  function CreateBranchController(CommonService,toastr) {
       var ctrl = this;
+      ctrl.MFIBranchForm = {
+        IsnameValid: true,
+        IslocationValid: true
+    };
       ctrl.branch = ctrl.resolve.branch;
-
+      ctrl.emailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
       ctrl.$onInit = function() {
         // console.log("branch init");
       };
 
       ctrl.ok = function() {
-        ctrl.close({ $value: ctrl.branch });
+        ctrl.IsValidData = CommonService.Validation.ValidateForm(ctrl.MFIBranchForm, ctrl.branch);
+        if(ctrl.IsValidData){
+          ctrl.close({ $value: ctrl.branch });
+        }else{
+          toastr.warning("Please fill the required fields and try again.", "Warning!");
+        }
       };
 
       ctrl.cancel = function() {
