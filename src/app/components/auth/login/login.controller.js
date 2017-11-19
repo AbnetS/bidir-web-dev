@@ -33,14 +33,7 @@
 
           $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
           AuthService.SetCredentials(result);
-          toastr.success(
-            "Welcome " +
-              vm.user.admin.first_name +
-              " " +
-              vm.user.admin.last_name +
-              " to Bidir Web App",
-            "Success"
-          );
+
           console.log(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
           CheckMFIAndRedirect();
         },
@@ -59,8 +52,21 @@ function CheckMFIAndRedirect(){
     function(response) {
       if (response.data.length > 0) {
         $state.go("index.branch");
+        toastr.success(
+          "Welcome Back " +
+            vm.user.admin.first_name ,
+          "Success"
+        );
       }else{
         $state.go("home.mfi");
+        toastr.success(
+          "Welcome " +
+            vm.user.admin.first_name +
+            " " +
+            vm.user.admin.last_name +
+            " to Bidir Web App",
+          "Success"
+        );
       }
     },
     function(error) {
