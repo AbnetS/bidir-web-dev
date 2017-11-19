@@ -12,6 +12,7 @@ var mfiUrl = 'http://api.bidir.staging.gebeya.io/mfis';
         UpdateMFI: _updateMFI,
         CreateMFI:_createMFI,
         UpdateBranch: _updateBranch,
+        SearchBranch: _searchBranch,
         GetBranches: _getBranches,
         CreateBranch:_createBranch,
         ChangeStatus:_changeBranchStatus,
@@ -21,6 +22,9 @@ var mfiUrl = 'http://api.bidir.staging.gebeya.io/mfis';
       };
 
       return service;
+      function _searchBranch(searchText){
+        return $http.get(mfiUrl+'/branches/search?name=' + searchText);
+      }
       function _updateBranch(updated_branch){
         // return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,updated_branch._id), updated_branch);
         return $http.put(mfiUrl+'/branches/' + updated_branch._id, updated_branch);

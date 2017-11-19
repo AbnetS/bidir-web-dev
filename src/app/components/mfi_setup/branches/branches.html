@@ -13,7 +13,18 @@
                   </button>
                 </p>
                 <div class="clients-list">
-                  <div class="full-height-scroll" full-scroll>
+                  <div class="full-height-scroll">
+                      <div class="row m-b-sm m-t-sm">
+                          <div class="col-md-1">
+                              <button type="button" ng-click="vm.refresh()" id="loading-example-btn" class="btn btn-white btn-sm"><i class="fa fa-refresh"></i> Refresh</button>
+                          </div>
+                          <div class="col-md-11">
+                              <div class="input-group">
+                                  <input type="text" ng-model="vm.search" placeholder="Search" class="input-sm form-control">
+                                    <span class="input-group-btn">
+                                  <button type="button" class="btn btn-sm btn-primary" ng-click="vm.searchBranch()"> Search!</button> </span></div>
+                          </div>
+                      </div>
 
                     <table st-table="vm.branches" st-safe-src="vm.branchesCopy" class="table table-striped">
                       <thead>
@@ -28,11 +39,11 @@
                           <th st-sort="status">status</th>
                           <th></th>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                           <th colspan="9">
-                            <input st-search="" class="form-control" placeholder="search ..." type="text" />
+                            <input ng-model="search" class="form-control" placeholder="search ..." type="text" />
                           </th>
-                        </tr>
+                        </tr> -->
                       </thead>
                       <tbody>
                         <tr ng-repeat="branch in vm.branches">
