@@ -62,7 +62,7 @@
             var dt = new Date(vm.MFI.establishment_year);
             vm.MFI.establishment_year = dt;
           }
-          // console.log("response", response);
+          console.log("response", response);
         },
         function(error) {
           console.log("error", error);

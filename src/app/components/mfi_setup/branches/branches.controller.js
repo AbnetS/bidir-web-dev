@@ -65,11 +65,18 @@
             branch,
             function(data) {
               // console.log("saved successfully", data);
+              AlertService.showSuccess(
+                "Saved! Branch saved successfully.",
+                "SUCCESS"
+              );
               getBranches();
             },
             function(error) {
               console.log("could not be saved", error);
-              toastr.error(error, "ERROR!");
+              AlertService.showError(
+                "Could not be saved!, " + error.data.specific_errors.message,
+                "ERROR"
+              );
             }
           );
         },
@@ -105,11 +112,20 @@
           //Update branch api
           MainService.UpdateBranch(upBranch).then(
             function(response) {
-              // console.log("updated successfully", response);
+              console.log("updated successfully", response);
+              AlertService.showSuccess(
+                "Updated! Branch updated successfully.",
+                "SUCCESS"
+              );
               getBranches();
             },
             function(error) {
-              console.log("could not be updated", error);
+              // console.log("could not be updated", error.data.specific_errors.message);
+              getBranches();
+              AlertService.showError(
+                "Could not be updated!, " + error.data.specific_errors.message,
+                "ERROR"
+              );
             }
           );
         },
