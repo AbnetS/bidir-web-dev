@@ -6,4 +6,5 @@ bower_components/
 .tmp/
 .vscode/
 build/
+dist/
 node_modules/
