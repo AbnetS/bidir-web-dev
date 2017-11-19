@@ -14,44 +14,38 @@
   ) {
     var vm = this;
     vm.saveChanges = saveChanges;
+    vm.MFISetupForm = {
+      IsnameValid: true,
+      IslocationValid: true,
+      IslogoValid: true,
+      Isestablishment_yearValid: true
+  };
 
     init();
 
     function saveChanges() {
-      if (_.isUndefined(vm.MFI._id)) {
-        MainService.CreateMFI(vm.MFI, vm.picFile).then(
-          function(response) {
-            AlertService.showSuccess(
-              "MFI Information created successfully",
-              "Information"
-            );
-            $state.go('index.branch');
-          },
-          function(error) {
-            AlertService.showError(
-              "Failed to create MFI!, Pleast try again",
-              "Information"
-            );
-            console.log("error", error);
-          }
-        );
+      vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFISetupForm, vm.MFI);
+      console.log("is valid", vm.IsValidData);
+      if (vm.IsValidData) {
+        if (_.isUndefined(vm.MFI._id)) {
+          MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
+              AlertService.showSuccess("MFI Information created successfully", "Information");
+              $state.go("index.branch");
+            }, function(error) {
+              AlertService.showError("Failed to create MFI!, Pleast try again", "Information");
+              console.log("error", error);
+            });
+        } else {
+          MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
+              AlertService.showSuccess("MFI Information updated successfully", "Information");
+              $state.go("index.branch");
+            }, function(error) {
+              AlertService.showError("MFI Information update failed", "Information");
+              console.log("error", error);
+            });
+        }
       } else {
-        MainService.UpdateMFI(vm.MFI, vm.picFile).then(
-          function(response) {
-            AlertService.showSuccess(
-              "MFI Information updated successfully",
-              "Information"
-            );
-            $state.go('index.branch');
-          },
-          function(error) {
-            AlertService.showError(
-              "MFI Information update failed",
-              "Information"
-            );
-            console.log("error", error);
-          }
-        );
+        toastr.error("Please fill the required fields and try again.", "ERROR!");
       }
     }
 

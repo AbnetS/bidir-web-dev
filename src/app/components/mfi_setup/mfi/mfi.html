@@ -25,15 +25,18 @@
                   <fieldset>
                     <div class="row">
                       <div class="col-lg-6">
-                        <div class="form-group">
+                        <div class="form-group"
+                              ng-class="{false:'has-error'}[vm.MFISetupForm.IsnameValid]">
                           <label>MFI Name *</label>
                           <input id="name" name="name" ng-model="vm.MFI.name" type="text" class="form-control required">
+                          <small ng-show="!vm.MFISetupForm.IsnameValid" class="help-block">Name is required.</small>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" ng-class="{false:'has-error'}[vm.MFISetupForm.IslocationValid]">
                           <label>Location *</label>
                           <input id="location" name="location" ng-model="vm.MFI.location" type="text" class="form-control required">
+                          <small ng-show="!vm.MFISetupForm.IslocationValid" class="help-block">Location is required.</small>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" ng-class="{false:'has-error'}[vm.MFISetupForm.IslogoValid]">
                           <label>Logo *</label>
                           <div class="input-group">
                             <input type="text" class="form-control" placeholder="{{vm.picFile.name?vm.picFile.name:vm.MFI.logo}}" />
@@ -43,10 +46,10 @@
                                 <input type="file" ngf-select ng-model="vm.picFile" name="file" accept="image/*" ngf-max-size="2MB" required ngf-model-invalid="errorFile">
                               </span>
                             </span>
-
                           </div>
+                          <small ng-show="!vm.MFISetupForm.IslogoValid" class="help-block">Logo is required.</small>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" ng-class="{false:'has-error'}[vm.MFISetupForm.Isestablishment_yearValid]">
                           <label>Establishment Year *</label>
                           <p class="input-group">
                             <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="vm.MFI.establishment_year" is-open="popup1.opened"
@@ -58,6 +61,7 @@
                               </button>
                             </span>
                           </p>
+                          <small ng-show="!vm.MFISetupForm.Isestablishment_yearValid" class="help-block">Establishment Year is required.</small>
                         </div>
                       </div>
                       <div class="col-lg-6">

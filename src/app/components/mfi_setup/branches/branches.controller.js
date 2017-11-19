@@ -17,24 +17,12 @@
     vm.changeStatus = _changeStatus;
     vm.search ='';
     vm.refresh =_refreshBranches;
+    vm.searchBranch = _searchBranches
 
     function _refreshBranches(){
       vm.search ='';
       getBranches();
     }
-
-    vm.searchBranch = function(){
-      MainService.SearchBranch(vm.search).then(
-        function(response) {
-          console.log("response", response);
-          vm.branches = response.data.branches;
-          vm.branchesCopy = [].concat(vm.branches);
-        },
-        function(error) {
-          console.log("error", error);
-        }
-      );
-    };
 
     getBranches();
 
@@ -49,8 +37,17 @@
         }
       );
     }
-    function searchBranches(){
-
+    function _searchBranches(){
+      MainService.SearchBranch(vm.search).then(
+        function(response) {
+          console.log("response", response);
+          vm.branches = response.data.branches;
+          vm.branchesCopy = [].concat(vm.branches);
+        },
+        function(error) {
+          console.log("error", error);
+        }
+      );
     }
 
     function addBranch(size) {
