@@ -12,6 +12,11 @@ function runBlock() {
   console.log("mfi run");
 }
 /**@ngInject */
-function routeConfig($locationProvider,$httpProvider) {}
+function routeConfig(uiMaskConfigProvider,$httpProvider) {
+  console.log("uiMaskConfigProvider",uiMaskConfigProvider);
+  // uiMaskConfigProvider.clearOnBlur(false);
+  // uiMaskConfigProvider.eventsToHandle(['input', 'keyup', 'click']);
+  uiMaskConfigProvider.allowInvalidValue = true;
+}
 
 })();

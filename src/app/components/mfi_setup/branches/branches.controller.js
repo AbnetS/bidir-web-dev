@@ -9,7 +9,8 @@
     $uibModal,
     $log,
     $http,
-    SweetAlert
+    SweetAlert,
+    _
   ) {
     var vm = this;
 
@@ -92,7 +93,6 @@
         size: "md",
         resolve: {
           branch: function() {
-            selectedBranch.email = '';
             return selectedBranch;
           }
         }
@@ -104,15 +104,17 @@
             _id: updatedBranch._id,
             name: updatedBranch.name,
             location: updatedBranch.location,
-            opening_date: updatedBranch.opening_date,
-            email: updatedBranch.email,
-            phone: updatedBranch.phone,
-            branch_type: updatedBranch.branch_type
+            branch_type: updatedBranch.branch_type,
+            opening_date: updatedBranch.opening_date
           };
+          if(!_.isUndefined(updatedBranch.email)){
+            upBranch.email =updatedBranch.email;
+          }else if(_.isString(updatedBranch.phone)){
+            upBranch.phone =updatedBranch.phone;
+          }
           //Update branch api
           MainService.UpdateBranch(upBranch).then(
             function(response) {
-              console.log("updated successfully", response);
               AlertService.showSuccess(
                 "Updated! Branch updated successfully.",
                 "SUCCESS"
