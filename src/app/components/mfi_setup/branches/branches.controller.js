@@ -110,7 +110,7 @@
           if(!_.isUndefined(updatedBranch.email)){
             upBranch.email =updatedBranch.email;
           }
-          if(_.isString(updatedBranch.phone)){
+          if(_.isString(updatedBranch.phone) && updatedBranch.phone !== ""){
             upBranch.phone =updatedBranch.phone;
           }
           //Update branch api
@@ -126,7 +126,7 @@
               // console.log("could not be updated", error.data.specific_errors.message);
               getBranches();
               AlertService.showError(
-                "Could not be updated!, " + error.data.specific_errors.message,
+                "Could not be updated!, " + error.data.specific_errors[0].message,
                 "ERROR"
               );
             }

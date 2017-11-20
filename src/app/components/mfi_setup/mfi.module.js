@@ -16,7 +16,7 @@ function routeConfig(uiMaskConfigProvider,$httpProvider) {
   console.log("uiMaskConfigProvider",uiMaskConfigProvider);
   // uiMaskConfigProvider.clearOnBlur(false);
   // uiMaskConfigProvider.eventsToHandle(['input', 'keyup', 'click']);
-  uiMaskConfigProvider.allowInvalidValue = true;
+  // uiMaskConfigProvider.allowInvalidValue = true;
 }
 
 })();

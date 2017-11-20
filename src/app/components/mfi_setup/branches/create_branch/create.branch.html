@@ -25,7 +25,9 @@
 
       <div class="col-sm-9">
         <input type="text" ng-model="$ctrl.branch.phone" class="form-control" name="inputPhone" ui-mask="(999) 999-999999" ui-mask-placeholder
-          ui-mask-placeholder-char="_" >
+          ui-mask-placeholder-char="_" ui-options="{allowInvalidValue:false,clearOnBlur:false}" required>
+          <!-- ui-options="{clearOnBlur:false}" -->
+          <!-- <div ng-if="$ctrl.branch.phone.$dirty" class="text-danger" ng-message="mask">Length should be 12 with format (251) 999 999999.  </div> -->
       </div>
     </div>
 
