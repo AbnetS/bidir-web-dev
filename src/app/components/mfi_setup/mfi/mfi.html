@@ -22,27 +22,13 @@
           <form id="form" name="MFIForm" class="wizard-big">
             <fieldset>
               <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6">
                   <div class="main-img-preview">
-                    <img ng-if="!vm.picFile"  ng-src="{{'http://api.bidir.staging.gebeya.io/mfis/' + vm.MFI.logo}}" class="thumbnail img-preview"  title="Preview Logo">
-                    <img  ngf-thumbnail="vm.picFile"  class="thumbnail img-preview" title="Preview Logo">
+                    <img ng-if="!vm.picFile" ng-src="{{'http://api.bidir.staging.gebeya.io/mfis/' + vm.MFI.logo}}" class="thumbnail img-preview"
+                      title="Preview Logo">
+                    <img ngf-thumbnail="vm.picFile" class="thumbnail img-preview" title="Preview Logo">
                   </div>
-                </div>
-              </div>
 
-
-              <div class="row">
-                <div class="col-lg-6">
-                  <div class="form-group" ng-class="{false:'has-error'}[vm.MFISetupForm.IsnameValid]">
-                    <label>MFI Name *</label>
-                    <input id="name" name="name" ng-model="vm.MFI.name" type="text" class="form-control required">
-                    <small ng-show="!vm.MFISetupForm.IsnameValid" class="help-block">Name is required.</small>
-                  </div>
-                  <div class="form-group" ng-class="{false:'has-error'}[vm.MFISetupForm.IslocationValid]">
-                    <label>Location *</label>
-                    <input id="location" name="location" ng-model="vm.MFI.location" type="text" class="form-control required">
-                    <small ng-show="!vm.MFISetupForm.IslocationValid" class="help-block">Location is required.</small>
-                  </div>
                   <div class="form-group" ng-class="{false:'has-error'}[vm.MFISetupForm.IslogoValid]">
                     <label>Logo *</label>
                     <div class="input-group">
@@ -55,26 +41,13 @@
                           <i ng-show="MFIForm.file.$error.maxSize">File too large {{errorFile.size / 1000000|number:1}}MB: max 2M</i>
                         </span>
                       </span>
-
                     </div>
+                  </div>
 
-                  </div>
-                  <div class="form-group" ng-class="{false:'has-error'}[vm.MFISetupForm.Isestablishment_yearValid]">
-                    <label>Establishment Year *</label>
-                    <p class="input-group">
-                      <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="vm.MFI.establishment_year" is-open="popup1.opened"
-                        datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats"
-                      />
-                      <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-click="open1()">
-                          <i class="glyphicon glyphicon-calendar"></i>
-                        </button>
-                      </span>
-                    </p>
-                    <small ng-show="!vm.MFISetupForm.Isestablishment_yearValid" class="help-block">Establishment Year is required.</small>
-                  </div>
                 </div>
+
                 <div class="col-lg-6">
+
                   <div class="form-group">
                     <label class="font-normal">Website</label>
                     <input id="website" name="website" ng-model="vm.MFI.website_link" type="text" class="form-control">
@@ -95,6 +68,45 @@
                       name="phoneNumber" type="text" class="form-control">
                   </div>
                 </div>
+
+              </div>
+
+
+              <div class="row">
+                <div class="col-lg-6">
+
+                  <div class="form-group" ng-class="{false:'has-error'}[vm.MFISetupForm.IsnameValid]">
+                    <label>MFI Name *</label>
+                    <input id="name" name="name" ng-model="vm.MFI.name" type="text" class="form-control required">
+                    <small ng-show="!vm.MFISetupForm.IsnameValid" class="help-block">Name is required.</small>
+                  </div>
+                  <div class="form-group" ng-class="{false:'has-error'}[vm.MFISetupForm.IslocationValid]">
+                    <label>Location *</label>
+                    <input id="location" name="location" ng-model="vm.MFI.location" type="text" class="form-control required">
+                    <small ng-show="!vm.MFISetupForm.IslocationValid" class="help-block">Location is required.</small>
+                  </div>
+
+
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group" ng-class="{false:'has-error'}[vm.MFISetupForm.Isestablishment_yearValid]">
+
+                    <label>Establishment Year *</label>
+                    <p class="input-group">
+                      <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="vm.MFI.establishment_year" is-open="popup1.opened"
+                        datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats"
+                      />
+                      <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="open1()">
+                          <i class="glyphicon glyphicon-calendar"></i>
+                        </button>
+                      </span>
+                    </p>
+                    <small ng-show="!vm.MFISetupForm.Isestablishment_yearValid" class="help-block">Establishment Year is required.</small>
+                  </div>
+
+                </div>
+
               </div>
               <div class="row">
                 <div class="col-sm-12">
