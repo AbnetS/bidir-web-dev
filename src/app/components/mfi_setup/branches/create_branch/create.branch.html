@@ -13,7 +13,7 @@
     </div>
 
     <div class="form-group row clearfix required" ng-class="{false:'has-error'}[$ctrl.MFIBranchForm.IslocationValid]">
-      <label for="inputLocation" class="col-sm-3 control-label">Location</label>
+      <label for="inputLocation" class="col-sm-3 control-label">District</label>
 
       <div class="col-sm-9">
         <input type="text" name="inputLocation" ng-model="$ctrl.branch.location" class="form-control" required>
@@ -63,6 +63,7 @@
           <option value="Rural Service">Rural Service</option>
           <option value="Regional office">Regional office</option>
           <option value="Satellite office">Satellite office</option>
+          <option value="Urban office">Urban office</option>
         </select>
       </div>
     </div>
