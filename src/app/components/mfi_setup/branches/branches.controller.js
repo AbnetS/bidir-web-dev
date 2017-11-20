@@ -109,7 +109,8 @@
           };
           if(!_.isUndefined(updatedBranch.email)){
             upBranch.email =updatedBranch.email;
-          }else if(_.isString(updatedBranch.phone)){
+          }
+          if(_.isString(updatedBranch.phone)){
             upBranch.phone =updatedBranch.phone;
           }
           //Update branch api
