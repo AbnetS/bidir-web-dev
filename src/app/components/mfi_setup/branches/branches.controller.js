@@ -62,7 +62,7 @@
       modalInstance.result.then(
         function(branch) {
           //Save new branch API
-          MainService.branches.save(
+          MainService.CreateBranch(
             branch,
             function(data) {
               // console.log("saved successfully", data);
@@ -123,7 +123,7 @@
               getBranches();
             },
             function(error) {
-              // console.log("could not be updated", error.data.specific_errors.message);
+              console.log("could not be updated", error);
               getBranches();
               AlertService.showError(
                 "Could not be updated!, " + error.data.specific_errors[0].message,

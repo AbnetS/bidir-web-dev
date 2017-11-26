@@ -8,7 +8,8 @@
 
           /** @ngInject */
           function runBlock() {
-              console.log("components run");
+              // console.log("components run");
+
           }
 
 })(window.angular);

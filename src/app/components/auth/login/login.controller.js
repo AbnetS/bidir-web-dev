@@ -47,9 +47,10 @@
         }
       );
 
-function CheckMFIAndRedirect(){
+      function CheckMFIAndRedirect(){
   MainService.GetMFI().then(
     function(response) {
+      debugger
       if (response.data.length > 0) {
         $state.go("index.branch");
         toastr.success(
@@ -78,6 +79,7 @@ function CheckMFIAndRedirect(){
     }
   );
 }
+
     };
   }
 })(window.angular);

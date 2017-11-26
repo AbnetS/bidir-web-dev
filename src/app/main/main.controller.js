@@ -33,8 +33,9 @@
               AlertService.showSuccess("MFI Information created successfully", "Information");
               $state.go("index.branch");
             }, function(error) {
-              AlertService.showError("Failed to create MFI!, " + error.data.specific_errors[0].message, "Information");
               console.log("error", error);
+              //TODO: the error is sending object
+            // AlertService.showError("Failed to create MFI!, " + error.data.specific_errors[0].message, "Information");
             });
         }
       } else {
@@ -43,6 +44,7 @@
     }
 
     function init() {
+
       MainService.GetMFI().then(
         function(response) {
           if (response.data.length > 0) {

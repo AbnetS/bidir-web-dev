@@ -1,17 +1,18 @@
 var API = {
     Config: {
-        BaseUrl: "http://api.bidir.staging.gebeya.io/" //REMOTE API
+        BaseUrl: "http://api.dev.bidir.gebeya.io/" //REMOTE API
     },
     Service: {
-      MFI: 'mfi',
-      Auth: 'auth'
+      MFI: 'MFI/MFI',
+      Auth: 'auth/auth'
     },
     Methods: {
         Auth: {
                 Login: 'login'
             },
-            MFI:'/MFIs/',
-            Branch:'/branches/'
+            MFI:'',
+            Branch:'branches',
+            BranchGet:'branches/paginate?page=1&per_page=100'
         }
 };
 var ResourceMethods = {

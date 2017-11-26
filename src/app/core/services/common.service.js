@@ -137,7 +137,7 @@
           return API.Config.BaseUrl + service +'/' + url;
       }
 
-        function _buildUrlWithParam(url,service, id) {
+        function _buildUrlWithParam(service,url, id) {
             return API.Config.BaseUrl + service +'/'+ url + '/' + id;
         }
     }

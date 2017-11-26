@@ -25,7 +25,7 @@
 
     /** @ngInject */
     function runBlock($log) {
-        console.log("bidirApp run");
+        // console.log("bidirApp run");
     }
     /** @ngInject */
     function appConfig($httpProvider){
