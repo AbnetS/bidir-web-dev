@@ -29,15 +29,18 @@
     getBranches();
 
     function getBranches() {
-      MainService.GetBranches().then(
+      MainService.GetMFI().then(
         function(response) {
-          vm.branches = response.data.docs;
+          console.log("mfi data",response);
+          vm.mfi = response.data[0];
+          vm.branches = response.data[0].branches;
           vm.branchesCopy = [].concat(vm.branches);
         },
         function(error) {
           console.log("error", error);
         }
       );
+
     }
     function _searchBranches(){
       MainService.SearchBranch(vm.search).then(
@@ -61,11 +64,13 @@
 
       modalInstance.result.then(
         function(branch) {
+          branch.MFI = vm.mfi._id;
           //Save new branch API
           MainService.CreateBranch(
             branch,
             function(data) {
-              // console.log("saved successfully", data);
+              debugger
+               // console.log("saved successfully", data);
               AlertService.showSuccess(
                 "Saved! Branch saved successfully.",
                 "SUCCESS"

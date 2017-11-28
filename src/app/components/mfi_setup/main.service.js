@@ -33,7 +33,13 @@
       };
 
       function _searchBranch(searchText){
-        return $http.get(mfiUrl+'/branches/search?name=' + searchText+ '&location='+searchText);
+        var httpConfig = {
+          headers: {
+            'Authorization': 'Bearer ' + AuthService.GetToken(),
+            'Accept': 'application/json'
+          }
+        };
+        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch)+'/name=' + searchText,httpConfig);
       }
       function _updateBranch(updated_branch){
         var httpConfig = {
@@ -60,7 +66,6 @@
             'Accept': 'application/json'
           }
         };
-        // return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,branchStatus._id,branchStatus) );
         return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,branchStatus._id), branchStatus,httpConfig);
       }
       function _getMFI(){
@@ -82,6 +87,7 @@
 
         return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.BranchGet),httpConfig);
       }
+
       function _updateMFI(data,logo){
         var updatedMFI = setAttribute(data,logo);
 
@@ -98,6 +104,7 @@
           transformRequest: angular.identity
       });
       }
+
       function setAttribute(mfi,picFile){
         var mfiData = new FormData();
         mfiData.append("name", mfi.name);
