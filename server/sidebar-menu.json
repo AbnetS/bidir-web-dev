@@ -1,0 +1,21 @@
+[
+  {
+    "text": "Main Navigation",
+    "heading": "true",
+    "translate": "sidebar.heading.HEADER"
+  },
+  {
+    "text": "Welcome",
+    "sref": "app.welcome",
+    "icon": "icon-tag"
+  },
+  {
+    "text": "User Management",
+    "sref": "#",
+    "icon": "fa fa-shield",
+    "submenu": [
+      {"text": "Manage Users",     "sref": "app.manage_user"},
+      {"text": "Manage Roles",     "sref": "app.manage_role"}
+    ]
+  }
+]
