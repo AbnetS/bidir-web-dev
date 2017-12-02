@@ -21,11 +21,20 @@
             function _saveUser() {
                 console.log("new user information",vm.user);
             }
-        vm.branches = [
-            { _id:1, name: 'Head Office',  location: 'Addis Ababa',branch_type:'Rural' },
-            { _id:2, name: 'Meki Branch',  location: 'Meki',branch_type:'Urban' },
-            { _id:3, name: 'Third Branch', location: 'somewhere',branch_type:'Satellite' }
-        ];
+
+        ManageUserService.GetRoles().then(function(response){
+            console.log("roles",response);
+            vm.roles = response.data.docs;
+        },function(error){
+            console.log("error",error);
+        });
+
+        ManageUserService.GetBranches().then(function(response){
+            console.log("branches",response);
+            vm.branches = response.data.docs;
+        },function(error){
+            console.log("error",error);
+        });
 
         vm.clear = function() {
             vm.dt = null;

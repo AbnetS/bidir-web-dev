@@ -15,11 +15,14 @@
         vm.addUser = _addUser;
 
         ManageUserService.GetUsers().then(function(response){
-            console.log("users list",response);
+            // console.log("users list",response);
             vm.users = response.data.docs;
         },function(error){
             console.log("error",error);
         });
+
+
+
         activate();
 
         ////////////////

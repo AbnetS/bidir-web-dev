@@ -49,6 +49,21 @@
     angular
         .module('app.colors', []);
 })();
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common", [])
+    .run(runBlock)
+    .config(routeConfig);
+
+  function runBlock() {
+    console.log("common run");
+  }
+
+  function routeConfig() {}
+})(window.angular);
+
 (function() {
     'use strict';
 
@@ -70,21 +85,6 @@
             'ngMessages'
         ]);
 })();
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common", [])
-    .run(runBlock)
-    .config(routeConfig);
-
-  function runBlock() {
-    console.log("common run");
-  }
-
-  function routeConfig() {}
-})(window.angular);
-
 (function() {
     'use strict';
 
@@ -397,6 +397,78 @@
 
 })();
 
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common")
+    .constant("_", window._)
+    .constant("APP_CONSTANTS", {
+      USER_ROLES: {
+        ALL: "*",
+        ADMIN: "admin",
+      },
+      StorageKey: {
+        TOKEN: "token",
+        SESSION: "SESSION"
+      },
+      AUTH_EVENTS: {
+        loginSuccess: "auth-login-success",
+        loginFailed: "auth-login-failed",
+        logoutSuccess: "auth-logout-success",
+        sessionTimeout: "auth-session-timeout",
+        notAuthenticated: "auth-not-authenticated",
+        notAuthorized: "auth-not-authorized"
+      }
+    });
+})(window.angular);
+
+var API = {
+    Config: {
+        BaseUrl: "http://api.dev.bidir.gebeya.io/" //REMOTE API
+    },
+    Service: {
+        MFI: 'MFI/MFI',
+        Auth: 'auth',
+        Users: 'users'
+    },
+    Methods: {
+        Auth: {
+            Login: 'login'
+        },
+        MFI: {
+            GetAll:'',
+            Branch: 'branches',
+            BranchGet: 'branches/paginate?page=1&per_page=100',
+        },
+        Users: {
+            GetAll: 'paginate?page=1&per_page=100',
+            Roles: 'roles',
+            GetRoles: 'roles/paginate?page=1&per_page=100'
+        }
+    }
+};
+
+var ResourceMethods = {
+    All: {
+        'query': {method: 'GET', isArray: true},
+        'get': {method: 'GET'},
+        'update': {method: 'PUT'},
+        'save': {method: 'POST'},
+        'delete': {method: 'DELETE'}
+    },
+    Readonly: {
+        'query': {method: 'GET', isArray: true},
+        'get': {method: 'GET'}
+    },
+    Query: {method: 'GET', isArray: true},
+    Get: {method: 'GET'},
+    Put: {method: 'PUT'},
+    Post: {method: 'POST'},
+    Delete: {method: 'DELETE'},
+    Search: {'search': {method: 'POST', isArray: true}}
+};
+
 (function() {
     'use strict';
 
@@ -513,71 +585,6 @@
 
 })();
 
-
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common")
-    .constant("_", window._)
-    .constant("APP_CONSTANTS", {
-      USER_ROLES: {
-        ALL: "*",
-        ADMIN: "admin",
-      },
-      StorageKey: {
-        TOKEN: "token",
-        SESSION: "SESSION"
-      },
-      AUTH_EVENTS: {
-        loginSuccess: "auth-login-success",
-        loginFailed: "auth-login-failed",
-        logoutSuccess: "auth-logout-success",
-        sessionTimeout: "auth-session-timeout",
-        notAuthenticated: "auth-not-authenticated",
-        notAuthorized: "auth-not-authorized"
-      }
-    });
-})(window.angular);
-
-var API = {
-    Config: {
-        BaseUrl: "http://api.dev.bidir.gebeya.io/" //REMOTE API
-    },
-    Service: {
-      MFI: 'MFI/MFI',
-      Auth: 'auth',
-      Users:'users'
-    },
-    Methods: {
-        Auth: {
-                Login: 'login'
-            },
-            MFI:'',
-            Branch:'branches',
-            BranchGet:'branches/paginate?page=1&per_page=100',
-            UserGet:'paginate?page=1&per_page=100'
-        }
-};
-var ResourceMethods = {
-  All: {
-      'query': { method: 'GET', isArray: true },
-      'get': { method: 'GET' },
-      'update': { method: 'PUT' },
-      'save': { method: 'POST' },
-      'delete': { method: 'DELETE' }
-  },
-  Readonly: {
-      'query': { method: 'GET', isArray: true },
-      'get': { method: 'GET' }
-  },
-  Query: { method: 'GET', isArray: true },
-  Get: { method: 'GET' },
-  Put: { method: 'PUT' },
-  Post: { method: 'POST' },
-  Delete: { method: 'DELETE' },
-  Search: { 'search': { method: 'POST', isArray: true } }
-};
 
 (function() {
     'use strict';
@@ -3059,11 +3066,20 @@ var ResourceMethods = {
             function _saveUser() {
                 console.log("new user information",vm.user);
             }
-        vm.branches = [
-            { _id:1, name: 'Head Office',  location: 'Addis Ababa',branch_type:'Rural' },
-            { _id:2, name: 'Meki Branch',  location: 'Meki',branch_type:'Urban' },
-            { _id:3, name: 'Third Branch', location: 'somewhere',branch_type:'Satellite' }
-        ];
+
+        ManageUserService.GetRoles().then(function(response){
+            console.log("roles",response);
+            vm.roles = response.data.docs;
+        },function(error){
+            console.log("error",error);
+        });
+
+        ManageUserService.GetBranches().then(function(response){
+            console.log("branches",response);
+            vm.branches = response.data.docs;
+        },function(error){
+            console.log("error",error);
+        });
 
         vm.clear = function() {
             vm.dt = null;
@@ -3107,11 +3123,14 @@ var ResourceMethods = {
         vm.addUser = _addUser;
 
         ManageUserService.GetUsers().then(function(response){
-            console.log("users list",response);
+            // console.log("users list",response);
             vm.users = response.data.docs;
         },function(error){
             console.log("error",error);
         });
+
+
+
         activate();
 
         ////////////////
@@ -3188,7 +3207,9 @@ var ResourceMethods = {
 
     function ManageUserService($resource,$http, CommonService,AuthService) {
         return {
-            GetUsers: _getUsers
+            GetUsers: _getUsers,
+            GetRoles: _getRoles,
+            GetBranches: _getBranches,
         };
 
         function _getUsers(){
@@ -3198,8 +3219,25 @@ var ResourceMethods = {
                     'Accept': 'application/json'
                 }
             };
-            console.log(AuthService.GetToken());
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.UserGet),httpConfig);
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.GetAll),httpConfig);
+        }
+        function _getRoles(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.GetRoles),httpConfig);
+        }
+        function _getBranches(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.BranchGet),httpConfig);
         }
     }
 
