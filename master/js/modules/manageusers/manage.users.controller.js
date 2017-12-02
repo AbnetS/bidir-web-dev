@@ -9,9 +9,10 @@
         .module('app.manage_users')
         .controller('ManageUsersController', ManageUsersController);
 
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnDefBuilder','$scope', 'ngDialog', 'ManageUserService'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnDefBuilder,$scope, ngDialog, ManageUserService) {
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnDefBuilder','$scope', 'ngDialog', 'ManageUserService','$mdDialog'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnDefBuilder,$scope, ngDialog, ManageUserService,$mdDialog) {
         var vm = this;
+        vm.addUser = _addUser;
 
         ManageUserService.GetUsers().then(function(response){
             console.log("users list",response);
@@ -28,42 +29,11 @@
                 ngDialog.openConfirm({
                     templateUrl: RouteHelpers.basepath('manageusers/create.user.html'),
                     className: 'ngdialog-theme-default',
-                    width: 800,
+                    width: 840,
                     showClose: true,
                     closeByEscape: false,
                     closeByDocument:false,
-                    controller: ['$scope', function($scope) {
-                        var vm = this;
-
-                        vm.people = [
-                            { name: 'Adam',      email: 'adam@email.com',      age: 12, country: 'United States' },
-                            { name: 'Amalie',    email: 'amalie@email.com',    age: 12, country: 'Argentina' },
-                            { name: 'Estefanía', email: 'estefania@email.com', age: 21, country: 'Argentina' },
-                            { name: 'Adrian',    email: 'adrian@email.com',    age: 21, country: 'Ecuador' }
-                        ];
-
-                        vm.clear = function() {
-                            vm.dt = null;
-                        };
-
-                        vm.dateOptions = {
-                            dateDisabled: false,
-                            formatYear: "yy",
-                            maxDate: new Date(2020, 5, 22),
-                            startingDay: 1
-                        };
-
-                        vm.open1 = function() {
-                            vm.popup1.opened = true;
-                        };
-
-                        vm.format = "dd-MMMM-yyyy";
-                        vm.altInputFormats = ["d!/M!/yyyy"];
-                        vm.popup1 = {
-                            opened: false
-                        };
-
-                    }],
+                    controller: 'CreateUserController',
                     controllerAs:'vm'
                 }).then(function (value) {
                     console.log('Modal promise resolved. Value: ', value);
@@ -71,7 +41,6 @@
                     console.log('Modal promise rejected. Reason: ', reason);
                 });
             };
-
 
             vm.dtOptions = DTOptionsBuilder.newOptions()
                 .withPaginationType('full_numbers')
@@ -92,6 +61,23 @@
             ];
 
 
+
+        }
+
+        function _addUser(ev){
+            $mdDialog.show({
+                locals: {},
+                templateUrl: RouteHelpers.basepath('manageusers/create.user.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateUserController'
+            })
+                .then(function (answer) {
+                }, function () {
+                });
         }
     }
 })(window.angular);

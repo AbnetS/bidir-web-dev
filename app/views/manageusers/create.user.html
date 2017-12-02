@@ -3,6 +3,7 @@
         <h3>Add User</h3>
     </div>
 </div>
+
 <div class="dialog-contents">
 
 <form name="vm.userForm" novalidate>
@@ -23,12 +24,11 @@
             <div class="form-group row clearfix">
                 <div class="col-sm-12">
                     <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="{{vm.format}}" ng-model="vm.user.hiring_date" is-open="vm.popup1.opened"
-                               datepicker-options="vm.dateOptions" ng-required="true" close-text="Close" alt-input-formats="vm.altInputFormats"
-                        />
+                        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="vm.user.hiring_date" is-open="vm.popup1.opened"
+                               datepicker-options="vm.dateOptions" ng-required="true" close-text="Close" alt-input-formats="vm.altInputFormats"/>
                         <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-click="open1()">
-                          <i class="glyphicon glyphicon-calendar"></i>
+                        <button type="button" class="btn btn-default" ng-click="vm.openDatePicker()">
+                          <i class="fa fa-calendar"></i>
                         </button>
                       </span>
                     </p>
@@ -44,35 +44,7 @@
 
         <!--RIGHT SIDE CONTENT-->
         <div class="col-lg-6">
-            <div class="form-group row clearfix">
-                <div class="col-sm-12">
-                    <ui-select ng-model="ctrl.person.selected" theme="select2" class="form-control" title="Choose a person">
-                        <ui-select-match placeholder="Select or search a person in the list...">{{$select.selected.name}}</ui-select-match>
-                        <ui-select-choices group-by="'country'" repeat="item in ctrl.people | filter: $select.search">
-                            <span ng-bind-html="item.name | highlight: $select.search"></span>
-                            <small ng-bind-html="item.email | highlight: $select.search"></small>
-                        </ui-select-choices>
-                    </ui-select>
-                </div>
-            </div>
 
-            <div class="form-group row clearfix">
-                <div class="col-sm-12">
-                    <ui-select
-                            multiple ng-model="vm.user.selectedBranch" theme="select2"
-                            close-on-select="false" style="width: 100%">
-                        <ui-select-match placeholder="Select person...">
-                            {{$item.name}} &lt;{{$item.email}}&gt;</ui-select-match>
-                        <ui-select-choices repeat="person in vm.people">
-                            <div ng-bind-html="person.name | highlight: $select.search"></div>
-                            <small>
-                                email: {{person.email}}
-                                age: <span ng-bind-html="''+person.age | highlight: $select.search"></span>
-                            </small>
-                        </ui-select-choices>
-                    </ui-select>
-                </div>
-            </div>
             <div class="form-group row clearfix required" ng-class="{false:'has-error'}[vm.user.last_name.IsusernameValid]">
                 <div class="col-sm-12">
                     <input type="text" id="inputUserName" placeholder="username" name="inputUserName" ng-model="vm.user.username" class="form-control" required>
@@ -83,6 +55,37 @@
                     <input type="password" id="inputPassword" placeholder="Password" name="inputPassword" ng-model="vm.user.password" class="form-control" required>
                 </div>
             </div>
+            <div class="form-group row clearfix">
+                <div class="col-sm-12">
+                    <ui-select ng-model="vm.user.default_branch" theme="select2"
+                               class="form-control" title="Choose default branch">
+                        <ui-select-match placeholder="Select or search a branch from the list...">
+                            {{$select.selected.name}} - {{$select.selected.location}}</ui-select-match>
+                        <ui-select-choices repeat="branch in vm.branches | filter: $select.search">
+                            <span ng-bind-html="branch.name | highlight: $select.search"></span>
+                            <small ng-bind-html="branch.location | highlight: $select.search"></small>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+
+            <div class="form-group row clearfix">
+                <div class="col-sm-12">
+                    <ui-select multiple ng-model="vm.user.access_branches"
+                               theme="select2" close-on-select="false" style="width:100%">
+                        <ui-select-match placeholder="Select access branch...">
+                            {{$item.name}} </ui-select-match>
+                        <ui-select-choices repeat="branch in vm.branches">
+                            <div ng-bind-html="branch.name | highlight: $select.search"></div>
+                            <small>
+                                location: {{branch.location}}
+                                branch type: <span ng-bind-html="''+branch.branch_type | highlight: $select.search"></span>
+                            </small>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+
         </div>
         <!--END OF RIGHT SIDE CONTENT-->
     </div>
@@ -95,6 +98,4 @@
        <button class="btn btn-default" type="button" ng-click="closeThisDialog('button')">Cancel</button>
    </div>
 </div>
-<div class="row">
-
-</div>
+<div class="row"></div>
