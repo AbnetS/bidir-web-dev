@@ -49,21 +49,6 @@
     angular
         .module('app.colors', []);
 })();
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common", [])
-    .run(runBlock)
-    .config(routeConfig);
-
-  function runBlock() {
-    console.log("common run");
-  }
-
-  function routeConfig() {}
-})(window.angular);
-
 (function() {
     'use strict';
 
@@ -85,6 +70,21 @@
             'ngMessages'
         ]);
 })();
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common", [])
+    .run(runBlock)
+    .config(routeConfig);
+
+  function runBlock() {
+    console.log("common run");
+  }
+
+  function routeConfig() {}
+})(window.angular);
+
 (function() {
     'use strict';
 
@@ -105,18 +105,6 @@
 
     angular
         .module('app.manage_roles', []);
-
-})();
-/**
- * Created by Yoni on 11/30/2017.
- */
-(function() {
-    'use strict';
-
-    angular
-        .module('app.manage_users', [
-
-        ]);
 
 })();
 (function() {
@@ -182,6 +170,18 @@
           ]);
 })();
 
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+(function() {
+    'use strict';
+
+    angular
+        .module('app.manage_users', [
+
+        ]);
+
+})();
 (function(angular) {
     'use strict';
     angular.module('app.auth')
@@ -397,71 +397,6 @@
 
 })();
 
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common")
-    .constant("_", window._)
-    .constant("APP_CONSTANTS", {
-      USER_ROLES: {
-        ALL: "*",
-        ADMIN: "admin",
-      },
-      StorageKey: {
-        TOKEN: "token",
-        SESSION: "SESSION"
-      },
-      AUTH_EVENTS: {
-        loginSuccess: "auth-login-success",
-        loginFailed: "auth-login-failed",
-        logoutSuccess: "auth-logout-success",
-        sessionTimeout: "auth-session-timeout",
-        notAuthenticated: "auth-not-authenticated",
-        notAuthorized: "auth-not-authorized"
-      }
-    });
-})(window.angular);
-
-var API = {
-    Config: {
-        BaseUrl: "http://api.dev.bidir.gebeya.io/" //REMOTE API
-    },
-    Service: {
-      MFI: 'MFI/MFI',
-      Auth: 'auth',
-      Users:'users'
-    },
-    Methods: {
-        Auth: {
-                Login: 'login'
-            },
-            MFI:'',
-            Branch:'branches',
-            BranchGet:'branches/paginate?page=1&per_page=100',
-            UserGet:'paginate?page=1&per_page=100'
-        }
-};
-var ResourceMethods = {
-  All: {
-      'query': { method: 'GET', isArray: true },
-      'get': { method: 'GET' },
-      'update': { method: 'PUT' },
-      'save': { method: 'POST' },
-      'delete': { method: 'DELETE' }
-  },
-  Readonly: {
-      'query': { method: 'GET', isArray: true },
-      'get': { method: 'GET' }
-  },
-  Query: { method: 'GET', isArray: true },
-  Get: { method: 'GET' },
-  Put: { method: 'PUT' },
-  Post: { method: 'POST' },
-  Delete: { method: 'DELETE' },
-  Search: { 'search': { method: 'POST', isArray: true } }
-};
-
 (function() {
     'use strict';
 
@@ -578,6 +513,71 @@ var ResourceMethods = {
 
 })();
 
+
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common")
+    .constant("_", window._)
+    .constant("APP_CONSTANTS", {
+      USER_ROLES: {
+        ALL: "*",
+        ADMIN: "admin",
+      },
+      StorageKey: {
+        TOKEN: "token",
+        SESSION: "SESSION"
+      },
+      AUTH_EVENTS: {
+        loginSuccess: "auth-login-success",
+        loginFailed: "auth-login-failed",
+        logoutSuccess: "auth-logout-success",
+        sessionTimeout: "auth-session-timeout",
+        notAuthenticated: "auth-not-authenticated",
+        notAuthorized: "auth-not-authorized"
+      }
+    });
+})(window.angular);
+
+var API = {
+    Config: {
+        BaseUrl: "http://api.dev.bidir.gebeya.io/" //REMOTE API
+    },
+    Service: {
+      MFI: 'MFI/MFI',
+      Auth: 'auth',
+      Users:'users'
+    },
+    Methods: {
+        Auth: {
+                Login: 'login'
+            },
+            MFI:'',
+            Branch:'branches',
+            BranchGet:'branches/paginate?page=1&per_page=100',
+            UserGet:'paginate?page=1&per_page=100'
+        }
+};
+var ResourceMethods = {
+  All: {
+      'query': { method: 'GET', isArray: true },
+      'get': { method: 'GET' },
+      'update': { method: 'PUT' },
+      'save': { method: 'POST' },
+      'delete': { method: 'DELETE' }
+  },
+  Readonly: {
+      'query': { method: 'GET', isArray: true },
+      'get': { method: 'GET' }
+  },
+  Query: { method: 'GET', isArray: true },
+  Get: { method: 'GET' },
+  Put: { method: 'PUT' },
+  Post: { method: 'POST' },
+  Delete: { method: 'DELETE' },
+  Search: { 'search': { method: 'POST', isArray: true } }
+};
 
 (function() {
     'use strict';
@@ -823,165 +823,6 @@ var ResourceMethods = {
     }
 })(window.angular);
 
-
-/**
- * Created by Yoni on 12/2/2017.
- */
-/**
- * Created by Yoni on 11/30/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_users')
-        .controller('CreateUserController', CreateUserController);
-
-    CreateUserController.$inject = ['$scope','ManageUserService'];
-    function CreateUserController($scope, ManageUserService) {
-        var vm = this;
-
-        vm.branches = [
-            { _id:1, name: 'Head Office',  location: 'Addis Ababa',branch_type:'Rural' },
-            { _id:2, name: 'Meki Branch',  location: 'Meki',branch_type:'Urban' },
-            { _id:3, name: 'Third Branch', location: 'somewhere',branch_type:'Satellite' }
-        ];
-
-        vm.clear = function() {
-            vm.dt = null;
-        };
-        vm.dateOptions = {
-            dateDisabled: false,
-            formatYear: "yy",
-            maxDate: new Date(2020, 5, 22),
-            startingDay: 1
-        };
-        vm.openDatePicker = function() {
-            vm.popup1.opened = true;
-        };
-        vm.format = "dd-MMMM-yyyy";
-        vm.altInputFormats = ["d!/M!/yyyy"];
-        vm.popup1 = {
-            opened: false
-        };
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 11/30/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_users')
-        .controller('ManageUsersController', ManageUsersController);
-
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnDefBuilder','$scope', 'ngDialog', 'ManageUserService','$mdDialog'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnDefBuilder,$scope, ngDialog, ManageUserService,$mdDialog) {
-        var vm = this;
-        vm.addUser = _addUser;
-
-        ManageUserService.GetUsers().then(function(response){
-            console.log("users list",response);
-            vm.users = response.data.docs;
-        },function(error){
-            console.log("error",error);
-        });
-        activate();
-
-        ////////////////
-        function activate() {
-
-            $scope.openConfirm = function () {
-                ngDialog.openConfirm({
-                    templateUrl: RouteHelpers.basepath('manageusers/create.user.html'),
-                    className: 'ngdialog-theme-default',
-                    width: 840,
-                    showClose: true,
-                    closeByEscape: false,
-                    closeByDocument:false,
-                    controller: 'CreateUserController',
-                    controllerAs:'vm'
-                }).then(function (value) {
-                    console.log('Modal promise resolved. Value: ', value);
-                }, function (reason) {
-                    console.log('Modal promise rejected. Reason: ', reason);
-                });
-            };
-
-            vm.dtOptions = DTOptionsBuilder.newOptions()
-                .withPaginationType('full_numbers')
-                .withDOM('<"html5buttons"B>lTfgitp')
-                .withButtons([
-                    {extend: 'copy',  className: 'btn-sm' },
-                    {extend: 'csv',   className: 'btn-sm' },
-                    {extend: 'excel', className: 'btn-sm', title: 'XLS-File'},
-                    {extend: 'pdf',   className: 'btn-sm', title: $('title').text() },
-                    {extend: 'print', className: 'btn-sm' }
-                ]);
-
-            vm.dtColumnDefs = [
-                DTColumnDefBuilder.newColumnDef(0),
-                DTColumnDefBuilder.newColumnDef(1),
-                DTColumnDefBuilder.newColumnDef(2),
-                DTColumnDefBuilder.newColumnDef(3).notSortable()
-            ];
-
-
-
-        }
-
-        function _addUser(ev){
-            $mdDialog.show({
-                locals: {},
-                templateUrl: RouteHelpers.basepath('manageusers/create.user.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateUserController'
-            })
-                .then(function (answer) {
-                }, function () {
-                });
-        }
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 11/30/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.manage_users')
-
-        .service('ManageUserService', ManageUserService);
-    ManageUserService.$inject = ['$resource','$http', 'CommonService','AuthService'];
-
-    function ManageUserService($resource,$http, CommonService,AuthService) {
-        return {
-            GetUsers: _getUsers
-        };
-
-        function _getUsers(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            console.log(AuthService.GetToken());
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.UserGet),httpConfig);
-        }
-    }
-
-})(window.angular);
 
 /**=========================================================
  * Module: modals.js
@@ -3194,6 +3035,175 @@ var ResourceMethods = {
         };
     }
 })();
+
+/**
+ * Created by Yoni on 12/2/2017.
+ */
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_users')
+        .controller('CreateUserController', CreateUserController);
+
+    CreateUserController.$inject = ['$mdDialog','ManageUserService'];
+    function CreateUserController($mdDialog, ManageUserService) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.saveUser = _saveUser;
+
+            function _saveUser() {
+                console.log("new user information",vm.user);
+            }
+        vm.branches = [
+            { _id:1, name: 'Head Office',  location: 'Addis Ababa',branch_type:'Rural' },
+            { _id:2, name: 'Meki Branch',  location: 'Meki',branch_type:'Urban' },
+            { _id:3, name: 'Third Branch', location: 'somewhere',branch_type:'Satellite' }
+        ];
+
+        vm.clear = function() {
+            vm.dt = null;
+        };
+        vm.dateOptions = {
+            dateDisabled: false,
+            formatYear: "yy",
+            maxDate: new Date(2020, 5, 22),
+            startingDay: 1
+        };
+        vm.openDatePicker = function() {
+            vm.popup1.opened = true;
+        };
+        vm.format = "dd-MMMM-yyyy";
+        vm.altInputFormats = ["d!/M!/yyyy"];
+        vm.popup1 = {
+            opened: false
+        };
+
+        function _cancel() {
+            $mdDialog.hide();
+        }
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_users')
+        .controller('ManageUsersController', ManageUsersController);
+
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnDefBuilder','$scope', 'ngDialog', 'ManageUserService','$mdDialog'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnDefBuilder,$scope, ngDialog, ManageUserService,$mdDialog) {
+        var vm = this;
+        vm.addUser = _addUser;
+
+        ManageUserService.GetUsers().then(function(response){
+            console.log("users list",response);
+            vm.users = response.data.docs;
+        },function(error){
+            console.log("error",error);
+        });
+        activate();
+
+        ////////////////
+        function activate() {
+
+            $scope.openConfirm = function () {
+                ngDialog.openConfirm({
+                    templateUrl: RouteHelpers.basepath('manageusers/create.user.html'),
+                    className: 'ngdialog-theme-default',
+                    width: 840,
+                    showClose: true,
+                    closeByEscape: false,
+                    closeByDocument:false,
+                    controller: 'CreateUserController',
+                    controllerAs:'vm'
+                }).then(function (value) {
+                    console.log('Modal promise resolved. Value: ', value);
+                }, function (reason) {
+                    console.log('Modal promise rejected. Reason: ', reason);
+                });
+            };
+
+            vm.dtOptions = DTOptionsBuilder.newOptions()
+                .withPaginationType('full_numbers')
+                .withDOM('<"html5buttons"B>lTfgitp')
+                .withButtons([
+                    {extend: 'copy',  className: 'btn-sm' },
+                    {extend: 'csv',   className: 'btn-sm' },
+                    {extend: 'excel', className: 'btn-sm', title: 'XLS-File'},
+                    {extend: 'pdf',   className: 'btn-sm', title: $('title').text() },
+                    {extend: 'print', className: 'btn-sm' }
+                ]);
+
+            vm.dtColumnDefs = [
+                DTColumnDefBuilder.newColumnDef(0),
+                DTColumnDefBuilder.newColumnDef(1),
+                DTColumnDefBuilder.newColumnDef(2),
+                DTColumnDefBuilder.newColumnDef(3).notSortable()
+            ];
+
+
+
+        }
+
+        function _addUser(ev){
+            $mdDialog.show({
+                locals: {},
+                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateUserController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                }, function () {
+                });
+        }
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.manage_users')
+
+        .service('ManageUserService', ManageUserService);
+    ManageUserService.$inject = ['$resource','$http', 'CommonService','AuthService'];
+
+    function ManageUserService($resource,$http, CommonService,AuthService) {
+        return {
+            GetUsers: _getUsers
+        };
+
+        function _getUsers(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            console.log(AuthService.GetToken());
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.UserGet),httpConfig);
+        }
+    }
+
+})(window.angular);
 
 (function(angular) {
 

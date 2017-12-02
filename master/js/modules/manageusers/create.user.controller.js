@@ -12,10 +12,15 @@
         .module('app.manage_users')
         .controller('CreateUserController', CreateUserController);
 
-    CreateUserController.$inject = ['$scope','ManageUserService'];
-    function CreateUserController($scope, ManageUserService) {
+    CreateUserController.$inject = ['$mdDialog','ManageUserService'];
+    function CreateUserController($mdDialog, ManageUserService) {
         var vm = this;
+        vm.cancel = _cancel;
+        vm.saveUser = _saveUser;
 
+            function _saveUser() {
+                console.log("new user information",vm.user);
+            }
         vm.branches = [
             { _id:1, name: 'Head Office',  location: 'Addis Ababa',branch_type:'Rural' },
             { _id:2, name: 'Meki Branch',  location: 'Meki',branch_type:'Urban' },
@@ -39,6 +44,10 @@
         vm.popup1 = {
             opened: false
         };
+
+        function _cancel() {
+            $mdDialog.hide();
+        }
     }
 })(window.angular);
 

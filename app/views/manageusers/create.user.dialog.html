@@ -1,43 +1,137 @@
-<md-dialog aria-label="User" style="max-width: 650px;">
-    <form ng-cloak>
-        <md-toolbar>
-            <div class="md-toolbar-tools">
-                <h2>Add User</h2>
+<md-dialog style="min-width: 800px">
+    <form role="form" name="vm.userForm" novalidate >
+        <md-toolbar class="small">
+            <div class="md-toolbar-tools small">
+                <h2>User</h2>
                 <span flex></span>
-                <md-button class="md-icon-button" ng-click="cancel()">
-                    <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+                <md-button aria-label="button" class="md-icon-button" ng-click="vm.cancel()">
+                    <i class="icon-close" style="font-size: medium"></i>
                 </md-button>
             </div>
         </md-toolbar>
 
-        <md-dialog-content>
-            <div class="md-dialog-content">
-                <h2>Using .md-dialog-content class that sets the padding as the spec</h2>
-                <p>
-                    The mango is a juicy stone fruit belonging to the genus Mangifera, consisting of numerous tropical fruiting trees, cultivated mostly for edible fruit. The majority of these species are found in nature as wild mangoes. They all belong to the flowering plant family Anacardiaceae. The mango is native to South and Southeast Asia, from where it has been distributed worldwide to become one of the most cultivated fruits in the tropics.
-                </p>
+        <md-dialog-content style="width:800px;max-height:1000px;">
+            <md-content class="md-padding">
+                <div class="row">
+                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                        <label class="control-label small">First Name</label>
+                        <span class="required" aria-required="true"> * </span>
+                        <input name="inputFirstName"
+                               ng-model="vm.user.first_name"
+                               placeholder="First Name"
+                               type="text"
+                               class="form-control input-sm" required>
+                    </div>
+                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                        <label class="control-label small">Default Branch</label>
+                        <span class="required" aria-required="true"> * </span>
+                        <ui-select ng-model="vm.user.default_branch" theme="select2"
+                                   class="form-control" title="Choose default branch">
+                            <ui-select-match placeholder="Select or search a branch from the list...">
+                                {{$select.selected.name}} - {{$select.selected.location}}</ui-select-match>
+                            <ui-select-choices repeat="branch in vm.branches | filter: $select.search">
+                                <span ng-bind-html="branch.name | highlight: $select.search"></span>
+                                <small ng-bind-html="branch.location | highlight: $select.search"></small>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
 
-                <img style="margin: auto; max-width: 100%;" alt="Lush mango tree" src="img/mangues.jpg">
+                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                        <label class="control-label small">Last Name</label>
+                        <span class="required" aria-required="true"> * </span>
+                        <input name="inputLastName"
+                               ng-model="vm.user.last_name"
+                               placeholder="Last Name"
+                               type="text"
+                               class="form-control input-sm" required>
+                    </div>
+                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                        <label class="control-label small">Access Branches</label>
+                        <ui-select multiple ng-model="vm.user.access_branches"
+                                   theme="select2" close-on-select="false" style="width:80%">
+                            <ui-select-match placeholder="Select access branch...">
+                                {{$item.name}} </ui-select-match>
+                            <ui-select-choices repeat="branch in vm.branches">
+                                <div ng-bind-html="branch.name | highlight: $select.search"></div>
+                                <small>
+                                    location: {{branch.location}}
+                                    branch type: <span ng-bind-html="''+branch.branch_type | highlight: $select.search"></span>
+                                </small>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
 
-                <p>
-                    The highest concentration of Mangifera genus is in the western part of Malesia (Sumatra, Java and Borneo) and in Burma and India. While other Mangifera species (e.g. horse mango, M. foetida) are also grown on a more localized basis, Mangifera indica&mdash;the "common mango" or "Indian mango"&mdash;is the only mango tree commonly cultivated in many tropical and subtropical regions.
-                </p>
-                <p>
-                    It originated in Indian subcontinent (present day India and Pakistan) and Burma. It is the national fruit of India, Pakistan, and the Philippines, and the national tree of Bangladesh. In several cultures, its fruit and leaves are ritually used as floral decorations at weddings, public celebrations, and religious ceremonies.
-                </p>
-            </div>
+                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                        <label class="control-label small">Sur Name</label>
+                        <span class="required" aria-required="true"> * </span>
+                        <input name="inputSurName"
+                               ng-model="vm.user.sur_name"
+                               placeholder="Sur Name"
+                               type="text"
+                               class="form-control input-sm" required>
+                    </div>
+                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                        <label class="control-label small">Hire Date</label>
+                        <p class="input-group">
+                            <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="vm.user.hiring_date" is-open="vm.popup1.opened"
+                                   datepicker-options="vm.dateOptions" ng-required="true" close-text="Close" alt-input-formats="vm.altInputFormats"/>
+                            <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="vm.openDatePicker()">
+                          <i class="fa fa-calendar"></i>
+                        </button>
+                      </span>
+                        </p>
+                    </div>
+
+                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                        <label class="control-label small">Select Role</label>
+                        <span class="required" aria-required="true"> * </span>
+                        <ui-select ng-model="vm.user.selected_role" theme="select2"
+                                   class="form-control" title="Choose user role">
+                            <ui-select-match placeholder="Select or search role from the list...">
+                                {{$select.selected.name}} - {{$select.selected.location}}</ui-select-match>
+                            <ui-select-choices repeat="role in vm.roles | filter: $select.search">
+                                <span ng-bind-html="branch.name | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                        <label class="control-label small">Username</label>
+                        <span class="required" aria-required="true"> * </span>
+                        <input name="inputUsername"
+                               ng-model="vm.user.username"
+                               placeholder="Username"
+                               type="text"
+                               class="form-control input-sm" required>
+                    </div>
+
+
+                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                        <label class="control-label small">Password</label>
+                        <span class="required" aria-required="true"> * </span>
+                        <input name="inputPassword"
+                               ng-model="vm.user.password"
+                               placeholder="Password"
+                               type="text"
+                               class="form-control input-sm" required>
+                    </div>
+                </div>
+
+            </md-content>
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button href="http://en.wikipedia.org/wiki/Mango" target="_blank" md-autofocus>
-                More on Wikipedia
+            <div layout="row" layout-align="start" flex>
+                <md-button class="md-raised md-button-small md-ink-ripple" ng-click="vm.cancel()">
+                    Cancel
+                </md-button>
+            </div>
+            <md-button  class="md-raised md-button-small md-ink-ripple" ng-click="vm.approveUser()">
+                Approve
             </md-button>
-            <span flex></span>
-            <md-button ng-click="answer('not useful')">
-                Not Useful
-            </md-button>
-            <md-button ng-click="answer('useful')">
-                Useful
+            <md-button class="md-raised md-primary md-button-small md-ink-ripple pull-right"
+                       ng-click="vm.saveUser()">
+                <i class="fa fa-save"></i> Save
             </md-button>
         </md-dialog-actions>
     </form>

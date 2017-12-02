@@ -67,13 +67,14 @@
         function _addUser(ev){
             $mdDialog.show({
                 locals: {},
-                templateUrl: RouteHelpers.basepath('manageusers/create.user.html'),
+                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
                 parent: angular.element(document.body),
                 targetEvent: ev,
                 clickOutsideToClose: false,
                 hasBackdrop: false,
                 escapeToClose: true,
-                controller: 'CreateUserController'
+                controller: 'CreateUserController',
+                controllerAs: 'vm'
             })
                 .then(function (answer) {
                 }, function () {
