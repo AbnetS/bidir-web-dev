@@ -13,6 +13,7 @@
             GetUsers: _getUsers,
             GetRoles: _getRoles,
             GetBranches: _getBranches,
+            CreateUser: _saveUser
         };
 
         function _getUsers(){
@@ -40,7 +41,16 @@
                     'Accept': 'application/json'
                 }
             };
-            return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.BranchGet),httpConfig);
+            return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAllBranches),httpConfig);
+        }
+        function _saveUser(user) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user,httpConfig);
         }
     }
 

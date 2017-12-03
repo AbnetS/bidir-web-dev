@@ -13,6 +13,7 @@
     function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnDefBuilder,$scope, ngDialog, ManageUserService,$mdDialog) {
         var vm = this;
         vm.addUser = _addUser;
+        vm.editUser = _editUser;
 
         ManageUserService.GetUsers().then(function(response){
             // console.log("users list",response);
@@ -28,24 +29,7 @@
         ////////////////
         function activate() {
 
-            $scope.openConfirm = function () {
-                ngDialog.openConfirm({
-                    templateUrl: RouteHelpers.basepath('manageusers/create.user.html'),
-                    className: 'ngdialog-theme-default',
-                    width: 840,
-                    showClose: true,
-                    closeByEscape: false,
-                    closeByDocument:false,
-                    controller: 'CreateUserController',
-                    controllerAs:'vm'
-                }).then(function (value) {
-                    console.log('Modal promise resolved. Value: ', value);
-                }, function (reason) {
-                    console.log('Modal promise rejected. Reason: ', reason);
-                });
-            };
-
-            vm.dtOptions = DTOptionsBuilder.newOptions()
+           vm.dtOptions = DTOptionsBuilder.newOptions()
                 .withPaginationType('full_numbers')
                 .withDOM('<"html5buttons"B>lTfgitp')
                 .withButtons([
@@ -55,7 +39,6 @@
                     {extend: 'pdf',   className: 'btn-sm', title: $('title').text() },
                     {extend: 'print', className: 'btn-sm' }
                 ]);
-
             vm.dtColumnDefs = [
                 DTColumnDefBuilder.newColumnDef(0),
                 DTColumnDefBuilder.newColumnDef(1),
@@ -70,6 +53,22 @@
         function _addUser(ev){
             $mdDialog.show({
                 locals: {},
+                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateUserController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                }, function () {
+                });
+        }
+        function _editUser(user,ev){
+            $mdDialog.show({
+                locals: {data:user},
                 templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
                 parent: angular.element(document.body),
                 targetEvent: ev,
