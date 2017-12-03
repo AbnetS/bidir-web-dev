@@ -22,7 +22,7 @@
                     </div>
                 </div>
                 <br/>
-                <textarea class="form-control ng-pristine ng-valid ng-empty ng-touched"
+                <textarea ng-disabled="vm.task.status === 'done'" class="form-control ng-pristine ng-valid ng-empty ng-touched"
                           ng-trim="true" ng-model="vm.task.comment"
                           placeholder="Type reason for changing task status.." rows="5" aria-invalid="false"
                           style=""></textarea>
@@ -35,10 +35,10 @@
                     Cancel
                 </md-button>
             </div>
-            <md-button  md-no-ink class="md-warning " ng-click="vm.declineUser()">
+            <md-button ng-hide="vm.task.status === 'done'"  md-no-ink class="md-warning " ng-click="vm.declineUser()">
                 Decline
             </md-button>
-            <md-button class="md-raised md-primary md-button-small md-ink-ripple pull-right"
+            <md-button ng-hide="vm.task.status === 'done'" class="md-raised md-primary md-button-small md-ink-ripple pull-right"
                        ng-click="vm.approveUser()">
                 <i class="fa fa-save"></i> Approve
             </md-button>

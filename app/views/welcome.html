@@ -9,9 +9,12 @@
    <div class="panel">
    <h4 class="layout-padding-sm"><em class="fa fa-clock-o fa-fw"></em>Tasks List</h4>
    <div>
+      <div ng-hide="vm.taskList">
+         <h1> No Tasks found enjoy your day.</h1>
+      </div>
       <!-- START list group-->
-      <div class="list-group mb0">
-         <a ng-disabled="tsk.status !== 'done'" ng-click="vm.viewTaskDetail(tsk,$event)" class="list-group-item" ng-repeat="tsk in vm.taskList">
+      <div ng-show="vm.taskList" class="list-group mb0">
+         <a ng-click="vm.viewTaskDetail(tsk,$event)" class="list-group-item" ng-repeat="tsk in vm.taskList">
             <button class="btn btn-default pull-right">View Detail</button>
 
             <h5><em class="fa fa-fw fa-calendar mr"></em>{{tsk.task}}</h5>
