@@ -29,7 +29,7 @@
               url: '/app',
               abstract: true,
               templateUrl: helper.basepath('app.html'),
-              resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert')
+              resolve: helper.resolveFor('modernizr', 'icons')
           })
           .state('app.welcome', {
               url: '/welcome',
