@@ -35,12 +35,12 @@
                     <tbody>
                     <tr ng-repeat="usr in vm.users">
                         <td>{{ $index + 1 }}</td>
-                        <td>{{ usr.admin.first_name }}</td>
+                        <td>{{ usr.account.first_name }}</td>
                         <td>{{usr.role  }}</td>
                         <td>{{ usr.username }}</td>
                         <td>{{usr.status }}</td>
                         <td>
-                          <a ng-click="vm.editUser(usr,$event)">
+                          <a ng-hide="usr.admin" ng-click="vm.editUser(usr,$event)">
                             <i class="fa fa-edit"></i> Edit
                           </a>
                         </td>

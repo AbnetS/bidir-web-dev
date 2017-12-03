@@ -2,7 +2,7 @@
  * Created by Yoni on 11/30/2017.
  */
 
-(function(angular) {
+(function(angular,document) {
     "use strict";
 
     angular
@@ -52,7 +52,9 @@
 
         function _addUser(ev){
             $mdDialog.show({
-                locals: {},
+                locals: {
+                    items: null
+                },
                 templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
                 parent: angular.element(document.body),
                 targetEvent: ev,
@@ -67,8 +69,11 @@
                 });
         }
         function _editUser(user,ev){
+
             $mdDialog.show({
-                locals: {data:user},
+                locals: {
+                    items: user
+                },
                 templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
                 parent: angular.element(document.body),
                 targetEvent: ev,
@@ -83,5 +88,5 @@
                 });
         }
     }
-})(window.angular);
+})(window.angular,window.document);
 

@@ -12,23 +12,29 @@
         .module('app.manage_users')
         .controller('CreateUserController', CreateUserController);
 
-    CreateUserController.$inject = ['$mdDialog','ManageUserService'];
-    function CreateUserController($mdDialog, ManageUserService,data) {
+    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','$scope'];
+    function CreateUserController($mdDialog, ManageUserService,items,$scope) {
         var vm = this;
         vm.cancel = _cancel;
         vm.saveUser = _saveUser;
-        console.log("data",data);
+        vm.isEdit = items !== null;
+        vm.user = items;
 
         initialize();
 
         function _saveUser() {
+            var userInfo = {
+                first_name: vm.user.first_name,
+                last_name: vm.user.last_name,
+                username: vm.user.username,
+                password: vm.user.password,
+                role : vm.user.selected_role._id,
+                default_branch : vm.user.selected_default_branch._id
+            };
 
-            vm.user.default_Branch = vm.user.selected_default_branch._id;
-            vm.user.role = vm.user.selected_role._id;
-            vm.user.user_role = "load_officer";
-
+            console.log("user info", userInfo);
             ManageUserService.CreateUser(
-                vm.user,
+                userInfo,
                 function (data) {
                     console.log("saved successfully", data);
                     //TODO: Alert & fetch user collection
