@@ -49,46 +49,47 @@
 
         function initialize(){
             if(vm.isEdit){
-                // angular.extend(vm.user, vm.user.account);
-                // var dt = new Date(vm.user.hired_date);
-                // vm.user.hired_date = dt;
-                vm.user.selected_role = vm.user.account.role;
-                vm.user.selected_default_branch = vm.user.default_branch;
+                angular.extend(vm.user, vm.user.account);
+                var dt = new Date(vm.user.hired_date);
+                vm.user.hired_date = dt;
+                // vm.user.selected_role = vm.user.account.role;
+                // vm.user.selected_default_branch = vm.user.default_branch;
             }
             ManageUserService.GetRoles().then(function(response){
                 vm.roles = response.data.docs;
-
-                // if(vm.isEdit){
-                //     //LOAD Role select value
-                //     angular.forEach(vm.roles,function(role){
-                //        if(role._id === vm.user.role){
-                //            vm.user.selected_role = role;
-                //        }
-                //     });
-                // }
+                if(vm.isEdit){
+                    //LOAD Role select value
+                    angular.forEach(vm.roles,function(role){
+                       if(role._id === vm.user.account.role._id){
+                           vm.user.selected_role = role;
+                       }
+                    });
+                }
             },function(error){
                 console.log("error",error);
             });
+
             ManageUserService.GetBranches().then(function(response){
                 vm.branches = response.data.docs;
                 if(vm.isEdit){
 
-                    // angular.forEach(vm.branches,function(branch){
-                    //     //LOAD Default Branch select value
-                    //     if(branch._id === vm.user.default_branch){
-                    //         vm.user.selected_default_branch = branch;
-                    //     }
-                    //     vm.user.selected_access_branches = [];
-                    //     //LOAD access branch select values
-                    //     if(vm.user.access_branches.length>0){
-                    //         angular.forEach(vm.user.access_branches,function(access_id){
-                    //             if(branch._id === access_id){
-                    //                 vm.user.selected_access_branches.push(branch);
-                    //             }
-                    //         })
-                    //     }
-                    //
-                    // });
+                    angular.forEach(vm.branches,function(branch){
+                        //LOAD Default Branch select value
+                        if(branch._id === vm.user.default_branch._id){
+                            vm.user.selected_default_branch = branch;
+                        }
+
+                        // vm.user.selected_access_branches = [];
+                        //LOAD access branch select values
+                        // if(vm.user.access_branches){
+                        //     angular.forEach(vm.user.access_branches,function(access_id){
+                        //         if(branch._id === access_id){
+                        //             vm.user.selected_access_branches.push(branch);
+                        //         }
+                        //     })
+                        // }
+
+                    });
                 }
             },function(error){
                 console.log("error",error);
