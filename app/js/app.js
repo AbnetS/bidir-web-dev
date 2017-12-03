@@ -462,6 +462,7 @@ var API = {
             GetRoles: 'roles/paginate?page=1&per_page=100'
         },
         Tasks: {
+            Task:'tasks',
             GetAll: 'tasks/paginate?page=1&per_page=100'
         }
     }
@@ -3388,20 +3389,42 @@ var ResourceMethods = {
         vm.approveUser = _approveUser;
         vm.declineUser = _declineUser;
         vm.task = items.taskInfo;
-
+        console.log("task ",vm.task);
         WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
-            console.log("task related user",response);
+            // console.log("task related user",response);
             vm.userInfo = response.data;
 
         },function(error){
             console.log("error",error);
         });
 
-        function _approveUser(task) {
-
+        function _approveUser() {
+            var task = {
+                taskId:vm.task._id ,
+                action: "approved",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
         }
-        function _declineUser(task) {
 
+        function _declineUser() {
+            var task = {
+                taskId:vm.task._id ,
+                action: "declined",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
+        }
+
+        function updateStatus(task){
+            WelcomeService.ChangeTaskStatus(task).then(
+                function(response) {
+                    console.log("task updated",response);
+                },
+                function(error) {
+                    console.log("could not be updated", error);
+                }
+            );
         }
         function _cancel() {
             $mdDialog.cancel();
@@ -3469,7 +3492,8 @@ var ResourceMethods = {
     function WelcomeService($http, CommonService,AuthService) {
         return {
             GetTasks: _getTasks,
-            GetUserAccount:_getUserAccount
+            GetUserAccount:_getUserAccount,
+            ChangeTaskStatus:_changeTaskStatus
         };
 
         function _getUserAccount(id){
@@ -3489,6 +3513,15 @@ var ResourceMethods = {
                 }
             };
             return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Tasks.GetAll),httpConfig);
+        }
+        function _changeTaskStatus(taskObj) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
         }
     }
 

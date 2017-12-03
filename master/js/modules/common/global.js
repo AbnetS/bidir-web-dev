@@ -25,6 +25,7 @@ var API = {
             GetRoles: 'roles/paginate?page=1&per_page=100'
         },
         Tasks: {
+            Task:'tasks',
             GetAll: 'tasks/paginate?page=1&per_page=100'
         }
     }

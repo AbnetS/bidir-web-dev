@@ -15,12 +15,17 @@
                 <div class="list-group mb0">
                     <div class="list-group-item" >
                         <h4><em class="fa fa-fw fa-user mr"></em>{{vm.userInfo.first_name}} {{vm.userInfo.last_name}}</h4>
-                        Task:<h5>{{vm.task.task}}</h5>
+                        <h5>Task: {{vm.task.task}}</h5>
                         Role:<span class="label label-inverse"> {{vm.userInfo.role.name}}</span>
                         Status:<span class="label label-inverse"> {{vm.userInfo.user.status}}</span>
                         <span class="label label-info pull-right">Last Updated: {{vm.task.last_modified | date:'medium'}}</span>
                     </div>
                 </div>
+                <br/>
+                <textarea class="form-control ng-pristine ng-valid ng-empty ng-touched"
+                          ng-trim="true" ng-model="vm.task.comment"
+                          placeholder="Type reason for changing task status.." rows="5" aria-invalid="false"
+                          style=""></textarea>
             </md-content>
         </md-dialog-content>
 

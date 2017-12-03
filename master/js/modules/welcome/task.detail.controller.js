@@ -16,20 +16,42 @@
         vm.approveUser = _approveUser;
         vm.declineUser = _declineUser;
         vm.task = items.taskInfo;
-
+        console.log("task ",vm.task);
         WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
-            console.log("task related user",response);
+            // console.log("task related user",response);
             vm.userInfo = response.data;
 
         },function(error){
             console.log("error",error);
         });
 
-        function _approveUser(task) {
-
+        function _approveUser() {
+            var task = {
+                taskId:vm.task._id ,
+                action: "approved",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
         }
-        function _declineUser(task) {
 
+        function _declineUser() {
+            var task = {
+                taskId:vm.task._id ,
+                action: "declined",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
+        }
+
+        function updateStatus(task){
+            WelcomeService.ChangeTaskStatus(task).then(
+                function(response) {
+                    console.log("task updated",response);
+                },
+                function(error) {
+                    console.log("could not be updated", error);
+                }
+            );
         }
         function _cancel() {
             $mdDialog.cancel();
