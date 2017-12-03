@@ -3420,6 +3420,7 @@ var ResourceMethods = {
             WelcomeService.ChangeTaskStatus(task).then(
                 function(response) {
                     console.log("task updated",response);
+                    $mdDialog.hide();
                 },
                 function(error) {
                     console.log("could not be updated", error);
