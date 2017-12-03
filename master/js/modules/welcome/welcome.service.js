@@ -10,9 +10,19 @@
 
     function WelcomeService($http, CommonService,AuthService) {
         return {
-            GetTasks: _getTasks
+            GetTasks: _getTasks,
+            GetUserAccount:_getUserAccount
         };
 
+        function _getUserAccount(id){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
+        }
         function _getTasks(){
             var httpConfig = {
                 headers: {

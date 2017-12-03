@@ -18,6 +18,7 @@ var API = {
             GetAllBranches: 'branches/paginate?page=1&per_page=100',
         },
         Users: {
+            Account:'accounts',
             User:'create',
             GetAll: 'paginate?page=1&per_page=100',
             Roles: 'roles',

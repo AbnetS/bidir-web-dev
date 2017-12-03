@@ -152,15 +152,15 @@
     'use strict';
 
     angular
-        .module('app.settings', []);
+        .module('app.routes', [
+            'app.lazyload'
+        ]);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.routes', [
-            'app.lazyload'
-        ]);
+        .module('app.settings', []);
 })();
 (function() {
     'use strict';
@@ -455,6 +455,7 @@ var API = {
             GetAllBranches: 'branches/paginate?page=1&per_page=100',
         },
         Users: {
+            Account:'accounts',
             User:'create',
             GetAll: 'paginate?page=1&per_page=100',
             Roles: 'roles',
@@ -2255,79 +2256,6 @@ var ResourceMethods = {
     }
 
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.settings')
-        .run(settingsRun);
-
-    settingsRun.$inject = ['$rootScope', '$localStorage'];
-
-    function settingsRun($rootScope, $localStorage){
-
-
-      // User Settings
-      // -----------------------------------
-      $rootScope.user = {
-        name:     'Yonas',
-        job:      'System Admin',
-        picture:  'app/img/user/02.jpg'
-      };
-
-      // Hides/show user avatar on sidebar from any element
-      $rootScope.toggleUserBlock = function(){
-        $rootScope.$broadcast('toggleUserBlock');
-      };
-
-      // Global Settings
-      // -----------------------------------
-      $rootScope.app = {
-        name: 'Bidir Web',
-        description: 'Bidir Web Application',
-        year: ((new Date()).getFullYear()),
-        layout: {
-          isFixed: true,
-          isCollapsed: false,
-          isBoxed: false,
-          isRTL: false,
-          horizontal: false,
-          isFloat: false,
-          asideHover: false,
-          theme: 'app/css/theme-d.css',
-          asideScrollbar: false,
-          isCollapsedText: false
-        },
-        useFullLayout: false,
-        hiddenFooter: false,
-        offsidebarOpen: false,
-        asideToggled: false,
-        viewAnimation: 'ng-fadeInUp'
-      };
-
-      // Setup the layout mode
-      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
-
-      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
-      // if( angular.isDefined($localStorage.layout) )
-      //   $rootScope.app.layout = $localStorage.layout;
-      // else
-      //   $localStorage.layout = $rootScope.app.layout;
-      //
-      // $rootScope.$watch('app.layout', function () {
-      //   $localStorage.layout = $rootScope.app.layout;
-      // }, true);
-
-      // Close submenu when sidebar change from collapsed to normal
-      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
-        if( newValue === false )
-          $rootScope.$broadcast('closeSidebarMenu');
-      });
-
-    }
-
-})();
-
 /**=========================================================
  * Module: helpers.js
  * Provides helper functions for routes definition
@@ -2512,6 +2440,79 @@ var ResourceMethods = {
 
 })();
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.settings')
+        .run(settingsRun);
+
+    settingsRun.$inject = ['$rootScope', '$localStorage'];
+
+    function settingsRun($rootScope, $localStorage){
+
+
+      // User Settings
+      // -----------------------------------
+      $rootScope.user = {
+        name:     'Yonas',
+        job:      'System Admin',
+        picture:  'app/img/user/02.jpg'
+      };
+
+      // Hides/show user avatar on sidebar from any element
+      $rootScope.toggleUserBlock = function(){
+        $rootScope.$broadcast('toggleUserBlock');
+      };
+
+      // Global Settings
+      // -----------------------------------
+      $rootScope.app = {
+        name: 'Bidir Web',
+        description: 'Bidir Web Application',
+        year: ((new Date()).getFullYear()),
+        layout: {
+          isFixed: true,
+          isCollapsed: false,
+          isBoxed: false,
+          isRTL: false,
+          horizontal: false,
+          isFloat: false,
+          asideHover: false,
+          theme: 'app/css/theme-d.css',
+          asideScrollbar: false,
+          isCollapsedText: false
+        },
+        useFullLayout: false,
+        hiddenFooter: false,
+        offsidebarOpen: false,
+        asideToggled: false,
+        viewAnimation: 'ng-fadeInUp'
+      };
+
+      // Setup the layout mode
+      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
+
+      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
+      // if( angular.isDefined($localStorage.layout) )
+      //   $rootScope.app.layout = $localStorage.layout;
+      // else
+      //   $localStorage.layout = $rootScope.app.layout;
+      //
+      // $rootScope.$watch('app.layout', function () {
+      //   $localStorage.layout = $rootScope.app.layout;
+      // }, true);
+
+      // Close submenu when sidebar change from collapsed to normal
+      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
+        if( newValue === false )
+          $rootScope.$broadcast('closeSidebarMenu');
+      });
+
+    }
+
+})();
 
 /**=========================================================
  * Module: sidebar-menu.js
@@ -3377,20 +3378,81 @@ var ResourceMethods = {
 
     angular
         .module('app.welcomePage')
+        .controller('TaskDetailController', TaskDetailController);
+
+    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items'];
+
+    function TaskDetailController($mdDialog, WelcomeService ,items) {
+        var vm = this
+        vm.cancel = _cancel;
+        vm.approveUser = _approveUser;
+        vm.declineUser = _declineUser;
+        vm.task = items.taskInfo;
+
+        WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
+            console.log("task related user",response);
+            vm.userInfo = response.data;
+
+        },function(error){
+            console.log("error",error);
+        });
+
+        function _approveUser(task) {
+
+        }
+        function _declineUser(task) {
+
+        }
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.welcomePage')
         .controller('WelcomeController', WelcomeController);
 
-    WelcomeController.$inject = ['$mdDialog', 'WelcomeService'];
+    WelcomeController.$inject = ['$mdDialog', 'WelcomeService','RouteHelpers'];
 
-    function WelcomeController($mdDialog, WelcomeService ) {
+    function WelcomeController($mdDialog, WelcomeService ,RouteHelpers) {
         var vm = this;
+        vm.viewTaskDetail = _viewTaskDetail;
 
         WelcomeService.GetTasks().then(function(response){
-            console.log("tasks List",response);
+            // console.log("tasks List",response);
             vm.taskList = response.data.docs;
         },function(error){
             console.log("error",error);
         });
 
+
+        function _viewTaskDetail(task,ev){
+            WelcomeService.GetUserAccount(task.entity_ref).then(function(response){
+                vm.userInfo = response.data.docs;
+                $mdDialog.show({
+                    locals: {items: {taskInfo:task,user:vm.userInfo}},
+                    templateUrl: RouteHelpers.basepath('task.detail.html'),
+                    parent: angular.element(document.body),
+                    targetEvent: ev,
+                    clickOutsideToClose: false,
+                    hasBackdrop: false,
+                    escapeToClose: true,
+                    controller: 'TaskDetailController',
+                    controllerAs: 'vm'
+                }).then(function (answer) {}, function () {});
+            },function(error){
+                console.log("error",error);
+            });
+
+
+        }
     }
 
 }(window.angular));
@@ -3406,9 +3468,19 @@ var ResourceMethods = {
 
     function WelcomeService($http, CommonService,AuthService) {
         return {
-            GetTasks: _getTasks
+            GetTasks: _getTasks,
+            GetUserAccount:_getUserAccount
         };
 
+        function _getUserAccount(id){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
+        }
         function _getTasks(){
             var httpConfig = {
                 headers: {
