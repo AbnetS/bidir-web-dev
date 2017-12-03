@@ -440,6 +440,7 @@ var API = {
         BaseUrl: "http://api.dev.bidir.gebeya.io/" //REMOTE API
     },
     Service: {
+        NONE:'',
         MFI: 'MFI',
         Auth: 'auth',
         Users: 'users'
@@ -456,6 +457,7 @@ var API = {
         },
         Users: {
             Account:'accounts',
+            UserUpdate:'',
             User:'create',
             GetAll: 'paginate?page=1&per_page=100',
             Roles: 'roles',
@@ -877,26 +879,43 @@ var ResourceMethods = {
 
         function _saveUser() {
             var userInfo = {
+                account:{
+                    email:vm.user.username
+                },
                 first_name: vm.user.first_name,
                 last_name: vm.user.last_name,
                 username: vm.user.username,
+                email: vm.user.username,
                 password: vm.user.password,
                 role : vm.user.selected_role._id,
-                default_branch : vm.user.selected_default_branch._id
+                default_branch : vm.user.selected_default_branch._id,
+                _id: vm.isEdit? vm.user._id:0
             };
 
-            console.log("user info", userInfo);
-            ManageUserService.CreateUser(
-                userInfo,
-                function (data) {
-                    console.log("saved successfully", data);
-                    $mdDialog.hide();
-                    //TODO: Alert & fetch user collection
-                },
-                function (error) {
-                    console.log("could not be saved", error);
-                }
-            );
+            if(vm.isEdit){
+                userInfo.account.email = userInfo.username;
+                ManageUserService.UpdateUser( userInfo ).then(function (data) {
+                        console.log("updated successfully", data);
+                        $mdDialog.hide();
+                        //TODO: Alert & fetch user collection
+                    },
+                    function (error) {
+                        console.log("could not be saved", error);
+                    });
+
+            }else {
+                ManageUserService.CreateUser(
+                    userInfo,
+                    function (data) {
+                        console.log("saved successfully", data);
+                        $mdDialog.hide();
+                        //TODO: Alert & fetch user collection
+                    },
+                    function (error) {
+                        console.log("could not be saved", error);
+                    }
+                );
+            }
         }
 
         function initialize(){
@@ -1108,6 +1127,7 @@ var ResourceMethods = {
             GetRoles: _getRoles,
             GetBranches: _getBranches,
             CreateUser: _saveUser,
+            UpdateUser: _updateUser,
             SetUserInfo: function(user){
                 this.user = user;
             },
@@ -1151,6 +1171,18 @@ var ResourceMethods = {
                 }
             };
             return $resource(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user, httpConfig).save(success,error);
+        }
+        function _updateUser(user) {
+
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            //http://api.dev.bidir.gebeya.io/users/
+            return $http.put('http://api.dev.bidir.gebeya.io/users/' + user._id, user, httpConfig);
+            // return $http.put(CommonService.buildUrl(API.Service.Users,API.Methods.Users.UserUpdate) + user._id, user, httpConfig);
         }
     }
 

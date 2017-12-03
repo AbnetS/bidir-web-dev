@@ -14,6 +14,7 @@
             GetRoles: _getRoles,
             GetBranches: _getBranches,
             CreateUser: _saveUser,
+            UpdateUser: _updateUser,
             SetUserInfo: function(user){
                 this.user = user;
             },
@@ -57,6 +58,18 @@
                 }
             };
             return $resource(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user, httpConfig).save(success,error);
+        }
+        function _updateUser(user) {
+
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            //http://api.dev.bidir.gebeya.io/users/
+            return $http.put('http://api.dev.bidir.gebeya.io/users/' + user._id, user, httpConfig);
+            // return $http.put(CommonService.buildUrl(API.Service.Users,API.Methods.Users.UserUpdate) + user._id, user, httpConfig);
         }
     }
 

@@ -3,6 +3,7 @@ var API = {
         BaseUrl: "http://api.dev.bidir.gebeya.io/" //REMOTE API
     },
     Service: {
+        NONE:'',
         MFI: 'MFI',
         Auth: 'auth',
         Users: 'users'
@@ -19,6 +20,7 @@ var API = {
         },
         Users: {
             Account:'accounts',
+            UserUpdate:'',
             User:'create',
             GetAll: 'paginate?page=1&per_page=100',
             Roles: 'roles',
