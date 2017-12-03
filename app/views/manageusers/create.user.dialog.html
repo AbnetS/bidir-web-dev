@@ -47,7 +47,7 @@
                     </div>
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Access Branches</label>
-                        <ui-select multiple ng-model="vm.user.access_branches"
+                        <ui-select multiple ng-model="vm.user.selected_access_branches"
                                    theme="select2" close-on-select="false" style="width:80%">
                             <ui-select-match placeholder="Select access branch...">
                                 {{$item.name}} - {{$item.location}}
@@ -66,16 +66,21 @@
                         <label class="control-label small">Grand Father Name</label>
                         <span class="required" aria-required="true"> * </span>
                         <input name="inputSurName"
-                               ng-model="vm.user.sur_name"
-                               placeholder="Sur Name"
+                               ng-model="vm.user.grand_father_name"
+                               placeholder="Grand Father Name"
                                type="text"
                                class="form-control input-sm" required>
                     </div>
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Hire Date</label>
                         <p class="input-group">
-                            <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="vm.user.hiring_date" is-open="vm.popup1.opened"
-                                   datepicker-options="vm.dateOptions" ng-required="true" close-text="Close" alt-input-formats="vm.altInputFormats"/>
+                            <input type="text" class="form-control"
+                                   uib-datepicker-popup="{{format}}"
+                                   ng-model="vm.user.hired_date"
+                                   is-open="vm.popup1.opened"
+                                   datepicker-options="vm.dateOptions"
+                                   ng-required="true" close-text="Close"
+                                   alt-input-formats="vm.altInputFormats"/>
                             <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-click="vm.openDatePicker()">
                               <i class="fa fa-calendar"></i>
@@ -105,7 +110,7 @@
                     </div>
 
 
-                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                    <div ng-if="!vm.isEdit" class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Password</label>
                         <span class="required" aria-required="true"> * </span>
                         <input name="inputPassword"
@@ -130,7 +135,7 @@
             </md-button>
             <md-button class="md-raised md-primary md-button-small md-ink-ripple pull-right"
                        ng-click="vm.saveUser()">
-                <i class="fa fa-save"></i> Save
+                <i class="fa fa-save"></i> {{vm.isEdit? 'Update':'Save'}}
             </md-button>
         </md-dialog-actions>
     </form>

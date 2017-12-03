@@ -22,6 +22,9 @@ var API = {
             GetAll: 'paginate?page=1&per_page=100',
             Roles: 'roles',
             GetRoles: 'roles/paginate?page=1&per_page=100'
+        },
+        Tasks: {
+            GetAll: 'tasks/paginate?page=1&per_page=100'
         }
     }
 };

@@ -19,7 +19,7 @@
             },
             GetUserInfo:function(){
                 return this.user;
-            },
+            }
         };
 
         function _getUsers(){
@@ -49,14 +49,14 @@
             };
             return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAllBranches),httpConfig);
         }
-        function _saveUser(user) {
+        function _saveUser(user,success,error) {
             var httpConfig = {
                 headers: {
                     'Authorization': 'Bearer ' + AuthService.GetToken(),
                     'Accept': 'application/json'
                 }
             };
-            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user,httpConfig);
+            return $resource(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user, httpConfig).save(success,error);
         }
     }
 

@@ -34,7 +34,10 @@
           .state('app.welcome', {
               url: '/welcome',
               title: 'Welcome',
-              templateUrl: helper.basepath('welcome.html')
+              templateUrl: helper.basepath('welcome.html'),
+              resolve: helper.resolveFor('icons'),
+              controller: 'WelcomeController',
+              controllerAs: 'vm'
           })
            .state('app.manage_user', {
                 url: '/manage_user',

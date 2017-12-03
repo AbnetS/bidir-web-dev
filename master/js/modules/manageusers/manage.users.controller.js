@@ -14,9 +14,11 @@
         var vm = this;
         vm.addUser = _addUser;
         vm.editUser = _editUser;
+        vm.changeStatus = _changeStatus;
+        vm.statusStyle = _statusStyle;
 
         ManageUserService.GetUsers().then(function(response){
-            // console.log("users list",response);
+            console.log("users list",response);
             vm.users = response.data.docs;
         },function(error){
             console.log("error",error);
@@ -48,6 +50,10 @@
 
 
 
+        }
+
+        function _changeStatus(user) {
+            console.log("user to change status",user);
         }
 
         function _addUser(ev){
@@ -86,6 +92,27 @@
                 .then(function (answer) {
                 }, function () {
                 });
+        }
+
+        function _statusStyle(status){
+            var style = '';
+            switch (status){
+                case 'active':
+                    style =  'label label-success';
+                    break;
+                case 'inactive':
+                    style =  'label label-default';
+                    break;
+                case 'declined':
+                    style =  'label label-danger';
+                    break;
+                case 'pending':
+                    style =  'label label-warning';
+                    break;
+                default:
+                    style =  'label label-default';
+            }
+            return style;
         }
     }
 })(window.angular,window.document);
