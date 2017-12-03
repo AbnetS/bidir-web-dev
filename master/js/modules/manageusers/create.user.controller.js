@@ -50,8 +50,8 @@
         function initialize(){
             if(vm.isEdit){
                 // angular.extend(vm.user, vm.user.account);
-                var dt = new Date(vm.user.hired_date);
-                vm.user.hired_date = dt;
+                // var dt = new Date(vm.user.hired_date);
+                // vm.user.hired_date = dt;
                 vm.user.selected_role = vm.user.account.role;
                 vm.user.selected_default_branch = vm.user.default_branch;
             }

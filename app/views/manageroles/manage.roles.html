@@ -1,79 +1,50 @@
+
+
 <h3>Manage Roles
-    <small>Manage Roles and permissions.</small>
+    <small>Manage user roles and permissions.</small>
 </h3>
-<!-- START panel-->
+
+<!-- ngRepeat + ngResource-->
 <div class="panel panel-default">
-    <!--<div class="panel-heading">Demo Table #1</div>-->
-    <!-- START table-responsive-->
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover" id="table-ext-1">
-            <thead>
-            <tr>
-                <th>UID</th>
-                <th>Picture</th>
-                <th>Username</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Profile</th>
-                <th>Last Login</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>1</td>
-                <td>
-                    <div class="media">
-                        <img class="img-responsive img-circle" src="app/img/user/91.jpg" alt="Image" />
-                    </div>
-                </td>
-                <td>@twitter</td>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>mail@example.com</td>
-                <td class="text-center">
-                    <div class="radial-bar radial-bar-25 radial-bar-xs" data-label="25%"></div>
-                </td>
-                <td>1 week</td>
-
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>
-                    <div class="media">
-                        <img class="img-responsive img-circle" src="app/img/user/22.jpg" alt="Image" />
-                    </div>
-                </td>
-                <td>@mdo</td>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>mail@example.com</td>
-                <td class="text-center">
-                    <div class="radial-bar radial-bar-50 radial-bar-xs" data-label="50%"></div>
-                </td>
-                <td>25 minutes</td>
-
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>
-                    <div class="media">
-                        <img class="img-responsive img-circle" src="app/img/user/33.jpg" alt="Image" />
-                    </div>
-                </td>
-                <td>@fat</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>mail@example.com</td>
-                <td class="text-center">
-                    <div class="radial-bar radial-bar-80 radial-bar-xs" data-label="80%"></div>
-                </td>
-                <td>10 hours</td>
-
-            </tr>
-            </tbody>
-        </table>
+    <div class="panel-heading">Roles </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-xs-10 col-lg-12">
+                <p><a class="btn btn-success pull-right" href="" ng-click="vm.addRole()">
+                    <i class="fa fa-plus"></i>
+                    Add Role</a>
+                </p>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="row-border hover" datatable="ng">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Permissions</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="role in vm.roles"  >
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{role.name}}</td>
+                        <td>{{role.name }}</td>
+                        <td>{{role.name }}</td>
+                        <td>
+                            <a class="btn btn-xs btn-info"
+                               ng-click="vm.editRole(usr,$event)">
+                                <i class="fa fa-edit"></i> Edit
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <!-- END table-responsive-->
 </div>
-<!-- END panel-->
