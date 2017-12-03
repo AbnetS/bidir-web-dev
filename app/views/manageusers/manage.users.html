@@ -39,7 +39,11 @@
                         <td>{{usr.role  }}</td>
                         <td>{{ usr.username }}</td>
                         <td>{{usr.status }}</td>
-                        <td></td>
+                        <td>
+                          <a ng-click="vm.editUser(usr,$event)">
+                            <i class="fa fa-edit"></i> Edit
+                          </a>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

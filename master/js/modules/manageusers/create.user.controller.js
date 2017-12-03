@@ -13,28 +13,47 @@
         .controller('CreateUserController', CreateUserController);
 
     CreateUserController.$inject = ['$mdDialog','ManageUserService'];
-    function CreateUserController($mdDialog, ManageUserService) {
+    function CreateUserController($mdDialog, ManageUserService,data) {
         var vm = this;
         vm.cancel = _cancel;
         vm.saveUser = _saveUser;
+        console.log("data",data);
 
-            function _saveUser() {
-                console.log("new user information",vm.user);
-            }
+        initialize();
 
-        ManageUserService.GetRoles().then(function(response){
-            console.log("roles",response);
-            vm.roles = response.data.docs;
-        },function(error){
-            console.log("error",error);
-        });
+        function _saveUser() {
 
-        ManageUserService.GetBranches().then(function(response){
-            console.log("branches",response);
-            vm.branches = response.data.docs;
-        },function(error){
-            console.log("error",error);
-        });
+            vm.user.default_Branch = vm.user.selected_default_branch._id;
+            vm.user.role = vm.user.selected_role._id;
+            vm.user.user_role = "load_officer";
+
+            ManageUserService.CreateUser(
+                vm.user,
+                function (data) {
+                    console.log("saved successfully", data);
+                    //TODO: Alert & fetch user collection
+                },
+                function (error) {
+                    console.log("could not be saved", error);
+                }
+            );
+        }
+
+        function initialize(){
+            ManageUserService.GetRoles().then(function(response){
+                console.log("roles",response);
+                vm.roles = response.data.docs;
+            },function(error){
+                console.log("error",error);
+            });
+
+            ManageUserService.GetBranches().then(function(response){
+                console.log("branches",response);
+                vm.branches = response.data.docs;
+            },function(error){
+                console.log("error",error);
+            });
+        }
 
         vm.clear = function() {
             vm.dt = null;
@@ -55,7 +74,7 @@
         };
 
         function _cancel() {
-            $mdDialog.hide();
+            $mdDialog.cancel();
         }
     }
 })(window.angular);

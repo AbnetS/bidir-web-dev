@@ -3,7 +3,7 @@ var API = {
         BaseUrl: "http://api.dev.bidir.gebeya.io/" //REMOTE API
     },
     Service: {
-        MFI: 'MFI/MFI',
+        MFI: 'MFI',
         Auth: 'auth',
         Users: 'users'
     },
@@ -12,11 +12,13 @@ var API = {
             Login: 'login'
         },
         MFI: {
+            MFI:'create',
             GetAll:'',
             Branch: 'branches',
-            BranchGet: 'branches/paginate?page=1&per_page=100',
+            GetAllBranches: 'branches/paginate?page=1&per_page=100',
         },
         Users: {
+            User:'create',
             GetAll: 'paginate?page=1&per_page=100',
             Roles: 'roles',
             GetRoles: 'roles/paginate?page=1&per_page=100'

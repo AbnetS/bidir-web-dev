@@ -1,13 +1,13 @@
 @charset "UTF-8";
 /*!
- * 
+ *
  * Angle - Bootstrap Admin App + AngularJS Material
- * 
+ *
  * Version: 3.8.1
  * Author: @themicon_co
  * Website: http://themicon.co
  * License: https://wrapbootstrap.com/help/licenses
- * 
+ *
  */
 /* ========================================================================
    Component: bootstrap-reset.less
@@ -7873,4 +7873,7 @@ md-tabs .md-tab.md-focused,
 md-tabs.md-default-theme,
 md-tabs .md-tab.md-focused md-icon {
   color: #3f51b5 !important;
+}
+.green {
+  background: #64ba46;
 }

@@ -5,7 +5,7 @@
                 <h2>User</h2>
                 <span flex></span>
                 <md-button aria-label="button" class="md-icon-button" ng-click="vm.cancel()">
-                    <i class="icon-close" style="font-size: medium"></i>
+                    <i class="icon-close"></i>
                 </md-button>
             </div>
         </md-toolbar>
@@ -25,13 +25,13 @@
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Default Branch</label>
                         <span class="required" aria-required="true"> * </span>
-                        <ui-select ng-model="vm.user.default_branch" theme="select2"
+                        <ui-select ng-model="vm.user.selected_default_branch" theme="select2"
                                    class="form-control" title="Choose default branch">
                             <ui-select-match placeholder="Select or search a branch from the list...">
                                 {{$select.selected.name}} - {{$select.selected.location}}</ui-select-match>
                             <ui-select-choices repeat="branch in vm.branches | filter: $select.search">
                                 <span ng-bind-html="branch.name | highlight: $select.search"></span>
-                                <small ng-bind-html="branch.location | highlight: $select.search"></small>
+                                <small ng-bind-html="branch.location"></small>
                             </ui-select-choices>
                         </ui-select>
                     </div>
@@ -50,7 +50,8 @@
                         <ui-select multiple ng-model="vm.user.access_branches"
                                    theme="select2" close-on-select="false" style="width:80%">
                             <ui-select-match placeholder="Select access branch...">
-                                {{$item.name}} </ui-select-match>
+                                {{$item.name}} - {{$item.location}}
+                            </ui-select-match>
                             <ui-select-choices repeat="branch in vm.branches">
                                 <div ng-bind-html="branch.name | highlight: $select.search"></div>
                                 <small>
@@ -76,24 +77,22 @@
                             <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="vm.user.hiring_date" is-open="vm.popup1.opened"
                                    datepicker-options="vm.dateOptions" ng-required="true" close-text="Close" alt-input-formats="vm.altInputFormats"/>
                             <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-click="vm.openDatePicker()">
-                          <i class="fa fa-calendar"></i>
-                        </button>
-                      </span>
+                            <button type="button" class="btn btn-default" ng-click="vm.openDatePicker()">
+                              <i class="fa fa-calendar"></i>
+                            </button>
+                            </span>
                         </p>
                     </div>
 
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
-                        <label class="control-label small">Select Role</label>
+                        <label class="control-label small">Role</label>
                         <span class="required" aria-required="true"> * </span>
-                        <ui-select ng-model="vm.user.selected_role" theme="select2"
-                                   class="form-control" title="Choose user role">
-                            <ui-select-match placeholder="Select or search role from the list...">
-                                {{$select.selected.name}} - {{$select.selected.location}}</ui-select-match>
-                            <ui-select-choices repeat="role in vm.roles | filter: $select.search">
-                                <span ng-bind-html="branch.name | highlight: $select.search"></span>
-                            </ui-select-choices>
-                        </ui-select>
+                        <md-select ng-model="vm.user.selected_role">
+                            <md-option><em>None</em></md-option>
+                            <md-option ng-repeat="role in vm.roles" ng-value="role">
+                                {{role.name}}
+                            </md-option>
+                        </md-select>
                     </div>
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Username</label>
@@ -112,7 +111,7 @@
                         <input name="inputPassword"
                                ng-model="vm.user.password"
                                placeholder="Password"
-                               type="text"
+                               type="password"
                                class="form-control input-sm" required>
                     </div>
                 </div>
@@ -126,7 +125,7 @@
                     Cancel
                 </md-button>
             </div>
-            <md-button md-no-ink class="md-primary " ng-click="vm.approveUser()">
+            <md-button ng-hide="true" md-no-ink class="md-primary " ng-click="vm.approveUser()">
                 Approve
             </md-button>
             <md-button class="md-raised md-primary md-button-small md-ink-ripple pull-right"
