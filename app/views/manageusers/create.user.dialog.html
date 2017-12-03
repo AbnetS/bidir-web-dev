@@ -92,17 +92,17 @@
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Role</label>
                         <span class="required" aria-required="true"> * </span>
-                        <md-select ng-model="vm.user.role">
+                        <md-select ng-model="vm.user.selected_role">
                             <md-option><em>None</em></md-option>
                             <md-option ng-repeat="role in vm.roles" ng-value="role">
                                 {{role.name}}
                             </md-option>
                         </md-select>
                     </div>
-                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                    <div  class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Username</label>
                         <span class="required" aria-required="true"> * </span>
-                        <input name="inputUsername"
+                        <input ng-disabled="vm.isEdit" name="inputUsername"
                                ng-model="vm.user.username"
                                placeholder="Username"
                                type="text"
