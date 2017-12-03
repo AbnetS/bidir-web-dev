@@ -1,11 +1,28 @@
 <div class="md-welcome">
    <div class="md-welcome-msg">
-      <div class="container container-md">
-         <h1 class="animated fadeInDown anim-delay-10">BIDIR</h1>
+      <div class="container container-sm">
          <h2 class="animated fadeInLeft anim-delay-15">BIDIR Web App Welcome page</h2>
       </div>
    </div>
 </div>
 <div class="container container-md">
+   <div class="panel">
+   <em class="fa fa-clock-o fa-fw"></em>Tasks Panel
+   <div>
+      <!-- START list group-->
+      <div class="list-group mb0">
+         <a ng-click="" class="list-group-item" ng-repeat="tsk in vm.taskList">
+            <button class="btn btn-default pull-right" ng-click="">View Detail</button>
 
+            <h5><em class="fa fa-fw fa-calendar mr"></em>{{tsk.task}}</h5>
+            <span class="label label-inverse">{{tsk.task_type}}</span>
+            <span class="label label-info">{{tsk.last_modified | date:'medium'}}</span>
+
+         </a>
+      </div>
+      <!-- END list group-->
+      <!--<div class="panel-footer text-right"><a class="btn btn-default btn-sm" ng-click="">View All</a>-->
+      <!--</div>-->
+   </div>
+   </div>
 </div>

@@ -35,7 +35,7 @@
               url: '/welcome',
               title: 'Welcome',
               templateUrl: helper.basepath('welcome.html'),
-              resolve: helper.resolveFor('icons'),
+              resolve: helper.resolveFor('moment','icons'),
               controller: 'WelcomeController',
               controllerAs: 'vm'
           })

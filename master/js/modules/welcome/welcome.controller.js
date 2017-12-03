@@ -11,10 +11,11 @@
     WelcomeController.$inject = ['$mdDialog', 'WelcomeService'];
 
     function WelcomeController($mdDialog, WelcomeService ) {
+        var vm = this;
 
         WelcomeService.GetTasks().then(function(response){
             console.log("tasks List",response);
-            // vm.tasks = response.data.docs;
+            vm.taskList = response.data.docs;
         },function(error){
             console.log("error",error);
         });
