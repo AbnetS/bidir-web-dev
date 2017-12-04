@@ -14,13 +14,7 @@
             GetRoles: _getRoles,
             GetBranches: _getBranches,
             CreateUser: _saveUser,
-            UpdateUser: _updateUser,
-            SetUserInfo: function(user){
-                this.user = user;
-            },
-            GetUserInfo:function(){
-                return this.user;
-            }
+            UpdateUser: _updateUser
         };
 
         function _getUsers(){

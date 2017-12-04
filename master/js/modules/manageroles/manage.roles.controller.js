@@ -9,7 +9,7 @@
         .module('app.manage_roles')
         .controller('ManageRolesController', ManageRolesController);
 
-    ManageRolesController.$inject = ['AuthService',
+    ManageRolesController.$inject = ['ManageUserService',
         '$scope',
         '$state',
         '$rootScope',
@@ -17,14 +17,20 @@
     ];
 
     function ManageRolesController(
-        AuthService,
+        ManageUserService,
         $scope,
         $state,
         $rootScope,
         APP_CONSTANTS
     ) {
         var vm = this;
-    console.log("manage role controller");
+
+        ManageUserService.GetRoles().then(function(response){
+            vm.roles = response.data.docs;
+            console.log("vm.roles",vm.roles);
+        },function(error){
+            console.log("error",error);
+        });
     }
 })(window.angular);
 

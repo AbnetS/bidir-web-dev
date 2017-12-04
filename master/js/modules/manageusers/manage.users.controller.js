@@ -18,7 +18,7 @@
         vm.statusStyle = _statusStyle;
 
         ManageUserService.GetUsers().then(function(response){
-            console.log("users list",response);
+            // console.log("users list",response);
             vm.users = response.data.docs;
         },function(error){
             console.log("error",error);
@@ -94,7 +94,7 @@
         function _statusStyle(status){
             var style = '';
             switch (status){
-                case 'active':
+                case 'active' || 'active ':
                     style =  'label label-success';
                     break;
                 case 'inactive':

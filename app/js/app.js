@@ -105,7 +105,9 @@
     'use strict';
 
     angular
-        .module('app.manage_roles', []);
+        .module('app.manage_users', [
+
+        ]);
 
 })();
 /**
@@ -115,9 +117,7 @@
     'use strict';
 
     angular
-        .module('app.manage_users', [
-
-        ]);
+        .module('app.manage_roles', []);
 
 })();
 (function() {
@@ -822,37 +822,6 @@ var ResourceMethods = {
 
 })();
 /**
- * Created by Yoni on 11/30/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_roles')
-        .controller('ManageRolesController', ManageRolesController);
-
-    ManageRolesController.$inject = ['AuthService',
-        '$scope',
-        '$state',
-        '$rootScope',
-        'APP_CONSTANTS'
-    ];
-
-    function ManageRolesController(
-        AuthService,
-        $scope,
-        $state,
-        $rootScope,
-        APP_CONSTANTS
-    ) {
-        var vm = this;
-    console.log("manage role controller");
-    }
-})(window.angular);
-
-
-/**
  * Created by Yoni on 12/2/2017.
  */
 /**
@@ -1015,7 +984,7 @@ var ResourceMethods = {
         vm.statusStyle = _statusStyle;
 
         ManageUserService.GetUsers().then(function(response){
-            console.log("users list",response);
+            // console.log("users list",response);
             vm.users = response.data.docs;
         },function(error){
             console.log("error",error);
@@ -1091,7 +1060,7 @@ var ResourceMethods = {
         function _statusStyle(status){
             var style = '';
             switch (status){
-                case 'active':
+                case 'active' || 'active ':
                     style =  'label label-success';
                     break;
                 case 'inactive':
@@ -1128,13 +1097,7 @@ var ResourceMethods = {
             GetRoles: _getRoles,
             GetBranches: _getBranches,
             CreateUser: _saveUser,
-            UpdateUser: _updateUser,
-            SetUserInfo: function(user){
-                this.user = user;
-            },
-            GetUserInfo:function(){
-                return this.user;
-            }
+            UpdateUser: _updateUser
         };
 
         function _getUsers(){
@@ -1200,6 +1163,43 @@ var ResourceMethods = {
     }
 
 })(window.angular);
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('ManageRolesController', ManageRolesController);
+
+    ManageRolesController.$inject = ['ManageUserService',
+        '$scope',
+        '$state',
+        '$rootScope',
+        'APP_CONSTANTS'
+    ];
+
+    function ManageRolesController(
+        ManageUserService,
+        $scope,
+        $state,
+        $rootScope,
+        APP_CONSTANTS
+    ) {
+        var vm = this;
+
+        ManageUserService.GetRoles().then(function(response){
+            vm.roles = response.data.docs;
+            console.log("vm.roles",vm.roles);
+        },function(error){
+            console.log("error",error);
+        });
+    }
+})(window.angular);
+
 
 /**=========================================================
  * Module: modals.js
