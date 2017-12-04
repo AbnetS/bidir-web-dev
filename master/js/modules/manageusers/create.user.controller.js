@@ -45,7 +45,6 @@
                     });
 
             }else {
-                console.log("vm.user",vm.user);
                 userInfo.password = vm.user.password;
                 userInfo.username = vm.user.username;
 
