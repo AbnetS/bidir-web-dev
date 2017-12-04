@@ -3426,9 +3426,9 @@ var ResourceMethods = {
         .module('app.welcomePage')
         .controller('TaskDetailController', TaskDetailController);
 
-    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items'];
+    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items','SweetAlert'];
 
-    function TaskDetailController($mdDialog, WelcomeService ,items) {
+    function TaskDetailController($mdDialog, WelcomeService ,items,SweetAlert) {
         var vm = this
         vm.cancel = _cancel;
         vm.approveUser = _approveUser;
@@ -3464,10 +3464,16 @@ var ResourceMethods = {
         function updateStatus(task){
             WelcomeService.ChangeTaskStatus(task).then(
                 function(response) {
+                    SweetAlert.swal('Task Status Changed!',
+                        'Task '+ task.status + ' Successfully!',
+                        'success');
                     console.log("task updated",response);
                     $mdDialog.hide();
                 },
                 function(error) {
+                    SweetAlert.swal( 'Oops...',
+                        'Something went wrong!',
+                        'error');
                     console.log("could not be updated", error);
                 }
             );
