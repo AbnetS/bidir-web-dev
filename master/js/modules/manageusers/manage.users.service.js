@@ -50,14 +50,26 @@
             };
             return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAllBranches),httpConfig);
         }
-        function _saveUser(user,success,error) {
+        function _saveUser(user) {
             var httpConfig = {
                 headers: {
                     'Authorization': 'Bearer ' + AuthService.GetToken(),
                     'Accept': 'application/json'
                 }
             };
-            return $resource(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user, httpConfig).save(success,error);
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user,httpConfig);
+            // return $http({
+            //     url: CommonService.buildUrl(API.Service.Users,API.Methods.Users.User),
+            //     method: 'POST',
+            //     data: user,
+            //     //assigning content-type as undefined,let the browser
+            //     //assign the correct boundary for us
+            //     headers: {
+            //         'Authorization': 'Bearer ' + AuthService.GetToken(),
+            //         'Accept': 'application/json'
+            //     }
+            // });
+            // return $resource(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user, httpConfig).save(success,error);
         }
         function _updateUser(user) {
 

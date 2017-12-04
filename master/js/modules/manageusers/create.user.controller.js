@@ -18,28 +18,23 @@
         vm.cancel = _cancel;
         vm.saveUser = _saveUser;
         vm.isEdit = items !== null;
-        vm.user = items;
+        vm.user = items !== null?items:null;
         console.log("user info", items);
 
         initialize();
 
         function _saveUser() {
             var userInfo = {
-                account:{
-                    email:vm.user.username
-                },
                 first_name: vm.user.first_name,
                 last_name: vm.user.last_name,
-                username: vm.user.username,
-                email: vm.user.username,
-                password: vm.user.password,
                 role : vm.user.selected_role._id,
-                default_branch : vm.user.selected_default_branch._id,
-                _id: vm.isEdit? vm.user._id:0
+                default_branch : vm.user.selected_default_branch._id
             };
 
             if(vm.isEdit){
-                userInfo.account.email = userInfo.username;
+                console.log("vm.user",vm.user);
+                userInfo._id = vm.user._id;
+                userInfo.account = items.account;
                 ManageUserService.UpdateUser( userInfo ).then(function (data) {
                         console.log("updated successfully", data);
                         $mdDialog.hide();
@@ -50,8 +45,11 @@
                     });
 
             }else {
-                ManageUserService.CreateUser(
-                    userInfo,
+                console.log("vm.user",vm.user);
+                userInfo.password = vm.user.password;
+                userInfo.username = vm.user.username;
+
+                ManageUserService.CreateUser(userInfo).then(
                     function (data) {
                         console.log("saved successfully", data);
                         $mdDialog.hide();

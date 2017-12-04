@@ -160,13 +160,13 @@
     'use strict';
 
     angular
-        .module('app.sidebar', []);
+        .module('app.settings', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.settings', []);
+        .module('app.sidebar', []);
 })();
 (function() {
     'use strict';
@@ -872,28 +872,23 @@ var ResourceMethods = {
         vm.cancel = _cancel;
         vm.saveUser = _saveUser;
         vm.isEdit = items !== null;
-        vm.user = items;
+        vm.user = items !== null?items:null;
         console.log("user info", items);
 
         initialize();
 
         function _saveUser() {
             var userInfo = {
-                account:{
-                    email:vm.user.username
-                },
                 first_name: vm.user.first_name,
                 last_name: vm.user.last_name,
-                username: vm.user.username,
-                email: vm.user.username,
-                password: vm.user.password,
                 role : vm.user.selected_role._id,
-                default_branch : vm.user.selected_default_branch._id,
-                _id: vm.isEdit? vm.user._id:0
+                default_branch : vm.user.selected_default_branch._id
             };
 
             if(vm.isEdit){
-                userInfo.account.email = userInfo.username;
+                console.log("vm.user",vm.user);
+                userInfo._id = vm.user._id;
+                userInfo.account = items.account;
                 ManageUserService.UpdateUser( userInfo ).then(function (data) {
                         console.log("updated successfully", data);
                         $mdDialog.hide();
@@ -904,8 +899,11 @@ var ResourceMethods = {
                     });
 
             }else {
-                ManageUserService.CreateUser(
-                    userInfo,
+                console.log("vm.user",vm.user);
+                userInfo.password = vm.user.password;
+                userInfo.username = vm.user.username;
+
+                ManageUserService.CreateUser(userInfo).then(
                     function (data) {
                         console.log("saved successfully", data);
                         $mdDialog.hide();
@@ -1163,14 +1161,26 @@ var ResourceMethods = {
             };
             return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAllBranches),httpConfig);
         }
-        function _saveUser(user,success,error) {
+        function _saveUser(user) {
             var httpConfig = {
                 headers: {
                     'Authorization': 'Bearer ' + AuthService.GetToken(),
                     'Accept': 'application/json'
                 }
             };
-            return $resource(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user, httpConfig).save(success,error);
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user,httpConfig);
+            // return $http({
+            //     url: CommonService.buildUrl(API.Service.Users,API.Methods.Users.User),
+            //     method: 'POST',
+            //     data: user,
+            //     //assigning content-type as undefined,let the browser
+            //     //assign the correct boundary for us
+            //     headers: {
+            //         'Authorization': 'Bearer ' + AuthService.GetToken(),
+            //         'Accept': 'application/json'
+            //     }
+            // });
+            // return $resource(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user, httpConfig).save(success,error);
         }
         function _updateUser(user) {
 
@@ -2474,6 +2484,79 @@ var ResourceMethods = {
 })();
 
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.settings')
+        .run(settingsRun);
+
+    settingsRun.$inject = ['$rootScope', '$localStorage'];
+
+    function settingsRun($rootScope, $localStorage){
+
+
+      // User Settings
+      // -----------------------------------
+      $rootScope.user = {
+        name:     'Yonas',
+        job:      'System Admin',
+        picture:  'app/img/user/02.jpg'
+      };
+
+      // Hides/show user avatar on sidebar from any element
+      $rootScope.toggleUserBlock = function(){
+        $rootScope.$broadcast('toggleUserBlock');
+      };
+
+      // Global Settings
+      // -----------------------------------
+      $rootScope.app = {
+        name: 'Bidir Web',
+        description: 'Bidir Web Application',
+        year: ((new Date()).getFullYear()),
+        layout: {
+          isFixed: true,
+          isCollapsed: false,
+          isBoxed: false,
+          isRTL: false,
+          horizontal: false,
+          isFloat: false,
+          asideHover: false,
+          theme: 'app/css/theme-d.css',
+          asideScrollbar: false,
+          isCollapsedText: false
+        },
+        useFullLayout: false,
+        hiddenFooter: false,
+        offsidebarOpen: false,
+        asideToggled: false,
+        viewAnimation: 'ng-fadeInUp'
+      };
+
+      // Setup the layout mode
+      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
+
+      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
+      // if( angular.isDefined($localStorage.layout) )
+      //   $rootScope.app.layout = $localStorage.layout;
+      // else
+      //   $localStorage.layout = $rootScope.app.layout;
+      //
+      // $rootScope.$watch('app.layout', function () {
+      //   $localStorage.layout = $rootScope.app.layout;
+      // }, true);
+
+      // Close submenu when sidebar change from collapsed to normal
+      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
+        if( newValue === false )
+          $rootScope.$broadcast('closeSidebarMenu');
+      });
+
+    }
+
+})();
+
 /**=========================================================
  * Module: sidebar-menu.js
  * Handle sidebar collapsible elements
@@ -2834,79 +2917,6 @@ var ResourceMethods = {
           $scope.$on('$destroy', detach);
         }
     }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.settings')
-        .run(settingsRun);
-
-    settingsRun.$inject = ['$rootScope', '$localStorage'];
-
-    function settingsRun($rootScope, $localStorage){
-
-
-      // User Settings
-      // -----------------------------------
-      $rootScope.user = {
-        name:     'Yonas',
-        job:      'System Admin',
-        picture:  'app/img/user/02.jpg'
-      };
-
-      // Hides/show user avatar on sidebar from any element
-      $rootScope.toggleUserBlock = function(){
-        $rootScope.$broadcast('toggleUserBlock');
-      };
-
-      // Global Settings
-      // -----------------------------------
-      $rootScope.app = {
-        name: 'Bidir Web',
-        description: 'Bidir Web Application',
-        year: ((new Date()).getFullYear()),
-        layout: {
-          isFixed: true,
-          isCollapsed: false,
-          isBoxed: false,
-          isRTL: false,
-          horizontal: false,
-          isFloat: false,
-          asideHover: false,
-          theme: 'app/css/theme-d.css',
-          asideScrollbar: false,
-          isCollapsedText: false
-        },
-        useFullLayout: false,
-        hiddenFooter: false,
-        offsidebarOpen: false,
-        asideToggled: false,
-        viewAnimation: 'ng-fadeInUp'
-      };
-
-      // Setup the layout mode
-      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
-
-      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
-      // if( angular.isDefined($localStorage.layout) )
-      //   $rootScope.app.layout = $localStorage.layout;
-      // else
-      //   $localStorage.layout = $rootScope.app.layout;
-      //
-      // $rootScope.$watch('app.layout', function () {
-      //   $localStorage.layout = $rootScope.app.layout;
-      // }, true);
-
-      // Close submenu when sidebar change from collapsed to normal
-      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
-        if( newValue === false )
-          $rootScope.$broadcast('closeSidebarMenu');
-      });
-
-    }
-
 })();
 
 (function() {
