@@ -28,7 +28,7 @@
         function _approveUser() {
             var task = {
                 taskId:vm.task._id ,
-                action: "approved",
+                status: "approved",
                 comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
             };
             updateStatus(task);
@@ -37,7 +37,7 @@
         function _declineUser() {
             var task = {
                 taskId:vm.task._id ,
-                action: "declined",
+                status: "declined",
                 comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
             };
             updateStatus(task);
