@@ -35,7 +35,7 @@
               url: '/welcome',
               title: 'Welcome',
               templateUrl: helper.basepath('welcome.html'),
-              resolve: helper.resolveFor('moment','icons'),
+              resolve: helper.resolveFor('moment','icons','oitozero.ngSweetAlert'),
               controller: 'WelcomeController',
               controllerAs: 'vm'
           })
@@ -43,7 +43,7 @@
                 url: '/manage_user',
                 title: 'manage users',
                 templateUrl: helper.basepath('manageusers/manage.users.html'),
-               resolve: angular.extend(helper.resolveFor('datatables','ngDialog','ui.select','icons'),{}),
+               resolve: angular.extend(helper.resolveFor('datatables','ngDialog','ui.select','icons','oitozero.ngSweetAlert'),{}),
                controller: 'ManageUsersController',
                controllerAs: 'vm'
             })
@@ -51,7 +51,7 @@
                 url: '/manage_role',
                 title: 'manage roles',
                 templateUrl: helper.basepath('manageroles/manage.roles.html'),
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select','icons'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select','icons','oitozero.ngSweetAlert'),
                 controller: 'ManageRolesController',
                 controllerAs: 'vm'
             })

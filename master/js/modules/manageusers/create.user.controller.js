@@ -12,8 +12,8 @@
         .module('app.manage_users')
         .controller('CreateUserController', CreateUserController);
 
-    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','$scope'];
-    function CreateUserController($mdDialog, ManageUserService,items,$scope) {
+    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','SweetAlert'];
+    function CreateUserController($mdDialog, ManageUserService,items,SweetAlert) {
         var vm = this;
         vm.cancel = _cancel;
         vm.saveUser = _saveUser;
@@ -50,11 +50,17 @@
 
                 ManageUserService.CreateUser(userInfo).then(
                     function (data) {
+                        SweetAlert.swal('Saved Successfully!',
+                            'User Information is stored',
+                            'success');
                         console.log("saved successfully", data);
                         $mdDialog.hide();
                         //TODO: Alert & fetch user collection
                     },
                     function (error) {
+                        SweetAlert.swal( 'Oops...',
+                            'Something went wrong!',
+                            'error');
                         console.log("could not be saved", error);
                     }
                 );

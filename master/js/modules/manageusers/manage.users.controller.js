@@ -9,8 +9,8 @@
         .module('app.manage_users')
         .controller('ManageUsersController', ManageUsersController);
 
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnDefBuilder','$scope', 'ngDialog', 'ManageUserService','$mdDialog'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnDefBuilder,$scope, ngDialog, ManageUserService,$mdDialog) {
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnDefBuilder','SweetAlert', 'ngDialog', 'ManageUserService','$mdDialog'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnDefBuilder,SweetAlert, ngDialog, ManageUserService,$mdDialog) {
         var vm = this;
         vm.addUser = _addUser;
         vm.editUser = _editUser;
@@ -57,6 +57,7 @@
         }
 
         function _addUser(ev){
+
             $mdDialog.show({
                 locals: {
                     items: null
@@ -76,9 +77,7 @@
         }
         function _editUser(user,ev){
             $mdDialog.show({
-                locals: {
-                    items: user
-                },
+                locals: {items: user},
                 templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
                 parent: angular.element(document.body),
                 targetEvent: ev,
@@ -87,8 +86,7 @@
                 escapeToClose: true,
                 controller: 'CreateUserController',
                 controllerAs: 'vm'
-            })
-                .then(function (answer) {
+            }).then(function (answer) {
                 }, function () {
                 });
         }
