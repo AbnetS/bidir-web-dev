@@ -2,21 +2,21 @@
 DOCKER_PATH=$(which docker)
 SERVICE_NAME=bidir-web
 IMAGE_TAG=bidir/$SERVICE_NAME
-EXPOSE_PORT=80
+EXPOSE_PORT=18080
 CONT_PORT=80
-HOST_IP=10.142.0.2
-MONGODB_URL=mongodb://10.142.0.2:27017/bidir
+HOST_IP=10.142.0.5
+MONGODB_URL=mongodb://10.142.0.5:27017/bidir
+cd master
 NPM=$(which npm)
+sudo $NPM install
 sudo $NPM install -g gulp
-sudo $NPM install bower
-BOWER=$(which bower)
-$BOWER install --root-access
-sudo $NPM install gulp 
+sudo $NPM install bower install
+sudo $NPM install gulp
 sudo $NPM install node-build-web-app --save-dev
-sudo $NPM install --no-optional 
+sudo $NPM install --no-optional
 GULP=$(which gulp)
-$GULP build 
-
+$GULP build
+cd ..
 #Stop running container
 $DOCKER_PATH stop $SERVICE_NAME
 # Remove container
@@ -30,8 +30,6 @@ $DOCKER_PATH run -d \
   --name $SERVICE_NAME \
   -p $HOST:$EXPOSE_PORT:$CONT_PORT \
   -e HOST=$HOST_IP \
-  -e API_URL=$API_URL \
   -e MONGODB_URL=$MONGODB_URL \
   --restart=always \
   $IMAGE_TAG
-
