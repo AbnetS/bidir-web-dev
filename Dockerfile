@@ -9,10 +9,6 @@ WORKDIR /
 ADD . /
 
 # Install dependencies
-RUN \
-    npm install -g bower && \
-    npm install && \
-    bower install —config.interactive=false —allow-root
 
 # Tell Docker we are going to use this port
 EXPOSE 9000
