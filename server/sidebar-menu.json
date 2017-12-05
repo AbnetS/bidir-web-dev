@@ -17,5 +17,14 @@
       {"text": "Manage Users",     "sref": "app.manage_user"},
       {"text": "Manage Roles",     "sref": "app.manage_role"}
     ]
+  },
+  {
+    "text": "MFI Setup",
+    "sref": "#",
+    "icon": "fa fa-cogs",
+    "submenu": [
+      {"text": "MFI Setting",     "sref": "app.manage_user"},
+      {"text": "Manage Branches",     "sref": "app.manage_role"}
+    ]
   }
 ]
