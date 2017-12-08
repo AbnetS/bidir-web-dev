@@ -51,9 +51,26 @@
                 url: '/manage_role',
                 title: 'manage roles',
                 templateUrl: helper.basepath('manageroles/manage.roles.html'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select','icons','oitozero.ngSweetAlert','filestyle','moment'),
+                controller: 'ManageRolesController',
+                controllerAs: 'vm'
+            })
+            //'colorpicker.module', 'codemirror', 'moment', 'taginput','inputmask','localytics.directives', 'ui.bootstrap-slider', 'ngWig', 'filestyle', 'summernote'
+            .state('app.mfi_setting', {
+                url: '/mfi_setup',
+                title: 'MFI Setting',
+                templateUrl:'master/js/custom/mfisetup/mfi/mfi.html',
                 resolve:helper.resolveFor('datatables','ngDialog','ui.select','icons','oitozero.ngSweetAlert'),
                 controller: 'ManageRolesController',
                 controllerAs: 'vm'
+            })
+
+            .state("app.manage_branch", {
+            url: "/branches",
+            title: "branches",
+            templateUrl: "master/js/custom/mfisetup/branches/branches.html",
+            controller: "BranchController",
+            controllerAs: 'vm'
             })
           // 
           // CUSTOM RESOLVES

@@ -32,7 +32,8 @@
             'app.auth',
             'app.manage_users',
             'app.manage_roles',
-            'app.welcomePage'
+            'app.welcomePage',
+            'custom'
         ]);
         
 })();
@@ -50,21 +51,6 @@
     angular
         .module('app.colors', []);
 })();
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common", [])
-    .run(runBlock)
-    .config(routeConfig);
-
-  function runBlock() {
-    console.log("common run");
-  }
-
-  function routeConfig() {}
-})(window.angular);
-
 (function() {
     'use strict';
 
@@ -86,6 +72,21 @@
             'ngMessages'
         ]);
 })();
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common", [])
+    .run(runBlock)
+    .config(routeConfig);
+
+  function runBlock() {
+    console.log("common run");
+  }
+
+  function routeConfig() {}
+})(window.angular);
+
 (function() {
     'use strict';
 
@@ -105,9 +106,7 @@
     'use strict';
 
     angular
-        .module('app.manage_users', [
-
-        ]);
+        .module('app.manage_roles', []);
 
 })();
 /**
@@ -117,7 +116,9 @@
     'use strict';
 
     angular
-        .module('app.manage_roles', []);
+        .module('app.manage_users', [
+
+        ]);
 
 })();
 (function() {
@@ -409,87 +410,6 @@
 
 })();
 
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common")
-    .constant("_", window._)
-    .constant("APP_CONSTANTS", {
-      USER_ROLES: {
-        ALL: "*",
-        ADMIN: "admin",
-      },
-      StorageKey: {
-        TOKEN: "token",
-        SESSION: "SESSION"
-      },
-      AUTH_EVENTS: {
-        loginSuccess: "auth-login-success",
-        loginFailed: "auth-login-failed",
-        logoutSuccess: "auth-logout-success",
-        sessionTimeout: "auth-session-timeout",
-        notAuthenticated: "auth-not-authenticated",
-        notAuthorized: "auth-not-authorized"
-      }
-    });
-})(window.angular);
-
-var API = {
-    Config: {
-        BaseUrl: "http://api.dev.bidir.gebeya.io/" //REMOTE API
-    },
-    Service: {
-        NONE:'',
-        MFI: 'MFI',
-        Auth: 'auth',
-        Users: 'users'
-    },
-    Methods: {
-        Auth: {
-            Login: 'login'
-        },
-        MFI: {
-            MFI:'create',
-            GetAll:'',
-            Branch: 'branches',
-            GetAllBranches: 'branches/paginate?page=1&per_page=100',
-        },
-        Users: {
-            Account:'accounts',
-            UserUpdate:'',
-            User:'create',
-            GetAll: 'paginate?page=1&per_page=100',
-            Roles: 'roles',
-            GetRoles: 'roles/paginate?page=1&per_page=100'
-        },
-        Tasks: {
-            Task:'tasks',
-            GetAll: 'tasks/paginate?page=1&per_page=100'
-        }
-    }
-};
-
-var ResourceMethods = {
-    All: {
-        'query': {method: 'GET', isArray: true},
-        'get': {method: 'GET'},
-        'update': {method: 'PUT'},
-        'save': {method: 'POST'},
-        'delete': {method: 'DELETE'}
-    },
-    Readonly: {
-        'query': {method: 'GET', isArray: true},
-        'get': {method: 'GET'}
-    },
-    Query: {method: 'GET', isArray: true},
-    Get: {method: 'GET'},
-    Put: {method: 'PUT'},
-    Post: {method: 'POST'},
-    Delete: {method: 'DELETE'},
-    Search: {'search': {method: 'POST', isArray: true}}
-};
-
 (function() {
     'use strict';
 
@@ -606,6 +526,87 @@ var ResourceMethods = {
 
 })();
 
+
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common")
+    .constant("_", window._)
+    .constant("APP_CONSTANTS", {
+      USER_ROLES: {
+        ALL: "*",
+        ADMIN: "admin",
+      },
+      StorageKey: {
+        TOKEN: "token",
+        SESSION: "SESSION"
+      },
+      AUTH_EVENTS: {
+        loginSuccess: "auth-login-success",
+        loginFailed: "auth-login-failed",
+        logoutSuccess: "auth-logout-success",
+        sessionTimeout: "auth-session-timeout",
+        notAuthenticated: "auth-not-authenticated",
+        notAuthorized: "auth-not-authorized"
+      }
+    });
+})(window.angular);
+
+var API = {
+    Config: {
+        BaseUrl: "http://api.dev.bidir.gebeya.io/" //REMOTE API
+    },
+    Service: {
+        NONE:'',
+        MFI: 'MFI',
+        Auth: 'auth',
+        Users: 'users'
+    },
+    Methods: {
+        Auth: {
+            Login: 'login'
+        },
+        MFI: {
+            MFI:'create',
+            GetAll:'',
+            Branch: 'branches',
+            GetAllBranches: 'branches/paginate?page=1&per_page=100',
+        },
+        Users: {
+            Account:'accounts',
+            UserUpdate:'',
+            User:'create',
+            GetAll: 'paginate?page=1&per_page=100',
+            Roles: 'roles',
+            GetRoles: 'roles/paginate?page=1&per_page=100'
+        },
+        Tasks: {
+            Task:'tasks',
+            GetAll: 'tasks/paginate?page=1&per_page=100'
+        }
+    }
+};
+
+var ResourceMethods = {
+    All: {
+        'query': {method: 'GET', isArray: true},
+        'get': {method: 'GET'},
+        'update': {method: 'PUT'},
+        'save': {method: 'POST'},
+        'delete': {method: 'DELETE'}
+    },
+    Readonly: {
+        'query': {method: 'GET', isArray: true},
+        'get': {method: 'GET'}
+    },
+    Query: {method: 'GET', isArray: true},
+    Get: {method: 'GET'},
+    Put: {method: 'PUT'},
+    Post: {method: 'POST'},
+    Delete: {method: 'DELETE'},
+    Search: {'search': {method: 'POST', isArray: true}}
+};
 
 (function() {
     'use strict';
@@ -821,6 +822,43 @@ var ResourceMethods = {
     }
 
 })();
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('ManageRolesController', ManageRolesController);
+
+    ManageRolesController.$inject = ['ManageUserService',
+        '$scope',
+        '$state',
+        '$rootScope',
+        'APP_CONSTANTS'
+    ];
+
+    function ManageRolesController(
+        ManageUserService,
+        $scope,
+        $state,
+        $rootScope,
+        APP_CONSTANTS
+    ) {
+        var vm = this;
+
+        ManageUserService.GetRoles().then(function(response){
+            vm.roles = response.data.docs;
+            console.log("vm.roles",vm.roles);
+        },function(error){
+            console.log("error",error);
+        });
+    }
+})(window.angular);
+
+
 /**
  * Created by Yoni on 12/2/2017.
  */
@@ -1163,43 +1201,6 @@ var ResourceMethods = {
     }
 
 })(window.angular);
-
-/**
- * Created by Yoni on 11/30/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_roles')
-        .controller('ManageRolesController', ManageRolesController);
-
-    ManageRolesController.$inject = ['ManageUserService',
-        '$scope',
-        '$state',
-        '$rootScope',
-        'APP_CONSTANTS'
-    ];
-
-    function ManageRolesController(
-        ManageUserService,
-        $scope,
-        $state,
-        $rootScope,
-        APP_CONSTANTS
-    ) {
-        var vm = this;
-
-        ManageUserService.GetRoles().then(function(response){
-            vm.roles = response.data.docs;
-            console.log("vm.roles",vm.roles);
-        },function(error){
-            console.log("error",error);
-        });
-    }
-})(window.angular);
-
 
 /**=========================================================
  * Module: modals.js
@@ -2439,9 +2440,26 @@ var ResourceMethods = {
                 url: '/manage_role',
                 title: 'manage roles',
                 templateUrl: helper.basepath('manageroles/manage.roles.html'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select','icons','oitozero.ngSweetAlert','filestyle','moment'),
+                controller: 'ManageRolesController',
+                controllerAs: 'vm'
+            })
+            //'colorpicker.module', 'codemirror', 'moment', 'taginput','inputmask','localytics.directives', 'ui.bootstrap-slider', 'ngWig', 'filestyle', 'summernote'
+            .state('app.mfi_setting', {
+                url: '/mfi_setup',
+                title: 'MFI Setting',
+                templateUrl:'master/js/custom/mfisetup/mfi/mfi.html',
                 resolve:helper.resolveFor('datatables','ngDialog','ui.select','icons','oitozero.ngSweetAlert'),
                 controller: 'ManageRolesController',
                 controllerAs: 'vm'
+            })
+
+            .state("app.manage_branch", {
+            url: "/branches",
+            title: "branches",
+            templateUrl: "master/js/custom/mfisetup/branches/branches.html",
+            controller: "BranchController",
+            controllerAs: 'vm'
             })
           // 
           // CUSTOM RESOLVES
@@ -3848,11 +3866,28 @@ var ResourceMethods = {
             'app.core',
             'app.sidebar',
             'app.common',
-            'app.auth'
+            'app.auth',
+            'app.mfi'
 
             /*...*/
         ]);
 })();
+(function() {
+  "use strict";
+
+  angular.module("app.mfi", [
+  ]).run(runBlock)
+  .config(routeConfig);
+
+function runBlock() {
+}
+
+function routeConfig() {
+
+}
+
+})();
+
 
 // To run this code, edit file index.html or index.jade and change
 // html data-ng-app attribute from angle to myAppName
@@ -3879,3 +3914,480 @@ var ResourceMethods = {
         }
     }
 })();
+
+(function(angular) {
+  'use strict';
+  angular.module('app.mfi')
+
+  .service('MainService', MainService);
+    MainService.$inject = ['$resource','$http',' CommonService','AuthService'];
+
+  function MainService($resource,$http, CommonService,AuthService) {
+
+      return {
+        GetMFI: _getMFI,
+        UpdateMFI: _updateMFI,
+        CreateMFI:_createMFI,
+        UpdateBranch: _updateBranch,
+        SearchBranch: _searchBranch,
+        GetBranches: _getBranches,
+        CreateBranch:_createBranch,
+        ChangeStatus:_changeBranchStatus,
+        branches: $resource(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch), {id:"@id"}, {
+          'query': { method: 'GET', isArray: true,headers: { 'Authorization': 'Bearer ' + AuthService.GetToken()} },
+          'get': {
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + AuthService.GetToken()}
+            },
+          'update': { method: 'PUT',headers: { 'Authorization': 'Bearer ' + AuthService.GetToken()} },
+          'delete': { method: 'DELETE',headers: { 'Authorization': 'Bearer ' + AuthService.GetToken()} }
+        })
+      };
+
+      function _searchBranch(searchText){
+        var httpConfig = {
+          headers: {
+            'Authorization': 'Bearer ' + AuthService.GetToken(),
+            'Accept': 'application/json'
+          }
+        };
+        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch)+'/name=' + searchText,httpConfig);
+      }
+      function _updateBranch(updated_branch){
+        var httpConfig = {
+          headers: {
+            'Authorization': 'Bearer ' + AuthService.GetToken(),
+            'Accept': 'application/json'
+          }
+        };
+        return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,updated_branch._id), updated_branch,httpConfig);
+      }
+      function _createBranch(branch){
+        var httpConfig = {
+          headers: {
+            'Authorization': 'Bearer ' + AuthService.GetToken(),
+            'Accept': 'application/json'
+          }
+        };
+        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch) + '/create', branch,httpConfig);
+      }
+      function _changeBranchStatus(branchStatus){
+        var httpConfig = {
+          headers: {
+            'Authorization': 'Bearer ' + AuthService.GetToken(),
+            'Accept': 'application/json'
+          }
+        };
+        return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,branchStatus._id), branchStatus,httpConfig);
+      }
+      function _getMFI(){
+        var httpConfig = {
+          headers: {
+            'Authorization': 'Bearer ' + AuthService.GetToken(),
+            'Accept': 'application/json'
+          }
+        };
+        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI) + '/all',httpConfig);
+      }
+      function _getBranches(){
+        var httpConfig = {
+          headers: {
+            'Authorization': 'Bearer ' + AuthService.GetToken(),
+            'Accept': 'application/json'
+          }
+        };
+
+        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.BranchGet),httpConfig);
+      }
+
+      function _updateMFI(data,logo){
+        var updatedMFI = setAttribute(data,logo);
+
+        return $http({
+          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFI) + data._id,
+          method: 'PUT',
+          data: updatedMFI,
+          //assigning content-type as undefined,let the browser
+          //assign the correct boundary for us
+          headers: {
+                  'Authorization': 'Bearer ' + AuthService.GetToken(),
+                  'Content-Type': undefined},
+          //prevents serializing payload.  don't do it.
+          transformRequest: angular.identity
+      });
+      }
+
+      function setAttribute(mfi,picFile){
+        var mfiData = new FormData();
+        mfiData.append("name", mfi.name);
+        mfiData.append("location", mfi.location);
+        mfiData.append("establishment_year", mfi.establishment_year);
+        mfiData.append("contact_person", _.isUndefined(mfi.contact_person)?'':mfi.contact_person);
+        mfiData.append("phone", _.isUndefined(mfi.phone)?'':mfi.phone);
+        mfiData.append("email", _.isUndefined(mfi.email)?'':mfi.email);
+        mfiData.append("website_link", _.isUndefined(mfi.website_link)?'':mfi.website_link);
+        if(!_.isUndefined(picFile)){
+          mfiData.append("logo", picFile);
+        }
+
+        return mfiData;
+      }
+
+      function _createMFI(data,logo){
+        var mfiData = setAttribute(data,logo);
+
+        return $http({
+          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFI) + 'create',
+          method: 'POST',
+          data: mfiData,
+          //assigning content-type as undefined,let the browser handle it
+          headers: {
+            'Authorization': 'Bearer ' + AuthService.GetToken(),
+            'Content-Type': undefined},
+          //prevents serializing data.  don't do it.
+          transformRequest: angular.identity
+      });
+
+      }
+  }
+
+})(window.angular);
+
+(function(angular) {
+  "use strict";
+
+    angular.module("app.mfi").controller("BranchController", BranchController);
+
+    BranchController.$inject = ['$state','$uibModal'];
+
+  function BranchController(
+    $state,
+    $uibModal
+  ) {
+    var vm = this;
+    vm.title = "Manage Branch";
+
+    vm.addBranch = addBranch;
+    vm.editBranch = _editBranch;
+    vm.changeStatus = _changeStatus;
+    vm.search ='';
+    vm.refresh =_refreshBranches;
+    vm.searchBranch = _searchBranches;
+
+    function _refreshBranches(){
+      vm.search ='';
+      getBranches();
+    }
+
+     getBranches();
+
+    function getBranches() {
+      MainService.GetMFI().then(
+        function(response) {
+          console.log("mfi data",response);
+          vm.mfi = response.data[0];
+          vm.branches = response.data[0].branches;
+          vm.branchesCopy = [].concat(vm.branches);
+        },
+        function(error) {
+          console.log("error", error);
+        }
+      );
+
+    }
+    function _searchBranches(){
+      MainService.SearchBranch(vm.search).then(
+        function(response) {
+          console.log("response", response);
+          vm.branches = response.data.branches;
+          vm.branchesCopy = [].concat(vm.branches);
+        },
+        function(error) {
+          console.log("error", error);
+        }
+      );
+    }
+
+    function addBranch(size) {
+
+      var modalInstance = $uibModal.open({
+          templateUrl: 'master/js/custom/mfisetup/branches/create_branch/create.branch.html',
+
+          controller: 'CreateBranchController',
+        size: "md",
+          bindings: {
+              resolve: '<',
+              close: '&',
+              dismiss: '&'
+          }
+      });
+
+      modalInstance.result.then(
+        function(branch) {
+          branch.MFI = vm.mfi._id;
+          //Save new branch API
+          MainService.CreateBranch(
+            branch,
+            function(data) {
+              debugger
+               // console.log("saved successfully", data);
+              AlertService.showSuccess(
+                "Saved! Branch saved successfully.",
+                "SUCCESS"
+              );
+              getBranches();
+            },
+            function(error) {
+              console.log("could not be saved", error);
+              AlertService.showError(
+                "Could not be saved!, " + error.data.specific_errors.message,
+                "ERROR"
+              );
+            }
+          );
+        },
+        function() {
+          // $log.info("modal-component dismissed at: " + new Date());
+        }
+      );
+    }
+
+    function _editBranch(selectedBranch) {
+      var modalInstance = $uibModal.open({
+        component: "createbranch",
+        size: "md",
+        resolve: {
+          branch: function() {
+            return selectedBranch;
+          }
+        }
+      });
+
+      modalInstance.result.then(
+        function(updatedBranch) {
+          var upBranch = {
+            _id: updatedBranch._id,
+            name: updatedBranch.name,
+            location: updatedBranch.location,
+            branch_type: updatedBranch.branch_type,
+            opening_date: updatedBranch.opening_date
+          };
+          if(!_.isUndefined(updatedBranch.email)){
+            upBranch.email =updatedBranch.email;
+          }
+          if(_.isString(updatedBranch.phone) && updatedBranch.phone !== ""){
+            upBranch.phone =updatedBranch.phone;
+          }
+          //Update branch api
+          MainService.UpdateBranch(upBranch).then(
+            function(response) {
+              AlertService.showSuccess(
+                "Updated! Branch updated successfully.",
+                "SUCCESS"
+              );
+              getBranches();
+            },
+            function(error) {
+              console.log("could not be updated", error);
+              getBranches();
+              AlertService.showError(
+                "Could not be updated!, " + error.data.specific_errors[0].message,
+                "ERROR"
+              );
+            }
+          );
+        },
+        function() {
+          // $log.info("modal-component dismissed without any change");
+        }
+      );
+    }
+
+    function _changeStatus(ChangeStatus) {
+      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
+      MainService.ChangeStatus(ChangeStatus).then(
+        function(response) {
+
+          AlertService.showSuccess(
+            "Updated! Status changed successfully.",
+            "SUCCESS"
+          );
+          // console.log("updated successfully", response);
+
+        },
+        function(error) {
+          // console.log("could not be updated", error);
+          AlertService.showError(
+            "Status not changed. Please try again.",
+            "ERROR"
+          );
+        }
+      );
+
+    }
+
+  }
+})(window.angular);
+
+(function(angular) {
+  "use strict";
+
+  angular.module("app.mfi").controller("MFIController", MFIController);
+
+  MFIController.$inject = ['AlertService', '$scope','MainService','CommonService'];
+
+  function MFIController(
+    AlertService,
+    $scope,
+    MainService,
+    CommonService
+  )
+  {
+    var vm = this;
+    vm.saveChanges = saveChanges;
+    vm.MFISetupForm = {
+      IsnameValid: true,
+      IslocationValid: true,
+      IslogoValid: true,
+      Isestablishment_yearValid: true
+  };
+
+
+    init();
+
+    function saveChanges() {
+
+      vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFISetupForm, vm.MFI);
+
+      if (vm.IsValidData) {
+        if (_.isUndefined(vm.MFI._id)) {
+          MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
+              AlertService.showSuccess("MFI Information created successfully", "Information");
+              console.log("Create MFI", response);
+            }, function(error) {
+              AlertService.showError("Failed to create MFI!, Pleast try again", "Information");
+              console.log("Create MFI Error", error);
+            });
+        } else {
+          MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
+              AlertService.showSuccess("MFI Information updated successfully", "Information");
+              console.log("Update MFI", response);
+            }, function(error) {
+              AlertService.showError("MFI Information update failed", "Information");
+              console.log("UpdateMFI Error", error);
+            });
+        }
+      } else {
+        toastr.warning("Please fill the required fields and try again.", "Warning!");
+      }
+    }
+
+    function init() {
+      MainService.GetMFI().then(
+        function(response) {
+          if (response.data.length > 0) {
+            vm.MFI = response.data[0];
+            var dt = new Date(vm.MFI.establishment_year);
+            vm.MFI.establishment_year = dt;
+          }
+          console.log("Get MFI", response);
+        },
+        function(error) {
+          console.log("Get MFI Error", error);
+        }
+      );
+
+      $scope.clear = function() {
+        $scope.dt = null;
+      };
+
+      $scope.dateOptions = {
+        dateDisabled: false,
+        formatYear: "yy",
+        maxDate: new Date(2020, 5, 22),
+        startingDay: 1
+      };
+
+      $scope.open1 = function() {
+        $scope.popup1.opened = true;
+      };
+
+      $scope.format = "dd-MMMM-yyyy";
+      $scope.altInputFormats = ["M!/d!/yyyy"];
+
+      $scope.popup1 = {
+        opened: false
+      };
+    }
+  }
+})(window.angular);
+
+(function(angular) {
+  'use strict';
+
+    angular.module('app.mfi')
+        .controller('CreateBranchController', CreateBranchController);
+
+    CreateBranchController.$inject = ['CommonService',' $scope'];
+
+  function CreateBranchController(CommonService,$scope) {
+      var ctrl = this;
+      ctrl.MFIBranchForm = {
+        IsnameValid: true,
+        IslocationValid: true
+    };
+    ctrl.branchTypes =[  'Satellite office','Rural Service','Satellite office'];
+
+      ctrl.branch = ctrl.resolve.branch;
+      ctrl.emailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+      ctrl.$onInit = function() {
+        if(!_.isUndefined(ctrl.branch))
+        {
+        var dt =_.isUndefined(ctrl.branch.opening_date)?undefined: new Date(ctrl.branch.opening_date);
+          ctrl.branch.opening_date = dt;
+        }
+      };
+
+      ctrl.ok = function() {
+        ctrl.IsValidData = CommonService.Validation.ValidateForm(ctrl.MFIBranchForm, ctrl.branch);
+
+        if($scope.branchForm.inputEmail.$error.email){
+          // toastr.warning("The email address you put is invalid.", "Warning!");
+        }else if(ctrl.IsValidData){
+          ctrl.close({ $value: ctrl.branch });
+        } else {
+          // toastr.warning("Please fill the required fields and try again.", "Warning!");
+        }
+      };
+
+      ctrl.cancel = function() {
+        ctrl.dismiss({ $value: 'cancel' });
+      };
+
+      $scope.clear = function() {
+        $scope.dt = null;
+      };
+
+      $scope.dateOptions = {
+        dateDisabled: false,
+        formatYear: "yy",
+        maxDate: new Date(2020, 5, 22),
+        startingDay: 1
+      };
+
+      $scope.open1 = function() {
+        $scope.popup1.opened = true;
+      };
+
+      $scope.format = "dd-MMMM-yyyy";
+      $scope.altInputFormats = ["M!/d!/yyyy"];
+
+      $scope.popup1 = {
+        opened: false
+      };
+  }
+
+
+
+})(window.angular);

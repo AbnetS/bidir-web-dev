@@ -32,7 +32,8 @@
             'app.auth',
             'app.manage_users',
             'app.manage_roles',
-            'app.welcomePage'
+            'app.welcomePage',
+            'custom'
         ]);
         
 })();

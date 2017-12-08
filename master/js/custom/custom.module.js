@@ -9,7 +9,8 @@
             'app.core',
             'app.sidebar',
             'app.common',
-            'app.auth'
+            'app.auth',
+            'app.mfi'
 
             /*...*/
         ]);
