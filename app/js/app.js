@@ -142,15 +142,15 @@
     'use strict';
 
     angular
-        .module('app.navsearch', []);
+        .module('app.material', [
+            'ngMaterial'
+          ]);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.material', [
-            'ngMaterial'
-          ]);
+        .module('app.navsearch', []);
 })();
 (function() {
     'use strict';
@@ -838,31 +838,58 @@ var API = {
         vm.cancel = _cancel;
         vm.saveRole = _saveRole;
         vm.isEdit = items !== null;
-        vm.selectedRole = items !== null?items:null;
-
+        vm.role = items !== null?items:null;
         initialize();
 
-        function _saveRole() {
+        function preparePermissions() {
             var allowedPermissions = [];
             var allowedPermissionIds = [];
             angular.forEach(vm.permissions,function(perm){
-                if(!angular.isUndefined(perm.checked)){
-                    if(perm.checked){
-                        allowedPermissions.push(perm);
-                        allowedPermissionIds.push(perm._id);
+                if(vm.isEdit){
+                    if(!angular.isUndefined(vm.role.permissions)){
+                        angular.forEach(vm.role.permissions,function(rolePerm){
+                            debugger
+                            rolePerm.checked = perm._id === rolePerm._id;
+
+                        });
+                    }
+                }
+                else{
+                    if(!angular.isUndefined(perm.checked)){
+                        if(perm.checked){
+                            allowedPermissions.push(perm);
+                            allowedPermissionIds.push(perm._id);
+                        }
                     }
                 }
             });
-            vm.role.Permissions = allowedPermissionIds;
+            vm.role.permissions = allowedPermissionIds;
+        }
+        function _saveRole() {
+            preparePermissions();
             console.log("vm.role",vm.role);
+            ManageRoleService.SaveRole( vm.role ).then(function (data) {
+                    console.log("updated successfully", data);
+                    $mdDialog.hide();
+                    //TODO: Alert & fetch data
+                },
+                function (error) {
+                    console.log("could not be saved", error);
+                });
         }
 
         function initialize(){
+
             ManageRoleService.GetPermissions().then(function(response){
                 vm.permissions = response.data.docs;
+                if(vm.isEdit){
+                    preparePermissions();
+                }
             },function(error){
                 console.log("error permissions",error);
             });
+
+
         }
 
         function _cancel() {
@@ -898,13 +925,15 @@ var API = {
         var vm = this;
         vm.addRole = _addRole;
         vm.editRole = _editRole;
-
-        ManageRoleService.GetRoles().then(function(response){
-            vm.roles = response.data.docs;
-            console.log("vm.roles",vm.roles);
-        },function(error){
-            console.log("error role",error);
-        });
+        fetchRoles();
+       function fetchRoles() {
+           ManageRoleService.GetRoles().then(function(response){
+               vm.roles = response.data.docs;
+               console.log("vm.roles",vm.roles);
+           },function(error){
+               console.log("error role",error);
+           });
+       }
 
 
 
@@ -926,12 +955,29 @@ var API = {
                 controllerAs: 'vm'
             })
                 .then(function (answer) {
+                    fetchRoles();
                 }, function () {
                 });
         }
 
         function _editRole(role,ev) {
-
+            $mdDialog.show({
+                locals: {
+                    items: role
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
         }
 
 
@@ -1580,115 +1626,6 @@ var API = {
             });
           }
 
-        }
-    }
-})();
-
-/**=========================================================
- * Module: navbar-search.js
- * Navbar search toggler * Auto dismiss on ESC key
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .directive('searchOpen', searchOpen)
-        .directive('searchDismiss', searchDismiss);
-
-    //
-    // directives definition
-    // 
-    
-    function searchOpen () {
-        var directive = {
-            controller: searchOpenController,
-            restrict: 'A'
-        };
-        return directive;
-
-    }
-
-    function searchDismiss () {
-        var directive = {
-            controller: searchDismissController,
-            restrict: 'A'
-        };
-        return directive;
-        
-    }
-
-    //
-    // Contrller definition
-    // 
-    
-    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchOpenController ($scope, $element, NavSearch) {
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.toggle);
-    }
-
-    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchDismissController ($scope, $element, NavSearch) {
-      
-      var inputSelector = '.navbar-form input[type="text"]';
-
-      $(inputSelector)
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('keyup', function(e) {
-          if (e.keyCode === 27) // ESC
-            NavSearch.dismiss();
-        });
-        
-      // click anywhere closes the search
-      $(document).on('click', NavSearch.dismiss);
-      // dismissable options
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.dismiss);
-    }
-
-})();
-
-
-/**=========================================================
- * Module: nav-search.js
- * Services to share navbar search functions
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .service('NavSearch', NavSearch);
-
-    function NavSearch() {
-        this.toggle = toggle;
-        this.dismiss = dismiss;
-
-        ////////////////
-
-        var navbarFormSelector = 'form.navbar-form';
-
-        function toggle() {
-          var navbarForm = $(navbarFormSelector);
-
-          navbarForm.toggleClass('open');
-
-          var isOpen = navbarForm.hasClass('open');
-
-          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
-        }
-
-        function dismiss() {
-          $(navbarFormSelector)
-            .removeClass('open') // Close control
-            .find('input[type="text"]').blur() // remove focus
-            // .val('') // Empty input
-            ;
         }
     }
 })();
@@ -2427,6 +2364,115 @@ var API = {
         }
     }
 })();
+/**=========================================================
+ * Module: navbar-search.js
+ * Navbar search toggler * Auto dismiss on ESC key
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .directive('searchOpen', searchOpen)
+        .directive('searchDismiss', searchDismiss);
+
+    //
+    // directives definition
+    // 
+    
+    function searchOpen () {
+        var directive = {
+            controller: searchOpenController,
+            restrict: 'A'
+        };
+        return directive;
+
+    }
+
+    function searchDismiss () {
+        var directive = {
+            controller: searchDismissController,
+            restrict: 'A'
+        };
+        return directive;
+        
+    }
+
+    //
+    // Contrller definition
+    // 
+    
+    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchOpenController ($scope, $element, NavSearch) {
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.toggle);
+    }
+
+    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchDismissController ($scope, $element, NavSearch) {
+      
+      var inputSelector = '.navbar-form input[type="text"]';
+
+      $(inputSelector)
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('keyup', function(e) {
+          if (e.keyCode === 27) // ESC
+            NavSearch.dismiss();
+        });
+        
+      // click anywhere closes the search
+      $(document).on('click', NavSearch.dismiss);
+      // dismissable options
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.dismiss);
+    }
+
+})();
+
+
+/**=========================================================
+ * Module: nav-search.js
+ * Services to share navbar search functions
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .service('NavSearch', NavSearch);
+
+    function NavSearch() {
+        this.toggle = toggle;
+        this.dismiss = dismiss;
+
+        ////////////////
+
+        var navbarFormSelector = 'form.navbar-form';
+
+        function toggle() {
+          var navbarForm = $(navbarFormSelector);
+
+          navbarForm.toggleClass('open');
+
+          var isOpen = navbarForm.hasClass('open');
+
+          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
+        }
+
+        function dismiss() {
+          $(navbarFormSelector)
+            .removeClass('open') // Close control
+            .find('input[type="text"]').blur() // remove focus
+            // .val('') // Empty input
+            ;
+        }
+    }
+})();
+
 (function() {
     'use strict';
 
