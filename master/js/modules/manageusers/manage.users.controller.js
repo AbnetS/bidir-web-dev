@@ -9,8 +9,8 @@
         .module('app.manage_users')
         .controller('ManageUsersController', ManageUsersController);
 
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnBuilder','$scope', 'ngDialog', 'ManageUserService','$mdDialog'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnBuilder,$scope, ngDialog, ManageUserService,$mdDialog) {
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnBuilder','$scope', '$compile', 'ManageUserService','$mdDialog'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnBuilder,$scope, $compile, ManageUserService,$mdDialog) {
         var vm = this;
         $scope.pageData = {
             total:0
@@ -33,7 +33,6 @@
 
         // this function used to get all data
         function getUsersData(sSource, aoData, fnCallback, oSettings){
-            debugger
             var draw = aoData[0].value;
             var columns = aoData[1].value;
             var order = aoData[2].value;
@@ -46,7 +45,6 @@
                 limit:length
             };
             ManageUserService.GetUsers(params).then(function(response){
-                debugger
                 var records = {
                     'draw': 0,
                     'recordsTotal': 0,
@@ -55,12 +53,21 @@
                 };
 
                 if(response.data){
-                    records = {
-                        'draw': draw,
-                        'recordsTotal': response.data.total_pages,
-                        'recordsFiltered':response.data.total_pages,
-                        'data': response.data.docs
-                    };
+
+
+                var filteredData = [];
+                angular.forEach(response.data.docs,function(user){
+                    if(!angular.isUndefined(user.account)){
+
+                        filteredData.push(user);
+                    }
+                });
+                records = {
+                    'draw': draw,
+                    'recordsTotal': response.data.total_pages,
+                    'recordsFiltered':response.data.total_pages,
+                    'data':filteredData
+                };
                 }
                 $scope.pageData.total= response.data.total_pages;
 
@@ -70,33 +77,56 @@
                 console.log("error",error);
             });
         };
-        function rowCallback() {
 
+        function rowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+            // console.log(aData);
+            return nRow;
         }
 
         ////////////////
         function activate() {
-
+            vm.dtInstance = {};
            vm.dtOptions = DTOptionsBuilder.newOptions()
                .withFnServerData(getUsersData) // method name server call
                .withDataProp('data')// parameter name of list use in getLeads Fuction
+               .withOption('createdRow', createdRow)
                .withOption('processing', true) // required,
                .withOption('serverSide', true)// required
                .withOption('paging', true)// required
                .withPaginationType('full_numbers')
-               .withDisplayLength(25)
-               .withOption('rowCallback', rowCallback)
-               .withDOM('lrtip');
-
+               .withDisplayLength(10)
+               .withOption('order', [0, 'asc'])
+               .withOption('bFilter', true);
 
             vm.dtColumns = [
-                DTColumnBuilder.newColumn('_id').withTitle('ID'),
-                DTColumnBuilder.newColumn('account.first_name').withTitle('First name'),
+                DTColumnBuilder.newColumn(null).withTitle('No.').renderWith(renderIndex),
+                DTColumnBuilder.newColumn('account.first_name').withTitle('First name').withOption('searchable', true),
                 DTColumnBuilder.newColumn('account.last_name').withTitle('Last name'),
-                DTColumnBuilder.newColumn('account.role').withTitle('Last name'),
-                DTColumnBuilder.newColumn('account.default_branch').withTitle('Last name'),
-                DTColumnBuilder.newColumn('username').withTitle('username')
+                DTColumnBuilder.newColumn('account.role.name').withTitle('Role'),
+                DTColumnBuilder.newColumn('account.default_branch.name').withTitle('Branch'),
+                DTColumnBuilder.newColumn('username').withTitle('username'),
+                DTColumnBuilder.newColumn(null).withTitle('Actions').notSortable().renderWith(actionButtons)
             ];
+
+            function renderIndex(data, type, full, meta) {
+                var rowNo = meta.row;
+                return '<p>' + rowNo + '</p>';
+            }
+            // Action buttons added to the last column: to edit and change status
+            function actionButtons(data, type, full, meta) {
+                var selectedUSer = data;
+                return '<button class="btn btn-success btn-xs" ng-click="vm.addUser(\'' + data._id + '\')">' +
+                    '   <i class="fa fa-edit"></i>' +
+                    '</button>&nbsp;' +
+                    '<button class="btn btn-xs btn-default" ng-click="vm.addUser(\'' + data._id + '\')">' +
+                    '   <i class="fa fa-bell-slash-o"></i>' +
+                    '</button>';
+            }
+
+            function createdRow(row, data, dataIndex) {
+                debugger
+                $compile(angular.element(row).contents())($scope);
+            }
 
         }
 
@@ -124,6 +154,7 @@
                 });
         }
         function _editUser(user,ev){
+            debugger
             $mdDialog.show({
                 locals: {items: user},
                 templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),

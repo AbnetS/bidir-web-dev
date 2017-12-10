@@ -21,41 +21,11 @@
         <br/>
         <div class="row">
             <div class="col-lg-12">
-                <table class="row-border hover" datatable="ng">
-                    <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Name</th>
-                        <th>Role</th>
-                        <th>Default Branch</th>
-                        <th>username</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="usr in vm.users" ng-hide="usr.admin">
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ usr.account.first_name }} {{ usr.account.last_name }}</td>
-                        <td>{{usr.account.role.name }}</td>
-                        <td>{{usr.account.default_branch.name }}</td>
-                        <td>{{ usr.username }}</td>
-                        <td>
-                            <span ng-class="vm.statusStyle(usr.status)">{{usr.status }}</span>
-                        </td>
-                        <td>
-                          <a class="btn btn-xs btn-info"
-                             ng-hide="usr.admin" ng-click="vm.editUser(usr,$event)">
-                            <i class="fa fa-edit"></i> Edit
-                          </a>
-                            <!--<a class="btn btn-xs btn-default"-->
-                                    <!--ng-click="vm.changeStatus(usr)">-->
-                                <!--<i class="fa fa-bell-slash-o"></i>-->
-                                <!--{{usr.status=== 'active'? "Deactivate":"Activate"}}-->
-                            <!--</a>-->
-                        </td>
-                    </tr>
-                    </tbody>
+                <table class="row-border hover"
+                       datatable=""
+                       dt-instance="vm.dtInstance"
+                       dt-columns="vm.dtColumns"
+                       dt-options="vm.dtOptions">
                 </table>
             </div>
         </div>

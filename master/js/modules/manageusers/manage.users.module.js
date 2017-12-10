@@ -7,6 +7,12 @@
     angular
         .module('app.manage_users', [
 
-        ]);
+        ]).run(runUM);
+
+    function runUM() {
+
+    }
+
+
 
 })();
