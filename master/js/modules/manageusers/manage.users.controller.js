@@ -41,9 +41,11 @@
             var search = aoData[5].value;
 
             var params  = {
-                start:start+1,
-                limit:length
+                start:start + 1,
+                limit:length,
+                search: search
             };
+
             ManageUserService.GetUsers(params).then(function(response){
                 var records = {
                     'draw': 0,
@@ -74,6 +76,7 @@
                 fnCallback(records);
 
             },function(error){
+                debugger
                 console.log("error",error);
             });
         };
@@ -85,18 +88,14 @@
 
         ////////////////
         function activate() {
-            vm.dtInstance = {};
+           vm.dtInstance = {};
            vm.dtOptions = DTOptionsBuilder.newOptions()
                .withFnServerData(getUsersData) // method name server call
                .withDataProp('data')// parameter name of list use in getLeads Fuction
-               .withOption('createdRow', createdRow)
                .withOption('processing', true) // required,
                .withOption('serverSide', true)// required
-               .withOption('paging', true)// required
                .withPaginationType('full_numbers')
-               .withDisplayLength(10)
-               .withOption('order', [0, 'asc'])
-               .withOption('bFilter', true);
+               .withOption('order', [0, 'asc']);
 
             vm.dtColumns = [
                 DTColumnBuilder.newColumn(null).withTitle('No.').renderWith(renderIndex),
@@ -105,11 +104,17 @@
                 DTColumnBuilder.newColumn('account.role.name').withTitle('Role'),
                 DTColumnBuilder.newColumn('account.default_branch.name').withTitle('Branch'),
                 DTColumnBuilder.newColumn('username').withTitle('username'),
+                DTColumnBuilder.newColumn('status').withTitle('status').notSortable().renderWith(renderStatusCol),
                 DTColumnBuilder.newColumn(null).withTitle('Actions').notSortable().renderWith(actionButtons)
             ];
 
+            function renderStatusCol(data, type, full, meta) {
+                console.log("renderStatusCol",data);
+                 return '<small class="label label-default" </small>';
+                // return '<span ng-class="vm.statusStyle(\'' + data.status + '\')"</span>';
+            }
             function renderIndex(data, type, full, meta) {
-                var rowNo = meta.row;
+                var rowNo = meta.row + 1;
                 return '<p>' + rowNo + '</p>';
             }
             // Action buttons added to the last column: to edit and change status
@@ -119,7 +124,7 @@
                     '   <i class="fa fa-edit"></i>' +
                     '</button>&nbsp;' +
                     '<button class="btn btn-xs btn-default" ng-click="vm.addUser(\'' + data._id + '\')">' +
-                    '   <i class="fa fa-bell-slash-o"></i>' +
+                    '   <i class="fa fa-eye"></i>' +
                     '</button>';
             }
 
@@ -171,6 +176,7 @@
         }
 
         function _statusStyle(status){
+            console.log("status",status);
             var style = '';
             switch (status){
                 case 'active' || 'active ':
