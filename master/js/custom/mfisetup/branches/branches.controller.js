@@ -3,11 +3,12 @@
 
     angular.module("app.mfi").controller("BranchController", BranchController);
 
-    BranchController.$inject = ['$state','$uibModal'];
+    BranchController.$inject = ['$state','$uibModal','MainService'];
 
   function BranchController(
     $state,
-    $uibModal
+    $uibModal,
+    MainService
   ) {
     var vm = this;
     vm.title = "Manage Branch";
