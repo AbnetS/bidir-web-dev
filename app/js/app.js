@@ -28,12 +28,12 @@
             'app.maps',
             'app.utils',
             'app.material',
+            'custom',
             'app.common',
             'app.auth',
             'app.manage_users',
             'app.manage_roles',
-            'app.welcomePage',
-            'custom'
+            'app.welcomePage'
         ]);
         
 })();
@@ -51,6 +51,21 @@
     angular
         .module('app.colors', []);
 })();
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common", [])
+    .run(runBlock)
+    .config(routeConfig);
+
+  function runBlock() {
+    console.log("common run");
+  }
+
+  function routeConfig() {}
+})(window.angular);
+
 (function() {
     'use strict';
 
@@ -72,21 +87,6 @@
             'ngMessages'
         ]);
 })();
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common", [])
-    .run(runBlock)
-    .config(routeConfig);
-
-  function runBlock() {
-    console.log("common run");
-  }
-
-  function routeConfig() {}
-})(window.angular);
-
 (function() {
     'use strict';
 
@@ -410,6 +410,87 @@
 
 })();
 
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common")
+    .constant("_", window._)
+    .constant("APP_CONSTANTS", {
+      USER_ROLES: {
+        ALL: "*",
+        ADMIN: "admin",
+      },
+      StorageKey: {
+        TOKEN: "token",
+        SESSION: "SESSION"
+      },
+      AUTH_EVENTS: {
+        loginSuccess: "auth-login-success",
+        loginFailed: "auth-login-failed",
+        logoutSuccess: "auth-logout-success",
+        sessionTimeout: "auth-session-timeout",
+        notAuthenticated: "auth-not-authenticated",
+        notAuthorized: "auth-not-authorized"
+      }
+    });
+})(window.angular);
+
+var API = {
+    Config: {
+        BaseUrl: "http://api.dev.bidir.gebeya.io/" //REMOTE API
+    },
+    Service: {
+        NONE:'',
+        MFI: 'MFI',
+        Auth: 'auth',
+        Users: 'users'
+    },
+    Methods: {
+        Auth: {
+            Login: 'login'
+        },
+        MFI: {
+            MFI:'create',
+            GetAll:'',
+            Branch: 'branches',
+            GetAllBranches: 'branches/paginate?page=1&per_page=100'
+        },
+        Users: {
+            Account:'accounts',
+            UserUpdate:'',
+            User:'create',
+            GetAll: '',
+            Roles: 'roles',
+            GetRoles: 'roles/paginate?page=1&per_page=100'
+        },
+        Tasks: {
+            Task:'tasks',
+            GetAll: 'tasks/paginate?page=1&per_page=100'
+        }
+    }
+};
+
+var ResourceMethods = {
+    All: {
+        'query': {method: 'GET', isArray: true},
+        'get': {method: 'GET'},
+        'update': {method: 'PUT'},
+        'save': {method: 'POST'},
+        'delete': {method: 'DELETE'}
+    },
+    Readonly: {
+        'query': {method: 'GET', isArray: true},
+        'get': {method: 'GET'}
+    },
+    Query: {method: 'GET', isArray: true},
+    Get: {method: 'GET'},
+    Put: {method: 'PUT'},
+    Post: {method: 'POST'},
+    Delete: {method: 'DELETE'},
+    Search: {'search': {method: 'POST', isArray: true}}
+};
+
 (function() {
     'use strict';
 
@@ -526,87 +607,6 @@
 
 })();
 
-
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common")
-    .constant("_", window._)
-    .constant("APP_CONSTANTS", {
-      USER_ROLES: {
-        ALL: "*",
-        ADMIN: "admin",
-      },
-      StorageKey: {
-        TOKEN: "token",
-        SESSION: "SESSION"
-      },
-      AUTH_EVENTS: {
-        loginSuccess: "auth-login-success",
-        loginFailed: "auth-login-failed",
-        logoutSuccess: "auth-logout-success",
-        sessionTimeout: "auth-session-timeout",
-        notAuthenticated: "auth-not-authenticated",
-        notAuthorized: "auth-not-authorized"
-      }
-    });
-})(window.angular);
-
-var API = {
-    Config: {
-        BaseUrl: "http://api.dev.bidir.gebeya.io/" //REMOTE API
-    },
-    Service: {
-        NONE:'',
-        MFI: 'MFI',
-        Auth: 'auth',
-        Users: 'users'
-    },
-    Methods: {
-        Auth: {
-            Login: 'login'
-        },
-        MFI: {
-            MFI:'create',
-            GetAll:'',
-            Branch: 'branches',
-            GetAllBranches: 'branches/paginate?page=1&per_page=100',
-        },
-        Users: {
-            Account:'accounts',
-            UserUpdate:'',
-            User:'create',
-            GetAll: 'paginate?page=1&per_page=100',
-            Roles: 'roles',
-            GetRoles: 'roles/paginate?page=1&per_page=100'
-        },
-        Tasks: {
-            Task:'tasks',
-            GetAll: 'tasks/paginate?page=1&per_page=100'
-        }
-    }
-};
-
-var ResourceMethods = {
-    All: {
-        'query': {method: 'GET', isArray: true},
-        'get': {method: 'GET'},
-        'update': {method: 'PUT'},
-        'save': {method: 'POST'},
-        'delete': {method: 'DELETE'}
-    },
-    Readonly: {
-        'query': {method: 'GET', isArray: true},
-        'get': {method: 'GET'}
-    },
-    Query: {method: 'GET', isArray: true},
-    Get: {method: 'GET'},
-    Put: {method: 'PUT'},
-    Post: {method: 'POST'},
-    Delete: {method: 'DELETE'},
-    Search: {'search': {method: 'POST', isArray: true}}
-};
 
 (function() {
     'use strict';
@@ -1013,46 +1013,94 @@ var ResourceMethods = {
         .module('app.manage_users')
         .controller('ManageUsersController', ManageUsersController);
 
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnDefBuilder','SweetAlert', 'ngDialog', 'ManageUserService','$mdDialog'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnDefBuilder,SweetAlert, ngDialog, ManageUserService,$mdDialog) {
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnBuilder','$scope', 'ngDialog', 'ManageUserService','$mdDialog'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnBuilder,$scope, ngDialog, ManageUserService,$mdDialog) {
         var vm = this;
+        $scope.pageData = {
+            total:0
+        };
         vm.addUser = _addUser;
         vm.editUser = _editUser;
         vm.changeStatus = _changeStatus;
         vm.statusStyle = _statusStyle;
 
-        ManageUserService.GetUsers().then(function(response){
-            // console.log("users list",response);
-            vm.users = response.data.docs;
-        },function(error){
-            console.log("error",error);
-        });
+        // ManageUserService.GetUsers().then(function(response){
+        //     // console.log("users list",response);
+        //     vm.users = response.data.docs;
+        // },function(error){
+        //     console.log("error",error);
+        // });
 
 
 
         activate();
 
+        // this function used to get all data
+        function getUsersData(sSource, aoData, fnCallback, oSettings){
+            debugger
+            var draw = aoData[0].value;
+            var columns = aoData[1].value;
+            var order = aoData[2].value;
+            var start = aoData[3].value;
+            var length = aoData[4].value;
+            var search = aoData[5].value;
+
+            var params  = {
+                start:start+1,
+                limit:length
+            };
+            ManageUserService.GetUsers(params).then(function(response){
+                debugger
+                var records = {
+                    'draw': 0,
+                    'recordsTotal': 0,
+                    'recordsFiltered': 0,
+                    'data': []
+                };
+
+                if(response.data){
+                    records = {
+                        'draw': draw,
+                        'recordsTotal': response.data.total_pages,
+                        'recordsFiltered':response.data.total_pages,
+                        'data': response.data.docs
+                    };
+                }
+                $scope.pageData.total= response.data.total_pages;
+
+                fnCallback(records);
+
+            },function(error){
+                console.log("error",error);
+            });
+        };
+        function rowCallback() {
+
+        }
+
         ////////////////
         function activate() {
 
            vm.dtOptions = DTOptionsBuilder.newOptions()
-                .withPaginationType('full_numbers')
-                .withDOM('<"html5buttons"B>lTfgitp')
-                .withButtons([
-                    {extend: 'copy',  className: 'btn-sm' },
-                    {extend: 'csv',   className: 'btn-sm' },
-                    {extend: 'excel', className: 'btn-sm', title: 'XLS-File'},
-                    {extend: 'pdf',   className: 'btn-sm', title: $('title').text() },
-                    {extend: 'print', className: 'btn-sm' }
-                ]);
-            vm.dtColumnDefs = [
-                DTColumnDefBuilder.newColumnDef(0),
-                DTColumnDefBuilder.newColumnDef(1),
-                DTColumnDefBuilder.newColumnDef(2),
-                DTColumnDefBuilder.newColumnDef(3).notSortable()
+               .withFnServerData(getUsersData) // method name server call
+               .withDataProp('data')// parameter name of list use in getLeads Fuction
+               .withOption('processing', true) // required,
+               .withOption('serverSide', true)// required
+               .withOption('paging', true)// required
+               .withPaginationType('full_numbers')
+               .withDisplayLength(25)
+               .withOption('rowCallback', rowCallback)
+               .withDOM('lrtip');
+
+
+            vm.dtColumns = [
+                DTColumnBuilder.newColumn('_id').withTitle('ID'),
+                DTColumnBuilder.newColumn('account.first_name').withTitle('First name'),
+                DTColumnBuilder.newColumn('account.last_name').withTitle('Last name'),
+                DTColumnBuilder.newColumn('account.role').withTitle('Last name'),
+                DTColumnBuilder.newColumn('account.default_branch').withTitle('Last name'),
+                DTColumnBuilder.newColumn('username').withTitle('username')
             ];
-
-
 
         }
 
@@ -1138,14 +1186,15 @@ var ResourceMethods = {
             UpdateUser: _updateUser
         };
 
-        function _getUsers(){
+        function _getUsers(params){
+
             var httpConfig = {
                 headers: {
                     'Authorization': 'Bearer ' + AuthService.GetToken(),
                     'Accept': 'application/json'
                 }
             };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.GetAll),httpConfig);
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll,params),httpConfig);
         }
         function _getRoles(){
             var httpConfig = {
@@ -3739,6 +3788,7 @@ var ResourceMethods = {
     };
         var factory = {
             buildUrl: _buildUrl,
+            buildPaginatedUrl:_buildPaginatedUrl,
             buildUrlWithParam: _buildUrlWithParam,
             Validation: {
               ComputeValidation: function (validationObject) {
@@ -3804,6 +3854,9 @@ var ResourceMethods = {
 
         function _buildUrl(service,url) {
           return API.Config.BaseUrl + service +'/' + url;
+        }
+        function _buildPaginatedUrl(service,url,params) {
+            return API.Config.BaseUrl + service +'/' + url + 'paginate?page='+params.start+'&per_page=' + params.limit;
         }
 
         function _buildUrlWithParam(service,url, id) {
@@ -4058,11 +4111,12 @@ function routeConfig() {
 
     angular.module("app.mfi").controller("BranchController", BranchController);
 
-    BranchController.$inject = ['$state','$uibModal'];
+    BranchController.$inject = ['$state','$uibModal','MainService'];
 
   function BranchController(
     $state,
-    $uibModal
+    $uibModal,
+    MainService
   ) {
     var vm = this;
     vm.title = "Manage Branch";

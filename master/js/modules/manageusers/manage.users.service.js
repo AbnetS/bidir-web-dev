@@ -17,14 +17,15 @@
             UpdateUser: _updateUser
         };
 
-        function _getUsers(){
+        function _getUsers(params){
+
             var httpConfig = {
                 headers: {
                     'Authorization': 'Bearer ' + AuthService.GetToken(),
                     'Accept': 'application/json'
                 }
             };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.GetAll),httpConfig);
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll,params),httpConfig);
         }
         function _getRoles(){
             var httpConfig = {

@@ -16,13 +16,13 @@ var API = {
             MFI:'create',
             GetAll:'',
             Branch: 'branches',
-            GetAllBranches: 'branches/paginate?page=1&per_page=100',
+            GetAllBranches: 'branches/paginate?page=1&per_page=100'
         },
         Users: {
             Account:'accounts',
             UserUpdate:'',
             User:'create',
-            GetAll: 'paginate?page=1&per_page=100',
+            GetAll: '',
             Roles: 'roles',
             GetRoles: 'roles/paginate?page=1&per_page=100'
         },

@@ -65,6 +65,7 @@
     };
         var factory = {
             buildUrl: _buildUrl,
+            buildPaginatedUrl:_buildPaginatedUrl,
             buildUrlWithParam: _buildUrlWithParam,
             Validation: {
               ComputeValidation: function (validationObject) {
@@ -130,6 +131,9 @@
 
         function _buildUrl(service,url) {
           return API.Config.BaseUrl + service +'/' + url;
+        }
+        function _buildPaginatedUrl(service,url,params) {
+            return API.Config.BaseUrl + service +'/' + url + 'paginate?page='+params.start+'&per_page=' + params.limit;
         }
 
         function _buildUrlWithParam(service,url, id) {
