@@ -15,6 +15,7 @@
 (function() {
     'use strict';
 
+    appRun.$inject = ["$rootScope", "$state", "$stateParams"];
     angular
         .module('angle', [
             'app.core',
@@ -34,7 +35,11 @@
             'app.manage_users',
             'app.manage_roles',
             'app.welcomePage'
-        ]);
+        ]).run(appRun);
+
+    function appRun($rootScope, $state, $stateParams){
+            //TODO: redirect them to an access denied state if they do not have authorization to access it.
+    }
         
 })();
 
@@ -137,15 +142,15 @@
     'use strict';
 
     angular
-        .module('app.material', [
-            'ngMaterial'
-          ]);
+        .module('app.navsearch', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.navsearch', []);
+        .module('app.material', [
+            'ngMaterial'
+          ]);
 })();
 (function() {
     'use strict';
@@ -468,7 +473,13 @@ var API = {
             User:'create',
             GetAll: '',
             Roles: 'roles',
+            Role: 'roles/create',
             GetRoles: 'roles/paginate?page=1&per_page=100'
+        },
+        Roles:{
+            GetAll: 'roles',
+            Create: 'roles/create',
+            Permissions: 'permissions'
         },
         Tasks: {
             Task:'tasks',
@@ -477,25 +488,7 @@ var API = {
     }
 };
 
-var ResourceMethods = {
-    All: {
-        'query': {method: 'GET', isArray: true},
-        'get': {method: 'GET'},
-        'update': {method: 'PUT'},
-        'save': {method: 'POST'},
-        'delete': {method: 'DELETE'}
-    },
-    Readonly: {
-        'query': {method: 'GET', isArray: true},
-        'get': {method: 'GET'}
-    },
-    Query: {method: 'GET', isArray: true},
-    Get: {method: 'GET'},
-    Put: {method: 'PUT'},
-    Post: {method: 'POST'},
-    Delete: {method: 'DELETE'},
-    Search: {'search': {method: 'POST', isArray: true}}
-};
+
 
 (function() {
     'use strict';
@@ -829,6 +822,57 @@ var ResourceMethods = {
 
 })();
 /**
+ * Created by Yoni on 12/10/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('CreateRoleController', CreateRoleController);
+
+    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','SweetAlert'];
+    function CreateRoleController($mdDialog, ManageRoleService,items,SweetAlert) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.saveRole = _saveRole;
+        vm.isEdit = items !== null;
+        vm.selectedRole = items !== null?items:null;
+
+        initialize();
+
+        function _saveRole() {
+            var allowedPermissions = [];
+            var allowedPermissionIds = [];
+            angular.forEach(vm.permissions,function(perm){
+                if(!angular.isUndefined(perm.checked)){
+                    if(perm.checked){
+                        allowedPermissions.push(perm);
+                        allowedPermissionIds.push(perm._id);
+                    }
+                }
+            });
+            vm.role.Permissions = allowedPermissionIds;
+            console.log("vm.role",vm.role);
+        }
+
+        function initialize(){
+            ManageRoleService.GetPermissions().then(function(response){
+                vm.permissions = response.data.docs;
+            },function(error){
+                console.log("error permissions",error);
+            });
+        }
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+})(window.angular);
+
+
+/**
  * Created by Yoni on 11/30/2017.
  */
 
@@ -840,30 +884,111 @@ var ResourceMethods = {
         .controller('ManageRolesController', ManageRolesController);
 
     ManageRolesController.$inject = ['ManageUserService',
-        '$scope',
-        '$state',
+        '$mdDialog',
+        'RouteHelpers',
         '$rootScope',
         'APP_CONSTANTS'
     ];
 
     function ManageRolesController(
-        ManageUserService,
-        $scope,
-        $state,
-        $rootScope,
-        APP_CONSTANTS
+        ManageRoleService,
+        $mdDialog,
+        RouteHelpers
     ) {
         var vm = this;
+        vm.addRole = _addRole;
+        vm.editRole = _editRole;
 
-        ManageUserService.GetRoles().then(function(response){
+        ManageRoleService.GetRoles().then(function(response){
             vm.roles = response.data.docs;
             console.log("vm.roles",vm.roles);
         },function(error){
-            console.log("error",error);
+            console.log("error role",error);
         });
+
+
+
+
+
+        function _addRole(ev){
+
+            $mdDialog.show({
+                locals: {
+                    items: null
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                }, function () {
+                });
+        }
+
+        function _editRole(role,ev) {
+
+        }
+
+
+
     }
 })(window.angular);
 
+
+/**
+ * Created by Yoni on 12/11/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.manage_roles')
+
+        .service('ManageRoleService', ManageRoleService);
+    ManageRoleService.$inject = ['$http', 'CommonService','AuthService'];
+
+    function ManageRoleService($http, CommonService,AuthService) {
+        return {
+            GetRoles: _getRoles,
+            GetPermissions: _getPermissions,
+            SaveRole: _saveRole
+        };
+
+        function _getRoles(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetRoles),httpConfig);
+        }
+        function _getPermissions(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions),httpConfig);
+        }
+
+        function _saveRole(role) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role,httpConfig);
+        }
+
+    }
+
+})(window.angular);
 
 /**
  * Created by Yoni on 12/2/2017.
@@ -1455,6 +1580,115 @@ var ResourceMethods = {
             });
           }
 
+        }
+    }
+})();
+
+/**=========================================================
+ * Module: navbar-search.js
+ * Navbar search toggler * Auto dismiss on ESC key
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .directive('searchOpen', searchOpen)
+        .directive('searchDismiss', searchDismiss);
+
+    //
+    // directives definition
+    // 
+    
+    function searchOpen () {
+        var directive = {
+            controller: searchOpenController,
+            restrict: 'A'
+        };
+        return directive;
+
+    }
+
+    function searchDismiss () {
+        var directive = {
+            controller: searchDismissController,
+            restrict: 'A'
+        };
+        return directive;
+        
+    }
+
+    //
+    // Contrller definition
+    // 
+    
+    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchOpenController ($scope, $element, NavSearch) {
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.toggle);
+    }
+
+    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchDismissController ($scope, $element, NavSearch) {
+      
+      var inputSelector = '.navbar-form input[type="text"]';
+
+      $(inputSelector)
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('keyup', function(e) {
+          if (e.keyCode === 27) // ESC
+            NavSearch.dismiss();
+        });
+        
+      // click anywhere closes the search
+      $(document).on('click', NavSearch.dismiss);
+      // dismissable options
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.dismiss);
+    }
+
+})();
+
+
+/**=========================================================
+ * Module: nav-search.js
+ * Services to share navbar search functions
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .service('NavSearch', NavSearch);
+
+    function NavSearch() {
+        this.toggle = toggle;
+        this.dismiss = dismiss;
+
+        ////////////////
+
+        var navbarFormSelector = 'form.navbar-form';
+
+        function toggle() {
+          var navbarForm = $(navbarFormSelector);
+
+          navbarForm.toggleClass('open');
+
+          var isOpen = navbarForm.hasClass('open');
+
+          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
+        }
+
+        function dismiss() {
+          $(navbarFormSelector)
+            .removeClass('open') // Close control
+            .find('input[type="text"]').blur() // remove focus
+            // .val('') // Empty input
+            ;
         }
     }
 })();
@@ -2193,115 +2427,6 @@ var ResourceMethods = {
         }
     }
 })();
-/**=========================================================
- * Module: navbar-search.js
- * Navbar search toggler * Auto dismiss on ESC key
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .directive('searchOpen', searchOpen)
-        .directive('searchDismiss', searchDismiss);
-
-    //
-    // directives definition
-    // 
-    
-    function searchOpen () {
-        var directive = {
-            controller: searchOpenController,
-            restrict: 'A'
-        };
-        return directive;
-
-    }
-
-    function searchDismiss () {
-        var directive = {
-            controller: searchDismissController,
-            restrict: 'A'
-        };
-        return directive;
-        
-    }
-
-    //
-    // Contrller definition
-    // 
-    
-    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchOpenController ($scope, $element, NavSearch) {
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.toggle);
-    }
-
-    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchDismissController ($scope, $element, NavSearch) {
-      
-      var inputSelector = '.navbar-form input[type="text"]';
-
-      $(inputSelector)
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('keyup', function(e) {
-          if (e.keyCode === 27) // ESC
-            NavSearch.dismiss();
-        });
-        
-      // click anywhere closes the search
-      $(document).on('click', NavSearch.dismiss);
-      // dismissable options
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.dismiss);
-    }
-
-})();
-
-
-/**=========================================================
- * Module: nav-search.js
- * Services to share navbar search functions
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .service('NavSearch', NavSearch);
-
-    function NavSearch() {
-        this.toggle = toggle;
-        this.dismiss = dismiss;
-
-        ////////////////
-
-        var navbarFormSelector = 'form.navbar-form';
-
-        function toggle() {
-          var navbarForm = $(navbarFormSelector);
-
-          navbarForm.toggleClass('open');
-
-          var isOpen = navbarForm.hasClass('open');
-
-          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
-        }
-
-        function dismiss() {
-          $(navbarFormSelector)
-            .removeClass('open') // Close control
-            .find('input[type="text"]').blur() // remove focus
-            // .val('') // Empty input
-            ;
-        }
-    }
-})();
-
 (function() {
     'use strict';
 
@@ -3899,7 +4024,8 @@ var ResourceMethods = {
           return API.Config.BaseUrl + service +'/' + url;
         }
         function _buildPaginatedUrl(service,url,params) {
-            return API.Config.BaseUrl + service +'/' + url + 'paginate?page='+params.start+'&per_page=' + params.limit;
+            var parameters = {start:1,limit:100};
+            return API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
         }
 
         function _buildUrlWithParam(service,url, id) {

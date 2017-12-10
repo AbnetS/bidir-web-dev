@@ -34,7 +34,11 @@
             'app.manage_users',
             'app.manage_roles',
             'app.welcomePage'
-        ]);
+        ]).run(appRun);
+
+    function appRun($rootScope, $state, $stateParams){
+            //TODO: redirect them to an access denied state if they do not have authorization to access it.
+    }
         
 })();
 

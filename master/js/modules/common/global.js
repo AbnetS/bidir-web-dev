@@ -24,7 +24,13 @@ var API = {
             User:'create',
             GetAll: '',
             Roles: 'roles',
+            Role: 'roles/create',
             GetRoles: 'roles/paginate?page=1&per_page=100'
+        },
+        Roles:{
+            GetAll: 'roles',
+            Create: 'roles/create',
+            Permissions: 'permissions'
         },
         Tasks: {
             Task:'tasks',
@@ -33,22 +39,4 @@ var API = {
     }
 };
 
-var ResourceMethods = {
-    All: {
-        'query': {method: 'GET', isArray: true},
-        'get': {method: 'GET'},
-        'update': {method: 'PUT'},
-        'save': {method: 'POST'},
-        'delete': {method: 'DELETE'}
-    },
-    Readonly: {
-        'query': {method: 'GET', isArray: true},
-        'get': {method: 'GET'}
-    },
-    Query: {method: 'GET', isArray: true},
-    Get: {method: 'GET'},
-    Put: {method: 'PUT'},
-    Post: {method: 'POST'},
-    Delete: {method: 'DELETE'},
-    Search: {'search': {method: 'POST', isArray: true}}
-};
+

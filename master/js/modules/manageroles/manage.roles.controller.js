@@ -10,27 +10,58 @@
         .controller('ManageRolesController', ManageRolesController);
 
     ManageRolesController.$inject = ['ManageUserService',
-        '$scope',
-        '$state',
+        '$mdDialog',
+        'RouteHelpers',
         '$rootScope',
         'APP_CONSTANTS'
     ];
 
     function ManageRolesController(
-        ManageUserService,
-        $scope,
-        $state,
-        $rootScope,
-        APP_CONSTANTS
+        ManageRoleService,
+        $mdDialog,
+        RouteHelpers
     ) {
         var vm = this;
+        vm.addRole = _addRole;
+        vm.editRole = _editRole;
 
-        ManageUserService.GetRoles().then(function(response){
+        ManageRoleService.GetRoles().then(function(response){
             vm.roles = response.data.docs;
             console.log("vm.roles",vm.roles);
         },function(error){
-            console.log("error",error);
+            console.log("error role",error);
         });
+
+
+
+
+
+        function _addRole(ev){
+
+            $mdDialog.show({
+                locals: {
+                    items: null
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                }, function () {
+                });
+        }
+
+        function _editRole(role,ev) {
+
+        }
+
+
+
     }
 })(window.angular);
 

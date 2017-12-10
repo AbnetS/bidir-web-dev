@@ -133,7 +133,8 @@
           return API.Config.BaseUrl + service +'/' + url;
         }
         function _buildPaginatedUrl(service,url,params) {
-            return API.Config.BaseUrl + service +'/' + url + 'paginate?page='+params.start+'&per_page=' + params.limit;
+            var parameters = {start:1,limit:100};
+            return API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
         }
 
         function _buildUrlWithParam(service,url, id) {
