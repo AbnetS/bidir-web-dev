@@ -31,23 +31,23 @@
       if (vm.IsValidData) {
         if (_.isUndefined(vm.MFI._id)) {
           MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
-              AlertService.showSuccess("MFI Information created successfully", "Information");
+              // AlertService.showSuccess("MFI Information created successfully", "Information");
               console.log("Create MFI", response);
             }, function(error) {
-              AlertService.showError("Failed to create MFI!, Pleast try again", "Information");
+              // AlertService.showError("Failed to create MFI!, Pleast try again", "Information");
               console.log("Create MFI Error", error);
             });
         } else {
           MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
-              AlertService.showSuccess("MFI Information updated successfully", "Information");
+              // AlertService.showSuccess("MFI Information updated successfully", "Information");
               console.log("Update MFI", response);
             }, function(error) {
-              AlertService.showError("MFI Information update failed", "Information");
+              // AlertService.showError("MFI Information update failed", "Information");
               console.log("UpdateMFI Error", error);
             });
         }
       } else {
-        toastr.warning("Please fill the required fields and try again.", "Warning!");
+        // toastr.warning("Please fill the required fields and try again.", "Warning!");
       }
     }
 

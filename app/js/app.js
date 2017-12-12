@@ -15,7 +15,7 @@
 (function() {
     'use strict';
 
-    appRun.$inject = ["$rootScope", "$state", "$stateParams"];
+    appRun.$inject = ["$rootScope", "AuthService", "$stateParams"];
     angular
         .module('angle', [
             'app.core',
@@ -37,8 +37,18 @@
             'app.mfi'
         ]).run(appRun);
 
-    function appRun($rootScope, $state, $stateParams){
+    function appRun($rootScope, AuthService, $stateParams){
             //TODO: redirect them to an access denied state if they do not have authorization to access it.
+        //Angular UI router state changes
+        $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
+
+            var UserInfo = AuthService.GetCredentials();
+
+            //Check if there is a logged in user
+            if (UserInfo === null) {
+                //Clear storage and redirect
+            }
+        });
     }
         
 })();
@@ -56,6 +66,21 @@
     angular
         .module('app.colors', []);
 })();
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common", [])
+    .run(runBlock)
+    .config(routeConfig);
+
+  function runBlock() {
+    console.log("common run");
+  }
+
+  function routeConfig() {}
+})(window.angular);
+
 (function() {
     'use strict';
 
@@ -96,15 +121,7 @@
     'use strict';
 
     angular
-        .module('app.manage_users', [
-
-        ]).run(runUM);
-
-    function runUM() {
-
-    }
-
-
+        .module('app.manage_roles', []);
 
 })();
 /**
@@ -114,7 +131,15 @@
     'use strict';
 
     angular
-        .module('app.manage_roles', []);
+        .module('app.manage_users', [
+
+        ]).run(runUM);
+
+    function runUM() {
+
+    }
+
+
 
 })();
 (function() {
@@ -141,18 +166,18 @@
     'use strict';
 
     angular
-        .module('app.routes', [
-            'app.lazyload'
-        ]);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.preloader', []);
 })();
 
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.routes', [
+            'app.lazyload'
+        ]);
+})();
 (function() {
     'use strict';
 
@@ -191,21 +216,6 @@
         .module('app.welcomePage', []);
 
 })();
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common", [])
-    .run(runBlock)
-    .config(routeConfig);
-
-  function runBlock() {
-    console.log("common run");
-  }
-
-  function routeConfig() {}
-})(window.angular);
-
 (function(angular) {
     'use strict';
     angular.module('app.auth')
@@ -269,7 +279,6 @@
         function logout() {
             StorageService.Reset();
             $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
-            console.log(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
             $state.go('page.login');
         }
 
@@ -420,6 +429,76 @@
     }
 
 })();
+
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common")
+    .constant("_", window._)
+    .constant("APP_CONSTANTS", {
+      USER_ROLES: {
+        ALL: "*",
+        ADMIN: "admin",
+      },
+      StorageKey: {
+        TOKEN: "token",
+        SESSION: "SESSION"
+      },
+      AUTH_EVENTS: {
+        loginSuccess: "auth-login-success",
+        loginFailed: "auth-login-failed",
+        logoutSuccess: "auth-logout-success",
+        sessionTimeout: "auth-session-timeout",
+        notAuthenticated: "auth-not-authenticated",
+        notAuthorized: "auth-not-authorized"
+      }
+    });
+})(window.angular);
+
+var API = {
+    Config: {
+        BaseUrl: "http://api.dev.bidir.gebeya.io/" //REMOTE API
+    },
+    Service: {
+        NONE:'',
+        MFI: 'MFI',
+        Auth: 'auth',
+        Users: 'users'
+    },
+    Methods: {
+        Auth: {
+            Login: 'login'
+        },
+        MFI: {
+            MFIUpdate:'',
+            MFI:'create',
+            GetAll:'all',
+            Branch: 'branches',
+            GetAllBranches: 'branches/paginate?page=1&per_page=100'
+        },
+        Users: {
+            Account:'accounts',
+            UserUpdate:'',
+            User:'create',
+            GetAll: '',
+            Roles: 'roles',
+            Role: 'roles/create',
+            GetRoles: 'roles/paginate?page=1&per_page=100'
+        },
+        Roles:{
+            GetAll: 'roles',
+            Create: 'roles/create',
+            Permissions: 'permissions'
+        },
+        Tasks: {
+            Task:'tasks',
+            GetAll: 'tasks/paginate?page=1&per_page=100'
+        }
+    }
+};
+
+
 
 (function() {
     'use strict';
@@ -609,7 +688,8 @@
                                    'vendor/morris.js/morris.js',
                                    'vendor/morris.js/morris.css'],
             'loaders.css':          ['vendor/loaders.css/loaders.css'],
-            'spinkit':              ['vendor/spinkit/css/spinkit.css']
+            'spinkit':              ['vendor/spinkit/css/spinkit.css'],
+            'underscore':           ['https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js']
           },
           // Angular based script (use the right module name)
           modules: [
@@ -752,6 +832,211 @@
     }
 
 })();
+/**
+ * Created by Yoni on 12/10/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('CreateRoleController', CreateRoleController);
+
+    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','SweetAlert'];
+    function CreateRoleController($mdDialog, ManageRoleService,items,SweetAlert) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.saveRole = _saveRole;
+        vm.isEdit = items !== null;
+        vm.role = items !== null?items:null;
+        initialize();
+
+        function preparePermissions() {
+            var allowedPermissions = [];
+            var allowedPermissionIds = [];
+            angular.forEach(vm.permissions,function(perm){
+                if(vm.isEdit){
+                    if(!angular.isUndefined(vm.role.permissions)){
+                        angular.forEach(vm.role.permissions,function(rolePerm){
+                            debugger
+                            rolePerm.checked = perm._id === rolePerm._id;
+
+                        });
+                    }
+                }
+                else{
+                    if(!angular.isUndefined(perm.checked)){
+                        if(perm.checked){
+                            allowedPermissions.push(perm);
+                            allowedPermissionIds.push(perm._id);
+                        }
+                    }
+                }
+            });
+            vm.role.permissions = allowedPermissionIds;
+        }
+        function _saveRole() {
+            preparePermissions();
+            console.log("vm.role",vm.role);
+            ManageRoleService.SaveRole( vm.role ).then(function (data) {
+                    console.log("updated successfully", data);
+                    $mdDialog.hide();
+                    //TODO: Alert & fetch data
+                },
+                function (error) {
+                    console.log("could not be saved", error);
+                });
+        }
+
+        function initialize(){
+
+            ManageRoleService.GetPermissions().then(function(response){
+                vm.permissions = response.data.docs;
+                if(vm.isEdit){
+                    preparePermissions();
+                }
+            },function(error){
+                console.log("error permissions",error);
+            });
+
+
+        }
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('ManageRoleController', ManageRoleController);
+
+    ManageRoleController.$inject = ['ManageRoleService', '$mdDialog', 'RouteHelpers'];
+
+    function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
+    {
+        var vm = this;
+        vm.addRole = _addRole;
+        vm.editRole = _editRole;
+
+        fetchRoles();
+
+       function fetchRoles() {
+           ManageRoleService.GetRoles().then(function(response){
+               vm.roles = response.data.docs;
+               console.log("vm.roles on RM",vm.roles);
+           },function(error){
+               console.log("error role",error);
+           });
+       }
+
+        function _addRole(ev){
+
+            $mdDialog.show({
+                locals: {
+                    items: null
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
+        }
+
+        function _editRole(role,ev) {
+            $mdDialog.show({
+                locals: {
+                    items: role
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
+        }
+
+
+
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 12/11/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.manage_roles')
+
+        .service('ManageRoleService', ManageRoleService);
+    ManageRoleService.$inject = ['$http', 'CommonService','AuthService'];
+
+    function ManageRoleService($http, CommonService,AuthService) {
+        return {
+            GetRoles: _getRoles,
+            GetPermissions: _getPermissions,
+            SaveRole: _saveRole
+        };
+
+        function _getRoles(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetRoles),httpConfig);
+        }
+
+        function _getPermissions(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions),httpConfig);
+        }
+
+        function _saveRole(role) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role,httpConfig);
+        }
+
+    }
+
+})(window.angular);
+
 /**
  * Created by Yoni on 12/2/2017.
  */
@@ -1176,211 +1461,6 @@
             return $http.put('http://api.dev.bidir.gebeya.io/users/' + user._id, user, httpConfig);
             // return $http.put(CommonService.buildUrl(API.Service.Users,API.Methods.Users.UserUpdate) + user._id, user, httpConfig);
         }
-    }
-
-})(window.angular);
-
-/**
- * Created by Yoni on 12/10/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_roles')
-        .controller('CreateRoleController', CreateRoleController);
-
-    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','SweetAlert'];
-    function CreateRoleController($mdDialog, ManageRoleService,items,SweetAlert) {
-        var vm = this;
-        vm.cancel = _cancel;
-        vm.saveRole = _saveRole;
-        vm.isEdit = items !== null;
-        vm.role = items !== null?items:null;
-        initialize();
-
-        function preparePermissions() {
-            var allowedPermissions = [];
-            var allowedPermissionIds = [];
-            angular.forEach(vm.permissions,function(perm){
-                if(vm.isEdit){
-                    if(!angular.isUndefined(vm.role.permissions)){
-                        angular.forEach(vm.role.permissions,function(rolePerm){
-                            debugger
-                            rolePerm.checked = perm._id === rolePerm._id;
-
-                        });
-                    }
-                }
-                else{
-                    if(!angular.isUndefined(perm.checked)){
-                        if(perm.checked){
-                            allowedPermissions.push(perm);
-                            allowedPermissionIds.push(perm._id);
-                        }
-                    }
-                }
-            });
-            vm.role.permissions = allowedPermissionIds;
-        }
-        function _saveRole() {
-            preparePermissions();
-            console.log("vm.role",vm.role);
-            ManageRoleService.SaveRole( vm.role ).then(function (data) {
-                    console.log("updated successfully", data);
-                    $mdDialog.hide();
-                    //TODO: Alert & fetch data
-                },
-                function (error) {
-                    console.log("could not be saved", error);
-                });
-        }
-
-        function initialize(){
-
-            ManageRoleService.GetPermissions().then(function(response){
-                vm.permissions = response.data.docs;
-                if(vm.isEdit){
-                    preparePermissions();
-                }
-            },function(error){
-                console.log("error permissions",error);
-            });
-
-
-        }
-
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 11/30/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_roles')
-        .controller('ManageRoleController', ManageRoleController);
-
-    ManageRoleController.$inject = ['ManageRoleService', '$mdDialog', 'RouteHelpers'];
-
-    function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
-    {
-        var vm = this;
-        vm.addRole = _addRole;
-        vm.editRole = _editRole;
-
-        fetchRoles();
-
-       function fetchRoles() {
-           ManageRoleService.GetRoles().then(function(response){
-               vm.roles = response.data.docs;
-               console.log("vm.roles on RM",vm.roles);
-           },function(error){
-               console.log("error role",error);
-           });
-       }
-
-        function _addRole(ev){
-
-            $mdDialog.show({
-                locals: {
-                    items: null
-                },
-                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateRoleController',
-                controllerAs: 'vm'
-            })
-                .then(function (answer) {
-                    fetchRoles();
-                }, function () {
-                });
-        }
-
-        function _editRole(role,ev) {
-            $mdDialog.show({
-                locals: {
-                    items: role
-                },
-                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateRoleController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                    fetchRoles();
-                }, function () {
-                });
-        }
-
-
-
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 12/11/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.manage_roles')
-
-        .service('ManageRoleService', ManageRoleService);
-    ManageRoleService.$inject = ['$http', 'CommonService','AuthService'];
-
-    function ManageRoleService($http, CommonService,AuthService) {
-        return {
-            GetRoles: _getRoles,
-            GetPermissions: _getPermissions,
-            SaveRole: _saveRole
-        };
-
-        function _getRoles(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetRoles),httpConfig);
-        }
-
-        function _getPermissions(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions),httpConfig);
-        }
-
-        function _saveRole(role) {
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role,httpConfig);
-        }
-
     }
 
 })(window.angular);
@@ -2393,6 +2473,99 @@
     }
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.preloader')
+        .directive('preloader', preloader);
+
+    preloader.$inject = ['$animate', '$timeout', '$q'];
+    function preloader ($animate, $timeout, $q) {
+
+        var directive = {
+            restrict: 'EAC',
+            template: 
+              '<div class="preloader-progress">' +
+                  '<div class="preloader-progress-bar" ' +
+                       'ng-style="{width: loadCounter + \'%\'}"></div>' +
+              '</div>'
+            ,
+            link: link
+        };
+        return directive;
+
+        ///////
+
+        function link(scope, el) {
+
+          scope.loadCounter = 0;
+
+          var counter  = 0,
+              timeout;
+
+          // disables scrollbar
+          angular.element('body').css('overflow', 'hidden');
+          // ensure class is present for styling
+          el.addClass('preloader');
+
+          appReady().then(endCounter);
+
+          timeout = $timeout(startCounter);
+
+          ///////
+
+          function startCounter() {
+
+            var remaining = 100 - counter;
+            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
+
+            scope.loadCounter = parseInt(counter, 10);
+
+            timeout = $timeout(startCounter, 20);
+          }
+
+          function endCounter() {
+
+            $timeout.cancel(timeout);
+
+            scope.loadCounter = 100;
+
+            $timeout(function(){
+              // animate preloader hiding
+              $animate.addClass(el, 'preloader-hidden');
+              // retore scrollbar
+              angular.element('body').css('overflow', '');
+            }, 300);
+          }
+
+          function appReady() {
+            var deferred = $q.defer();
+            var viewsLoaded = 0;
+            // if this doesn't sync with the real app ready
+            // a custom event must be used instead
+            var off = scope.$on('$viewContentLoaded', function () {
+              viewsLoaded ++;
+              // we know there are at least two views to be loaded 
+              // before the app is ready (1-index.html 2-app*.html)
+              if ( viewsLoaded === 2) {
+                // with resolve this fires only once
+                $timeout(function(){
+                  deferred.resolve();
+                }, 3000);
+
+                off();
+              }
+
+            });
+
+            return deferred.promise;
+          }
+
+        } //link
+    }
+
+})();
 /**=========================================================
  * Module: helpers.js
  * Provides helper functions for routes definition
@@ -2508,7 +2681,7 @@
               url: '/app',
               abstract: true,
               templateUrl: helper.basepath('app.html'),
-              resolve: helper.resolveFor('modernizr', 'icons','datatables')
+              resolve: helper.resolveFor('modernizr', 'icons','datatables','underscore','oitozero.ngSweetAlert')
           })
           .state('app.welcome', {
               url: '/welcome',
@@ -2544,13 +2717,14 @@
             })
 
             .state("app.manage_branch", {
-            url: "/branches",
-            title: "branches",
-            templateUrl: "master/js/custom/mfisetup/branches/branches.html",
-            controller: "BranchController",
-            controllerAs: 'vm'
+                url: "/branches",
+                title: "branches",
+                templateUrl: "master/js/custom/mfisetup/branches/branches.html",
+                controller: "BranchController",
+                controllerAs: 'vm'
             })
-          // 
+
+
           // CUSTOM RESOLVES
           //   Add your own resolves properties
           //   following this object extend
@@ -2559,7 +2733,7 @@
             .state('page', {
                 url: '/page',
                 templateUrl: 'app/pages/page.html',
-                resolve: helper.resolveFor('modernizr', 'icons'),
+                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert'),
                 controller: ['$rootScope', function($rootScope) {
                     $rootScope.app.layout.isBoxed = false;
                 }]
@@ -2598,105 +2772,12 @@
     'use strict';
 
     angular
-        .module('app.preloader')
-        .directive('preloader', preloader);
-
-    preloader.$inject = ['$animate', '$timeout', '$q'];
-    function preloader ($animate, $timeout, $q) {
-
-        var directive = {
-            restrict: 'EAC',
-            template: 
-              '<div class="preloader-progress">' +
-                  '<div class="preloader-progress-bar" ' +
-                       'ng-style="{width: loadCounter + \'%\'}"></div>' +
-              '</div>'
-            ,
-            link: link
-        };
-        return directive;
-
-        ///////
-
-        function link(scope, el) {
-
-          scope.loadCounter = 0;
-
-          var counter  = 0,
-              timeout;
-
-          // disables scrollbar
-          angular.element('body').css('overflow', 'hidden');
-          // ensure class is present for styling
-          el.addClass('preloader');
-
-          appReady().then(endCounter);
-
-          timeout = $timeout(startCounter);
-
-          ///////
-
-          function startCounter() {
-
-            var remaining = 100 - counter;
-            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
-
-            scope.loadCounter = parseInt(counter, 10);
-
-            timeout = $timeout(startCounter, 20);
-          }
-
-          function endCounter() {
-
-            $timeout.cancel(timeout);
-
-            scope.loadCounter = 100;
-
-            $timeout(function(){
-              // animate preloader hiding
-              $animate.addClass(el, 'preloader-hidden');
-              // retore scrollbar
-              angular.element('body').css('overflow', '');
-            }, 300);
-          }
-
-          function appReady() {
-            var deferred = $q.defer();
-            var viewsLoaded = 0;
-            // if this doesn't sync with the real app ready
-            // a custom event must be used instead
-            var off = scope.$on('$viewContentLoaded', function () {
-              viewsLoaded ++;
-              // we know there are at least two views to be loaded 
-              // before the app is ready (1-index.html 2-app*.html)
-              if ( viewsLoaded === 2) {
-                // with resolve this fires only once
-                $timeout(function(){
-                  deferred.resolve();
-                }, 3000);
-
-                off();
-              }
-
-            });
-
-            return deferred.promise;
-          }
-
-        } //link
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.settings')
         .run(settingsRun);
 
-    settingsRun.$inject = ['$rootScope', '$localStorage'];
+    settingsRun.$inject = ['$rootScope', 'AuthService'];
 
-    function settingsRun($rootScope, $localStorage){
+    function settingsRun($rootScope, AuthService){
 
 
       // User Settings
@@ -2710,6 +2791,9 @@
       // Hides/show user avatar on sidebar from any element
       $rootScope.toggleUserBlock = function(){
         $rootScope.$broadcast('toggleUserBlock');
+      };
+      $rootScope.logoutUser = function (){
+            AuthService.Logout();
       };
 
       // Global Settings
@@ -3777,75 +3861,6 @@
     }
 
 })(window.angular);
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common")
-    .constant("_", window._)
-    .constant("APP_CONSTANTS", {
-      USER_ROLES: {
-        ALL: "*",
-        ADMIN: "admin",
-      },
-      StorageKey: {
-        TOKEN: "token",
-        SESSION: "SESSION"
-      },
-      AUTH_EVENTS: {
-        loginSuccess: "auth-login-success",
-        loginFailed: "auth-login-failed",
-        logoutSuccess: "auth-logout-success",
-        sessionTimeout: "auth-session-timeout",
-        notAuthenticated: "auth-not-authenticated",
-        notAuthorized: "auth-not-authorized"
-      }
-    });
-})(window.angular);
-
-var API = {
-    Config: {
-        BaseUrl: "http://api.dev.bidir.gebeya.io/" //REMOTE API
-    },
-    Service: {
-        NONE:'',
-        MFI: 'MFI',
-        Auth: 'auth',
-        Users: 'users'
-    },
-    Methods: {
-        Auth: {
-            Login: 'login'
-        },
-        MFI: {
-            MFI:'create',
-            GetAll:'all',
-            Branch: 'branches',
-            GetAllBranches: 'branches/paginate?page=1&per_page=100'
-        },
-        Users: {
-            Account:'accounts',
-            UserUpdate:'',
-            User:'create',
-            GetAll: '',
-            Roles: 'roles',
-            Role: 'roles/create',
-            GetRoles: 'roles/paginate?page=1&per_page=100'
-        },
-        Roles:{
-            GetAll: 'roles',
-            Create: 'roles/create',
-            Permissions: 'permissions'
-        },
-        Tasks: {
-            Task:'tasks',
-            GetAll: 'tasks/paginate?page=1&per_page=100'
-        }
-    }
-};
-
-
-
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -4064,7 +4079,10 @@ var API = {
         }
 
         function _buildUrlWithParam(service,url, id) {
-            return API.Config.BaseUrl + service +'/'+ url + '/' + id;
+            console.log("service",service);
+            console.log("url",url);
+            // return API.Config.BaseUrl + service +'/'+ url + '/' + id;
+            return url===''?API.Config.BaseUrl + service + '/' + id : API.Config.BaseUrl + service +'/'+ url + '/' + id;
         }
     }
 
@@ -4253,7 +4271,7 @@ function runBlock() {
         var updatedMFI = setAttribute(data,logo);
 
         return $http({
-          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFI) + data._id,
+          url: CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.MFIUpdate,data._id),
           method: 'PUT',
           data: updatedMFI,
           //assigning content-type as undefined,let the browser
@@ -4286,7 +4304,7 @@ function runBlock() {
         var mfiData = setAttribute(data,logo);
 
         return $http({
-          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFI) + 'create',
+          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFIUpdate),
           method: 'POST',
           data: mfiData,
           //assigning content-type as undefined,let the browser handle it
@@ -4512,23 +4530,23 @@ function runBlock() {
       if (vm.IsValidData) {
         if (_.isUndefined(vm.MFI._id)) {
           MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
-              AlertService.showSuccess("MFI Information created successfully", "Information");
+              // AlertService.showSuccess("MFI Information created successfully", "Information");
               console.log("Create MFI", response);
             }, function(error) {
-              AlertService.showError("Failed to create MFI!, Pleast try again", "Information");
+              // AlertService.showError("Failed to create MFI!, Pleast try again", "Information");
               console.log("Create MFI Error", error);
             });
         } else {
           MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
-              AlertService.showSuccess("MFI Information updated successfully", "Information");
+              // AlertService.showSuccess("MFI Information updated successfully", "Information");
               console.log("Update MFI", response);
             }, function(error) {
-              AlertService.showError("MFI Information update failed", "Information");
+              // AlertService.showError("MFI Information update failed", "Information");
               console.log("UpdateMFI Error", error);
             });
         }
       } else {
-        toastr.warning("Please fill the required fields and try again.", "Warning!");
+        // toastr.warning("Please fill the required fields and try again.", "Warning!");
       }
     }
 

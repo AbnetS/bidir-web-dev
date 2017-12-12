@@ -29,7 +29,7 @@
               url: '/app',
               abstract: true,
               templateUrl: helper.basepath('app.html'),
-              resolve: helper.resolveFor('modernizr', 'icons','datatables')
+              resolve: helper.resolveFor('modernizr', 'icons','datatables','underscore','oitozero.ngSweetAlert')
           })
           .state('app.welcome', {
               url: '/welcome',
@@ -65,13 +65,14 @@
             })
 
             .state("app.manage_branch", {
-            url: "/branches",
-            title: "branches",
-            templateUrl: "master/js/custom/mfisetup/branches/branches.html",
-            controller: "BranchController",
-            controllerAs: 'vm'
+                url: "/branches",
+                title: "branches",
+                templateUrl: "master/js/custom/mfisetup/branches/branches.html",
+                controller: "BranchController",
+                controllerAs: 'vm'
             })
-          // 
+
+
           // CUSTOM RESOLVES
           //   Add your own resolves properties
           //   following this object extend
@@ -80,7 +81,7 @@
             .state('page', {
                 url: '/page',
                 templateUrl: 'app/pages/page.html',
-                resolve: helper.resolveFor('modernizr', 'icons'),
+                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert'),
                 controller: ['$rootScope', function($rootScope) {
                     $rootScope.app.layout.isBoxed = false;
                 }]

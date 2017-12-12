@@ -13,6 +13,7 @@ var API = {
             Login: 'login'
         },
         MFI: {
+            MFIUpdate:'',
             MFI:'create',
             GetAll:'all',
             Branch: 'branches',

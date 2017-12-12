@@ -87,7 +87,7 @@
         var updatedMFI = setAttribute(data,logo);
 
         return $http({
-          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFI) + data._id,
+          url: CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.MFIUpdate,data._id),
           method: 'PUT',
           data: updatedMFI,
           //assigning content-type as undefined,let the browser
@@ -120,7 +120,7 @@
         var mfiData = setAttribute(data,logo);
 
         return $http({
-          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFI) + 'create',
+          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFIUpdate),
           method: 'POST',
           data: mfiData,
           //assigning content-type as undefined,let the browser handle it

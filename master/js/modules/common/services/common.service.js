@@ -140,7 +140,10 @@
         }
 
         function _buildUrlWithParam(service,url, id) {
-            return API.Config.BaseUrl + service +'/'+ url + '/' + id;
+            console.log("service",service);
+            console.log("url",url);
+            // return API.Config.BaseUrl + service +'/'+ url + '/' + id;
+            return url===''?API.Config.BaseUrl + service + '/' + id : API.Config.BaseUrl + service +'/'+ url + '/' + id;
         }
     }
 

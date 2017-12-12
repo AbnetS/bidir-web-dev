@@ -5,9 +5,9 @@
         .module('app.settings')
         .run(settingsRun);
 
-    settingsRun.$inject = ['$rootScope', '$localStorage'];
+    settingsRun.$inject = ['$rootScope', 'AuthService'];
 
-    function settingsRun($rootScope, $localStorage){
+    function settingsRun($rootScope, AuthService){
 
 
       // User Settings
@@ -21,6 +21,9 @@
       // Hides/show user avatar on sidebar from any element
       $rootScope.toggleUserBlock = function(){
         $rootScope.$broadcast('toggleUserBlock');
+      };
+      $rootScope.logoutUser = function (){
+            AuthService.Logout();
       };
 
       // Global Settings
