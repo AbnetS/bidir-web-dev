@@ -30,17 +30,13 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="role in vm.roles"  >
+                    <tr ng-repeat="role in vm.roles">
                         <td>{{ $index + 1 }}</td>
                         <td>{{role.name}}</td>
                         <td>{{role.description }}</td>
                         <td>{{role.last_modified | date:'medium' }}</td>
                         <td>
-                            <a
-                               ng-click="vm.editRole(role,$event)">
-                                <i class="fa fa-edit"></i>
-                                Permissions
-                            </a>
+                            <a ng-click="vm.editRole(role,$event)"> <i class="fa fa-edit"></i>  Permissions </a>
                         </td>
                     </tr>
                     </tbody>

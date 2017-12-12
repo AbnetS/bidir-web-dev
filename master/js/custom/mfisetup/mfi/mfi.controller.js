@@ -20,6 +20,7 @@
       IslogoValid: true,
       Isestablishment_yearValid: true
   };
+    vm.title = "MFI SETUP";
 
 
     init();

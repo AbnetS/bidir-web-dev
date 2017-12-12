@@ -104,7 +104,7 @@
                 DTColumnBuilder.newColumn('account.role.name').withTitle('Role'),
                 DTColumnBuilder.newColumn('account.default_branch.name').withTitle('Branch'),
                 DTColumnBuilder.newColumn('username').withTitle('username'),
-                DTColumnBuilder.newColumn('status').withTitle('status').notSortable().renderWith(renderStatusCol),
+                DTColumnBuilder.newColumn('status').withTitle('status'),//.notSortable().renderWith(renderStatusCol),
                 DTColumnBuilder.newColumn(null).withTitle('Actions').notSortable().renderWith(actionButtons)
             ];
 

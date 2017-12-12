@@ -50,12 +50,6 @@
     angular
         .module('app.auth', []);
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
-})();
 (function(angular) {
   "use strict";
 
@@ -71,6 +65,12 @@
   function routeConfig() {}
 })(window.angular);
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
+})();
 (function() {
     'use strict';
 
@@ -371,56 +371,6 @@
 })(window.angular);
 
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
-
 (function(angular) {
   "use strict";
 
@@ -489,6 +439,56 @@ var API = {
 };
 
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
 
 (function() {
     'use strict';
@@ -1083,7 +1083,6 @@ var API = {
                     });
 
             }else {
-                userInfo.password = vm.user.password;
                 userInfo.username = vm.user.username;
 
                 ManageUserService.CreateUser(userInfo).then(
@@ -1285,7 +1284,7 @@ var API = {
                 DTColumnBuilder.newColumn('account.role.name').withTitle('Role'),
                 DTColumnBuilder.newColumn('account.default_branch.name').withTitle('Branch'),
                 DTColumnBuilder.newColumn('username').withTitle('username'),
-                DTColumnBuilder.newColumn('status').withTitle('status').notSortable().renderWith(renderStatusCol),
+                DTColumnBuilder.newColumn('status').withTitle('status'),//.notSortable().renderWith(renderStatusCol),
                 DTColumnBuilder.newColumn(null).withTitle('Actions').notSortable().renderWith(actionButtons)
             ];
 
@@ -4071,7 +4070,9 @@ var API = {
         }
         function _buildPaginatedUrl(service,url,params) {
             var parameters = {start:1,limit:100};
-            return API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
+            return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
+                API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
+
         }
 
         function _buildUrlWithParam(service,url, id) {
@@ -4520,6 +4521,7 @@ function routeConfig() {
       IslogoValid: true,
       Isestablishment_yearValid: true
   };
+    vm.title = "MFI SETUP";
 
 
     init();

@@ -1,38 +1,39 @@
-<h3> {{vm.title}}
-  <small> dsecription...</small>
+<h3> MFI SETUP
+  <small> MFI INFORMATION...</small>
 </h3>
 
 <!-- START panel-->
 <div class="panel panel-default">
-  <div class="panel-heading">Form elements</div>
   <div class="panel-body">
     <div class="row">
       <div class="col-sm-12">
         <div class="tabs-container">
           <div class="panel-body">
+
             <form id="form" name="MFIForm" class="wizard-big">
               <fieldset>
                 <div class="row">
                   <div class="col-md-6">
                     <div class="main-img-preview">
-                      <img ng-if="!vm.picFile" ng-src="{{vm.MFI.logo}}" class="thumbnail img-preview"
-                           title="Preview Logo">
-                      <img ngf-thumbnail="vm.picFile" class="thumbnail img-preview" title="Preview Logo">
+                      <!--<img ng-if="!vm.picFile" ng-src="{{vm.MFI.logo}}" class="thumbnail img-preview" title="Preview Logo">-->
+                      <img  src="/app/img/no-img.png" class="thumbnail img-preview"
+                            title="Preview Logo" style=" max-width:320px; max-height:180px; overflow: hidden">
+                      <!--<img ng-if="vm.picFile" ngf-thumbnail="vm.picFile" class="thumbnail img-preview" title="Preview Logo">-->
                     </div>
 
                     <div class="form-group" ng-class="{false:'has-error'}[vm.MFISetupForm.IslogoValid]">
                       <label>Logo *</label>
-                      <div class="input-group">
-                        <input type="text" class="form-control" placeholder="{{vm.picFile.name?vm.picFile.name:vm.MFI.logo}}" />
-                        <span class="input-group-btn">
-                        <span class="btn btn-secondary btn-file">
-                          <span class="fa fa-picture-o"></span>
-                          <input type="file" ngf-select ng-model="vm.picFile" name="logo" accept="image/*" ngf-max-size="1MB" required ngf-model-invalid="errorFile"
-                                 required>
-                          <i ng-show="MFIForm.file.$error.maxSize">File too large {{errorFile.size / 1000000|number:1}}MB: max 2M</i>
-                        </span>
-                      </span>
-                      </div>
+                      <input class="form-control" filestyle="" type="file" data-button-text="Single" data-class-button="btn btn-default" data-classinput="form-control inline" nv-file-select="" uploader="form.uploader" />
+                      <!--<div class="input-group">-->
+                        <!--&lt;!&ndash;<span class="input-group-btn">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<span class="btn btn-secondary btn-file">&ndash;&gt;-->
+                          <!--&lt;!&ndash;&lt;!&ndash;<span class="fa fa-picture-o"></span>&ndash;&gt;&ndash;&gt;-->
+                          <!--&lt;!&ndash;&lt;!&ndash;<input type="file" ngf-select ng-model="vm.picFile" name="logo" accept="image/*" ngf-max-size="1MB" required ngf-model-invalid="errorFile"&ndash;&gt;&ndash;&gt;-->
+                                 <!--&lt;!&ndash;&lt;!&ndash;required>&ndash;&gt;&ndash;&gt;-->
+                          <!--&lt;!&ndash;&lt;!&ndash;<i ng-show="MFIForm.file.$error.maxSize">File too large {{errorFile.size / 1000000|number:1}}MB: max 2M</i>&ndash;&gt;&ndash;&gt;-->
+                        <!--&lt;!&ndash;</span>&ndash;&gt;-->
+                      <!--</span>-->
+                      <!--</div>-->
                     </div>
 
                   </div>
@@ -106,6 +107,7 @@
                 </div>
               </fieldset>
             </form>
+
           </div>
         </div>
       </div>

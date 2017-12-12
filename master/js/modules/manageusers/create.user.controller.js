@@ -45,7 +45,6 @@
                     });
 
             }else {
-                userInfo.password = vm.user.password;
                 userInfo.username = vm.user.username;
 
                 ManageUserService.CreateUser(userInfo).then(
