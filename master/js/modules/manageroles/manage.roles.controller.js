@@ -7,36 +7,26 @@
 
     angular
         .module('app.manage_roles')
-        .controller('ManageRolesController', ManageRolesController);
+        .controller('ManageRoleController', ManageRoleController);
 
-    ManageRolesController.$inject = ['ManageUserService',
-        '$mdDialog',
-        'RouteHelpers',
-        '$rootScope',
-        'APP_CONSTANTS'
-    ];
+    ManageRoleController.$inject = ['ManageRoleService', '$mdDialog', 'RouteHelpers'];
 
-    function ManageRolesController(
-        ManageRoleService,
-        $mdDialog,
-        RouteHelpers
-    ) {
+    function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
+    {
         var vm = this;
         vm.addRole = _addRole;
         vm.editRole = _editRole;
+
         fetchRoles();
+
        function fetchRoles() {
            ManageRoleService.GetRoles().then(function(response){
                vm.roles = response.data.docs;
-               console.log("vm.roles",vm.roles);
+               console.log("vm.roles on RM",vm.roles);
            },function(error){
                console.log("error role",error);
            });
        }
-
-
-
-
 
         function _addRole(ev){
 
@@ -72,8 +62,7 @@
                 escapeToClose: true,
                 controller: 'CreateRoleController',
                 controllerAs: 'vm'
-            })
-                .then(function (answer) {
+            }).then(function (answer) {
                     fetchRoles();
                 }, function () {
                 });

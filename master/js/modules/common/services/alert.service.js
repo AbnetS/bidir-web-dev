@@ -69,7 +69,7 @@
             error(msg + ' ' + exMsg, "Error");
         }
         function init() {
-            SweetAlert.setDefaults({confirmButtonColor: '#0096884'});
+            // SweetAlert.setDefaults({confirmButtonColor: '#0096884'});
         }
     }
 })();

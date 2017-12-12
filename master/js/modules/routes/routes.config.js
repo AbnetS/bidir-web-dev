@@ -52,16 +52,15 @@
                 title: 'manage roles',
                 templateUrl: helper.basepath('manageroles/manage.roles.html'),
                 resolve:helper.resolveFor('datatables','ngDialog','ui.select','icons','oitozero.ngSweetAlert','filestyle','moment'),
-                controller: 'ManageRolesController',
+                controller: 'ManageRoleController',
                 controllerAs: 'vm'
             })
-            //'colorpicker.module', 'codemirror', 'moment', 'taginput','inputmask','localytics.directives', 'ui.bootstrap-slider', 'ngWig', 'filestyle', 'summernote'
             .state('app.mfi_setting', {
                 url: '/mfi_setup',
                 title: 'MFI Setting',
                 templateUrl:'master/js/custom/mfisetup/mfi/mfi.html',
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select','icons','oitozero.ngSweetAlert'),
-                controller: 'ManageRolesController',
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select','icons','oitozero.ngSweetAlert','moment','inputmask','filestyle'),
+                controller: 'MFIController',
                 controllerAs: 'vm'
             })
 

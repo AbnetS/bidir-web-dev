@@ -11,7 +11,6 @@
         activate();
 
         vm.user = AuthService.GetCredentials().user;
-        console.log("user",vm.user);
 
         ////////////////
         function activate() {

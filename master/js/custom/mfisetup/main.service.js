@@ -3,7 +3,7 @@
   angular.module('app.mfi')
 
   .service('MainService', MainService);
-    MainService.$inject = ['$resource','$http',' CommonService','AuthService'];
+    // MainService.$inject = ['$resource','$http',' CommonService','AuthService'];
 
   function MainService($resource,$http, CommonService,AuthService) {
 
@@ -70,7 +70,7 @@
             'Accept': 'application/json'
           }
         };
-        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI) + '/all',httpConfig);
+        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll),httpConfig);
       }
       function _getBranches(){
         var httpConfig = {

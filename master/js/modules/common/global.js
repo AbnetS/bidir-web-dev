@@ -14,7 +14,7 @@ var API = {
         },
         MFI: {
             MFI:'create',
-            GetAll:'',
+            GetAll:'all',
             Branch: 'branches',
             GetAllBranches: 'branches/paginate?page=1&per_page=100'
         },

@@ -24,6 +24,7 @@
             };
             return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetRoles),httpConfig);
         }
+
         function _getPermissions(){
             var httpConfig = {
                 headers: {

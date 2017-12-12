@@ -2,14 +2,10 @@
   "use strict";
 
   angular.module("app.mfi", [
-  ]).run(runBlock)
-  .config(routeConfig);
+  ]).run(runBlock);
 
 function runBlock() {
 }
 
-function routeConfig() {
-
-}
 
 })();

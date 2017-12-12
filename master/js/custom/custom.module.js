@@ -6,12 +6,7 @@
             // request the the entire framework
             'angle',
             // or just modules
-            'app.core',
-            'app.sidebar',
-            'app.common',
-            'app.auth',
             'app.mfi'
-
             /*...*/
         ]);
 })();

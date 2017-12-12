@@ -28,12 +28,12 @@
             'app.maps',
             'app.utils',
             'app.material',
-            'custom',
             'app.common',
             'app.auth',
             'app.manage_users',
             'app.manage_roles',
-            'app.welcomePage'
+            'app.welcomePage',
+            'app.mfi'
         ]).run(appRun);
 
     function appRun($rootScope, $state, $stateParams){
