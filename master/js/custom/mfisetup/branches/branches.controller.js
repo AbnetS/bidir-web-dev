@@ -11,7 +11,6 @@
     MainService
   ) {
     var vm = this;
-    vm.title = "Manage Branch";
 
     vm.addBranch = addBranch;
     vm.editBranch = _editBranch;
@@ -33,7 +32,7 @@
           console.log("mfi data",response);
           vm.mfi = response.data[0];
           vm.branches = response.data[0].branches;
-          vm.branchesCopy = [].concat(vm.branches);
+          // vm.branchesCopy = [].concat(vm.branches);
         },
         function(error) {
           console.log("error", error);
