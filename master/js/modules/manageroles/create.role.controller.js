@@ -9,8 +9,8 @@
         .module('app.manage_roles')
         .controller('CreateRoleController', CreateRoleController);
 
-    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','SweetAlert'];
-    function CreateRoleController($mdDialog, ManageRoleService,items,SweetAlert) {
+    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService'];
+    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService) {
         var vm = this;
         vm.cancel = _cancel;
         vm.saveRole = _saveRole;
@@ -38,22 +38,25 @@
         function _saveRole() {
             preparePermissions();
             if(vm.isEdit){
-                ManageRoleService.UpdateRole( vm.role ).then(function (data) {
+                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
                         console.log("updated successfully", data);
                         $mdDialog.hide();
-                        //TODO: Alert & fetch data
+                        AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
                     },
                     function (error) {
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to update Role",message);
                         console.log("could not be saved", error);
                     });
             }else {
 
-                ManageRoleService.SaveRole( vm.role ).then(function (data) {
-                        console.log("updated successfully", data);
+                ManageRoleService.SaveRole( vm.role).then(function (data) {
+                        AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
                         $mdDialog.hide();
-                        //TODO: Alert & fetch data
                     },
                     function (error) {
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to Save Role",message);
                         console.log("could not be saved", error);
                     });
             }
@@ -61,15 +64,22 @@
 
         function initialize(){
 
-            ManageRoleService.GetPermissions().then(function(response){
-                vm.permissions = response.data.docs;
+            if(ManageRoleService.GetPermissionsFromStore() !== null){
+                vm.permissions = ManageRoleService.GetPermissionsFromStore();
                 if(vm.isEdit){
                     setPermissions();
                 }
-            },function(error){
-                console.log("error permissions",error);
-            });
-
+            }else {
+                ManageRoleService.GetPermissions().then(function(response){
+                    vm.permissions = response.data.docs;
+                    ManageRoleService.StorePermissions(vm.permissions);
+                    if(vm.isEdit){
+                        setPermissions();
+                    }
+                },function(error){
+                    console.log("error permissions",error);
+                });
+            }
 
         }
 

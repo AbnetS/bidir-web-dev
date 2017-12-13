@@ -11,7 +11,8 @@
       },
       StorageKey: {
         TOKEN: "token",
-        SESSION: "SESSION"
+        SESSION: "SESSION",
+        PERMISSIONS:"PERMISSIONS"
       },
       AUTH_EVENTS: {
         loginSuccess: "auth-login-success",

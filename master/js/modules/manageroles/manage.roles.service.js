@@ -6,14 +6,16 @@
     angular.module('app.manage_roles')
 
         .service('ManageRoleService', ManageRoleService);
-    ManageRoleService.$inject = ['$http', 'CommonService','AuthService'];
+    ManageRoleService.$inject = ['$http', 'CommonService','AuthService','StorageService','APP_CONSTANTS'];
 
-    function ManageRoleService($http, CommonService,AuthService) {
+    function ManageRoleService($http, CommonService,AuthService,StorageService,APP_CONSTANTS) {
         return {
             GetRoles: _getRoles,
             GetPermissions: _getPermissions,
             SaveRole: _saveRole,
-            UpdateRole:_updateRole
+            UpdateRole:_updateRole,
+            StorePermissions:_storePermissions,
+            GetPermissionsFromStore:_getPermissionsFromStorage
         };
 
         function _getRoles(){
@@ -54,6 +56,13 @@
                 }
             };
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role,httpConfig);
+        }
+
+        function _storePermissions(permissions) {
+            return StorageService.Set(APP_CONSTANTS.StorageKey.PERMISSIONS, permissions);
+        }
+        function _getPermissionsFromStorage() {
+            return !_.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS)) ? StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS) : null;
         }
 
     }

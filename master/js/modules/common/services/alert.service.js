@@ -5,9 +5,9 @@
     'use strict';
     angular.module('app.core').factory('AlertService', AlertService);
 
-
+    AlertService.$inject = ['SweetAlert']
     function AlertService(SweetAlert) {
-        init();
+        // init();
         return {
             showError: error,
             showInfo: info,
@@ -17,19 +17,19 @@
             showConfirm: showConfirm,
             showConfirmForDelete: showConfirmForDelete
         };
-        function error(message, title) {
-            SweetAlert(title,message, "error");
+        function error(title,message) {
+            SweetAlert.swal(title,message, "error");
         }
-        function info(message, title) {
-            SweetAlert(title,message, "info");
+        function info(title,message) {
+            SweetAlert.swal(title,message, "info");
         }
-        function warning(message, title) {
-            SweetAlert({title: title, text: message, type: "warning", confirmButtonText: "Ok"});
+        function warning(title,message) {
+            SweetAlert.swal({title: title, text: message, type: "warning", confirmButtonText: "Ok"});
         }
         function showConfirm(message, title, confirmText, confirmationType, closeOnConfirm) {
             closeOnConfirm = typeof closeOnConfirm === "undefined" || typeof closeOnConfirm !== "boolean" ? true : closeOnConfirm;
             confirmationType = typeof confirmationType === "undefined" || typeof confirmationType !== "string" ? "warning" : confirmationType;
-            return SweetAlert({
+            return SweetAlert.swal({
                 title: title,
                 text: message,
                 type: confirmationType,
@@ -43,7 +43,7 @@
         function showConfirmForDelete(message, title, confirmText, confirmationType, closeOnConfirm) {
             closeOnConfirm = typeof closeOnConfirm === "undefined" || typeof closeOnConfirm !== "boolean" ? true : closeOnConfirm;
             confirmationType = typeof confirmationType === "undefined" || typeof confirmationType !== "string" ? "warning" : confirmationType;
-            return SweetAlert({
+            return SweetAlert.swal({
                 title: title,
                 text: message,
                 type: confirmationType,
@@ -54,8 +54,8 @@
                 showLoaderOnConfirm: true
             });
         }
-        function success(message, title) {
-            SweetAlert(title,message, "success");
+        function success(title,message) {
+            SweetAlert.swal(title,message, "success");
         }
         function errorHandler(response) {
             var msg = 'Server was unable to process the request';
@@ -69,7 +69,7 @@
             error(msg + ' ' + exMsg, "Error");
         }
         function init() {
-            // SweetAlert.setDefaults({confirmButtonColor: '#0096884'});
+            SweetAlert.setDefaults({confirmButtonColor: '#0096884'});
         }
     }
 })();
