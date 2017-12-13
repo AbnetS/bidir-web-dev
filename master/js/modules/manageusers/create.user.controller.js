@@ -28,12 +28,14 @@
                 first_name: vm.user.first_name,
                 last_name: vm.user.last_name,
                 role : vm.user.selected_role._id,
+                hired_date:vm.user.hired_date,
                 default_branch : vm.user.selected_default_branch._id
             };
 
             if(vm.isEdit){
-                userInfo._id = vm.user._id;
-                userInfo.account = items.account;
+
+                userInfo._id = vm.user.account._id;
+
                 ManageUserService.UpdateUser( userInfo ).then(function (data) {
                         console.log("updated successfully", data);
                         $mdDialog.hide();
@@ -77,9 +79,11 @@
                 if(vm.isEdit){
                     //LOAD Role select value
                     angular.forEach(vm.roles,function(role){
+                        if(!_.isUndefined(vm.user.account)){
                        if(role._id === vm.user.account.role._id){
                            vm.user.selected_role = role;
-                       }
+                       }}
+
                     });
                 }
             },function(error){
@@ -92,8 +96,11 @@
 
                     angular.forEach(vm.branches,function(branch){
                         //LOAD Default Branch select value
-                        if(branch._id === vm.user.default_branch._id){
-                            vm.user.selected_default_branch = branch;
+                        if(!_.isUndefined(vm.user.default_branch._id)){
+
+                            if(branch._id === vm.user.default_branch._id){
+                                vm.user.selected_default_branch = branch;
+                            }
                         }
 
                         // vm.user.selected_access_branches = [];

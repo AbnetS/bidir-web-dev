@@ -62,7 +62,7 @@
                     'Accept': 'application/json'
                 }
             };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id), user, httpConfig);
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,user._id), user, httpConfig);
         }
     }
 
