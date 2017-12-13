@@ -12,8 +12,8 @@
         .module('app.manage_users')
         .controller('CreateUserController', CreateUserController);
 
-    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','SweetAlert'];
-    function CreateUserController($mdDialog, ManageUserService,items,SweetAlert) {
+    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService'];
+    function CreateUserController($mdDialog, ManageUserService,items,AlertService) {
         var vm = this;
         vm.cancel = _cancel;
         vm.saveUser = _saveUser;
@@ -32,7 +32,6 @@
             };
 
             if(vm.isEdit){
-                console.log("vm.user",vm.user);
                 userInfo._id = vm.user._id;
                 userInfo.account = items.account;
                 ManageUserService.UpdateUser( userInfo ).then(function (data) {
@@ -45,21 +44,20 @@
                     });
 
             }else {
+
                 userInfo.username = vm.user.username;
+                userInfo.password = vm.user.password;
 
                 ManageUserService.CreateUser(userInfo).then(
                     function (data) {
-                        SweetAlert.swal('Saved Successfully!',
-                            'User Information is stored',
-                            'success');
+                        AlertService.showSuccess('Saved Successfully!', 'User Information is stored');
                         console.log("saved successfully", data);
                         $mdDialog.hide();
                         //TODO: Alert & fetch user collection
                     },
                     function (error) {
-                        SweetAlert.swal( 'Oops...',
-                            'Something went wrong!',
-                            'error');
+                        var message = error.data.error.message;
+                        AlertService.showError( 'Oops... Something went wrong', message);
                         console.log("could not be saved", error);
                     }
                 );

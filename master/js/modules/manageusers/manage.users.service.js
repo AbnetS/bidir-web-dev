@@ -34,7 +34,7 @@
                     'Accept': 'application/json'
                 }
             };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.GetRoles),httpConfig);
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles),httpConfig);
         }
         function _getBranches(){
             var httpConfig = {
