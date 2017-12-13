@@ -25,8 +25,7 @@ var API = {
             User:'create',
             GetAll: '',
             Roles: 'roles',
-            Role: 'roles/create',
-            GetRoles: 'roles/paginate?page=1&per_page=100'
+            Role: 'roles/create'
         },
         Roles:{
             GetAll: 'roles',

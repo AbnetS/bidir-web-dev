@@ -12,7 +12,8 @@
         return {
             GetRoles: _getRoles,
             GetPermissions: _getPermissions,
-            SaveRole: _saveRole
+            SaveRole: _saveRole,
+            UpdateRole:_updateRole
         };
 
         function _getRoles(){
@@ -22,7 +23,7 @@
                     'Accept': 'application/json'
                 }
             };
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetRoles),httpConfig);
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles),httpConfig);
         }
 
         function _getPermissions(){
@@ -43,6 +44,16 @@
                 }
             };
             return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role,httpConfig);
+        }
+
+        function _updateRole(role) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role,httpConfig);
         }
 
     }

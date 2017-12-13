@@ -22,7 +22,7 @@
        function fetchRoles() {
            ManageRoleService.GetRoles().then(function(response){
                vm.roles = response.data.docs;
-               console.log("vm.roles on RM",vm.roles);
+               // console.log("vm.roles on RM",vm.roles);
            },function(error){
                console.log("error role",error);
            });
