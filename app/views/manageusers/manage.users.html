@@ -21,12 +21,41 @@
         <br/>
         <div class="row">
             <div class="col-lg-12">
-                <table class="row-border hover"
-                       datatable=""
-                       dt-instance="vm.dtInstance"
-                       dt-columns="vm.dtColumns"
-                       dt-options="vm.dtOptions">
-                </table>
+                <table class="row-border hover" datatable="ng">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Default Branch</th>
+                        <th>username</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="usr in vm.users" ng-hide="usr.admin">
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ usr.account.first_name }} {{ usr.account.last_name }}</td>
+                        <td>{{usr.account.role.name }}</td>
+                        <td>{{usr.account.default_branch.name }}</td>
+                        <td>{{ usr.username }}</td>
+                        <td>
+                            <span ng-class="vm.statusStyle(usr.status)">{{usr.status }}</span>
+                        </td>
+                        <td>
+                            <button class="btn btn-info btn-xs"
+                               ng-hide="usr.admin" ng-click="vm.editUser(usr,$event)">
+                                <i class="fa fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-default btn-xs"
+                                ng-click="vm.changeStatus(usr)">
+                                    <i class="fa fa-eye"></i>
+                                    {{usr.status=== 'active'? "Deactivate":"Activate"}}
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
             </div>
         </div>
     </div>

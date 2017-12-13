@@ -53,18 +53,6 @@
                 }
             };
             return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user,httpConfig);
-            // return $http({
-            //     url: CommonService.buildUrl(API.Service.Users,API.Methods.Users.User),
-            //     method: 'POST',
-            //     data: user,
-            //     //assigning content-type as undefined,let the browser
-            //     //assign the correct boundary for us
-            //     headers: {
-            //         'Authorization': 'Bearer ' + AuthService.GetToken(),
-            //         'Accept': 'application/json'
-            //     }
-            // });
-            // return $resource(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user, httpConfig).save(success,error);
         }
         function _updateUser(user) {
 
@@ -74,9 +62,7 @@
                     'Accept': 'application/json'
                 }
             };
-            //http://api.dev.bidir.gebeya.io/users/
-            return $http.put('http://api.dev.bidir.gebeya.io/users/' + user._id, user, httpConfig);
-            // return $http.put(CommonService.buildUrl(API.Service.Users,API.Methods.Users.UserUpdate) + user._id, user, httpConfig);
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id), user, httpConfig);
         }
     }
 

@@ -124,23 +124,11 @@
         .module('app.manage_roles', []);
 
 })();
-/**
- * Created by Yoni on 11/30/2017.
- */
 (function() {
     'use strict';
 
     angular
-        .module('app.manage_users', [
-
-        ]).run(runUM);
-
-    function runUM() {
-
-    }
-
-
-
+        .module('app.maps', []);
 })();
 (function() {
     'use strict';
@@ -168,12 +156,6 @@
     'use strict';
 
     angular
-        .module('app.maps', []);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.routes', [
             'app.lazyload'
         ]);
@@ -182,13 +164,13 @@
     'use strict';
 
     angular
-        .module('app.sidebar', []);
+        .module('app.settings', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.settings', []);
+        .module('app.sidebar', []);
 })();
 (function() {
     'use strict';
@@ -214,6 +196,24 @@
 
     angular
         .module('app.welcomePage', []);
+
+})();
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+(function() {
+    'use strict';
+
+    angular
+        .module('app.manage_users', [
+
+        ]).run(runUM);
+
+    function runUM() {
+
+    }
+
+
 
 })();
 (function(angular) {
@@ -1071,431 +1071,170 @@ var API = {
 
 })(window.angular);
 
-/**
- * Created by Yoni on 12/2/2017.
- */
-/**
- * Created by Yoni on 11/30/2017.
- */
+/**=========================================================
+ * Module: modals.js
+ * Provides a simple way to implement bootstrap modals from templates
+ =========================================================*/
 
-(function(angular) {
-    "use strict";
+(function() {
+    'use strict';
 
     angular
-        .module('app.manage_users')
-        .controller('CreateUserController', CreateUserController);
+        .module('app.maps')
+        .controller('ModalGmapController', ModalGmapController);
 
-    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService'];
-    function CreateUserController($mdDialog, ManageUserService,items,AlertService) {
+    ModalGmapController.$inject = ['$uibModal'];
+    function ModalGmapController($uibModal) {
         var vm = this;
-        vm.cancel = _cancel;
-        vm.saveUser = _saveUser;
-        vm.isEdit = items !== null;
-        vm.user = items !== null?items:null;
-        console.log("user info", items);
-
-        initialize();
-
-        function _saveUser() {
-            var userInfo = {
-                first_name: vm.user.first_name,
-                last_name: vm.user.last_name,
-                role : vm.user.selected_role._id,
-                default_branch : vm.user.selected_default_branch._id
-            };
-
-            if(vm.isEdit){
-                userInfo._id = vm.user._id;
-                userInfo.account = items.account;
-                ManageUserService.UpdateUser( userInfo ).then(function (data) {
-                        console.log("updated successfully", data);
-                        $mdDialog.hide();
-                        //TODO: Alert & fetch user collection
-                    },
-                    function (error) {
-                        console.log("could not be saved", error);
-                    });
-
-            }else {
-
-                userInfo.username = vm.user.username;
-                userInfo.password = vm.user.password;
-
-                ManageUserService.CreateUser(userInfo).then(
-                    function (data) {
-                        AlertService.showSuccess('Saved Successfully!', 'User Information is stored');
-                        console.log("saved successfully", data);
-                        $mdDialog.hide();
-                        //TODO: Alert & fetch user collection
-                    },
-                    function (error) {
-                        var message = error.data.error.message;
-                        AlertService.showError( 'Oops... Something went wrong', message);
-                        console.log("could not be saved", error);
-                    }
-                );
-            }
-        }
-
-        function initialize(){
-            if(vm.isEdit){
-                angular.extend(vm.user, vm.user.account);
-                var dt = new Date(vm.user.hired_date);
-                vm.user.hired_date = dt;
-                // vm.user.selected_role = vm.user.account.role;
-                // vm.user.selected_default_branch = vm.user.default_branch;
-            }
-            ManageUserService.GetRoles().then(function(response){
-                vm.roles = response.data.docs;
-                if(vm.isEdit){
-                    //LOAD Role select value
-                    angular.forEach(vm.roles,function(role){
-                       if(role._id === vm.user.account.role._id){
-                           vm.user.selected_role = role;
-                       }
-                    });
-                }
-            },function(error){
-                console.log("error",error);
-            });
-
-            ManageUserService.GetBranches().then(function(response){
-                vm.branches = response.data.docs;
-                if(vm.isEdit){
-
-                    angular.forEach(vm.branches,function(branch){
-                        //LOAD Default Branch select value
-                        if(branch._id === vm.user.default_branch._id){
-                            vm.user.selected_default_branch = branch;
-                        }
-
-                        // vm.user.selected_access_branches = [];
-                        //LOAD access branch select values
-                        // if(vm.user.access_branches){
-                        //     angular.forEach(vm.user.access_branches,function(access_id){
-                        //         if(branch._id === access_id){
-                        //             vm.user.selected_access_branches.push(branch);
-                        //         }
-                        //     })
-                        // }
-
-                    });
-                }
-            },function(error){
-                console.log("error",error);
-            });
-        }
-
-        vm.clear = function() {
-            vm.dt = null;
-        };
-        vm.dateOptions = {
-            dateDisabled: false,
-            formatYear: "yy",
-            maxDate: new Date(2020, 5, 22),
-            startingDay: 1
-        };
-        vm.openDatePicker = function() {
-            vm.popup1.opened = true;
-        };
-        vm.format = "dd-MMMM-yyyy";
-        vm.altInputFormats = ["d!/M!/yyyy"];
-        vm.popup1 = {
-            opened: false
-        };
-
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 11/30/2017.
- */
-
-(function(angular,document) {
-    "use strict";
-
-    angular
-        .module('app.manage_users')
-        .controller('ManageUsersController', ManageUsersController);
-
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnBuilder','$scope', '$compile', 'ManageUserService','$mdDialog'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnBuilder,$scope, $compile, ManageUserService,$mdDialog) {
-        var vm = this;
-        $scope.pageData = {
-            total:0
-        };
-        vm.addUser = _addUser;
-        vm.editUser = _editUser;
-        vm.changeStatus = _changeStatus;
-        vm.statusStyle = _statusStyle;
-
-        // ManageUserService.GetUsers().then(function(response){
-        //     // console.log("users list",response);
-        //     vm.users = response.data.docs;
-        // },function(error){
-        //     console.log("error",error);
-        // });
-
-
 
         activate();
 
-        // this function used to get all data
-        function getUsersData(sSource, aoData, fnCallback, oSettings){
-            var draw = aoData[0].value;
-            var columns = aoData[1].value;
-            var order = aoData[2].value;
-            var start = aoData[3].value;
-            var length = aoData[4].value;
-            var search = aoData[5].value;
+        ////////////////
 
-            var params  = {
-                start:start + 1,
-                limit:length,
-                search: search
+        function activate() {
+
+          vm.open = function (size) {
+
+            //var modalInstance =
+            $uibModal.open({
+              templateUrl: '/myModalContent.html',
+              controller: ModalInstanceCtrl,
+              size: size
+            });
+          };
+
+          // Please note that $uibModalInstance represents a modal window (instance) dependency.
+          // It is not the same as the $uibModal service used above.
+
+          ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout'];
+          function ModalInstanceCtrl($scope, $uibModalInstance, $timeout) {
+
+            $uibModalInstance.opened.then(function () {
+              var position = new google.maps.LatLng(33.790807, -117.835734);
+
+              $scope.mapOptionsModal = {
+                zoom: 14,
+                center: position,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+              };
+
+              // we use timeout to wait maps to be ready before add a markers
+              $timeout(function(){
+                // 1. Add a marker at the position it was initialized
+                new google.maps.Marker({
+                  map: $scope.myMapModal,
+                  position: position
+                });
+                // 2. Trigger a resize so the map is redrawed
+                google.maps.event.trigger($scope.myMapModal, 'resize');
+                // 3. Move to the center if it is misaligned
+                $scope.myMapModal.panTo(position);
+              });
+
+            });
+
+            $scope.ok = function () {
+              $uibModalInstance.close('closed');
             };
 
-            ManageUserService.GetUsers(params).then(function(response){
-                var records = {
-                    'draw': 0,
-                    'recordsTotal': 0,
-                    'recordsFiltered': 0,
-                    'data': []
-                };
+            $scope.cancel = function () {
+              $uibModalInstance.dismiss('cancel');
+            };
 
-                if(response.data){
+          }
 
-
-                var filteredData = [];
-                angular.forEach(response.data.docs,function(user){
-                    if(!angular.isUndefined(user.account)){
-
-                        filteredData.push(user);
-                    }
-                });
-                records = {
-                    'draw': draw,
-                    'recordsTotal': response.data.total_pages,
-                    'recordsFiltered':response.data.total_pages,
-                    'data':filteredData
-                };
-                }
-                $scope.pageData.total= response.data.total_pages;
-
-                fnCallback(records);
-
-            },function(error){
-                debugger
-                console.log("error",error);
-            });
-        };
-
-        function rowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-            // console.log(aData);
-            return nRow;
         }
+    }
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps')
+        .controller('GMapController', GMapController);
+
+    GMapController.$inject = ['$timeout'];
+    function GMapController($timeout) {
+        var vm = this;
+
+        activate();
 
         ////////////////
+
         function activate() {
-           vm.dtInstance = {};
-           vm.dtOptions = DTOptionsBuilder.newOptions()
-               .withFnServerData(getUsersData) // method name server call
-               .withDataProp('data')// parameter name of list use in getLeads Fuction
-               .withOption('processing', true) // required,
-               .withOption('serverSide', true)// required
-               .withPaginationType('full_numbers')
-               .withOption('order', [0, 'asc']);
-
-            vm.dtColumns = [
-                DTColumnBuilder.newColumn(null).withTitle('No.').renderWith(renderIndex),
-                DTColumnBuilder.newColumn('account.first_name').withTitle('First name').withOption('searchable', true),
-                DTColumnBuilder.newColumn('account.last_name').withTitle('Last name'),
-                DTColumnBuilder.newColumn('account.role.name').withTitle('Role'),
-                DTColumnBuilder.newColumn('account.default_branch.name').withTitle('Branch'),
-                DTColumnBuilder.newColumn('username').withTitle('username'),
-                DTColumnBuilder.newColumn('status').withTitle('status'),//.notSortable().renderWith(renderStatusCol),
-                DTColumnBuilder.newColumn(null).withTitle('Actions').notSortable().renderWith(actionButtons)
+          var position = [
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.787453, -117.835858)
             ];
+          
+          vm.addMarker = addMarker;
+          // we use timeout to wait maps to be ready before add a markers
+          $timeout(function(){
+            addMarker(vm.myMap1, position[0]);
+            addMarker(vm.myMap2, position[1]);
+            addMarker(vm.myMap3, position[2]);
+            addMarker(vm.myMap5, position[3]);
+          });
 
-            function renderStatusCol(data, type, full, meta) {
-                console.log("renderStatusCol",data);
-                 return '<small class="label label-default" </small>';
-                // return '<span ng-class="vm.statusStyle(\'' + data.status + '\')"</span>';
-            }
-            function renderIndex(data, type, full, meta) {
-                var rowNo = meta.row + 1;
-                return '<p>' + rowNo + '</p>';
-            }
-            // Action buttons added to the last column: to edit and change status
-            function actionButtons(data, type, full, meta) {
-                var selectedUSer = data;
-                return '<button class="btn btn-success btn-xs" ng-click="vm.addUser(\'' + data._id + '\')">' +
-                    '   <i class="fa fa-edit"></i>' +
-                    '</button>&nbsp;' +
-                    '<button class="btn btn-xs btn-default" ng-click="vm.addUser(\'' + data._id + '\')">' +
-                    '   <i class="fa fa-eye"></i>' +
-                    '</button>';
-            }
+          vm.mapOptions1 = {
+            zoom: 14,
+            center: position[0],
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+          };
 
-            function createdRow(row, data, dataIndex) {
-                debugger
-                $compile(angular.element(row).contents())($scope);
-            }
+          vm.mapOptions2 = {
+            zoom: 19,
+            center: position[1],
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
 
-        }
+          vm.mapOptions3 = {
+            zoom: 14,
+            center: position[2],
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+          };
 
-        function _changeStatus(user) {
-            console.log("user to change status",user);
-        }
+          vm.mapOptions4 = {
+            zoom: 14,
+            center: position[3],
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
 
-        function _addUser(ev){
+          // for multiple markers
+          $timeout(function(){
+            addMarker(vm.myMap4, position[3]);
+            addMarker(vm.myMap4, position[4]);
+          });
 
-            $mdDialog.show({
-                locals: {
-                    items: null
-                },
-                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateUserController',
-                controllerAs: 'vm'
-            })
-                .then(function (answer) {
-                }, function () {
-                });
-        }
-        function _editUser(user,ev){
-            debugger
-            $mdDialog.show({
-                locals: {items: user},
-                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateUserController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                }, function () {
-                });
-        }
+          // custom map style
+          var MapStyles = [{'featureType':'water','stylers':[{'visibility':'on'},{'color':'#bdd1f9'}]},{'featureType':'all','elementType':'labels.text.fill','stylers':[{'color':'#334165'}]},{featureType:'landscape',stylers:[{color:'#e9ebf1'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#c5c6c6'}]},{featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'road.local',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'transit',elementType:'geometry',stylers:[{color:'#d8dbe0'}]},{featureType:'poi',elementType:'geometry',stylers:[{color:'#cfd5e0'}]},{featureType:'administrative',stylers:[{visibility:'on'},{lightness:33}]},{featureType:'poi.park',elementType:'labels',stylers:[{visibility:'on'},{lightness:20}]},{featureType:'road',stylers:[{color:'#d8dbe0',lightness:20}]}];
+          vm.mapOptions5 = {
+            zoom: 14,
+            center: position[3],
+            styles: MapStyles,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+          };
 
-        function _statusStyle(status){
-            console.log("status",status);
-            var style = '';
-            switch (status){
-                case 'active' || 'active ':
-                    style =  'label label-success';
-                    break;
-                case 'inactive':
-                    style =  'label label-default';
-                    break;
-                case 'declined':
-                    style =  'label label-danger';
-                    break;
-                case 'pending':
-                    style =  'label label-warning';
-                    break;
-                default:
-                    style =  'label label-default';
-            }
-            return style;
+          ///////////////
+          
+          function addMarker(map, position) {
+            return new google.maps.Marker({
+              map: map,
+              position: position
+            });
+          }
+
         }
     }
-})(window.angular,window.document);
-
-
-/**
- * Created by Yoni on 11/30/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.manage_users')
-
-        .service('ManageUserService', ManageUserService);
-    ManageUserService.$inject = ['$resource','$http', 'CommonService','AuthService'];
-
-    function ManageUserService($resource,$http, CommonService,AuthService) {
-        return {
-            GetUsers: _getUsers,
-            GetRoles: _getRoles,
-            GetBranches: _getBranches,
-            CreateUser: _saveUser,
-            UpdateUser: _updateUser
-        };
-
-        function _getUsers(params){
-
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll,params),httpConfig);
-        }
-        function _getRoles(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles),httpConfig);
-        }
-        function _getBranches(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAllBranches),httpConfig);
-        }
-        function _saveUser(user) {
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user,httpConfig);
-            // return $http({
-            //     url: CommonService.buildUrl(API.Service.Users,API.Methods.Users.User),
-            //     method: 'POST',
-            //     data: user,
-            //     //assigning content-type as undefined,let the browser
-            //     //assign the correct boundary for us
-            //     headers: {
-            //         'Authorization': 'Bearer ' + AuthService.GetToken(),
-            //         'Accept': 'application/json'
-            //     }
-            // });
-            // return $resource(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user, httpConfig).save(success,error);
-        }
-        function _updateUser(user) {
-
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            //http://api.dev.bidir.gebeya.io/users/
-            return $http.put('http://api.dev.bidir.gebeya.io/users/' + user._id, user, httpConfig);
-            // return $http.put(CommonService.buildUrl(API.Service.Users,API.Methods.Users.UserUpdate) + user._id, user, httpConfig);
-        }
-    }
-
-})(window.angular);
+})();
 
 
 (function() {
@@ -2434,171 +2173,6 @@ var API = {
 
 })();
 /**=========================================================
- * Module: modals.js
- * Provides a simple way to implement bootstrap modals from templates
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.maps')
-        .controller('ModalGmapController', ModalGmapController);
-
-    ModalGmapController.$inject = ['$uibModal'];
-    function ModalGmapController($uibModal) {
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-
-          vm.open = function (size) {
-
-            //var modalInstance =
-            $uibModal.open({
-              templateUrl: '/myModalContent.html',
-              controller: ModalInstanceCtrl,
-              size: size
-            });
-          };
-
-          // Please note that $uibModalInstance represents a modal window (instance) dependency.
-          // It is not the same as the $uibModal service used above.
-
-          ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout'];
-          function ModalInstanceCtrl($scope, $uibModalInstance, $timeout) {
-
-            $uibModalInstance.opened.then(function () {
-              var position = new google.maps.LatLng(33.790807, -117.835734);
-
-              $scope.mapOptionsModal = {
-                zoom: 14,
-                center: position,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-              };
-
-              // we use timeout to wait maps to be ready before add a markers
-              $timeout(function(){
-                // 1. Add a marker at the position it was initialized
-                new google.maps.Marker({
-                  map: $scope.myMapModal,
-                  position: position
-                });
-                // 2. Trigger a resize so the map is redrawed
-                google.maps.event.trigger($scope.myMapModal, 'resize');
-                // 3. Move to the center if it is misaligned
-                $scope.myMapModal.panTo(position);
-              });
-
-            });
-
-            $scope.ok = function () {
-              $uibModalInstance.close('closed');
-            };
-
-            $scope.cancel = function () {
-              $uibModalInstance.dismiss('cancel');
-            };
-
-          }
-
-        }
-    }
-
-})();
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.maps')
-        .controller('GMapController', GMapController);
-
-    GMapController.$inject = ['$timeout'];
-    function GMapController($timeout) {
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-          var position = [
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.787453, -117.835858)
-            ];
-          
-          vm.addMarker = addMarker;
-          // we use timeout to wait maps to be ready before add a markers
-          $timeout(function(){
-            addMarker(vm.myMap1, position[0]);
-            addMarker(vm.myMap2, position[1]);
-            addMarker(vm.myMap3, position[2]);
-            addMarker(vm.myMap5, position[3]);
-          });
-
-          vm.mapOptions1 = {
-            zoom: 14,
-            center: position[0],
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            scrollwheel: false
-          };
-
-          vm.mapOptions2 = {
-            zoom: 19,
-            center: position[1],
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
-
-          vm.mapOptions3 = {
-            zoom: 14,
-            center: position[2],
-            mapTypeId: google.maps.MapTypeId.SATELLITE
-          };
-
-          vm.mapOptions4 = {
-            zoom: 14,
-            center: position[3],
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
-
-          // for multiple markers
-          $timeout(function(){
-            addMarker(vm.myMap4, position[3]);
-            addMarker(vm.myMap4, position[4]);
-          });
-
-          // custom map style
-          var MapStyles = [{'featureType':'water','stylers':[{'visibility':'on'},{'color':'#bdd1f9'}]},{'featureType':'all','elementType':'labels.text.fill','stylers':[{'color':'#334165'}]},{featureType:'landscape',stylers:[{color:'#e9ebf1'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#c5c6c6'}]},{featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'road.local',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'transit',elementType:'geometry',stylers:[{color:'#d8dbe0'}]},{featureType:'poi',elementType:'geometry',stylers:[{color:'#cfd5e0'}]},{featureType:'administrative',stylers:[{visibility:'on'},{lightness:33}]},{featureType:'poi.park',elementType:'labels',stylers:[{visibility:'on'},{lightness:20}]},{featureType:'road',stylers:[{color:'#d8dbe0',lightness:20}]}];
-          vm.mapOptions5 = {
-            zoom: 14,
-            center: position[3],
-            styles: MapStyles,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            scrollwheel: false
-          };
-
-          ///////////////
-          
-          function addMarker(map, position) {
-            return new google.maps.Marker({
-              map: map,
-              position: position
-            });
-          }
-
-        }
-    }
-})();
-
-/**=========================================================
  * Module: helpers.js
  * Provides helper functions for routes definition
  =========================================================*/
@@ -2799,6 +2373,82 @@ var API = {
 
 })();
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.settings')
+        .run(settingsRun);
+
+    settingsRun.$inject = ['$rootScope', 'AuthService'];
+
+    function settingsRun($rootScope, AuthService){
+
+
+      // User Settings
+      // -----------------------------------
+      $rootScope.user = {
+        name:     'Yonas',
+        job:      'System Admin',
+        picture:  'app/img/user/02.jpg'
+      };
+
+      // Hides/show user avatar on sidebar from any element
+      $rootScope.toggleUserBlock = function(){
+        $rootScope.$broadcast('toggleUserBlock');
+      };
+      $rootScope.logoutUser = function (){
+            AuthService.Logout();
+      };
+
+      // Global Settings
+      // -----------------------------------
+      $rootScope.app = {
+        name: 'Bidir Web',
+        description: 'Bidir Web Application',
+        year: ((new Date()).getFullYear()),
+        layout: {
+          isFixed: true,
+          isCollapsed: false,
+          isBoxed: false,
+          isRTL: false,
+          horizontal: false,
+          isFloat: false,
+          asideHover: false,
+          theme: 'app/css/theme-d.css',
+          asideScrollbar: false,
+          isCollapsedText: false
+        },
+        useFullLayout: false,
+        hiddenFooter: false,
+        offsidebarOpen: false,
+        asideToggled: false,
+        viewAnimation: 'ng-fadeInUp'
+      };
+
+      // Setup the layout mode
+      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
+
+      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
+      // if( angular.isDefined($localStorage.layout) )
+      //   $rootScope.app.layout = $localStorage.layout;
+      // else
+      //   $localStorage.layout = $rootScope.app.layout;
+      //
+      // $rootScope.$watch('app.layout', function () {
+      //   $localStorage.layout = $rootScope.app.layout;
+      // }, true);
+
+      // Close submenu when sidebar change from collapsed to normal
+      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
+        if( newValue === false )
+          $rootScope.$broadcast('closeSidebarMenu');
+      });
+
+    }
+
+})();
 
 /**=========================================================
  * Module: sidebar-menu.js
@@ -3159,82 +2809,6 @@ var API = {
           $scope.$on('$destroy', detach);
         }
     }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.settings')
-        .run(settingsRun);
-
-    settingsRun.$inject = ['$rootScope', 'AuthService'];
-
-    function settingsRun($rootScope, AuthService){
-
-
-      // User Settings
-      // -----------------------------------
-      $rootScope.user = {
-        name:     'Yonas',
-        job:      'System Admin',
-        picture:  'app/img/user/02.jpg'
-      };
-
-      // Hides/show user avatar on sidebar from any element
-      $rootScope.toggleUserBlock = function(){
-        $rootScope.$broadcast('toggleUserBlock');
-      };
-      $rootScope.logoutUser = function (){
-            AuthService.Logout();
-      };
-
-      // Global Settings
-      // -----------------------------------
-      $rootScope.app = {
-        name: 'Bidir Web',
-        description: 'Bidir Web Application',
-        year: ((new Date()).getFullYear()),
-        layout: {
-          isFixed: true,
-          isCollapsed: false,
-          isBoxed: false,
-          isRTL: false,
-          horizontal: false,
-          isFloat: false,
-          asideHover: false,
-          theme: 'app/css/theme-d.css',
-          asideScrollbar: false,
-          isCollapsedText: false
-        },
-        useFullLayout: false,
-        hiddenFooter: false,
-        offsidebarOpen: false,
-        asideToggled: false,
-        viewAnimation: 'ng-fadeInUp'
-      };
-
-      // Setup the layout mode
-      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
-
-      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
-      // if( angular.isDefined($localStorage.layout) )
-      //   $rootScope.app.layout = $localStorage.layout;
-      // else
-      //   $localStorage.layout = $rootScope.app.layout;
-      //
-      // $rootScope.$watch('app.layout', function () {
-      //   $localStorage.layout = $rootScope.app.layout;
-      // }, true);
-
-      // Close submenu when sidebar change from collapsed to normal
-      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
-        if( newValue === false )
-          $rootScope.$broadcast('closeSidebarMenu');
-      });
-
-    }
-
 })();
 
 (function() {
@@ -3893,6 +3467,343 @@ var API = {
     }
 
 })(window.angular);
+/**
+ * Created by Yoni on 12/2/2017.
+ */
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_users')
+        .controller('CreateUserController', CreateUserController);
+
+    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService'];
+    function CreateUserController($mdDialog, ManageUserService,items,AlertService) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.saveUser = _saveUser;
+        vm.isEdit = items !== null;
+        vm.user = items !== null?items:null;
+        console.log("user info", items);
+
+        initialize();
+
+        function _saveUser() {
+            var userInfo = {
+                first_name: vm.user.first_name,
+                last_name: vm.user.last_name,
+                role : vm.user.selected_role._id,
+                default_branch : vm.user.selected_default_branch._id
+            };
+
+            if(vm.isEdit){
+                userInfo._id = vm.user._id;
+                userInfo.account = items.account;
+                ManageUserService.UpdateUser( userInfo ).then(function (data) {
+                        console.log("updated successfully", data);
+                        $mdDialog.hide();
+                        AlertService.showSuccess('Updated Successfully!', 'User Information is Updated');
+                    },
+                    function (error) {
+                        var message = error.data.error.message;
+                        AlertService.showError( 'Oops... Something went wrong', message);
+                        console.log("could not be saved", error);
+                    });
+
+            }else {
+
+                userInfo.username = vm.user.username;
+                userInfo.password = vm.user.password;
+
+                ManageUserService.CreateUser(userInfo).then(
+                    function (data) {
+                        AlertService.showSuccess('Saved Successfully!', 'User Information is saved successfully');
+                        console.log("saved successfully", data);
+                        $mdDialog.hide();
+                        //TODO: Alert & fetch user collection
+                    },
+                    function (error) {
+                        var message = error.data.error.message;
+                        AlertService.showError( 'Oops... Something went wrong', message);
+                        console.log("could not be saved", error);
+                    }
+                );
+            }
+        }
+
+        function initialize(){
+            if(vm.isEdit){
+                angular.extend(vm.user, vm.user.account);
+                var dt = new Date(vm.user.hired_date);
+                vm.user.hired_date = dt;
+            }
+            ManageUserService.GetRoles().then(function(response){
+                vm.roles = response.data.docs;
+                if(vm.isEdit){
+                    //LOAD Role select value
+                    angular.forEach(vm.roles,function(role){
+                       if(role._id === vm.user.account.role._id){
+                           vm.user.selected_role = role;
+                       }
+                    });
+                }
+            },function(error){
+                console.log("error",error);
+            });
+
+            ManageUserService.GetBranches().then(function(response){
+                vm.branches = response.data.docs;
+                if(vm.isEdit){
+
+                    angular.forEach(vm.branches,function(branch){
+                        //LOAD Default Branch select value
+                        if(branch._id === vm.user.default_branch._id){
+                            vm.user.selected_default_branch = branch;
+                        }
+
+                        // vm.user.selected_access_branches = [];
+                        //LOAD access branch select values
+                        // if(vm.user.access_branches){
+                        //     angular.forEach(vm.user.access_branches,function(access_id){
+                        //         if(branch._id === access_id){
+                        //             vm.user.selected_access_branches.push(branch);
+                        //         }
+                        //     })
+                        // }
+
+                    });
+                }
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        vm.clear = function() {
+            vm.dt = null;
+        };
+        vm.dateOptions = {
+            dateDisabled: false,
+            formatYear: "yy",
+            maxDate: new Date(2020, 5, 22),
+            startingDay: 1
+        };
+        vm.openDatePicker = function() {
+            vm.popup1.opened = true;
+        };
+        vm.format = "dd-MMMM-yyyy";
+        vm.altInputFormats = ["d!/M!/yyyy"];
+        vm.popup1 = {
+            opened: false
+        };
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular,document) {
+    "use strict";
+
+    angular
+        .module('app.manage_users')
+        .controller('ManageUsersController', ManageUsersController);
+
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog) {
+        var vm = this;
+        $scope.pageData = {
+            total:0
+        };
+        vm.addUser = _addUser;
+        vm.editUser = _editUser;
+        vm.changeStatus = _changeStatus;
+        vm.statusStyle = _statusStyle;
+
+
+
+
+
+
+
+        activate();
+
+        ////////////////
+        function activate() {
+
+            fetchUserData();
+
+            vm.dtOptions = DTOptionsBuilder.newOptions()
+                .withPaginationType('full_numbers')
+                .withDOM('<"html5buttons"B>lTfgitp')
+                .withButtons([
+                    {extend: 'copy',  className: 'btn-sm' },
+                    {extend: 'csv',   className: 'btn-sm' },
+                    {extend: 'excel', className: 'btn-sm', title: 'XLS-File'},
+                    {extend: 'pdf',   className: 'btn-sm', title: $('title').text() },
+                    {extend: 'print', className: 'btn-sm' }
+                ]);
+            vm.dtColumnDefs = [
+                DTColumnDefBuilder.newColumnDef(0),
+                DTColumnDefBuilder.newColumnDef(1),
+                DTColumnDefBuilder.newColumnDef(2),
+                DTColumnDefBuilder.newColumnDef(3).notSortable()
+            ];
+
+        }
+        function fetchUserData() {
+            ManageUserService.GetUsers().then(function(response){
+                // console.log("users list",response);
+                vm.users = response.data.docs;
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        function _changeStatus(user) {
+            console.log("user to change status",user);
+        }
+
+        function _addUser(ev){
+
+            $mdDialog.show({
+                locals: {
+                    items: null
+                },
+                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateUserController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                }, function () {
+                });
+        }
+        function _editUser(user,ev){
+            debugger
+            $mdDialog.show({
+                locals: {items: user},
+                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateUserController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                }, function () {
+                });
+        }
+
+
+        function _statusStyle(status){
+            var style = '';
+            switch (status){
+                case 'active' || 'active ':
+                    style =  'label label-success';
+                    break;
+                case 'inactive':
+                    style =  'label label-default';
+                    break;
+                case 'declined':
+                    style =  'label label-danger';
+                    break;
+                case 'pending':
+                    style =  'label label-warning';
+                    break;
+                default:
+                    style =  'label label-default';
+            }
+            return style;
+        }
+    }
+})(window.angular,window.document);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.manage_users')
+
+        .service('ManageUserService', ManageUserService);
+    ManageUserService.$inject = ['$resource','$http', 'CommonService','AuthService'];
+
+    function ManageUserService($resource,$http, CommonService,AuthService) {
+        return {
+            GetUsers: _getUsers,
+            GetRoles: _getRoles,
+            GetBranches: _getBranches,
+            CreateUser: _saveUser,
+            UpdateUser: _updateUser
+        };
+
+        function _getUsers(params){
+
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll,params),httpConfig);
+        }
+        function _getRoles(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles),httpConfig);
+        }
+        function _getBranches(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAllBranches),httpConfig);
+        }
+        function _saveUser(user) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user,httpConfig);
+        }
+        function _updateUser(user) {
+
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id), user, httpConfig);
+        }
+    }
+
+})(window.angular);
+
 /**
  * Created by Yoni on 12/3/2017.
  */

@@ -37,9 +37,11 @@
                 ManageUserService.UpdateUser( userInfo ).then(function (data) {
                         console.log("updated successfully", data);
                         $mdDialog.hide();
-                        //TODO: Alert & fetch user collection
+                        AlertService.showSuccess('Updated Successfully!', 'User Information is Updated');
                     },
                     function (error) {
+                        var message = error.data.error.message;
+                        AlertService.showError( 'Oops... Something went wrong', message);
                         console.log("could not be saved", error);
                     });
 
@@ -50,7 +52,7 @@
 
                 ManageUserService.CreateUser(userInfo).then(
                     function (data) {
-                        AlertService.showSuccess('Saved Successfully!', 'User Information is stored');
+                        AlertService.showSuccess('Saved Successfully!', 'User Information is saved successfully');
                         console.log("saved successfully", data);
                         $mdDialog.hide();
                         //TODO: Alert & fetch user collection
@@ -69,8 +71,6 @@
                 angular.extend(vm.user, vm.user.account);
                 var dt = new Date(vm.user.hired_date);
                 vm.user.hired_date = dt;
-                // vm.user.selected_role = vm.user.account.role;
-                // vm.user.selected_default_branch = vm.user.default_branch;
             }
             ManageUserService.GetRoles().then(function(response){
                 vm.roles = response.data.docs;
