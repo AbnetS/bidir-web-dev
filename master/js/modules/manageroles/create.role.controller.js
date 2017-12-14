@@ -64,6 +64,14 @@
 
         function initialize(){
 
+            ManageRoleService.GetPermissionsbyGroup().then(function(response){
+                vm.groupedPermissions = response.data.docs;
+                console.log("permissions group",response);
+            },function(error){
+                console.log("error permissions",error);
+            });
+
+
             if(ManageRoleService.GetPermissionsFromStore() !== null){
                 vm.permissions = ManageRoleService.GetPermissionsFromStore();
                 if(vm.isEdit){

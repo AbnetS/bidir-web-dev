@@ -30,7 +30,8 @@ var API = {
         Roles:{
             GetAll: 'roles',
             Create: 'roles/create',
-            Permissions: 'permissions'
+            Permissions: 'permissions',
+            PermissionByGroup: 'permissions/groups'
         },
         Tasks: {
             Task:'tasks',

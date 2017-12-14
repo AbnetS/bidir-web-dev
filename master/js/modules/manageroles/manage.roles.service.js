@@ -12,6 +12,7 @@
         return {
             GetRoles: _getRoles,
             GetPermissions: _getPermissions,
+            GetPermissionsbyGroup:_getPermissionsbyGroup,
             SaveRole: _saveRole,
             UpdateRole:_updateRole,
             StorePermissions:_storePermissions,
@@ -36,6 +37,15 @@
                 }
             };
             return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions),httpConfig);
+        }
+        function _getPermissionsbyGroup(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup),httpConfig);
         }
 
         function _saveRole(role) {

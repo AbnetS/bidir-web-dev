@@ -12,44 +12,45 @@
 
         <md-dialog-content style="width:800px;max-height:1600px;">
             <md-content class="md-padding">
+                <form class="mb-xl" ng-submit="vm.addRole()">
                 <div class="row">
+
                     <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <div class="col col-lg">
                             <div class="pr-lg">
-                                <form class="mb-xl" ng-submit="vm.addRole()">
                                     <div class="form-group">
                                         <input class="form-control" ng-trim="true" type="text" ng-model="vm.role.name" placeholder="Role Name.." required="required" />
                                     </div>
                                     <div class="form-group">
                                         <textarea class="form-control" ng-trim="true" ng-model="vm.role.description" placeholder="Type a description.." rows="8"></textarea>
                                     </div>
-                                </form>
                             </div>
                         </div>
                     </div>
 
-                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
-                        <div class="col todo-item-list " >
-                            <div class="lead text-muted text-center" ng-show="!vm.permissions">No Permissions found...</div>
-
-                            <md-list ng-cloak>
-                                <md-subheader class="md-no-sticky">Permissions</md-subheader>
-                                <md-list-item ng-repeat="permission in vm.permissions">
-                                    <label class="mda-checkbox">
-                                        <input type="checkbox" ng-model="permission.checked">
-                                        <em class="bg-green-500"></em>{{ permission.name }}</label>
-                                </md-list-item>
-
-                            </md-list>
-                            <p class="text-right" ng-if="todo.items.length &gt; 0">
-                                <span>{{ totalCompleted() }} Completed</span>-
-                                <span>{{ totalPending() }} Pending</span>
-                            </p>
+                    <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                        <div class="lead text-muted text-center" ng-show="!vm.permissions">No Permissions found...</div>
+                        <div ng-hide="!vm.permissions" class="col col-lg">
+                            <div class="pr-lg">
+                                <input class="form-control form-control-rounded" ng-trim="true" type="text" ng-model="vm.search" placeholder="Search Permissions..."  />
+                                <md-list ng-cloak>
+                                    <md-subheader class="md-no-sticky">
+                                        <p class="text-right" ng-if="vm.isEdit">
+                                            <span> has {{ vm.role.permissions.length }} out of {{vm.permissions.length}} permissions</span>
+                                        </p>
+                                    </md-subheader>
+                                    <md-list-item ng-repeat="permission in vm.permissions | filter:vm.search">
+                                        <label class="mda-checkbox">
+                                            <input type="checkbox" ng-model="permission.checked">
+                                            <em class="bg-green-500"></em>{{ permission.name | ReplaceUnderscore }}</label>
+                                    </md-list-item>
+                                </md-list>
+                            </div>
                         </div>
                     </div>
+
                 </div>
-
-
+                </form>
             </md-content>
         </md-dialog-content>
 
