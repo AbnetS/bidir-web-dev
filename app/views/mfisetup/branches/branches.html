@@ -13,7 +13,7 @@
                     <div class="col-xs-10 col-lg-12">
                         <p>
                             Head Office is created by default. Click on Add to add more branches.
-                            <a class="btn btn-success pull-right" href="" ng-click="vm.addBranch()">
+                            <a class="btn btn-success pull-right" href="" ng-click="vm.addBranch($event)">
                                 <i class="fa fa-plus"></i>
                                 Add Branch</a>
                         </p>
@@ -32,7 +32,6 @@
                                 <th>Opening Date</th>
                                 <th >Branch Type</th>
                                 <th >email</th>
-                                <th >Phone</th>
                                 <th >status</th>
                                 <th></th>
                             </tr>
@@ -47,7 +46,6 @@
                                 <td>{{branch.opening_date | date}}</td>
                                 <td>{{branch.branch_type}}</td>
                                 <td>{{branch.email}}</td>
-                                <td>{{branch.phone}}</td>
                                 <td>
                                     <span class="badge " ng-class="branch.status==='active'?'badge-primary':'badge-default'" >{{branch.status}}</span>
                                 </td>

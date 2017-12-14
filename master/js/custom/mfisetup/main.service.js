@@ -27,6 +27,7 @@
         })
       };
 
+
       function _searchBranch(searchText){
         var httpConfig = {
           headers: {

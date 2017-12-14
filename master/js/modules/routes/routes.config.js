@@ -58,7 +58,7 @@
             .state('app.mfi_setting', {
                 url: '/mfi_setup',
                 title: 'MFI Setting',
-                templateUrl:'master/js/custom/mfisetup/mfi/mfi.html',
+                templateUrl:helper.basepath('mfisetup/mfi.html'),
                 resolve:helper.resolveFor('datatables','ngDialog','ui.select','icons','oitozero.ngSweetAlert','moment','inputmask','filestyle'),
                 controller: 'MFIController',
                 controllerAs: 'vm'
@@ -67,7 +67,7 @@
             .state("app.manage_branch", {
                 url: "/branches",
                 title: "branches",
-                templateUrl: "master/js/custom/mfisetup/branches/branches.html",
+                templateUrl:helper.basepath('mfisetup/branches/branches.html'),
                 controller: "BranchController",
                 controllerAs: 'vm'
             })

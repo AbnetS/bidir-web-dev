@@ -3,11 +3,12 @@
 
     angular.module("app.mfi").controller("BranchController", BranchController);
 
-    BranchController.$inject = ['$state','$uibModal','MainService'];
+    BranchController.$inject = ['RouteHelpers','$uibModal','$mdDialog','MainService'];
 
   function BranchController(
-    $state,
+      RouteHelpers,
     $uibModal,
+    $mdDialog,
     MainService
   ) {
     var vm = this;
@@ -53,48 +54,50 @@
       );
     }
 
-    function addBranch(size) {
+    function addBranch(ev) {
+        $mdDialog.show({
+            locals: {items: null},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+        }, function () {
+        });
 
-      var modalInstance = $uibModal.open({
-          templateUrl: 'master/js/custom/mfisetup/branches/create_branch/create.branch.html',
 
-          controller: 'CreateBranchController',
-        size: "md",
-          bindings: {
-              resolve: '<',
-              close: '&',
-              dismiss: '&'
-          }
-      });
-
-      modalInstance.result.then(
-        function(branch) {
-          branch.MFI = vm.mfi._id;
-          //Save new branch API
-          MainService.CreateBranch(
-            branch,
-            function(data) {
-              debugger
-               // console.log("saved successfully", data);
-              AlertService.showSuccess(
-                "Saved! Branch saved successfully.",
-                "SUCCESS"
-              );
-              getBranches();
-            },
-            function(error) {
-              console.log("could not be saved", error);
-              AlertService.showError(
-                "Could not be saved!, " + error.data.specific_errors.message,
-                "ERROR"
-              );
-            }
-          );
-        },
-        function() {
-          // $log.info("modal-component dismissed at: " + new Date());
-        }
-      );
+      // modalInstance.result.then(
+      //   function(branch) {
+      //     // branch.MFI = vm.mfi._id;
+      //     //Save new branch API
+      //     MainService.CreateBranch(
+      //       branch,
+      //       function(data) {
+      //
+      //          // console.log("saved successfully", data);
+      //         AlertService.showSuccess(
+      //           "Saved! Branch saved successfully.",
+      //           "SUCCESS"
+      //         );
+      //         getBranches();
+      //       },
+      //       function(error) {
+      //         console.log("could not be saved", error);
+      //         AlertService.showError(
+      //           "Could not be saved!, " + error.data.specific_errors.message,
+      //           "ERROR"
+      //         );
+      //       }
+      //     );
+      //   },
+      //   function() {
+      //     // $log.info("modal-component dismissed at: " + new Date());
+      //   }
+      // );
     }
 
     function _editBranch(selectedBranch) {

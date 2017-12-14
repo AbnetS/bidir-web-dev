@@ -4,7 +4,7 @@
     angular.module('app.mfi')
         .controller('CreateBranchController', CreateBranchController);
 
-    CreateBranchController.$inject = ['CommonService',' $scope'];
+    CreateBranchController.$inject = ['CommonService','$scope'];
 
   function CreateBranchController(CommonService,$scope) {
       var ctrl = this;
@@ -14,16 +14,16 @@
     };
     ctrl.branchTypes =[  'Satellite office','Rural Service','Satellite office'];
 
-      ctrl.branch = ctrl.resolve.branch;
+      // ctrl.branch = ctrl.resolve.branch;
       ctrl.emailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-      ctrl.$onInit = function() {
-        if(!_.isUndefined(ctrl.branch))
-        {
-        var dt =_.isUndefined(ctrl.branch.opening_date)?undefined: new Date(ctrl.branch.opening_date);
-          ctrl.branch.opening_date = dt;
-        }
-      };
+      // ctrl.$onInit = function() {
+      //   if(!_.isUndefined(ctrl.branch))
+      //   {
+      //   var dt =_.isUndefined(ctrl.branch.opening_date)?undefined: new Date(ctrl.branch.opening_date);
+      //     ctrl.branch.opening_date = dt;
+      //   }
+      // };
 
       ctrl.ok = function() {
         ctrl.IsValidData = CommonService.Validation.ValidateForm(ctrl.MFIBranchForm, ctrl.branch);

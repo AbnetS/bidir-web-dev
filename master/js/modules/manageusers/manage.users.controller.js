@@ -84,7 +84,6 @@
                 });
         }
         function _editUser(user,ev){
-            debugger
             $mdDialog.show({
                 locals: {items: user},
                 templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),

@@ -1304,7 +1304,6 @@ var API = {
                 });
         }
         function _editUser(user,ev){
-            debugger
             $mdDialog.show({
                 locals: {items: user},
                 templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
@@ -2660,7 +2659,7 @@ var API = {
             .state('app.mfi_setting', {
                 url: '/mfi_setup',
                 title: 'MFI Setting',
-                templateUrl:'master/js/custom/mfisetup/mfi/mfi.html',
+                templateUrl:helper.basepath('mfisetup/mfi.html'),
                 resolve:helper.resolveFor('datatables','ngDialog','ui.select','icons','oitozero.ngSweetAlert','moment','inputmask','filestyle'),
                 controller: 'MFIController',
                 controllerAs: 'vm'
@@ -2669,7 +2668,7 @@ var API = {
             .state("app.manage_branch", {
                 url: "/branches",
                 title: "branches",
-                templateUrl: "master/js/custom/mfisetup/branches/branches.html",
+                templateUrl:helper.basepath('mfisetup/branches/branches.html'),
                 controller: "BranchController",
                 controllerAs: 'vm'
             })
@@ -4160,6 +4159,7 @@ function runBlock() {
         })
       };
 
+
       function _searchBranch(searchText){
         var httpConfig = {
           headers: {
@@ -4274,11 +4274,12 @@ function runBlock() {
 
     angular.module("app.mfi").controller("BranchController", BranchController);
 
-    BranchController.$inject = ['$state','$uibModal','MainService'];
+    BranchController.$inject = ['RouteHelpers','$uibModal','$mdDialog','MainService'];
 
   function BranchController(
-    $state,
+      RouteHelpers,
     $uibModal,
+    $mdDialog,
     MainService
   ) {
     var vm = this;
@@ -4324,48 +4325,50 @@ function runBlock() {
       );
     }
 
-    function addBranch(size) {
+    function addBranch(ev) {
+        $mdDialog.show({
+            locals: {items: null},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+        }, function () {
+        });
 
-      var modalInstance = $uibModal.open({
-          templateUrl: 'master/js/custom/mfisetup/branches/create_branch/create.branch.html',
 
-          controller: 'CreateBranchController',
-        size: "md",
-          bindings: {
-              resolve: '<',
-              close: '&',
-              dismiss: '&'
-          }
-      });
-
-      modalInstance.result.then(
-        function(branch) {
-          branch.MFI = vm.mfi._id;
-          //Save new branch API
-          MainService.CreateBranch(
-            branch,
-            function(data) {
-              debugger
-               // console.log("saved successfully", data);
-              AlertService.showSuccess(
-                "Saved! Branch saved successfully.",
-                "SUCCESS"
-              );
-              getBranches();
-            },
-            function(error) {
-              console.log("could not be saved", error);
-              AlertService.showError(
-                "Could not be saved!, " + error.data.specific_errors.message,
-                "ERROR"
-              );
-            }
-          );
-        },
-        function() {
-          // $log.info("modal-component dismissed at: " + new Date());
-        }
-      );
+      // modalInstance.result.then(
+      //   function(branch) {
+      //     // branch.MFI = vm.mfi._id;
+      //     //Save new branch API
+      //     MainService.CreateBranch(
+      //       branch,
+      //       function(data) {
+      //
+      //          // console.log("saved successfully", data);
+      //         AlertService.showSuccess(
+      //           "Saved! Branch saved successfully.",
+      //           "SUCCESS"
+      //         );
+      //         getBranches();
+      //       },
+      //       function(error) {
+      //         console.log("could not be saved", error);
+      //         AlertService.showError(
+      //           "Could not be saved!, " + error.data.specific_errors.message,
+      //           "ERROR"
+      //         );
+      //       }
+      //     );
+      //   },
+      //   function() {
+      //     // $log.info("modal-component dismissed at: " + new Date());
+      //   }
+      // );
     }
 
     function _editBranch(selectedBranch) {
@@ -4478,23 +4481,26 @@ function runBlock() {
       if (vm.IsValidData) {
         if (_.isUndefined(vm.MFI._id)) {
           MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
-              // AlertService.showSuccess("MFI Information created successfully", "Information");
+              AlertService.showSuccess("Created MFI successfully","MFI Information created successfully");
               console.log("Create MFI", response);
             }, function(error) {
-              // AlertService.showError("Failed to create MFI!, Pleast try again", "Information");
               console.log("Create MFI Error", error);
+              var message = error.data.error.message;
+            AlertService.showError("Failed to create MFI!", message);
+
             });
         } else {
           MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
-              // AlertService.showSuccess("MFI Information updated successfully", "Information");
+              AlertService.showSuccess("MFI Info updated successfully","MFI Information updated successfully");
               console.log("Update MFI", response);
             }, function(error) {
-              // AlertService.showError("MFI Information update failed", "Information");
               console.log("UpdateMFI Error", error);
+              var message = error.data.error.message;
+              AlertService.showError("MFI Information update failed",message);
             });
         }
       } else {
-        // toastr.warning("Please fill the required fields and try again.", "Warning!");
+          AlertService.showWarning("Warning","Please fill the required fields and try again.");
       }
     }
 
@@ -4544,7 +4550,7 @@ function runBlock() {
     angular.module('app.mfi')
         .controller('CreateBranchController', CreateBranchController);
 
-    CreateBranchController.$inject = ['CommonService',' $scope'];
+    CreateBranchController.$inject = ['CommonService','$scope'];
 
   function CreateBranchController(CommonService,$scope) {
       var ctrl = this;
@@ -4554,16 +4560,16 @@ function runBlock() {
     };
     ctrl.branchTypes =[  'Satellite office','Rural Service','Satellite office'];
 
-      ctrl.branch = ctrl.resolve.branch;
+      // ctrl.branch = ctrl.resolve.branch;
       ctrl.emailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-      ctrl.$onInit = function() {
-        if(!_.isUndefined(ctrl.branch))
-        {
-        var dt =_.isUndefined(ctrl.branch.opening_date)?undefined: new Date(ctrl.branch.opening_date);
-          ctrl.branch.opening_date = dt;
-        }
-      };
+      // ctrl.$onInit = function() {
+      //   if(!_.isUndefined(ctrl.branch))
+      //   {
+      //   var dt =_.isUndefined(ctrl.branch.opening_date)?undefined: new Date(ctrl.branch.opening_date);
+      //     ctrl.branch.opening_date = dt;
+      //   }
+      // };
 
       ctrl.ok = function() {
         ctrl.IsValidData = CommonService.Validation.ValidateForm(ctrl.MFIBranchForm, ctrl.branch);
