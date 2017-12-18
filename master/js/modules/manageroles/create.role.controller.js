@@ -14,6 +14,7 @@
         var vm = this;
         vm.cancel = _cancel;
         vm.saveRole = _saveRole;
+        vm.changeModuleStyle = _modulesStyle;
         vm.isEdit = items !== null;
         vm.role = items !== null?items:null;
 
@@ -64,19 +65,13 @@
 
         function initialize(){
 
-            ManageRoleService.GetPermissionsbyGroup().then(function(response){
-                vm.groupedPermissions = response.data.docs;
-                console.log("permissions group",response);
-            },function(error){
-                console.log("error permissions",error);
-            });
-
-
             if(ManageRoleService.GetPermissionsFromStore() !== null){
                 vm.permissions = ManageRoleService.GetPermissionsFromStore();
+                console.log("permissions",vm.permissions);
                 if(vm.isEdit){
                     setPermissions();
                 }
+
             }else {
                 ManageRoleService.GetPermissions().then(function(response){
                     vm.permissions = response.data.docs;
@@ -87,9 +82,38 @@
                 },function(error){
                     console.log("error permissions",error);
                 });
+
             }
 
         }
+
+        function _modulesStyle(module){
+            var style = '';
+            switch (module){
+                case 'SCREENING':
+                    style =  'label label-primary';
+                    break;
+                case 'FORM_BUILDER':
+                    style =  'label label-danger';
+                    break;
+                case 'USER_MANAGEMENT':
+                    style =  'label label-green';
+                    break;
+                case 'SCREENING_MODULE':
+                    style =  'label label-warning';
+                    break;
+                case 'MFI_SETUP':
+                    style =  'label label-purple';
+                    break;
+                default:
+                    style =  'label label-default';
+            }
+            return style;
+        }
+
+
+
+
 
         function _cancel() {
             $mdDialog.cancel();
