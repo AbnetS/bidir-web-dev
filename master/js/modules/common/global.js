@@ -16,8 +16,8 @@ var API = {
             MFIUpdate:'',
             MFI:'create',
             GetAll:'all',
-            Branch: 'branches',
-            GetAllBranches: 'branches/paginate?page=1&per_page=100'
+            CreateBranch: 'branches/create',
+            GetAllBranches: 'branches'
         },
         Users: {
             Account:'accounts',

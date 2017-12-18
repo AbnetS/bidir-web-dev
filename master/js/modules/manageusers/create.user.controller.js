@@ -123,6 +123,7 @@
         vm.clear = function() {
             vm.dt = null;
         };
+
         vm.dateOptions = {
             dateDisabled: false,
             formatYear: "yy",

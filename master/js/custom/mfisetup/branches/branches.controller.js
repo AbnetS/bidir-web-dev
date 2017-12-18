@@ -57,7 +57,7 @@
     function addBranch(ev) {
         $mdDialog.show({
             locals: {items: null},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.html'),
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
             parent: angular.element(document.body),
             targetEvent: ev,
             clickOutsideToClose: false,
@@ -66,38 +66,10 @@
             controller: 'CreateBranchController',
             controllerAs: 'vm'
         }).then(function (answer) {
+            getBranches();
         }, function () {
         });
 
-
-      // modalInstance.result.then(
-      //   function(branch) {
-      //     // branch.MFI = vm.mfi._id;
-      //     //Save new branch API
-      //     MainService.CreateBranch(
-      //       branch,
-      //       function(data) {
-      //
-      //          // console.log("saved successfully", data);
-      //         AlertService.showSuccess(
-      //           "Saved! Branch saved successfully.",
-      //           "SUCCESS"
-      //         );
-      //         getBranches();
-      //       },
-      //       function(error) {
-      //         console.log("could not be saved", error);
-      //         AlertService.showError(
-      //           "Could not be saved!, " + error.data.specific_errors.message,
-      //           "ERROR"
-      //         );
-      //       }
-      //     );
-      //   },
-      //   function() {
-      //     // $log.info("modal-component dismissed at: " + new Date());
-      //   }
-      // );
     }
 
     function _editBranch(selectedBranch) {

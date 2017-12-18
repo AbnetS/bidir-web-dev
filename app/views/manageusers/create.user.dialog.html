@@ -1,6 +1,6 @@
-<md-dialog style="min-width: 800px">
+<md-dialog flex="55" class="bidir-bg">
     <form role="form" name="vm.userForm" novalidate >
-        <md-toolbar class="small">
+        <md-toolbar>
             <div class="md-toolbar-tools small">
                 <h2>User</h2>
                 <span flex></span>
@@ -10,7 +10,7 @@
             </div>
         </md-toolbar>
 
-        <md-dialog-content style="width:800px;max-height:1600px;">
+        <md-dialog-content>
             <md-content class="md-padding">
                 <div class="row">
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
@@ -130,10 +130,7 @@
                     Cancel
                 </md-button>
             </div>
-            <md-button ng-hide="true" md-no-ink class="md-primary " ng-click="vm.approveUser()">
-                Approve
-            </md-button>
-            <md-button class="md-raised md-primary md-button-small md-ink-ripple pull-right"
+            <md-button class="md-raised md-button-small md-ink-ripple pull-right"
                        ng-click="vm.saveUser()">
                 <i class="fa fa-save"></i> {{vm.isEdit? 'Update':'Save'}}
             </md-button>

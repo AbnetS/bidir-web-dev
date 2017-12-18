@@ -26,6 +26,7 @@
         }
 
         function setCredentials(session) {
+            $http.defaults.headers.common['Authorization'] = 'Bearer ' + session.token;
             return StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
         }
 

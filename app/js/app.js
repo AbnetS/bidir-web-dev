@@ -15,7 +15,7 @@
 (function() {
     'use strict';
 
-    appRun.$inject = ["$rootScope", "AuthService", "$stateParams"];
+    appRun.$inject = ["$rootScope", "AuthService", "$http"];
     angular
         .module('angle', [
             'app.core',
@@ -37,15 +37,15 @@
             'app.mfi'
         ]).run(appRun);
 
-    function appRun($rootScope, AuthService, $stateParams){
+    function appRun($rootScope, AuthService, $http){
             //TODO: redirect them to an access denied state if they do not have authorization to access it.
         //Angular UI router state changes
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
 
             var UserInfo = AuthService.GetCredentials();
-
             //Check if there is a logged in user
-            if (UserInfo === null) {
+            if (UserInfo !== null) {
+                $http.defaults.headers.common['Authorization'] = 'Bearer ' + UserInfo.token;
                 //Clear storage and redirect
             }
         });
@@ -121,6 +121,16 @@
     'use strict';
 
     angular
+        .module('app.manage_roles', []);
+
+})();
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+(function() {
+    'use strict';
+
+    angular
         .module('app.manage_users', [
 
         ]).run(runUM);
@@ -186,16 +196,6 @@
     angular
         .module('app.translate', []);
 })();
-/**
- * Created by Yoni on 11/30/2017.
- */
-(function() {
-    'use strict';
-
-    angular
-        .module('app.manage_roles', []);
-
-})();
 (function() {
     'use strict';
 
@@ -244,6 +244,7 @@
         }
 
         function setCredentials(session) {
+            $http.defaults.headers.common['Authorization'] = 'Bearer ' + session.token;
             return StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
         }
 
@@ -487,8 +488,8 @@ var API = {
             MFIUpdate:'',
             MFI:'create',
             GetAll:'all',
-            Branch: 'branches',
-            GetAllBranches: 'branches/paginate?page=1&per_page=100'
+            CreateBranch: 'branches/create',
+            GetAllBranches: 'branches'
         },
         Users: {
             Account:'accounts',
@@ -846,6 +847,263 @@ var API = {
 
 })();
 /**
+ * Created by Yoni on 12/10/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('CreateRoleController', CreateRoleController);
+
+    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService'];
+    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.saveRole = _saveRole;
+        vm.isEdit = items !== null;
+        vm.role = items !== null?items:null;
+
+        initialize();
+
+        function setPermissions() {
+            _.each(vm.role.permissions, function(oldPermission){
+                _.each(vm.permissions, function(permission) {
+                    if(permission.name === oldPermission.name && !permission.checked){
+                        permission.checked = permission.name === oldPermission.name;
+                    }
+                });
+            });
+        }
+
+        function preparePermissions() {
+            vm.role.permissions = _.filter(vm.permissions,function(permission){
+                return permission.checked? permission._id : null;
+            });
+        }
+
+        function _saveRole() {
+            preparePermissions();
+            if(vm.isEdit){
+                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
+                        console.log("updated successfully", data);
+                        $mdDialog.hide();
+                        AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
+                    },
+                    function (error) {
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to update Role",message);
+                        console.log("could not be saved", error);
+                    });
+            }else {
+
+                ManageRoleService.SaveRole( vm.role).then(function (data) {
+                        AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
+                        $mdDialog.hide();
+                    },
+                    function (error) {
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to Save Role",message);
+                        console.log("could not be saved", error);
+                    });
+            }
+        }
+
+        function initialize(){
+
+            ManageRoleService.GetPermissionsbyGroup().then(function(response){
+                vm.groupedPermissions = response.data.docs;
+                console.log("permissions group",response);
+            },function(error){
+                console.log("error permissions",error);
+            });
+
+
+            if(ManageRoleService.GetPermissionsFromStore() !== null){
+                vm.permissions = ManageRoleService.GetPermissionsFromStore();
+                if(vm.isEdit){
+                    setPermissions();
+                }
+            }else {
+                ManageRoleService.GetPermissions().then(function(response){
+                    vm.permissions = response.data.docs;
+                    ManageRoleService.StorePermissions(vm.permissions);
+                    if(vm.isEdit){
+                        setPermissions();
+                    }
+                },function(error){
+                    console.log("error permissions",error);
+                });
+            }
+
+        }
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('ManageRoleController', ManageRoleController);
+
+    ManageRoleController.$inject = ['ManageRoleService', '$mdDialog', 'RouteHelpers'];
+
+    function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
+    {
+        var vm = this;
+        vm.addRole = _addRole;
+        vm.editRole = _editRole;
+
+        fetchRoles();
+
+       function fetchRoles() {
+           ManageRoleService.GetRoles().then(function(response){
+               vm.roles = response.data.docs;
+               // console.log("vm.roles on RM",vm.roles);
+           },function(error){
+               console.log("error role",error);
+           });
+       }
+
+        function _addRole(ev){
+
+            $mdDialog.show({
+                locals: {
+                    items: null
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
+        }
+
+        function _editRole(role,ev) {
+            $mdDialog.show({
+                locals: {
+                    items: role
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
+        }
+
+
+
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 12/11/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.manage_roles')
+
+        .service('ManageRoleService', ManageRoleService);
+    ManageRoleService.$inject = ['$http', 'CommonService','AuthService','StorageService','APP_CONSTANTS'];
+
+    function ManageRoleService($http, CommonService,AuthService,StorageService,APP_CONSTANTS) {
+        return {
+            GetRoles: _getRoles,
+            GetPermissions: _getPermissions,
+            GetPermissionsbyGroup:_getPermissionsbyGroup,
+            SaveRole: _saveRole,
+            UpdateRole:_updateRole,
+            StorePermissions:_storePermissions,
+            GetPermissionsFromStore:_getPermissionsFromStorage
+        };
+
+        function _getRoles(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles),httpConfig);
+        }
+
+        function _getPermissions(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions),httpConfig);
+        }
+        function _getPermissionsbyGroup(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup),httpConfig);
+        }
+
+        function _saveRole(role) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role,httpConfig);
+        }
+
+        function _updateRole(role) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role,httpConfig);
+        }
+
+        function _storePermissions(permissions) {
+            return StorageService.Set(APP_CONSTANTS.StorageKey.PERMISSIONS, permissions);
+        }
+        function _getPermissionsFromStorage() {
+            return !_.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS)) ? StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS) : null;
+        }
+
+    }
+
+})(window.angular);
+
+/**
  * Created by Yoni on 12/2/2017.
  */
 /**
@@ -970,6 +1228,7 @@ var API = {
         vm.clear = function() {
             vm.dt = null;
         };
+
         vm.dateOptions = {
             dateDisabled: false,
             formatYear: "yy",
@@ -2992,263 +3251,6 @@ var API = {
 
     }
 })();
-/**
- * Created by Yoni on 12/10/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_roles')
-        .controller('CreateRoleController', CreateRoleController);
-
-    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService'];
-    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService) {
-        var vm = this;
-        vm.cancel = _cancel;
-        vm.saveRole = _saveRole;
-        vm.isEdit = items !== null;
-        vm.role = items !== null?items:null;
-
-        initialize();
-
-        function setPermissions() {
-            _.each(vm.role.permissions, function(oldPermission){
-                _.each(vm.permissions, function(permission) {
-                    if(permission.name === oldPermission.name && !permission.checked){
-                        permission.checked = permission.name === oldPermission.name;
-                    }
-                });
-            });
-        }
-
-        function preparePermissions() {
-            vm.role.permissions = _.filter(vm.permissions,function(permission){
-                return permission.checked? permission._id : null;
-            });
-        }
-
-        function _saveRole() {
-            preparePermissions();
-            if(vm.isEdit){
-                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
-                        console.log("updated successfully", data);
-                        $mdDialog.hide();
-                        AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
-                    },
-                    function (error) {
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to update Role",message);
-                        console.log("could not be saved", error);
-                    });
-            }else {
-
-                ManageRoleService.SaveRole( vm.role).then(function (data) {
-                        AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
-                        $mdDialog.hide();
-                    },
-                    function (error) {
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to Save Role",message);
-                        console.log("could not be saved", error);
-                    });
-            }
-        }
-
-        function initialize(){
-
-            ManageRoleService.GetPermissionsbyGroup().then(function(response){
-                vm.groupedPermissions = response.data.docs;
-                console.log("permissions group",response);
-            },function(error){
-                console.log("error permissions",error);
-            });
-
-
-            if(ManageRoleService.GetPermissionsFromStore() !== null){
-                vm.permissions = ManageRoleService.GetPermissionsFromStore();
-                if(vm.isEdit){
-                    setPermissions();
-                }
-            }else {
-                ManageRoleService.GetPermissions().then(function(response){
-                    vm.permissions = response.data.docs;
-                    ManageRoleService.StorePermissions(vm.permissions);
-                    if(vm.isEdit){
-                        setPermissions();
-                    }
-                },function(error){
-                    console.log("error permissions",error);
-                });
-            }
-
-        }
-
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 11/30/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_roles')
-        .controller('ManageRoleController', ManageRoleController);
-
-    ManageRoleController.$inject = ['ManageRoleService', '$mdDialog', 'RouteHelpers'];
-
-    function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
-    {
-        var vm = this;
-        vm.addRole = _addRole;
-        vm.editRole = _editRole;
-
-        fetchRoles();
-
-       function fetchRoles() {
-           ManageRoleService.GetRoles().then(function(response){
-               vm.roles = response.data.docs;
-               // console.log("vm.roles on RM",vm.roles);
-           },function(error){
-               console.log("error role",error);
-           });
-       }
-
-        function _addRole(ev){
-
-            $mdDialog.show({
-                locals: {
-                    items: null
-                },
-                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateRoleController',
-                controllerAs: 'vm'
-            })
-                .then(function (answer) {
-                    fetchRoles();
-                }, function () {
-                });
-        }
-
-        function _editRole(role,ev) {
-            $mdDialog.show({
-                locals: {
-                    items: role
-                },
-                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateRoleController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                    fetchRoles();
-                }, function () {
-                });
-        }
-
-
-
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 12/11/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.manage_roles')
-
-        .service('ManageRoleService', ManageRoleService);
-    ManageRoleService.$inject = ['$http', 'CommonService','AuthService','StorageService','APP_CONSTANTS'];
-
-    function ManageRoleService($http, CommonService,AuthService,StorageService,APP_CONSTANTS) {
-        return {
-            GetRoles: _getRoles,
-            GetPermissions: _getPermissions,
-            GetPermissionsbyGroup:_getPermissionsbyGroup,
-            SaveRole: _saveRole,
-            UpdateRole:_updateRole,
-            StorePermissions:_storePermissions,
-            GetPermissionsFromStore:_getPermissionsFromStorage
-        };
-
-        function _getRoles(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles),httpConfig);
-        }
-
-        function _getPermissions(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions),httpConfig);
-        }
-        function _getPermissionsbyGroup(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup),httpConfig);
-        }
-
-        function _saveRole(role) {
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role,httpConfig);
-        }
-
-        function _updateRole(role) {
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role,httpConfig);
-        }
-
-        function _storePermissions(permissions) {
-            return StorageService.Set(APP_CONSTANTS.StorageKey.PERMISSIONS, permissions);
-        }
-        function _getPermissionsFromStorage() {
-            return !_.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS)) ? StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS) : null;
-        }
-
-    }
-
-})(window.angular);
-
 /**=========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
@@ -4207,7 +4209,7 @@ function runBlock() {
             'Accept': 'application/json'
           }
         };
-        return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,updated_branch._id), updated_branch,httpConfig);
+        return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,updated_branch._id), updated_branch);
       }
       function _createBranch(branch){
         var httpConfig = {
@@ -4216,7 +4218,7 @@ function runBlock() {
             'Accept': 'application/json'
           }
         };
-        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch) + '/create', branch,httpConfig);
+        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch), branch);
       }
       function _changeBranchStatus(branchStatus){
         var httpConfig = {
@@ -4225,7 +4227,7 @@ function runBlock() {
             'Accept': 'application/json'
           }
         };
-        return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,branchStatus._id), branchStatus,httpConfig);
+        return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,branchStatus._id), branchStatus);
       }
       function _getMFI(){
         var httpConfig = {
@@ -4234,7 +4236,7 @@ function runBlock() {
             'Accept': 'application/json'
           }
         };
-        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll),httpConfig);
+        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll));
       }
       function _getBranches(){
         var httpConfig = {
@@ -4244,7 +4246,7 @@ function runBlock() {
           }
         };
 
-        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.BranchGet),httpConfig);
+        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.BranchGet));
       }
 
       function _updateMFI(data,logo){
@@ -4359,7 +4361,7 @@ function runBlock() {
     function addBranch(ev) {
         $mdDialog.show({
             locals: {items: null},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.html'),
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
             parent: angular.element(document.body),
             targetEvent: ev,
             clickOutsideToClose: false,
@@ -4368,38 +4370,10 @@ function runBlock() {
             controller: 'CreateBranchController',
             controllerAs: 'vm'
         }).then(function (answer) {
+            getBranches();
         }, function () {
         });
 
-
-      // modalInstance.result.then(
-      //   function(branch) {
-      //     // branch.MFI = vm.mfi._id;
-      //     //Save new branch API
-      //     MainService.CreateBranch(
-      //       branch,
-      //       function(data) {
-      //
-      //          // console.log("saved successfully", data);
-      //         AlertService.showSuccess(
-      //           "Saved! Branch saved successfully.",
-      //           "SUCCESS"
-      //         );
-      //         getBranches();
-      //       },
-      //       function(error) {
-      //         console.log("could not be saved", error);
-      //         AlertService.showError(
-      //           "Could not be saved!, " + error.data.specific_errors.message,
-      //           "ERROR"
-      //         );
-      //       }
-      //     );
-      //   },
-      //   function() {
-      //     // $log.info("modal-component dismissed at: " + new Date());
-      //   }
-      // );
     }
 
     function _editBranch(selectedBranch) {
@@ -4581,64 +4555,81 @@ function runBlock() {
     angular.module('app.mfi')
         .controller('CreateBranchController', CreateBranchController);
 
-    CreateBranchController.$inject = ['CommonService','$scope'];
+    CreateBranchController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService'];
 
-  function CreateBranchController(CommonService,$scope) {
-      var ctrl = this;
-      ctrl.MFIBranchForm = {
-        IsnameValid: true,
-        IslocationValid: true
-    };
-    ctrl.branchTypes =[  'Satellite office','Rural Service','Satellite office'];
-
-      // ctrl.branch = ctrl.resolve.branch;
-      ctrl.emailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
-      // ctrl.$onInit = function() {
-      //   if(!_.isUndefined(ctrl.branch))
-      //   {
-      //   var dt =_.isUndefined(ctrl.branch.opening_date)?undefined: new Date(ctrl.branch.opening_date);
-      //     ctrl.branch.opening_date = dt;
-      //   }
-      // };
-
-      ctrl.ok = function() {
-        ctrl.IsValidData = CommonService.Validation.ValidateForm(ctrl.MFIBranchForm, ctrl.branch);
-
-        if($scope.branchForm.inputEmail.$error.email){
-          // toastr.warning("The email address you put is invalid.", "Warning!");
-        }else if(ctrl.IsValidData){
-          ctrl.close({ $value: ctrl.branch });
-        } else {
-          // toastr.warning("Please fill the required fields and try again.", "Warning!");
-        }
+  function CreateBranchController($mdDialog, items,AlertService,CommonService,MainService) {
+      var vm = this;
+      vm.cancel = _cancel;
+      vm.saveBranch = _saveBranch;
+      vm.isEdit = items !== null;
+      vm.branch = items !== null?items:null;
+      vm.MFIBranchForm = {
+          IsnameValid: true,
+          IslocationValid: true
       };
 
-      ctrl.cancel = function() {
-        ctrl.dismiss({ $value: 'cancel' });
+      vm.branchTypes =['Satellite office','Rural Service','Regional office','Urban office'];
+
+      vm.emailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    
+      function _saveBranch() {
+          vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFIBranchForm, vm.branch);
+          if(vm.branchForm.inputEmail.$error.email){
+              AlertService.showWarning("Branch validation failed","Please provide valid email address");
+          }else if(vm.IsValidData){
+              //Save new branch API
+              MainService.CreateBranch(vm.branch).then(
+                  function(data) {
+                      $mdDialog.hide();
+                      AlertService.showSuccess(
+                          "Saved! Branch saved successfully.",
+                          "SUCCESS"
+                      );
+                  },
+                  function(error) {
+                      console.log("could not be saved", error);
+                      AlertService.showError(
+                          "Could not be saved!, " + error.data.message,
+                          "ERROR"
+                      );
+                  }
+              )
+
+          } else {
+              AlertService.showError("Failed to create branch","Please fill the required fields and try again.");
+          }
+      }
+
+      
+      vm.clear = function() {
+          vm.dt = null;
+      };
+      vm.dateOptions = {
+          dateDisabled: false,
+          formatYear: "yy",
+          maxDate: new Date(2020, 5, 22),
+          startingDay: 1
+      };
+      vm.openDatePicker = function() {
+          vm.popup1.opened = true;
+      };
+      vm.format = "dd-MMMM-yyyy";
+      vm.altInputFormats = ["d!/M!/yyyy"];
+      vm.popup1 = {
+          opened: false
       };
 
-      $scope.clear = function() {
-        $scope.dt = null;
-      };
+      function _cancel() {
+          $mdDialog.cancel();
+      }
+      function initialize(){
+          if(!_.isUndefined(vm.branch))
+          {
+              var dt =_.isUndefined(vm.branch.opening_date)?undefined: new Date(vm.branch.opening_date);
 
-      $scope.dateOptions = {
-        dateDisabled: false,
-        formatYear: "yy",
-        maxDate: new Date(2020, 5, 22),
-        startingDay: 1
-      };
-
-      $scope.open1 = function() {
-        $scope.popup1.opened = true;
-      };
-
-      $scope.format = "dd-MMMM-yyyy";
-      $scope.altInputFormats = ["M!/d!/yyyy"];
-
-      $scope.popup1 = {
-        opened: false
-      };
+              vm.branch.opening_date = dt;
+          }
+      }
   }
 
 

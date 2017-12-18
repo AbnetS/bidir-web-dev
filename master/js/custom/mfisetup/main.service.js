@@ -44,7 +44,7 @@
             'Accept': 'application/json'
           }
         };
-        return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,updated_branch._id), updated_branch,httpConfig);
+        return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,updated_branch._id), updated_branch);
       }
       function _createBranch(branch){
         var httpConfig = {
@@ -53,7 +53,7 @@
             'Accept': 'application/json'
           }
         };
-        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch) + '/create', branch,httpConfig);
+        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch), branch);
       }
       function _changeBranchStatus(branchStatus){
         var httpConfig = {
@@ -62,7 +62,7 @@
             'Accept': 'application/json'
           }
         };
-        return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,branchStatus._id), branchStatus,httpConfig);
+        return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,branchStatus._id), branchStatus);
       }
       function _getMFI(){
         var httpConfig = {
@@ -71,7 +71,7 @@
             'Accept': 'application/json'
           }
         };
-        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll),httpConfig);
+        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll));
       }
       function _getBranches(){
         var httpConfig = {
@@ -81,7 +81,7 @@
           }
         };
 
-        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.BranchGet),httpConfig);
+        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.BranchGet));
       }
 
       function _updateMFI(data,logo){
