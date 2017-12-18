@@ -16,8 +16,9 @@ var API = {
             MFIUpdate:'',
             MFI:'create',
             GetAll:'all',
-            CreateBranch: 'branches/create',
-            GetAllBranches: 'branches'
+            Branches: 'branches',
+            CreateBranch: 'branches/create'
+
         },
         Users: {
             Account:'accounts',

@@ -3,14 +3,9 @@
 
     angular.module("app.mfi").controller("BranchController", BranchController);
 
-    BranchController.$inject = ['RouteHelpers','$uibModal','$mdDialog','MainService'];
+    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService'];
 
-  function BranchController(
-      RouteHelpers,
-    $uibModal,
-    $mdDialog,
-    MainService
-  ) {
+  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService) {
     var vm = this;
 
     vm.addBranch = addBranch;
@@ -30,10 +25,9 @@
     function getBranches() {
       MainService.GetMFI().then(
         function(response) {
-          console.log("mfi data",response);
+          // console.log("mfi data",response);
           vm.mfi = response.data[0];
           vm.branches = response.data[0].branches;
-          // vm.branchesCopy = [].concat(vm.branches);
         },
         function(error) {
           console.log("error", error);
@@ -72,65 +66,31 @@
 
     }
 
-    function _editBranch(selectedBranch) {
-      var modalInstance = $uibModal.open({
-        component: "createbranch",
-        size: "md",
-        resolve: {
-          branch: function() {
-            return selectedBranch;
-          }
-        }
-      });
-
-      modalInstance.result.then(
-        function(updatedBranch) {
-          var upBranch = {
-            _id: updatedBranch._id,
-            name: updatedBranch.name,
-            location: updatedBranch.location,
-            branch_type: updatedBranch.branch_type,
-            opening_date: updatedBranch.opening_date
-          };
-          if(!_.isUndefined(updatedBranch.email)){
-            upBranch.email =updatedBranch.email;
-          }
-          if(_.isString(updatedBranch.phone) && updatedBranch.phone !== ""){
-            upBranch.phone =updatedBranch.phone;
-          }
-          //Update branch api
-          MainService.UpdateBranch(upBranch).then(
-            function(response) {
-              AlertService.showSuccess(
-                "Updated! Branch updated successfully.",
-                "SUCCESS"
-              );
-              getBranches();
-            },
-            function(error) {
-              console.log("could not be updated", error);
-              getBranches();
-              AlertService.showError(
-                "Could not be updated!, " + error.data.specific_errors[0].message,
-                "ERROR"
-              );
-            }
-          );
-        },
-        function() {
-          // $log.info("modal-component dismissed without any change");
-        }
-      );
+    function _editBranch(selectedBranch,ev) {
+        $mdDialog.show({
+            locals: {items: selectedBranch},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
     }
 
     function _changeStatus(ChangeStatus) {
       ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
-      MainService.ChangeStatus(ChangeStatus).then(
+      MainService.UpdateBranch(ChangeStatus).then(
         function(response) {
 
           AlertService.showSuccess(
-            "Updated! Status changed successfully.",
-            "SUCCESS"
+              "Updated branch status",
+              "Updated Status successfully."
           );
           // console.log("updated successfully", response);
 

@@ -488,8 +488,9 @@ var API = {
             MFIUpdate:'',
             MFI:'create',
             GetAll:'all',
-            CreateBranch: 'branches/create',
-            GetAllBranches: 'branches'
+            Branches: 'branches',
+            CreateBranch: 'branches/create'
+
         },
         Users: {
             Account:'accounts',
@@ -4180,75 +4181,28 @@ function runBlock() {
         SearchBranch: _searchBranch,
         GetBranches: _getBranches,
         CreateBranch:_createBranch,
-        ChangeStatus:_changeBranchStatus,
-        branches: $resource(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch), {id:"@id"}, {
-          'query': { method: 'GET', isArray: true,headers: { 'Authorization': 'Bearer ' + AuthService.GetToken()} },
-          'get': {
-            method: 'GET',
-            headers: { 'Authorization': 'Bearer ' + AuthService.GetToken()}
-            },
-          'update': { method: 'PUT',headers: { 'Authorization': 'Bearer ' + AuthService.GetToken()} },
-          'delete': { method: 'DELETE',headers: { 'Authorization': 'Bearer ' + AuthService.GetToken()} }
-        })
+        // ChangeStatus:_changeBranchStatus
       };
 
-
-      function _searchBranch(searchText){
-        var httpConfig = {
-          headers: {
-            'Authorization': 'Bearer ' + AuthService.GetToken(),
-            'Accept': 'application/json'
-          }
-        };
-        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch)+'/name=' + searchText,httpConfig);
-      }
-      function _updateBranch(updated_branch){
-        var httpConfig = {
-          headers: {
-            'Authorization': 'Bearer ' + AuthService.GetToken(),
-            'Accept': 'application/json'
-          }
-        };
-        return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,updated_branch._id), updated_branch);
+      function _getBranches(){
+          return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.BranchGet));
       }
       function _createBranch(branch){
-        var httpConfig = {
-          headers: {
-            'Authorization': 'Bearer ' + AuthService.GetToken(),
-            'Accept': 'application/json'
-          }
-        };
         return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch), branch);
       }
-      function _changeBranchStatus(branchStatus){
-        var httpConfig = {
-          headers: {
-            'Authorization': 'Bearer ' + AuthService.GetToken(),
-            'Accept': 'application/json'
-          }
-        };
-        return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,branchStatus._id), branchStatus);
+      function _updateBranch(updated_branch){
+          return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.Branches,updated_branch._id), updated_branch);
       }
+      // function _changeBranchStatus(branchStatus){
+      //   return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,branchStatus._id), branchStatus);
+      // }
+      function _searchBranch(searchText){
+          return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch)+'/name=' + searchText,httpConfig);
+      }
+
       function _getMFI(){
-        var httpConfig = {
-          headers: {
-            'Authorization': 'Bearer ' + AuthService.GetToken(),
-            'Accept': 'application/json'
-          }
-        };
         return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll));
       }
-      function _getBranches(){
-        var httpConfig = {
-          headers: {
-            'Authorization': 'Bearer ' + AuthService.GetToken(),
-            'Accept': 'application/json'
-          }
-        };
-
-        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.BranchGet));
-      }
-
       function _updateMFI(data,logo){
         var updatedMFI = setAttribute(data,logo);
 
@@ -4264,22 +4218,6 @@ function runBlock() {
           //prevents serializing payload.  don't do it.
           transformRequest: angular.identity
       });
-      }
-
-      function setAttribute(mfi,picFile){
-        var mfiData = new FormData();
-        mfiData.append("name", mfi.name);
-        mfiData.append("location", mfi.location);
-        mfiData.append("establishment_year", mfi.establishment_year);
-        mfiData.append("contact_person", _.isUndefined(mfi.contact_person)?'':mfi.contact_person);
-        mfiData.append("phone", _.isUndefined(mfi.phone)?'':mfi.phone);
-        mfiData.append("email", _.isUndefined(mfi.email)?'':mfi.email);
-        mfiData.append("website_link", _.isUndefined(mfi.website_link)?'':mfi.website_link);
-        if(!_.isUndefined(picFile)){
-          mfiData.append("logo", picFile);
-        }
-
-        return mfiData;
       }
 
       function _createMFI(data,logo){
@@ -4298,6 +4236,22 @@ function runBlock() {
       });
 
       }
+
+      function setAttribute(mfi,picFile){
+          var mfiData = new FormData();
+          mfiData.append("name", mfi.name);
+          mfiData.append("location", mfi.location);
+          mfiData.append("establishment_year", mfi.establishment_year);
+          mfiData.append("contact_person", _.isUndefined(mfi.contact_person)?'':mfi.contact_person);
+          mfiData.append("phone", _.isUndefined(mfi.phone)?'':mfi.phone);
+          mfiData.append("email", _.isUndefined(mfi.email)?'':mfi.email);
+          mfiData.append("website_link", _.isUndefined(mfi.website_link)?'':mfi.website_link);
+          if(!_.isUndefined(picFile)){
+              mfiData.append("logo", picFile);
+          }
+
+          return mfiData;
+      }
   }
 
 })(window.angular);
@@ -4307,14 +4261,9 @@ function runBlock() {
 
     angular.module("app.mfi").controller("BranchController", BranchController);
 
-    BranchController.$inject = ['RouteHelpers','$uibModal','$mdDialog','MainService'];
+    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService'];
 
-  function BranchController(
-      RouteHelpers,
-    $uibModal,
-    $mdDialog,
-    MainService
-  ) {
+  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService) {
     var vm = this;
 
     vm.addBranch = addBranch;
@@ -4334,10 +4283,9 @@ function runBlock() {
     function getBranches() {
       MainService.GetMFI().then(
         function(response) {
-          console.log("mfi data",response);
+          // console.log("mfi data",response);
           vm.mfi = response.data[0];
           vm.branches = response.data[0].branches;
-          // vm.branchesCopy = [].concat(vm.branches);
         },
         function(error) {
           console.log("error", error);
@@ -4376,65 +4324,31 @@ function runBlock() {
 
     }
 
-    function _editBranch(selectedBranch) {
-      var modalInstance = $uibModal.open({
-        component: "createbranch",
-        size: "md",
-        resolve: {
-          branch: function() {
-            return selectedBranch;
-          }
-        }
-      });
-
-      modalInstance.result.then(
-        function(updatedBranch) {
-          var upBranch = {
-            _id: updatedBranch._id,
-            name: updatedBranch.name,
-            location: updatedBranch.location,
-            branch_type: updatedBranch.branch_type,
-            opening_date: updatedBranch.opening_date
-          };
-          if(!_.isUndefined(updatedBranch.email)){
-            upBranch.email =updatedBranch.email;
-          }
-          if(_.isString(updatedBranch.phone) && updatedBranch.phone !== ""){
-            upBranch.phone =updatedBranch.phone;
-          }
-          //Update branch api
-          MainService.UpdateBranch(upBranch).then(
-            function(response) {
-              AlertService.showSuccess(
-                "Updated! Branch updated successfully.",
-                "SUCCESS"
-              );
-              getBranches();
-            },
-            function(error) {
-              console.log("could not be updated", error);
-              getBranches();
-              AlertService.showError(
-                "Could not be updated!, " + error.data.specific_errors[0].message,
-                "ERROR"
-              );
-            }
-          );
-        },
-        function() {
-          // $log.info("modal-component dismissed without any change");
-        }
-      );
+    function _editBranch(selectedBranch,ev) {
+        $mdDialog.show({
+            locals: {items: selectedBranch},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
     }
 
     function _changeStatus(ChangeStatus) {
       ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
-      MainService.ChangeStatus(ChangeStatus).then(
+      MainService.UpdateBranch(ChangeStatus).then(
         function(response) {
 
           AlertService.showSuccess(
-            "Updated! Status changed successfully.",
-            "SUCCESS"
+              "Updated branch status",
+              "Updated Status successfully."
           );
           // console.log("updated successfully", response);
 
@@ -4567,40 +4481,71 @@ function runBlock() {
           IsnameValid: true,
           IslocationValid: true
       };
+      init();
 
-      vm.branchTypes =['Satellite office','Rural Service','Regional office','Urban office'];
-
-      vm.emailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-    
       function _saveBranch() {
+
           vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFIBranchForm, vm.branch);
           if(vm.branchForm.inputEmail.$error.email){
               AlertService.showWarning("Branch validation failed","Please provide valid email address");
           }else if(vm.IsValidData){
-              //Save new branch API
-              MainService.CreateBranch(vm.branch).then(
-                  function(data) {
-                      $mdDialog.hide();
-                      AlertService.showSuccess(
-                          "Saved! Branch saved successfully.",
-                          "SUCCESS"
+              if(!vm.isEdit){
+                  //Save new branch API
+                  MainService.CreateBranch(vm.branch).then(
+                      function(data) {
+                          $mdDialog.hide();
+                          AlertService.showSuccess(
+                              "Saved! Branch saved successfully.",
+                              "SUCCESS"
+                          );
+                      },
+                      function(error) {
+                          console.log("could not be saved", error);
+                          AlertService.showError(
+                              "Could not be saved!, " + error.data.message,
+                              "ERROR"
+                          );
+                      }
+                  )
+              }else {
+                  var upBranch = {
+                      _id: vm.branch._id,
+                      name: vm.branch.name,
+                      location: vm.branch.location,
+                      branch_type: vm.branch.branch_type,
+                      opening_date: vm.branch.opening_date
+                  };
+                      if(!_.isUndefined(vm.branch.email)){
+                        upBranch.email =vm.branch.email;
+                      }
+                      if(_.isString(vm.branch.phone) && vm.branch.phone !== ""){
+                        upBranch.phone =vm.branch.phone;
+                      }
+                      //Update branch api
+                      MainService.UpdateBranch(upBranch).then(
+                        function(response) {
+                          AlertService.showSuccess(
+                            "Branch Updated",
+                            "Branch updated successfully."
+                          );
+                          $mdDialog.hide();
+                        },
+                        function(error) {
+                          console.log("could not be updated", error);
+                          AlertService.showError(
+                              "Could not update Branch",
+                            error.data.message
+                          );
+                        }
                       );
-                  },
-                  function(error) {
-                      console.log("could not be saved", error);
-                      AlertService.showError(
-                          "Could not be saved!, " + error.data.message,
-                          "ERROR"
-                      );
-                  }
-              )
+
+              }
 
           } else {
               AlertService.showError("Failed to create branch","Please fill the required fields and try again.");
           }
       }
 
-      
       vm.clear = function() {
           vm.dt = null;
       };
@@ -4622,11 +4567,11 @@ function runBlock() {
       function _cancel() {
           $mdDialog.cancel();
       }
-      function initialize(){
-          if(!_.isUndefined(vm.branch))
+      function init(){
+          vm.branchTypes =['Satellite office','Rural Service','Regional office','Urban office'];
+          if(vm.isEdit)
           {
               var dt =_.isUndefined(vm.branch.opening_date)?undefined: new Date(vm.branch.opening_date);
-
               vm.branch.opening_date = dt;
           }
       }

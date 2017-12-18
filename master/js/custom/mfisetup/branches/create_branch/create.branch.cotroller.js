@@ -16,40 +16,71 @@
           IsnameValid: true,
           IslocationValid: true
       };
+      init();
 
-      vm.branchTypes =['Satellite office','Rural Service','Regional office','Urban office'];
-
-      vm.emailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-    
       function _saveBranch() {
+
           vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFIBranchForm, vm.branch);
           if(vm.branchForm.inputEmail.$error.email){
               AlertService.showWarning("Branch validation failed","Please provide valid email address");
           }else if(vm.IsValidData){
-              //Save new branch API
-              MainService.CreateBranch(vm.branch).then(
-                  function(data) {
-                      $mdDialog.hide();
-                      AlertService.showSuccess(
-                          "Saved! Branch saved successfully.",
-                          "SUCCESS"
+              if(!vm.isEdit){
+                  //Save new branch API
+                  MainService.CreateBranch(vm.branch).then(
+                      function(data) {
+                          $mdDialog.hide();
+                          AlertService.showSuccess(
+                              "Saved! Branch saved successfully.",
+                              "SUCCESS"
+                          );
+                      },
+                      function(error) {
+                          console.log("could not be saved", error);
+                          AlertService.showError(
+                              "Could not be saved!, " + error.data.message,
+                              "ERROR"
+                          );
+                      }
+                  )
+              }else {
+                  var upBranch = {
+                      _id: vm.branch._id,
+                      name: vm.branch.name,
+                      location: vm.branch.location,
+                      branch_type: vm.branch.branch_type,
+                      opening_date: vm.branch.opening_date
+                  };
+                      if(!_.isUndefined(vm.branch.email)){
+                        upBranch.email =vm.branch.email;
+                      }
+                      if(_.isString(vm.branch.phone) && vm.branch.phone !== ""){
+                        upBranch.phone =vm.branch.phone;
+                      }
+                      //Update branch api
+                      MainService.UpdateBranch(upBranch).then(
+                        function(response) {
+                          AlertService.showSuccess(
+                            "Branch Updated",
+                            "Branch updated successfully."
+                          );
+                          $mdDialog.hide();
+                        },
+                        function(error) {
+                          console.log("could not be updated", error);
+                          AlertService.showError(
+                              "Could not update Branch",
+                            error.data.message
+                          );
+                        }
                       );
-                  },
-                  function(error) {
-                      console.log("could not be saved", error);
-                      AlertService.showError(
-                          "Could not be saved!, " + error.data.message,
-                          "ERROR"
-                      );
-                  }
-              )
+
+              }
 
           } else {
               AlertService.showError("Failed to create branch","Please fill the required fields and try again.");
           }
       }
 
-      
       vm.clear = function() {
           vm.dt = null;
       };
@@ -71,11 +102,11 @@
       function _cancel() {
           $mdDialog.cancel();
       }
-      function initialize(){
-          if(!_.isUndefined(vm.branch))
+      function init(){
+          vm.branchTypes =['Satellite office','Rural Service','Regional office','Urban office'];
+          if(vm.isEdit)
           {
               var dt =_.isUndefined(vm.branch.opening_date)?undefined: new Date(vm.branch.opening_date);
-
               vm.branch.opening_date = dt;
           }
       }
