@@ -29,12 +29,26 @@
                 last_name: vm.user.last_name,
                 role : vm.user.selected_role._id,
                 hired_date:vm.user.hired_date,
-                default_branch : vm.user.selected_default_branch._id
+                default_branch : vm.user.selected_default_branch._id,
+                access_branches:[]
             };
+            debugger
 
             if(vm.isEdit){
 
                 userInfo._id = vm.user.account._id;
+                userInfo.access_branches.push(userInfo.default_branch);
+
+                _.forEach(vm.user.selected_access_branches,function(accessBranch){
+
+                    var found = userInfo.access_branches.some(function (el) {
+                        return el._id === accessBranch._id;
+                    });
+
+                    if (!found) {
+                        userInfo.access_branches.push(accessBranch._id);
+                    }
+                });
 
                 ManageUserService.UpdateUser( userInfo ).then(function (data) {
                         console.log("updated successfully", data);
@@ -92,8 +106,8 @@
 
             ManageUserService.GetBranches().then(function(response){
                 vm.branches = response.data.docs;
+                vm.user.selected_access_branches = [];
                 if(vm.isEdit){
-
                     angular.forEach(vm.branches,function(branch){
                         //LOAD Default Branch select value
                         if(!_.isUndefined(vm.user.default_branch._id)){
@@ -102,16 +116,17 @@
                                 vm.user.selected_default_branch = branch;
                             }
                         }
-
-                        // vm.user.selected_access_branches = [];
                         //LOAD access branch select values
-                        // if(vm.user.access_branches){
-                        //     angular.forEach(vm.user.access_branches,function(access_id){
-                        //         if(branch._id === access_id){
-                        //             vm.user.selected_access_branches.push(branch);
-                        //         }
-                        //     })
-                        // }
+                        if(vm.user.access_branches.length > 0)
+                        {
+                            var found = vm.user.access_branches.some(function (accBranch) {
+                                return accBranch._id === branch._id;
+                            });
+
+                            if (found) {
+                                vm.user.selected_access_branches.push(branch);
+                            }
+                        }
 
                     });
                 }

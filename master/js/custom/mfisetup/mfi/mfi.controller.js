@@ -5,22 +5,18 @@
 
   MFIController.$inject = ['AlertService', '$scope','MainService','CommonService'];
 
-  function MFIController(
-    AlertService,
-    $scope,
-    MainService,
-    CommonService
-  )
+  function MFIController(AlertService,$scope,MainService,CommonService)
+
   {
     var vm = this;
     vm.saveChanges = saveChanges;
+
     vm.MFISetupForm = {
       IsnameValid: true,
       IslocationValid: true,
       IslogoValid: true,
       Isestablishment_yearValid: true
   };
-
 
     init();
 

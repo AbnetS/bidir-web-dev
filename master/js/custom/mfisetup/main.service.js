@@ -3,9 +3,10 @@
   angular.module('app.mfi')
 
   .service('MainService', MainService);
-    // MainService.$inject = ['$resource','$http',' CommonService','AuthService'];
 
-  function MainService($resource,$http, CommonService,AuthService) {
+  // MainService.$inject = ['$http',' CommonService','AuthService'];
+
+  function MainService($http, CommonService,AuthService) {
 
       return {
         GetMFI: _getMFI,

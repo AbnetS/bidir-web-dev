@@ -28,5 +28,5 @@
   "bower_components/jquery.browser/dist/jquery.browser.js",
   "bower_components/angular-aria/angular-aria.js",
   "bower_components/angular-messages/angular-messages.js",
-  "bower_components/underscore/underscore-min.js"
+  "bower_components/underscore/underscore.js"
 ]
