@@ -1147,74 +1147,84 @@ var API = {
         var vm = this;
         vm.cancel = _cancel;
         vm.saveUser = _saveUser;
+        vm.onSelectedDefaultBranch = _onSelectedDefaultBranch;
         vm.isEdit = items !== null;
         vm.user = items !== null?items:null;
         console.log("user info", items);
+        vm.multi_branch = false;
 
         initialize();
 
         function _saveUser() {
-            var userInfo = {
-                first_name: vm.user.first_name,
-                last_name: vm.user.last_name,
-                role : vm.user.selected_role._id,
-                hired_date:vm.user.hired_date,
-                default_branch : vm.user.selected_default_branch._id,
-                access_branches:[]
-            };
             debugger
+            if(!_.isUndefined(vm.user.selected_role) &&  !_.isUndefined(vm.user.selected_default_branch)){
+                var userInfo = {
+                    first_name: vm.user.first_name,
+                    last_name: vm.user.last_name,
+                    role : vm.user.selected_role._id,
+                    hired_date:vm.user.hired_date,
+                    default_branch : vm.user.selected_default_branch._id,
+                    access_branches:[],
+                    multi_branch: vm.multi_branch
+                };
+                if(vm.isEdit){
 
-            if(vm.isEdit){
+                    userInfo._id = vm.user.account._id;
+                    userInfo.access_branches.push(userInfo.default_branch);
 
-                userInfo._id = vm.user.account._id;
-                userInfo.access_branches.push(userInfo.default_branch);
+                    _.forEach(vm.user.selected_access_branches,function(accessBranch){
 
-                _.forEach(vm.user.selected_access_branches,function(accessBranch){
+                        var found = userInfo.access_branches.some(function (el) {
+                            return el._id === accessBranch._id;
+                        });
 
-                    var found = userInfo.access_branches.some(function (el) {
-                        return el._id === accessBranch._id;
+                        if (!found) {
+                            userInfo.access_branches.push(accessBranch._id);
+                        }
                     });
 
-                    if (!found) {
-                        userInfo.access_branches.push(accessBranch._id);
-                    }
-                });
+                    ManageUserService.UpdateUser( userInfo ).then(function (data) {
+                            console.log("updated successfully", data);
+                            $mdDialog.hide();
+                            AlertService.showSuccess('Updated Successfully!', 'User Information is Updated');
+                        },
+                        function (error) {
+                            var message = error.data.error.message;
+                            AlertService.showError( 'Oops... Something went wrong', message);
+                            console.log("could not be saved", error);
+                        });
 
-                ManageUserService.UpdateUser( userInfo ).then(function (data) {
-                        console.log("updated successfully", data);
-                        $mdDialog.hide();
-                        AlertService.showSuccess('Updated Successfully!', 'User Information is Updated');
-                    },
-                    function (error) {
-                        var message = error.data.error.message;
-                        AlertService.showError( 'Oops... Something went wrong', message);
-                        console.log("could not be saved", error);
-                    });
+                }else {
 
+                    userInfo.username = vm.user.username;
+                    userInfo.password = vm.user.password;
+
+                    ManageUserService.CreateUser(userInfo).then(
+                        function (data) {
+                            AlertService.showSuccess('Saved Successfully!', 'User Information is saved successfully');
+                            console.log("saved successfully", data);
+                            $mdDialog.hide();
+                            //TODO: Alert & fetch user collection
+                        },
+                        function (error) {
+                            var message = error.data.error.message;
+                            AlertService.showError( 'Oops... Something went wrong', message);
+                            console.log("could not be saved", error);
+                        }
+                    );
+                }
             }else {
-
-                userInfo.username = vm.user.username;
-                userInfo.password = vm.user.password;
-
-                ManageUserService.CreateUser(userInfo).then(
-                    function (data) {
-                        AlertService.showSuccess('Saved Successfully!', 'User Information is saved successfully');
-                        console.log("saved successfully", data);
-                        $mdDialog.hide();
-                        //TODO: Alert & fetch user collection
-                    },
-                    function (error) {
-                        var message = error.data.error.message;
-                        AlertService.showError( 'Oops... Something went wrong', message);
-                        console.log("could not be saved", error);
-                    }
-                );
+                AlertService.showError( 'Oops... Something went wrong', "You haven't provided all required fields.");
             }
+
+
+
         }
 
         function initialize(){
             if(vm.isEdit){
                 angular.extend(vm.user, vm.user.account);
+                vm.multi_branch = vm.user.multi_branch;
                 var dt = new Date(vm.user.hired_date);
                 vm.user.hired_date = dt;
             }
@@ -1263,6 +1273,16 @@ var API = {
             },function(error){
                 console.log("error",error);
             });
+        }
+
+
+        function _onSelectedDefaultBranch() {
+            if(vm.isEdit){
+                //TODO: REMOVE Branch
+            }else {
+                vm.user.selected_access_branches.push(vm.user.selected_default_branch);
+            }
+
         }
 
         vm.clear = function() {
@@ -4290,6 +4310,98 @@ function runBlock() {
 (function(angular) {
   "use strict";
 
+  angular.module("app.mfi").controller("MFIController", MFIController);
+
+  MFIController.$inject = ['AlertService', '$scope','MainService','CommonService'];
+
+  function MFIController(AlertService,$scope,MainService,CommonService)
+
+  {
+    var vm = this;
+    vm.saveChanges = saveChanges;
+
+    vm.MFISetupForm = {
+      IsnameValid: true,
+      IslocationValid: true,
+      IslogoValid: true,
+      Isestablishment_yearValid: true
+  };
+
+    init();
+
+    function saveChanges() {
+
+      vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFISetupForm, vm.MFI);
+
+      if (vm.IsValidData) {
+        if (_.isUndefined(vm.MFI._id)) {
+          MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
+              AlertService.showSuccess("Created MFI successfully","MFI Information created successfully");
+              console.log("Create MFI", response);
+            }, function(error) {
+              console.log("Create MFI Error", error);
+              var message = error.data.error.message;
+            AlertService.showError("Failed to create MFI!", message);
+
+            });
+        } else {
+          MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
+              AlertService.showSuccess("MFI Info updated successfully","MFI Information updated successfully");
+              console.log("Update MFI", response);
+            }, function(error) {
+              console.log("UpdateMFI Error", error);
+              var message = error.data.error.message;
+              AlertService.showError("MFI Information update failed",message);
+            });
+        }
+      } else {
+          AlertService.showWarning("Warning","Please fill the required fields and try again.");
+      }
+    }
+
+    function init() {
+      MainService.GetMFI().then(
+        function(response) {
+          if (response.data.length > 0) {
+            vm.MFI = response.data[0];
+            var dt = new Date(vm.MFI.establishment_year);
+            vm.MFI.establishment_year = dt;
+          }
+          console.log("Get MFI", response);
+        },
+        function(error) {
+          console.log("Get MFI Error", error);
+        }
+      );
+
+      $scope.clear = function() {
+        $scope.dt = null;
+      };
+
+      $scope.dateOptions = {
+        dateDisabled: false,
+        formatYear: "yy",
+        maxDate: new Date(2020, 5, 22),
+        startingDay: 1
+      };
+
+      $scope.open1 = function() {
+        $scope.popup1.opened = true;
+      };
+
+      $scope.format = "dd-MMMM-yyyy";
+      $scope.altInputFormats = ["M!/d!/yyyy"];
+
+      $scope.popup1 = {
+        opened: false
+      };
+    }
+  }
+})(window.angular);
+
+(function(angular) {
+  "use strict";
+
     angular.module("app.mfi").controller("BranchController", BranchController);
 
     BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService'];
@@ -4395,98 +4507,6 @@ function runBlock() {
 
     }
 
-  }
-})(window.angular);
-
-(function(angular) {
-  "use strict";
-
-  angular.module("app.mfi").controller("MFIController", MFIController);
-
-  MFIController.$inject = ['AlertService', '$scope','MainService','CommonService'];
-
-  function MFIController(AlertService,$scope,MainService,CommonService)
-
-  {
-    var vm = this;
-    vm.saveChanges = saveChanges;
-
-    vm.MFISetupForm = {
-      IsnameValid: true,
-      IslocationValid: true,
-      IslogoValid: true,
-      Isestablishment_yearValid: true
-  };
-
-    init();
-
-    function saveChanges() {
-
-      vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFISetupForm, vm.MFI);
-
-      if (vm.IsValidData) {
-        if (_.isUndefined(vm.MFI._id)) {
-          MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
-              AlertService.showSuccess("Created MFI successfully","MFI Information created successfully");
-              console.log("Create MFI", response);
-            }, function(error) {
-              console.log("Create MFI Error", error);
-              var message = error.data.error.message;
-            AlertService.showError("Failed to create MFI!", message);
-
-            });
-        } else {
-          MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
-              AlertService.showSuccess("MFI Info updated successfully","MFI Information updated successfully");
-              console.log("Update MFI", response);
-            }, function(error) {
-              console.log("UpdateMFI Error", error);
-              var message = error.data.error.message;
-              AlertService.showError("MFI Information update failed",message);
-            });
-        }
-      } else {
-          AlertService.showWarning("Warning","Please fill the required fields and try again.");
-      }
-    }
-
-    function init() {
-      MainService.GetMFI().then(
-        function(response) {
-          if (response.data.length > 0) {
-            vm.MFI = response.data[0];
-            var dt = new Date(vm.MFI.establishment_year);
-            vm.MFI.establishment_year = dt;
-          }
-          console.log("Get MFI", response);
-        },
-        function(error) {
-          console.log("Get MFI Error", error);
-        }
-      );
-
-      $scope.clear = function() {
-        $scope.dt = null;
-      };
-
-      $scope.dateOptions = {
-        dateDisabled: false,
-        formatYear: "yy",
-        maxDate: new Date(2020, 5, 22),
-        startingDay: 1
-      };
-
-      $scope.open1 = function() {
-        $scope.popup1.opened = true;
-      };
-
-      $scope.format = "dd-MMMM-yyyy";
-      $scope.altInputFormats = ["M!/d!/yyyy"];
-
-      $scope.popup1 = {
-        opened: false
-      };
-    }
   }
 })(window.angular);
 

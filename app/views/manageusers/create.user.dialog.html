@@ -13,7 +13,8 @@
         <md-dialog-content>
             <md-content class="md-padding">
                 <div class="row">
-                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
+
+                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
                         <label class="control-label small">First Name</label>
                         <span class="required" aria-required="true"> * </span>
                         <input name="inputFirstName"
@@ -22,11 +23,34 @@
                                type="text"
                                class="form-control input-sm" required>
                     </div>
+
+                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                        <label class="control-label small">Last Name</label>
+                        <span class="required" aria-required="true"> * </span>
+                        <input name="inputLastName"
+                               ng-model="vm.user.last_name"
+                               placeholder="Last Name"
+                               type="text"
+                               class="form-control input-sm" required>
+                    </div>
+
+                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                        <label class="control-label small">Grand Father Name</label>
+                        <span class="required" aria-required="true"> * </span>
+                        <input name="inputSurName"
+                               ng-model="vm.user.grandfather_name"
+                               placeholder="Grand Father Name"
+                               type="text"
+                               class="form-control input-sm" required>
+                    </div>
+
+
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Default Branch</label>
                         <span class="required" aria-required="true"> * </span>
                         <br/>
                         <ui-select ng-model="vm.user.selected_default_branch" theme="select2"
+                                   on-select="vm.onSelectedDefaultBranch(branch)"
                                    title="Choose default branch">
                             <ui-select-match placeholder="Select or search a branch from the list...">
                                 {{$select.selected.name}} - {{$select.selected.location}}</ui-select-match>
@@ -36,44 +60,9 @@
                             </ui-select-choices>
                         </ui-select>
                     </div>
-
-                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
-                        <label class="control-label small">Last Name</label>
-                        <span class="required" aria-required="true"> * </span>
-                        <input name="inputLastName"
-                               ng-model="vm.user.last_name"
-                               placeholder="Last Name"
-                               type="text"
-                               class="form-control input-sm" required>
-                    </div>
-                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
-                        <label class="control-label small">Access Branches</label>
-                        <ui-select multiple ng-model="vm.user.selected_access_branches"
-                                   theme="select2" close-on-select="false" style="width:80%">
-                            <ui-select-match placeholder="Select access branch...">
-                                {{$item.name}} - {{$item.location}}
-                            </ui-select-match>
-                            <ui-select-choices repeat="branch in vm.branches">
-                                <div ng-bind-html="branch.name | highlight: $select.search"></div>
-                                <small>
-                                    location: {{branch.location}}
-                                    branch type: <span ng-bind-html="''+branch.branch_type | highlight: $select.search"></span>
-                                </small>
-                            </ui-select-choices>
-                        </ui-select>
-                    </div>
-
-                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
-                        <label class="control-label small">Grand Father Name</label>
-                        <span class="required" aria-required="true"> * </span>
-                        <input name="inputSurName"
-                               ng-model="vm.user.grandfather_name"
-                               placeholder="Grand Father Name"
-                               type="text"
-                               class="form-control input-sm" required>
-                    </div>
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Hire Date</label>
+                        <span class="required" aria-required="true"> </span>
                         <p class="input-group">
                             <input type="text" class="form-control"
                                    uib-datepicker-popup="{{format}}"
@@ -90,6 +79,31 @@
                         </p>
                     </div>
 
+
+                    <div class="form-group col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                        <label class="mda-checkbox">
+                            <input type="checkbox" ng-model="vm.multi_branch">
+                            <em class="bg-green-500"></em>All Branches</label>
+                    </div>
+                    <div class="form-group col-xs-10 col-sm-8 col-md-8 col-lg-8">
+                        <label class="control-label small">Access Branches</label>
+                        <ui-select ng-disabled="vm.multi_branch" multiple ng-model="vm.user.selected_access_branches"
+                                   theme="select2" close-on-select="false" style="width:80%">
+                            <ui-select-match placeholder="Select access branch...">
+                                {{$item.name}} - {{$item.location}}
+                            </ui-select-match>
+                            <ui-select-choices repeat="branch in vm.branches">
+                                <div ng-bind-html="branch.name | highlight: $select.search"></div>
+                                <small>
+                                    location: {{branch.location}}
+                                    branch type: <span ng-bind-html="''+branch.branch_type | highlight: $select.search"></span>
+                                </small>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+
+
+
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Role</label>
                         <span class="required" aria-required="true"> * </span>
@@ -100,6 +114,8 @@
                             </md-option>
                         </md-select>
                     </div>
+
+
                     <div  class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Username</label>
                         <span class="required" aria-required="true"> * </span>
