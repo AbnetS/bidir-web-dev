@@ -34,15 +34,17 @@
                               "SUCCESS"
                           );
                       },
-                      function(error) {
-                          console.log("could not be saved", error);
+                      function(response) {
+                          var message = response.data.error.message;
+                          console.log("could not be saved", response.data);
                           AlertService.showError(
-                              "Could not be saved!, " + error.data.message,
-                              "ERROR"
+                              "ERROR",
+                              "Could not be saved!, " + message
                           );
                       }
                   )
               }else {
+                  debugger
                   var upBranch = {
                       _id: vm.branch._id,
                       name: vm.branch.name,
@@ -65,11 +67,12 @@
                           );
                           $mdDialog.hide();
                         },
-                        function(error) {
-                          console.log("could not be updated", error);
+                        function(response) {
+                            var message = response.data.error.message;
+                          console.log("could not be updated", response.data);
                           AlertService.showError(
                               "Could not update Branch",
-                            error.data.message
+                              message
                           );
                         }
                       );

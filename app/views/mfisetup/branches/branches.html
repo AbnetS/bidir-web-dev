@@ -47,15 +47,17 @@
                                     <td>{{branch.branch_type}}</td>
                                     <td>{{branch.email}}</td>
                                     <td>
-                                        <span class="badge " ng-class="branch.status==='active'?'badge-primary':'badge-default'">{{branch.status}}</span>
+                                        <span ng-class="branch.status==='active'?'label label-success':'label label-default'">{{branch.status}}</span>
                                     </td>
-                                    <td>
-                                        <a ng-click="vm.editBranch(branch)">
+                                    <td class="text-center">
+                                        <a ng-if="branch.status==='active'" ng-click="vm.editBranch(branch)">
                                             <i class="fa fa-edit"></i>
-                                            EDIT
+                                            Edit
                                         </a>
+                                        <!--spacing-->
+                                        <p></p>
                                         <a ng-click="vm.changeStatus(branch)">
-                                            <i class="fa fa-trash-o fa-fw"></i>
+                                            <i class="fa fa-trash-o"></i>
                                             {{branch.status=== 'active'? "Deactivate":"Activate"}}
                                         </a>
                                     </td>
