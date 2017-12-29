@@ -7,7 +7,7 @@
     .config(routeConfig);
 
   function runBlock() {
-    console.log("common run");
+    // console.log("common run");
   }
 
   function routeConfig() {}

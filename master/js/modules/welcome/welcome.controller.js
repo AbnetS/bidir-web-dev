@@ -14,12 +14,12 @@
         var vm = this;
         vm.viewTaskDetail = _viewTaskDetail;
 
-        WelcomeService.GetTasks().then(function(response){
-            // console.log("tasks List",response);
-            vm.taskList = response.data.docs;
-        },function(error){
-            console.log("error",error);
-        });
+        // WelcomeService.GetTasks().then(function(response){
+        //     // console.log("tasks List",response);
+        //     vm.taskList = response.data.docs;
+        // },function(error){
+        //     console.log("error",error);
+        // });
 
 
         function _viewTaskDetail(task,ev){

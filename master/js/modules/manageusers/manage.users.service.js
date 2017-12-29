@@ -14,7 +14,8 @@
             GetRoles: _getRoles,
             GetBranches: _getBranches,
             CreateUser: _saveUser,
-            UpdateUser: _updateUser
+            UpdateUser: _updateUser,
+            UpdateUserStatus: _updateUserStatus
         };
 
         function _getUsers(params){
@@ -48,16 +49,13 @@
             };
             return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user,httpConfig);
         }
-        function _updateUser(user) {
-
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,user._id), user, httpConfig);
+        function _updateUser(account) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
         }
+        function _updateUserStatus(user) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id), user);
+        }
+        
     }
 
 })(window.angular);

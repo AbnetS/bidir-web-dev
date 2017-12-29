@@ -15,7 +15,7 @@
 (function() {
     'use strict';
 
-    appRun.$inject = ["$rootScope", "AuthService", "$http"];
+    appRun.$inject = ["$rootScope", "AuthService", "$http", "$state"];
     angular
         .module('angle', [
             'app.core',
@@ -37,7 +37,7 @@
             'app.mfi'
         ]).run(appRun);
 
-    function appRun($rootScope, AuthService, $http){
+    function appRun($rootScope, AuthService, $http,$state){
             //TODO: redirect them to an access denied state if they do not have authorization to access it.
         //Angular UI router state changes
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
@@ -46,7 +46,10 @@
             //Check if there is a logged in user
             if (UserInfo !== null) {
                 $http.defaults.headers.common['Authorization'] = 'Bearer ' + UserInfo.token;
+
+            }else{
                 //Clear storage and redirect
+                $state.go('page.login');
             }
         });
     }
@@ -75,7 +78,7 @@
     .config(routeConfig);
 
   function runBlock() {
-    console.log("common run");
+    // console.log("common run");
   }
 
   function routeConfig() {}
@@ -1165,7 +1168,7 @@ var API = {
                     hired_date:vm.user.hired_date,
                     default_branch : vm.user.selected_default_branch._id,
                     access_branches:[],
-                    multi_branch: vm.multi_branch
+                    multi_branches: vm.multi_branches
                 };
                 if(vm.isEdit){
 
@@ -1322,8 +1325,8 @@ var API = {
         .module('app.manage_users')
         .controller('ManageUsersController', ManageUsersController);
 
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog) {
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog','AlertService'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog,AlertService) {
         var vm = this;
         $scope.pageData = {
             total:0
@@ -1374,7 +1377,26 @@ var API = {
         }
 
         function _changeStatus(user) {
-            console.log("user to change status",user);
+            var userAccount = {};
+            userAccount._id = user._id;
+            if(user.status === 'active'){
+                userAccount.status = 'suspended';
+                user.status = 'suspended';
+            }else{
+                userAccount.status = 'active';
+                user.status = 'active';
+            }
+        
+            ManageUserService.UpdateUserStatus(userAccount).then(function(response){
+                console.log('updated user',response);
+                var message =   userAccount.status==='active'?'activated':userAccount.status;
+                AlertService.showSuccess('Updated Successfully!', 'User is ' + message  + '.');
+            },function(error){
+                console.log('error',error);
+                var message = error.data.error.message;
+                AlertService.showError( 'Oops... Something went wrong', message);
+                
+            });
         }
 
         function _addUser(ev){
@@ -1422,11 +1444,8 @@ var API = {
                 case 'inactive':
                     style =  'label label-default';
                     break;
-                case 'declined':
+                case 'suspended':
                     style =  'label label-danger';
-                    break;
-                case 'pending':
-                    style =  'label label-warning';
                     break;
                 default:
                     style =  'label label-default';
@@ -1453,7 +1472,8 @@ var API = {
             GetRoles: _getRoles,
             GetBranches: _getBranches,
             CreateUser: _saveUser,
-            UpdateUser: _updateUser
+            UpdateUser: _updateUser,
+            UpdateUserStatus: _updateUserStatus
         };
 
         function _getUsers(params){
@@ -1487,16 +1507,13 @@ var API = {
             };
             return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user,httpConfig);
         }
-        function _updateUser(user) {
-
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,user._id), user, httpConfig);
+        function _updateUser(account) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
         }
+        function _updateUserStatus(user) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id), user);
+        }
+        
     }
 
 })(window.angular);
@@ -3819,12 +3836,12 @@ var API = {
         var vm = this;
         vm.viewTaskDetail = _viewTaskDetail;
 
-        WelcomeService.GetTasks().then(function(response){
-            // console.log("tasks List",response);
-            vm.taskList = response.data.docs;
-        },function(error){
-            console.log("error",error);
-        });
+        // WelcomeService.GetTasks().then(function(response){
+        //     // console.log("tasks List",response);
+        //     vm.taskList = response.data.docs;
+        // },function(error){
+        //     console.log("error",error);
+        // });
 
 
         function _viewTaskDetail(task,ev){
@@ -4310,98 +4327,6 @@ function runBlock() {
 (function(angular) {
   "use strict";
 
-  angular.module("app.mfi").controller("MFIController", MFIController);
-
-  MFIController.$inject = ['AlertService', '$scope','MainService','CommonService'];
-
-  function MFIController(AlertService,$scope,MainService,CommonService)
-
-  {
-    var vm = this;
-    vm.saveChanges = saveChanges;
-
-    vm.MFISetupForm = {
-      IsnameValid: true,
-      IslocationValid: true,
-      IslogoValid: true,
-      Isestablishment_yearValid: true
-  };
-
-    init();
-
-    function saveChanges() {
-
-      vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFISetupForm, vm.MFI);
-
-      if (vm.IsValidData) {
-        if (_.isUndefined(vm.MFI._id)) {
-          MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
-              AlertService.showSuccess("Created MFI successfully","MFI Information created successfully");
-              console.log("Create MFI", response);
-            }, function(error) {
-              console.log("Create MFI Error", error);
-              var message = error.data.error.message;
-            AlertService.showError("Failed to create MFI!", message);
-
-            });
-        } else {
-          MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
-              AlertService.showSuccess("MFI Info updated successfully","MFI Information updated successfully");
-              console.log("Update MFI", response);
-            }, function(error) {
-              console.log("UpdateMFI Error", error);
-              var message = error.data.error.message;
-              AlertService.showError("MFI Information update failed",message);
-            });
-        }
-      } else {
-          AlertService.showWarning("Warning","Please fill the required fields and try again.");
-      }
-    }
-
-    function init() {
-      MainService.GetMFI().then(
-        function(response) {
-          if (response.data.length > 0) {
-            vm.MFI = response.data[0];
-            var dt = new Date(vm.MFI.establishment_year);
-            vm.MFI.establishment_year = dt;
-          }
-          console.log("Get MFI", response);
-        },
-        function(error) {
-          console.log("Get MFI Error", error);
-        }
-      );
-
-      $scope.clear = function() {
-        $scope.dt = null;
-      };
-
-      $scope.dateOptions = {
-        dateDisabled: false,
-        formatYear: "yy",
-        maxDate: new Date(2020, 5, 22),
-        startingDay: 1
-      };
-
-      $scope.open1 = function() {
-        $scope.popup1.opened = true;
-      };
-
-      $scope.format = "dd-MMMM-yyyy";
-      $scope.altInputFormats = ["M!/d!/yyyy"];
-
-      $scope.popup1 = {
-        opened: false
-      };
-    }
-  }
-})(window.angular);
-
-(function(angular) {
-  "use strict";
-
     angular.module("app.mfi").controller("BranchController", BranchController);
 
     BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService'];
@@ -4507,6 +4432,98 @@ function runBlock() {
 
     }
 
+  }
+})(window.angular);
+
+(function(angular) {
+  "use strict";
+
+  angular.module("app.mfi").controller("MFIController", MFIController);
+
+  MFIController.$inject = ['AlertService', '$scope','MainService','CommonService'];
+
+  function MFIController(AlertService,$scope,MainService,CommonService)
+
+  {
+    var vm = this;
+    vm.saveChanges = saveChanges;
+
+    vm.MFISetupForm = {
+      IsnameValid: true,
+      IslocationValid: true,
+      IslogoValid: true,
+      Isestablishment_yearValid: true
+  };
+
+    init();
+
+    function saveChanges() {
+
+      vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFISetupForm, vm.MFI);
+
+      if (vm.IsValidData) {
+        if (_.isUndefined(vm.MFI._id)) {
+          MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
+              AlertService.showSuccess("Created MFI successfully","MFI Information created successfully");
+              console.log("Create MFI", response);
+            }, function(error) {
+              console.log("Create MFI Error", error);
+              var message = error.data.error.message;
+            AlertService.showError("Failed to create MFI!", message);
+
+            });
+        } else {
+          MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
+              AlertService.showSuccess("MFI Info updated successfully","MFI Information updated successfully");
+              console.log("Update MFI", response);
+            }, function(error) {
+              console.log("UpdateMFI Error", error);
+              var message = error.data.error.message;
+              AlertService.showError("MFI Information update failed",message);
+            });
+        }
+      } else {
+          AlertService.showWarning("Warning","Please fill the required fields and try again.");
+      }
+    }
+
+    function init() {
+      MainService.GetMFI().then(
+        function(response) {
+          if (response.data.length > 0) {
+            vm.MFI = response.data[0];
+            var dt = new Date(vm.MFI.establishment_year);
+            vm.MFI.establishment_year = dt;
+          }
+          console.log("Get MFI", response);
+        },
+        function(error) {
+          console.log("Get MFI Error", error);
+        }
+      );
+
+      $scope.clear = function() {
+        $scope.dt = null;
+      };
+
+      $scope.dateOptions = {
+        dateDisabled: false,
+        formatYear: "yy",
+        maxDate: new Date(2020, 5, 22),
+        startingDay: 1
+      };
+
+      $scope.open1 = function() {
+        $scope.popup1.opened = true;
+      };
+
+      $scope.format = "dd-MMMM-yyyy";
+      $scope.altInputFormats = ["M!/d!/yyyy"];
+
+      $scope.popup1 = {
+        opened: false
+      };
+    }
   }
 })(window.angular);
 

@@ -35,7 +35,7 @@
                     hired_date:vm.user.hired_date,
                     default_branch : vm.user.selected_default_branch._id,
                     access_branches:[],
-                    multi_branch: vm.multi_branch
+                    multi_branches: vm.multi_branches
                 };
                 if(vm.isEdit){
 

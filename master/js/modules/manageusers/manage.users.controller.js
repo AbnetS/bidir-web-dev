@@ -9,8 +9,8 @@
         .module('app.manage_users')
         .controller('ManageUsersController', ManageUsersController);
 
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog) {
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog','AlertService'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog,AlertService) {
         var vm = this;
         $scope.pageData = {
             total:0
@@ -61,7 +61,26 @@
         }
 
         function _changeStatus(user) {
-            console.log("user to change status",user);
+            var userAccount = {};
+            userAccount._id = user._id;
+            if(user.status === 'active'){
+                userAccount.status = 'suspended';
+                user.status = 'suspended';
+            }else{
+                userAccount.status = 'active';
+                user.status = 'active';
+            }
+        
+            ManageUserService.UpdateUserStatus(userAccount).then(function(response){
+                console.log('updated user',response);
+                var message =   userAccount.status==='active'?'activated':userAccount.status;
+                AlertService.showSuccess('Updated Successfully!', 'User is ' + message  + '.');
+            },function(error){
+                console.log('error',error);
+                var message = error.data.error.message;
+                AlertService.showError( 'Oops... Something went wrong', message);
+                
+            });
         }
 
         function _addUser(ev){
@@ -109,11 +128,8 @@
                 case 'inactive':
                     style =  'label label-default';
                     break;
-                case 'declined':
+                case 'suspended':
                     style =  'label label-danger';
-                    break;
-                case 'pending':
-                    style =  'label label-warning';
                     break;
                 default:
                     style =  'label label-default';
