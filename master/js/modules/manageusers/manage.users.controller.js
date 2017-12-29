@@ -53,7 +53,7 @@
         }
         function fetchUserData() {
             ManageUserService.GetUsers().then(function(response){
-                // console.log("users list",response);
+                console.log("users list",response);
                 vm.users = response.data.docs;
             },function(error){
                 console.log("error",error);
@@ -99,6 +99,8 @@
                 controllerAs: 'vm'
             })
                 .then(function (answer) {
+                    fetchUserData();
+
                 }, function () {
                 });
         }
@@ -114,6 +116,7 @@
                 controller: 'CreateUserController',
                 controllerAs: 'vm'
             }).then(function (answer) {
+                fetchUserData();
                 }, function () {
                 });
         }
