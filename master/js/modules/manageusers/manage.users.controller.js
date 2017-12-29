@@ -74,7 +74,7 @@
             ManageUserService.UpdateUserStatus(userAccount).then(function(response){
                 console.log('updated user',response);
                 var message =   userAccount.status==='active'?'activated':userAccount.status;
-                AlertService.showSuccess('Updated Successfully!', 'User is ' + message  + '.');
+                AlertService.showSuccess('Updated User Status!', 'User is ' + message  + '.');
             },function(error){
                 console.log('error',error);
                 var message = error.data.error.message;

@@ -13,8 +13,8 @@
         <md-dialog-content>
             <md-content class="md-padding">
                 <div class="row">
-
-                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                    <!-- FIRST NAME -->
+                    <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">First Name</label>
                         <span class="required" aria-required="true"> * </span>
                         <input name="inputFirstName"
@@ -23,8 +23,8 @@
                                type="text"
                                class="form-control input-sm" required>
                     </div>
-
-                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                    <!-- LAST NAME -->
+                    <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Last Name</label>
                         <span class="required" aria-required="true"> * </span>
                         <input name="inputLastName"
@@ -33,8 +33,8 @@
                                type="text"
                                class="form-control input-sm" required>
                     </div>
-
-                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                    <!-- Grand Father Name -->
+                    <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Grand Father Name</label>
                         <span class="required" aria-required="true"> * </span>
                         <input name="inputSurName"
@@ -43,8 +43,17 @@
                                type="text"
                                class="form-control input-sm" required>
                     </div>
-
-
+                     <!-- Grand Father Name -->
+                     <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label class="control-label small">Title</label>
+                            <span class="required" aria-required="true"> * </span>
+                            <input name="inputTitle"
+                                   ng-model="vm.user.title"
+                                   placeholder="Title"
+                                   type="text"
+                                   class="form-control input-sm">
+                        </div>
+                    <!-- Default Branch -->
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Default Branch</label>
                         <span class="required" aria-required="true"> * </span>
@@ -60,35 +69,16 @@
                             </ui-select-choices>
                         </ui-select>
                     </div>
+
+                    </br>
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
-                        <label class="control-label small">Hire Date</label>
-                        <span class="required" aria-required="true"> </span>
-                        <p class="input-group">
-                            <input type="text" class="form-control"
-                                   uib-datepicker-popup="{{format}}"
-                                   ng-model="vm.user.hired_date"
-                                   is-open="vm.popup1.opened"
-                                   datepicker-options="vm.dateOptions"
-                                   ng-required="true" close-text="Close"
-                                   alt-input-formats="vm.altInputFormats"/>
-                            <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-click="vm.openDatePicker()">
-                              <i class="fa fa-calendar"></i>
-                            </button>
-                            </span>
-                        </p>
-                    </div>
-
-
-                    <div class="form-group col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                        <label class="mda-checkbox">
-                            <input type="checkbox" ng-model="vm.multi_branches">
-                            <em class="bg-green-500"></em>All Branches</label>
-                    </div>
-                    <div class="form-group col-xs-10 col-sm-8 col-md-8 col-lg-8">
-                        <label class="control-label small">Access Branches</label>
-                        <ui-select ng-disabled="vm.multi_branches" multiple ng-model="vm.user.selected_access_branches"
-                                   theme="select2" close-on-select="false" style="width:80%">
+                            <label class="mda-checkbox">
+                                    <input type="checkbox" ng-model="vm.multi_branches">
+                                    <em class="bg-green-500"></em>All Branches</label>
+                                    <p></p>
+                        <ui-select ng-disabled="vm.multi_branches" multiple 
+                                   ng-model="vm.user.selected_access_branches"
+                                   theme="select2" close-on-select="false" style="width:100%">
                             <ui-select-match placeholder="Select access branch...">
                                 {{$item.name}} - {{$item.location}}
                             </ui-select-match>
@@ -100,8 +90,27 @@
                                 </small>
                             </ui-select-choices>
                         </ui-select>
+
                     </div>
 
+                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                            <label class="control-label small">Hire Date</label>
+                            <span class="required" aria-required="true"> </span>
+                            <p class="input-group">
+                                <input type="text" class="form-control"
+                                       uib-datepicker-popup="{{format}}"
+                                       ng-model="vm.user.hired_date"
+                                       is-open="vm.popup1.opened"
+                                       datepicker-options="vm.dateOptions"
+                                       ng-required="true" close-text="Close"
+                                       alt-input-formats="vm.altInputFormats"/>
+                                <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="vm.openDatePicker()">
+                                  <i class="fa fa-calendar"></i>
+                                </button>
+                                </span>
+                            </p>
+                    </div>
 
 
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">

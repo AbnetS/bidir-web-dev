@@ -1164,6 +1164,7 @@ var API = {
                 var userInfo = {
                     first_name: vm.user.first_name,
                     last_name: vm.user.last_name,
+                    grandfather_name:vm.user.grandfather_name,
                     role : vm.user.selected_role._id,
                     hired_date:vm.user.hired_date,
                     default_branch : vm.user.selected_default_branch._id,
@@ -1390,7 +1391,7 @@ var API = {
             ManageUserService.UpdateUserStatus(userAccount).then(function(response){
                 console.log('updated user',response);
                 var message =   userAccount.status==='active'?'activated':userAccount.status;
-                AlertService.showSuccess('Updated Successfully!', 'User is ' + message  + '.');
+                AlertService.showSuccess('Updated User Status!', 'User is ' + message  + '.');
             },function(error){
                 console.log('error',error);
                 var message = error.data.error.message;

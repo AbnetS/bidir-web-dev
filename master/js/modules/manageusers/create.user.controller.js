@@ -31,6 +31,7 @@
                 var userInfo = {
                     first_name: vm.user.first_name,
                     last_name: vm.user.last_name,
+                    grandfather_name:vm.user.grandfather_name,
                     role : vm.user.selected_role._id,
                     hired_date:vm.user.hired_date,
                     default_branch : vm.user.selected_default_branch._id,
