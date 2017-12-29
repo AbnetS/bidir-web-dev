@@ -9,8 +9,8 @@
         .module('app.manage_users')
         .controller('ManageUsersController', ManageUsersController);
 
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog','AlertService'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog,AlertService) {
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog','AlertService','toaster'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog,AlertService,toaster) {
         var vm = this;
         $scope.pageData = {
             total:0
@@ -19,10 +19,6 @@
         vm.editUser = _editUser;
         vm.changeStatus = _changeStatus;
         vm.statusStyle = _statusStyle;
-
-
-
-
 
 
 
@@ -61,6 +57,12 @@
         }
 
         function _changeStatus(user) {
+            vm.toaster = {
+                type:  'success',
+                title: 'Title',
+                text:  'Message'
+            };
+
             var userAccount = {};
             userAccount._id = user._id;
             if(user.status === 'active'){
@@ -75,11 +77,12 @@
                 console.log('updated user',response);
                 var message =   userAccount.status==='active'?'activated':userAccount.status;
                 AlertService.showSuccess('Updated User Status!', 'User is ' + message  + '.');
+                // toaster.pop(vm.toaster.type, vm.toaster.title, vm.toaster.text);
             },function(error){
                 console.log('error',error);
                 var message = error.data.error.message;
                 AlertService.showError( 'Oops... Something went wrong', message);
-                
+                // toaster.pop(vm.toaster.type, vm.toaster.title, vm.toaster.text);
             });
         }
 

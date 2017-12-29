@@ -29,13 +29,13 @@
               url: '/app',
               abstract: true,
               templateUrl: helper.basepath('app.html'),
-              resolve: helper.resolveFor('modernizr', 'icons','datatables','underscore','oitozero.ngSweetAlert')
+              resolve: helper.resolveFor('fastclick','modernizr','sparklines', 'icons','animo','underscore',
+                        'sparklines','slimscroll','oitozero.ngSweetAlert','toaster','whirl')
           })
           .state('app.welcome', {
               url: '/welcome',
               title: 'Welcome',
               templateUrl: helper.basepath('welcome.html'),
-              resolve: helper.resolveFor('moment','icons','oitozero.ngSweetAlert'),
               controller: 'WelcomeController',
               controllerAs: 'vm'
           })
@@ -43,7 +43,7 @@
                 url: '/manage_user',
                 title: 'manage users',
                 templateUrl: helper.basepath('manageusers/manage.users.html'),
-               resolve: angular.extend(helper.resolveFor('datatables','ngDialog','ui.select','icons','oitozero.ngSweetAlert'),{}),
+               resolve: angular.extend(helper.resolveFor('datatables','ngDialog','ui.select'),{}),
                controller: 'ManageUsersController',
                controllerAs: 'vm'
             })
@@ -91,8 +91,7 @@
                 title: 'Login',
                 templateUrl: 'app/pages/login.html',
                 controller: 'LoginFormController',
-                controllerAs: 'login',
-                resolve: helper.resolveFor('toaster')
+                controllerAs: 'login'
             })
             .state('page.404', {
                 url: '/404',

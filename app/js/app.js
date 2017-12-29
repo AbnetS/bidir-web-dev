@@ -1326,8 +1326,8 @@ var API = {
         .module('app.manage_users')
         .controller('ManageUsersController', ManageUsersController);
 
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'DTColumnBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog','AlertService'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder, DTColumnBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog,AlertService) {
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog','AlertService','toaster'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog,AlertService,toaster) {
         var vm = this;
         $scope.pageData = {
             total:0
@@ -1336,10 +1336,6 @@ var API = {
         vm.editUser = _editUser;
         vm.changeStatus = _changeStatus;
         vm.statusStyle = _statusStyle;
-
-
-
-
 
 
 
@@ -1378,6 +1374,12 @@ var API = {
         }
 
         function _changeStatus(user) {
+            vm.toaster = {
+                type:  'success',
+                title: 'Title',
+                text:  'Message'
+            };
+
             var userAccount = {};
             userAccount._id = user._id;
             if(user.status === 'active'){
@@ -1392,11 +1394,12 @@ var API = {
                 console.log('updated user',response);
                 var message =   userAccount.status==='active'?'activated':userAccount.status;
                 AlertService.showSuccess('Updated User Status!', 'User is ' + message  + '.');
+                // toaster.pop(vm.toaster.type, vm.toaster.title, vm.toaster.text);
             },function(error){
                 console.log('error',error);
                 var message = error.data.error.message;
                 AlertService.showError( 'Oops... Something went wrong', message);
-                
+                // toaster.pop(vm.toaster.type, vm.toaster.title, vm.toaster.text);
             });
         }
 
@@ -2738,13 +2741,13 @@ var API = {
               url: '/app',
               abstract: true,
               templateUrl: helper.basepath('app.html'),
-              resolve: helper.resolveFor('modernizr', 'icons','datatables','underscore','oitozero.ngSweetAlert')
+              resolve: helper.resolveFor('fastclick','modernizr','sparklines', 'icons','animo','underscore',
+                        'sparklines','slimscroll','oitozero.ngSweetAlert','toaster','whirl')
           })
           .state('app.welcome', {
               url: '/welcome',
               title: 'Welcome',
               templateUrl: helper.basepath('welcome.html'),
-              resolve: helper.resolveFor('moment','icons','oitozero.ngSweetAlert'),
               controller: 'WelcomeController',
               controllerAs: 'vm'
           })
@@ -2752,7 +2755,7 @@ var API = {
                 url: '/manage_user',
                 title: 'manage users',
                 templateUrl: helper.basepath('manageusers/manage.users.html'),
-               resolve: angular.extend(helper.resolveFor('datatables','ngDialog','ui.select','icons','oitozero.ngSweetAlert'),{}),
+               resolve: angular.extend(helper.resolveFor('datatables','ngDialog','ui.select'),{}),
                controller: 'ManageUsersController',
                controllerAs: 'vm'
             })
@@ -2800,8 +2803,7 @@ var API = {
                 title: 'Login',
                 templateUrl: 'app/pages/login.html',
                 controller: 'LoginFormController',
-                controllerAs: 'login',
-                resolve: helper.resolveFor('toaster')
+                controllerAs: 'login'
             })
             .state('page.404', {
                 url: '/404',
