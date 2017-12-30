@@ -61,12 +61,6 @@
     'use strict';
 
     angular
-        .module('app.auth', []);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.colors', []);
 })();
 (function(angular) {
@@ -84,6 +78,12 @@
   function routeConfig() {}
 })(window.angular);
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.auth', []);
+})();
 (function() {
     'use strict';
 
@@ -111,12 +111,6 @@
     angular
         .module('app.lazyload', []);
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar', []);
-})();
 /**
  * Created by Yoni on 11/30/2017.
  */
@@ -126,6 +120,12 @@
     angular
         .module('app.manage_roles', []);
 
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar', []);
 })();
 /**
  * Created by Yoni on 11/30/2017.
@@ -219,171 +219,6 @@
         .module('app.welcomePage', []);
 
 })();
-(function(angular) {
-    'use strict';
-    angular.module('app.auth')
-
-    .service('AuthService', AuthService);
-
-     AuthService.$inject = ['$http', 'StorageService', 'CommonService', 'APP_CONSTANTS', '$rootScope', '$state'];
-
-    function AuthService($http, StorageService, CommonService, APP_CONSTANTS, $rootScope, $state) {
-
-        var service = {
-            login: _login,
-            Logout: logout,
-            GetCredentials: getCredentials,
-            SetCredentials: setCredentials,
-            GetToken: getToken,
-            IsAuthenticated: isAuthenticated,
-            IsAuthorized: isAuthorized,
-            GetCurrentUser:_getCurrentUser
-        };
-
-        return service;
-
-        function getCredentials() {
-            return !angular.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.SESSION)) ? StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) : null;
-        }
-
-        function setCredentials(session) {
-            $http.defaults.headers.common['Authorization'] = 'Bearer ' + session.token;
-            return StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
-        }
-
-        function getToken() {
-            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION).token;
-        }
-
-        function isAuthenticated() {
-            var session = getCredentials();
-            var loggedInUser = (angular.isUndefined(session) || session === null) ? undefined : session;
-            return (!angular.isUndefined(loggedInUser));
-        }
-        function _getCurrentUser(){
-          var credential = getCredentials();
-          return angular.isUndefined(credential) || credential === null ? null : credential.user;
-        }
-
-        function isAuthorized(roles) {
-            if (!angular.isArray(roles)) {
-                roles = [roles];
-            }
-            var credential = getCredentials();
-            var session = angular.isUndefined(credential) || credential === null ? null : getCredentials().user;
-            var haveAccess = session !== null ? roles.indexOf(session.role) !== -1 : false;
-
-            return isAuthenticated() && haveAccess;
-        }
-
-        function _login(user) {
-          return $http.post(CommonService.buildUrl(API.Service.Auth,API.Methods.Auth.Login), user);
-        }
-
-        function logout() {
-            StorageService.Reset();
-            $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
-            $state.go('page.login');
-        }
-
-    }
-
-})(window.angular);
-
-/**=========================================================
- * Module: access-login.js
- * Demo for login api
- =========================================================*/
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.auth')
-        .controller('LoginFormController', LoginFormController);
-
-    LoginFormController.$inject = ['AuthService',
-        '$scope',
-        '$state',
-        '$rootScope',
-        'APP_CONSTANTS',
-        'toaster'
-        ];
-
-    function LoginFormController(
-        AuthService,
-        $scope,
-        $state,
-        $rootScope,
-        APP_CONSTANTS,
-        toaster
-    ) {
-        var vm = this;
-        vm.userValidator = {
-            usernameMin: 4,
-            usernameMax: 20,
-            passwordMin: 6
-        };
-        vm.user = {};
-
-        vm.login = function() {
-            AuthService.login(vm.user).then(
-                function(response) {
-                    var result = response.data;
-                    vm.user = result.user;
-
-                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
-                    AuthService.SetCredentials(result);
-
-                    console.log(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
-                    $state.go("app.welcome");
-                    // CheckMFIAndRedirect();
-                },
-                function(error) {
-                    console.log("error", error);
-                    toaster.pop("success", "ERROR", "The username or password is incorrect! Please try again.");
-                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
-                }
-            );
-
-            function CheckMFIAndRedirect(){
-                MainService.GetMFI().then(
-                    function(response) {
-                        debugger
-                        if (response.data.length > 0) {
-                            $state.go("index.branch");
-                            toastr.success(
-                                "Welcome Back " +
-                                vm.user.admin.first_name ,
-                                "Success"
-                            );
-                        }else{
-                            $state.go("home.mfi");
-                            toastr.success(
-                                "Welcome " +
-                                vm.user.admin.first_name +
-                                " " +
-                                vm.user.admin.last_name +
-                                " to Bidir Web App",
-                                "Success"
-                            );
-                        }
-                    },
-                    function(error) {
-                        console.log("error", error);
-                        toastr.error(
-                            "Error occured while trying to connect! Please try again.",
-                            "ERROR!"
-                        );
-                    }
-                );
-            }
-
-        };
-    }
-})(window.angular);
-
-
 (function() {
     'use strict';
 
@@ -454,12 +289,58 @@
         loginSuccess: "auth-login-success",
         loginFailed: "auth-login-failed",
         logoutSuccess: "auth-logout-success",
+        logoutUser: "auth-logout-user",
         sessionTimeout: "auth-session-timeout",
         notAuthenticated: "auth-not-authenticated",
         notAuthorized: "auth-not-authorized"
       }
     });
 })(window.angular);
+
+/**
+ * Created by Yoni on 12/30/2017.
+ */
+//Directive
+
+(function(angular) {
+
+    'use strict';
+
+    angular.module('app.common')
+        .directive('permission', ["PermissionService", function(PermissionService) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+
+                scope.$watch(attrs.permission, function(value) {
+                    var permission = value;
+                    var hasPermission = false;
+                    if (_.isString(permission)) {
+                        hasPermission = PermissionService.hasThisPermission(permission)
+                    } else if (_.isArray(permission)) {
+
+                        hasPermission = PermissionService.hasThesePermissions(permission) //multiple permissions
+                    }
+
+                    toggleVisibility(hasPermission);
+                });
+
+                function toggleVisibility(hasPermission) {
+                    if (hasPermission) {
+                        element.show();
+                    } else {
+                        element.hide();
+                    }
+                }
+            }
+        };
+    }])
+
+
+
+})(window.angular);
+
+
 
 /**
  * Created by Yoni on 12/14/2017.
@@ -516,6 +397,162 @@ var API = {
     }
 };
 
+
+
+(function(angular) {
+    'use strict';
+    angular.module('app.auth')
+
+    .service('AuthService', AuthService);
+
+     AuthService.$inject = ['$http', 'StorageService', 'CommonService', 'APP_CONSTANTS', '$rootScope', '$state'];
+
+    function AuthService($http, StorageService, CommonService, APP_CONSTANTS, $rootScope, $state) {
+
+        var service = {
+            login: _login,
+            Logout: logout,
+            GetCredentials: getCredentials,
+            SetCredentials: setCredentials,
+            GetToken: getToken,
+            IsAuthenticated: isAuthenticated,
+            IsAuthorized: isAuthorized,
+            GetCurrentUser:_getCurrentUser
+        };
+
+        return service;
+
+        function getCredentials() {
+            return !angular.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.SESSION)) ? StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) : null;
+        }
+
+        function setCredentials(session) {
+            $http.defaults.headers.common['Authorization'] = 'Bearer ' + session.token;
+            return StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
+        }
+
+        function getToken() {
+            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION).token;
+        }
+
+        function isAuthenticated() {
+            var session = getCredentials();
+            var loggedInUser = (angular.isUndefined(session) || session === null) ? undefined : session;
+            return (!angular.isUndefined(loggedInUser));
+        }
+        function _getCurrentUser(){
+          var credential = getCredentials();
+          return angular.isUndefined(credential) || credential === null ? null : credential.user;
+        }
+
+        function isAuthorized(roles) {
+            if (!angular.isArray(roles)) {
+                roles = [roles];
+            }
+            var credential = getCredentials();
+            var session = angular.isUndefined(credential) || credential === null ? null : getCredentials().user;
+            var haveAccess = session !== null ? roles.indexOf(session.role) !== -1 : false;
+
+            return isAuthenticated() && haveAccess;
+        }
+
+        function _login(user) {
+          return $http.post(CommonService.buildUrl(API.Service.Auth,API.Methods.Auth.Login), user);
+        }
+
+        function logout() {
+            StorageService.Reset();
+            // $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
+            $state.go('page.login');
+        }
+
+    }
+
+})(window.angular);
+
+/**=========================================================
+ * Module: access-login.js
+ * Demo for login api
+ =========================================================*/
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.auth')
+        .controller('LoginFormController', LoginFormController);
+
+    LoginFormController.$inject = ['AuthService', '$state',  '$rootScope',  'APP_CONSTANTS',  'PermissionService', 'AlertService'];
+
+    function LoginFormController( AuthService,  $state, $rootScope,  APP_CONSTANTS, PermissionService,AlertService
+    ) {
+        var vm = this;
+        vm.userValidator = {
+            usernameMin: 4,
+            usernameMax: 20,
+            passwordMin: 6
+        };
+        vm.user = {};
+
+        vm.login = function() {
+            AuthService.login(vm.user).then(
+                function(response) {
+                    var result = response.data;
+                    vm.user = result.user;
+                    debugger
+                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
+                    AuthService.SetCredentials(result);
+
+                    //check permissions list
+                    var permissions = PermissionService.permissions();
+                    console.log('permissions',permissions);
+
+                    $state.go("app.welcome");
+                    // CheckMFIAndRedirect();
+                },
+                function(error) {
+                    console.log("error", error);
+                    AlertService.showError("Error on Login", "The username or password is incorrect! Please try again.");
+                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
+                }
+            );
+
+            function CheckMFIAndRedirect(){
+                MainService.GetMFI().then(
+                    function(response) {
+                        debugger
+                        if (response.data.length > 0) {
+                            $state.go("index.branch");
+                            toastr.success(
+                                "Welcome Back " +
+                                vm.user.admin.first_name ,
+                                "Success"
+                            );
+                        }else{
+                            $state.go("home.mfi");
+                            toastr.success(
+                                "Welcome " +
+                                vm.user.admin.first_name +
+                                " " +
+                                vm.user.admin.last_name +
+                                " to Bidir Web App",
+                                "Success"
+                            );
+                        }
+                    },
+                    function(error) {
+                        console.log("error", error);
+                        toastr.error(
+                            "Error occured while trying to connect! Please try again.",
+                            "ERROR!"
+                        );
+                    }
+                );
+            }
+
+        };
+    }
+})(window.angular);
 
 
 (function() {
@@ -707,10 +744,12 @@ var API = {
                                    'vendor/morris.js/morris.css'],
             'loaders.css':          ['vendor/loaders.css/loaders.css'],
             'spinkit':              ['vendor/spinkit/css/spinkit.css'],
-            'underscore':           ['https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js']
+            'underscore':           ['vendor/underscore/underscore.js']
           },
           // Angular based script (use the right module name)
           modules: [
+            {name: 'angularFileUpload',
+                                                files: ['vendor/angular-file-upload/dist/angular-file-upload.js'] },
             {name: 'toaster',                   files: ['vendor/angularjs-toaster/toaster.js',
                                                        'vendor/angularjs-toaster/toaster.css']},
             {name: 'localytics.directives',     files: ['vendor/chosen_v1.2.0/chosen.jquery.min.js',
@@ -806,50 +845,6 @@ var API = {
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
-
-})();
 /**
  * Created by Yoni on 12/10/2017.
  */
@@ -1131,6 +1126,50 @@ var API = {
 
 })(window.angular);
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
+
+})();
 /**
  * Created by Yoni on 12/2/2017.
  */
@@ -2771,7 +2810,7 @@ var API = {
                 url: '/mfi_setup',
                 title: 'MFI Setting',
                 templateUrl:helper.basepath('mfisetup/mfi.html'),
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select','icons','oitozero.ngSweetAlert','moment','inputmask','filestyle'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment','inputmask','angularFileUpload'),
                 controller: 'MFIController',
                 controllerAs: 'vm'
             })
@@ -2793,7 +2832,7 @@ var API = {
             .state('page', {
                 url: '/page',
                 templateUrl: 'app/pages/page.html',
-                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert'),
+                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert','toaster'),
                 controller: ['$rootScope', function($rootScope) {
                     $rootScope.app.layout.isBoxed = false;
                 }]
@@ -4143,6 +4182,65 @@ var API = {
 
 })(window.angular);
 
+/**
+ * Created by Yoni on 12/30/2017.
+ */
+
+
+(function(angular) {
+
+    'use strict';
+
+    angular.module('app.common')
+        .factory('PermissionService', PermissionService);
+
+    PermissionService.$inject = ['StorageService','APP_CONSTANTS','AuthService'];
+
+    function PermissionService(StorageService,APP_CONSTANTS,AuthService) {
+            var permissionsloc = _permissions();
+        var factory = {
+            hasThisPermission:_hasThisPermission,
+            hasThesePermissions:_hasThesePermissions,
+            permissions:_permissions
+        };
+
+        return factory;
+
+
+        function _permissions() {
+            var user =  AuthService.GetCurrentUser();
+
+            if(!_.isUndefined(user)){
+                if(!_.isUndefined(user.account)){
+                    return _.pluck(user.account.role.permissions, 'name');
+                }
+                else {
+                    return null;
+                }
+            }
+
+        }
+
+        function _hasThisPermission(permission) {
+            var permissions = this.permissions();
+            var hasPermission = _.contains(permissions, permission);
+            return hasPermission;
+        }
+
+        function _hasThesePermissions(permissions) {
+            var hasPermission = false;
+            _.each(permissions, function(permission) {
+                //return true if user has access to one of the permissions
+                hasPermission = hasPermission || accountService.hasThisPermission(permission);
+            })
+            return hasPermission;
+        }
+
+
+
+    }
+
+})(window.angular);
 (function(angular) {
     'use strict';
 

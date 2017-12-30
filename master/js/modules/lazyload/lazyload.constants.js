@@ -51,10 +51,12 @@
                                    'vendor/morris.js/morris.css'],
             'loaders.css':          ['vendor/loaders.css/loaders.css'],
             'spinkit':              ['vendor/spinkit/css/spinkit.css'],
-            'underscore':           ['https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js']
+            'underscore':           ['vendor/underscore/underscore.js']
           },
           // Angular based script (use the right module name)
           modules: [
+            {name: 'angularFileUpload',
+                                                files: ['vendor/angular-file-upload/dist/angular-file-upload.js'] },
             {name: 'toaster',                   files: ['vendor/angularjs-toaster/toaster.js',
                                                        'vendor/angularjs-toaster/toaster.css']},
             {name: 'localytics.directives',     files: ['vendor/chosen_v1.2.0/chosen.jquery.min.js',

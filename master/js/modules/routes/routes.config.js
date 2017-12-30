@@ -59,7 +59,7 @@
                 url: '/mfi_setup',
                 title: 'MFI Setting',
                 templateUrl:helper.basepath('mfisetup/mfi.html'),
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select','icons','oitozero.ngSweetAlert','moment','inputmask','filestyle'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment','inputmask','angularFileUpload'),
                 controller: 'MFIController',
                 controllerAs: 'vm'
             })
@@ -81,7 +81,7 @@
             .state('page', {
                 url: '/page',
                 templateUrl: 'app/pages/page.html',
-                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert'),
+                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert','toaster'),
                 controller: ['$rootScope', function($rootScope) {
                     $rootScope.app.layout.isBoxed = false;
                 }]

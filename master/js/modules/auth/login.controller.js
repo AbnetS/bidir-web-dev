@@ -10,12 +10,9 @@
         .module('app.auth')
         .controller('LoginFormController', LoginFormController);
 
-    LoginFormController.$inject = ['AuthService',
-        '$state',  '$rootScope',  'APP_CONSTANTS',  'toaster', 'AlertService'
-        ];
+    LoginFormController.$inject = ['AuthService', '$state',  '$rootScope',  'APP_CONSTANTS',  'PermissionService', 'AlertService'];
 
-    function LoginFormController(
-        AuthService,  $state, $rootScope,  APP_CONSTANTS, toaster,AlertService
+    function LoginFormController( AuthService,  $state, $rootScope,  APP_CONSTANTS, PermissionService,AlertService
     ) {
         var vm = this;
         vm.userValidator = {
@@ -30,11 +27,14 @@
                 function(response) {
                     var result = response.data;
                     vm.user = result.user;
-
+                    debugger
                     $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
                     AuthService.SetCredentials(result);
 
-                    console.log(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
+                    //check permissions list
+                    var permissions = PermissionService.permissions();
+                    console.log('permissions',permissions);
+
                     $state.go("app.welcome");
                     // CheckMFIAndRedirect();
                 },
