@@ -11,20 +11,11 @@
         .controller('LoginFormController', LoginFormController);
 
     LoginFormController.$inject = ['AuthService',
-        '$scope',
-        '$state',
-        '$rootScope',
-        'APP_CONSTANTS',
-        'toaster'
+        '$state',  '$rootScope',  'APP_CONSTANTS',  'toaster', 'AlertService'
         ];
 
     function LoginFormController(
-        AuthService,
-        $scope,
-        $state,
-        $rootScope,
-        APP_CONSTANTS,
-        toaster
+        AuthService,  $state, $rootScope,  APP_CONSTANTS, toaster,AlertService
     ) {
         var vm = this;
         vm.userValidator = {
@@ -49,7 +40,7 @@
                 },
                 function(error) {
                     console.log("error", error);
-                    toaster.pop("success", "ERROR", "The username or password is incorrect! Please try again.");
+                    AlertService.showError("Error on Login", "The username or password is incorrect! Please try again.");
                     $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
                 }
             );
