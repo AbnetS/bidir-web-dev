@@ -9,8 +9,8 @@
         .module('app.manage_users')
         .controller('ManageUsersController', ManageUsersController);
 
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog','AlertService','toaster'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog,AlertService,toaster) {
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog','AlertService'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog,AlertService) {
         var vm = this;
         $scope.pageData = {
             total:0

@@ -27,7 +27,6 @@
                 function(response) {
                     var result = response.data;
                     vm.user = result.user;
-                    debugger
                     $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
                     AuthService.SetCredentials(result);
 

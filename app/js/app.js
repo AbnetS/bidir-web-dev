@@ -320,7 +320,6 @@
                 function(response) {
                     var result = response.data;
                     vm.user = result.user;
-                    debugger
                     $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
                     AuthService.SetCredentials(result);
 
@@ -525,6 +524,7 @@
 var API = {
     Config: {
         BaseUrl: 'http://api.dev.bidir.gebeya.io/' //REMOTE API
+       // BaseUrl: 'http://api.terrafina.bidir.gebeya.io/' //REMOTE API
     },
     Service: {
         NONE:'',
@@ -1377,8 +1377,8 @@ var API = {
         .module('app.manage_users')
         .controller('ManageUsersController', ManageUsersController);
 
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog','AlertService','toaster'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog,AlertService,toaster) {
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog','AlertService'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog,AlertService) {
         var vm = this;
         $scope.pageData = {
             total:0
