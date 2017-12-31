@@ -12,6 +12,7 @@
         ////////////////
 
         function getMenu(onReady, onError) {
+            debugger
           var menuJson = 'server/sidebar-menu.json',
               menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
 

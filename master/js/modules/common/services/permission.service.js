@@ -16,7 +16,8 @@
         var factory = {
             hasThisPermission:_hasThisPermission,
             hasThesePermissions:_hasThesePermissions,
-            permissions:_permissions
+            permissions:_permissions,
+            permittedModules:_permittedModules
         };
 
         return factory;
@@ -32,9 +33,7 @@
             if(!_.isUndefined(user) && user !== null){
                 if(!_.isUndefined(user.account)){
                     response.isSuper = false;
-                    response.permissions =  _.map(user.account.role.permissions, function(perm) {
-                        return perm.module + '_' + perm.operation; 
-                    });
+                    response.permissions =  user.account.role.permissions;
                     return response;
                 }
                 else if (!_.isUndefined(user.admin)) {
@@ -52,14 +51,27 @@
 
         }
 
+        function _permittedModules(){
+
+            var permissions = _permissions().permissions;
+            var moduleObj = _.uniq(permissions,function(permi){
+                return permi.module;
+            });
+
+            return _.pluck(moduleObj, 'module');
+        }
+
         function _hasThisPermission(permission) {
-            var permissions = _permissions();
+            var allPermissions = _permissions();
             var hasPermission = false;
             
-            if(permissions.isSuper){
+            if(allPermissions.isSuper){
                 hasPermission = true;
             }else{
-            hasPermission = _.contains(permissions.permissions, permission);
+                var permissions = _.map(allPermissions.permissions, function(perm) {
+                    return perm.module + '_' + perm.operation; 
+                });
+            hasPermission = _.contains(permissions, permission);
             }
             return hasPermission;
         }

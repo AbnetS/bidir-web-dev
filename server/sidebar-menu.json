@@ -3,17 +3,18 @@
     "text": "Main Navigation",
     "permission": "Main_Navigation",
     "heading": "true",
-    "translate": "sidebar.heading.HEADER"
+    "translate": "sidebar.heading.HEADER",
+    "module": ""
   },
   {
     "text": "Welcome",
     "sref": "app.welcome",
     "icon": "icon-tag",
-    "permission": "WELCOME"
+    "module": ""
   },
   {
     "text": "MFI Setup",
-    "permission": "MFI_SETUP",
+    "module": "MFI_SETUP",
     "sref": "#",
     "icon": "fa fa-cogs",
     "submenu": [
@@ -23,7 +24,7 @@
   },
   {
     "text": "User Management",
-    "permission": "USER_MANAGEMENT",
+    "module": "USER_MANAGEMENT",
     "sref": "#",
     "icon": "fa fa-shield",
     "submenu": [

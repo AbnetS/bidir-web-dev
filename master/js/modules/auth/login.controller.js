@@ -30,9 +30,7 @@
                     $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
                     AuthService.SetCredentials(result);
 
-                    //check permissions list
-                    var permissions = PermissionService.permissions();
-                    console.log('permissions',permissions);
+                    console.log('vm.user',vm.user);
 
                     $state.go("app.welcome");
                     // CheckMFIAndRedirect();

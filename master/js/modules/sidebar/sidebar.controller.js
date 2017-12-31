@@ -10,8 +10,8 @@
         .module('app.sidebar')
         .controller('SidebarController', SidebarController);
 
-    SidebarController.$inject = ['$rootScope', '$scope', '$state', 'SidebarLoader', 'Utils'];
-    function SidebarController($rootScope, $scope, $state, SidebarLoader,  Utils) {
+    SidebarController.$inject = ['$rootScope', '$scope', '$state', 'SidebarLoader', 'Utils','PermissionService'];
+    function SidebarController($rootScope, $scope, $state, SidebarLoader,  Utils,PermissionService) {
 
         activate();
 
@@ -34,6 +34,7 @@
           SidebarLoader.getMenu(sidebarReady);
 
           function sidebarReady(items) {
+             var modules = PermissionService.permittedModules();
             $scope.menuItems = items.data;
           }
 
@@ -80,7 +81,6 @@
 
             // Check item and children active state
             function isActive(item) {
-
               if(!item) return;
 
               if( !item.sref || item.sref === '#') {

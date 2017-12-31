@@ -64,6 +64,12 @@
     angular
         .module('app.auth', []);
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
+})();
 (function(angular) {
   "use strict";
 
@@ -79,12 +85,6 @@
   function routeConfig() {}
 })(window.angular);
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
-})();
 (function() {
     'use strict';
 
@@ -323,9 +323,7 @@
                     $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
                     AuthService.SetCredentials(result);
 
-                    //check permissions list
-                    var permissions = PermissionService.permissions();
-                    console.log('permissions',permissions);
+                    console.log('vm.user',vm.user);
 
                     $state.go("app.welcome");
                     // CheckMFIAndRedirect();
@@ -374,6 +372,56 @@
     }
 })(window.angular);
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
 
 (function(angular) {
   "use strict";
@@ -504,56 +552,6 @@ var API = {
 };
 
 
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
 
 (function() {
     'use strict';
@@ -2953,8 +2951,8 @@ var API = {
         .module('app.sidebar')
         .controller('SidebarController', SidebarController);
 
-    SidebarController.$inject = ['$rootScope', '$scope', '$state', 'SidebarLoader', 'Utils'];
-    function SidebarController($rootScope, $scope, $state, SidebarLoader,  Utils) {
+    SidebarController.$inject = ['$rootScope', '$scope', '$state', 'SidebarLoader', 'Utils','PermissionService'];
+    function SidebarController($rootScope, $scope, $state, SidebarLoader,  Utils,PermissionService) {
 
         activate();
 
@@ -2977,6 +2975,7 @@ var API = {
           SidebarLoader.getMenu(sidebarReady);
 
           function sidebarReady(items) {
+             var modules = PermissionService.permittedModules();
             $scope.menuItems = items.data;
           }
 
@@ -3023,7 +3022,6 @@ var API = {
 
             // Check item and children active state
             function isActive(item) {
-
               if(!item) return;
 
               if( !item.sref || item.sref === '#') {
@@ -3261,6 +3259,7 @@ var API = {
         ////////////////
 
         function getMenu(onReady, onError) {
+            debugger
           var menuJson = 'server/sidebar-menu.json',
               menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
 
@@ -4199,7 +4198,8 @@ var API = {
         var factory = {
             hasThisPermission:_hasThisPermission,
             hasThesePermissions:_hasThesePermissions,
-            permissions:_permissions
+            permissions:_permissions,
+            permittedModules:_permittedModules
         };
 
         return factory;
@@ -4215,9 +4215,7 @@ var API = {
             if(!_.isUndefined(user) && user !== null){
                 if(!_.isUndefined(user.account)){
                     response.isSuper = false;
-                    response.permissions =  _.map(user.account.role.permissions, function(perm) {
-                        return perm.module + '_' + perm.operation; 
-                    });
+                    response.permissions =  user.account.role.permissions;
                     return response;
                 }
                 else if (!_.isUndefined(user.admin)) {
@@ -4235,14 +4233,27 @@ var API = {
 
         }
 
+        function _permittedModules(){
+
+            var permissions = _permissions().permissions;
+            var moduleObj = _.uniq(permissions,function(permi){
+                return permi.module;
+            });
+
+            return _.pluck(moduleObj, 'module');
+        }
+
         function _hasThisPermission(permission) {
-            var permissions = _permissions();
+            var allPermissions = _permissions();
             var hasPermission = false;
             
-            if(permissions.isSuper){
+            if(allPermissions.isSuper){
                 hasPermission = true;
             }else{
-            hasPermission = _.contains(permissions.permissions, permission);
+                var permissions = _.map(allPermissions.permissions, function(perm) {
+                    return perm.module + '_' + perm.operation; 
+                });
+            hasPermission = _.contains(permissions, permission);
             }
             return hasPermission;
         }
