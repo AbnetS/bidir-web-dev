@@ -36,19 +36,20 @@
             'app.mfi'
         ]).run(appRun);
 
-    function appRun($rootScope, AuthService, $http,$state){
+    function appRun($rootScope, AuthService, $http,$state,$location){
             //TODO: redirect them to an access denied state if they do not have authorization to access it.
+            
+            $rootScope.currentUser = AuthService.GetCredentials();
+           
+
         //Angular UI router state changes
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
-
-            var UserInfo = AuthService.GetCredentials();
-            //Check if there is a logged in user
-            if (UserInfo !== null) {
-                $http.defaults.headers.common['Authorization'] = 'Bearer ' + UserInfo.token;
-
+            
+            if ($rootScope.currentUser !== null) {
+                $http.defaults.headers.common['Authorization'] = 'Bearer ' + $rootScope.currentUser.token;
             }else{
                 //Clear storage and redirect
-                $state.go('page.login');
+                $location.path('/page/login');
             }
         });
     }

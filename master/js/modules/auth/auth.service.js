@@ -41,7 +41,7 @@
         }
         function _getCurrentUser(){
           var credential = getCredentials();
-          return angular.isUndefined(credential) || credential === null ? null : credential.user;
+          return credential !== null? credential.user: null;
         }
 
         function isAuthorized(roles) {
@@ -61,7 +61,7 @@
 
         function logout() {
             StorageService.Reset();
-            // $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
+            $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
             $state.go('page.login');
         }
 

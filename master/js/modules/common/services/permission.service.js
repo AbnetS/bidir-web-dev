@@ -26,13 +26,16 @@
         function _permissions() {
             var user =  AuthService.GetCurrentUser();
 
-            if(!_.isUndefined(user)){
+            if(!_.isUndefined(user) && user !== null){
+
                 if(!_.isUndefined(user.account)){
                     return _.pluck(user.account.role.permissions, 'name');
                 }
                 else {
                     return null;
                 }
+            }else{
+                return null;
             }
 
         }

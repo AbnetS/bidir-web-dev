@@ -10,7 +10,7 @@
         var vm = this;
         activate();
 
-        vm.user = AuthService.GetCredentials().user;
+        vm.user = AuthService.GetCurrentUser();
 
         ////////////////
         function activate() {
