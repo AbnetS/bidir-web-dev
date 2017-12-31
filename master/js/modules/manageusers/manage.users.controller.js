@@ -103,7 +103,6 @@
             })
                 .then(function (answer) {
                     fetchUserData();
-
                 }, function () {
                 });
         }

@@ -51,7 +51,7 @@
                 url: '/manage_role',
                 title: 'manage roles',
                 templateUrl: helper.basepath('manageroles/manage.roles.html'),
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select','icons','oitozero.ngSweetAlert','filestyle','moment'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment'),
                 controller: 'ManageRoleController',
                 controllerAs: 'vm'
             })
