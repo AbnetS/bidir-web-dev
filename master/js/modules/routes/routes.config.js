@@ -59,7 +59,7 @@
                 url: '/mfi_setup',
                 title: 'MFI Setting',
                 templateUrl:helper.basepath('mfisetup/mfi.html'),
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment','inputmask','angularFileUpload'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment','inputmask','ngFileUpload'),
                 controller: 'MFIController',
                 controllerAs: 'vm'
             })

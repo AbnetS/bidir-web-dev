@@ -36,6 +36,7 @@
 
             });
         } else {
+          
           MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
               AlertService.showSuccess("MFI Info updated successfully","MFI Information updated successfully");
               console.log("Update MFI", response);

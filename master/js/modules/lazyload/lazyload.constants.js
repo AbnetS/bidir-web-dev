@@ -55,9 +55,9 @@
           },
           // Angular based script (use the right module name)
           modules: [
-            {name: 'angularFileUpload',
-                                                files: ['vendor/angular-file-upload/dist/angular-file-upload.js'] },
-            {name: 'toaster',                   files: ['vendor/angularjs-toaster/toaster.js',
+            {name: 'ngFileUpload',
+                                                files: ['vendor/ng-file-upload-shim/ng-file-upload-shim.min.js'] },
+            {name: 'toaster',                   files: ['vendor/ng-file-upload/ng-file-upload.min.js',
                                                        'vendor/angularjs-toaster/toaster.css']},
             {name: 'localytics.directives',     files: ['vendor/chosen_v1.2.0/chosen.jquery.min.js',
                                                        'vendor/chosen_v1.2.0/chosen.min.css',

@@ -7,7 +7,7 @@
 
     'use strict';
 
-    angular.module('app.common')
+    angular.module('angle')
         .directive('permission', function(PermissionService) {
         return {
             restrict: 'A',
@@ -35,7 +35,18 @@
                 }
             }
         };
-    })
+    }).directive('filesInput', function() {
+        return {
+          require: 'ngModel',
+          link: function postLink(scope,elem,attrs,ngModel) {
+              console.log("file added");
+            elem.on('change', function(e) {
+              var files = elem[0].files;
+              ngModel.$setViewValue(files);
+            })
+          }
+        }
+      });
 
 
 

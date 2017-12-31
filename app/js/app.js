@@ -463,7 +463,7 @@
 
     'use strict';
 
-    angular.module('app.common')
+    angular.module('angle')
         .directive('permission', ["PermissionService", function(PermissionService) {
         return {
             restrict: 'A',
@@ -491,7 +491,18 @@
                 }
             }
         };
-    }])
+    }]).directive('filesInput', function() {
+        return {
+          require: 'ngModel',
+          link: function postLink(scope,elem,attrs,ngModel) {
+              console.log("file added");
+            elem.on('change', function(e) {
+              var files = elem[0].files;
+              ngModel.$setViewValue(files);
+            })
+          }
+        }
+      });
 
 
 
@@ -513,8 +524,7 @@
 })(window.angular);
 var API = {
     Config: {
-        // BaseUrl: "http://api.dev.bidir.gebeya.io/" //REMOTE API
-        BaseUrl: "http://api.terrafina.bidir.gebeya.io/" //REMOTE API
+        BaseUrl: 'http://api.dev.bidir.gebeya.io/' //REMOTE API
     },
     Service: {
         NONE:'',
@@ -750,9 +760,9 @@ var API = {
           },
           // Angular based script (use the right module name)
           modules: [
-            {name: 'angularFileUpload',
-                                                files: ['vendor/angular-file-upload/dist/angular-file-upload.js'] },
-            {name: 'toaster',                   files: ['vendor/angularjs-toaster/toaster.js',
+            {name: 'ngFileUpload',
+                                                files: ['vendor/ng-file-upload-shim/ng-file-upload-shim.min.js'] },
+            {name: 'toaster',                   files: ['vendor/ng-file-upload/ng-file-upload.min.js',
                                                        'vendor/angularjs-toaster/toaster.css']},
             {name: 'localytics.directives',     files: ['vendor/chosen_v1.2.0/chosen.jquery.min.js',
                                                        'vendor/chosen_v1.2.0/chosen.min.css',
@@ -2812,7 +2822,7 @@ var API = {
                 url: '/mfi_setup',
                 title: 'MFI Setting',
                 templateUrl:helper.basepath('mfisetup/mfi.html'),
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment','inputmask','angularFileUpload'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment','inputmask','ngFileUpload'),
                 controller: 'MFIController',
                 controllerAs: 'vm'
             })
@@ -4582,6 +4592,7 @@ function runBlock() {
 
             });
         } else {
+          
           MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
               AlertService.showSuccess("MFI Info updated successfully","MFI Information updated successfully");
               console.log("Update MFI", response);
