@@ -46,6 +46,7 @@
               _.each(menuItems, function(menuItem) {
                   if(isSuper){
                       menuItem.showMenuItem = true;
+                      validateSubMenus(menuItem);
                   }
                   else {
                       menuItem.showMenuItem = PermissionService.hasThisModule(menuItem.module);
@@ -60,19 +61,20 @@
               if(!_.isUndefined(menuItem.submenu)){
                   _.each(menuItem.submenu,function(sub){
                       var isSuper = false;
+                      debugger
                       if(!_.isUndefined($rootScope.currentUser)){
                           isSuper = $rootScope.currentUser.username === 'super@bidir.com';
                           if(isSuper){
-                              sub.showMenuItem = true;
+                              sub.showsubmenu = true;
                           }else{
                               if(!_.isUndefined(sub.permission)){
-                                  sub.showMenuItem = _.contains(permissions,sub.permission);
+                                  sub.showsubmenu = _.contains(permissions,sub.permission);
                               }else {
-                                  sub.showMenuItem = false;
+                                  sub.showsubmenu = false;
                               }
                           }
                       }else {
-                          sub.showMenuItem = false;
+                          sub.showsubmenu = false;
                       }
 
                   });
