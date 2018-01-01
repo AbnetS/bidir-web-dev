@@ -1,17 +1,19 @@
 <h3> Manage Branch
-    <small> Manage Branches...</small>
+    <small> Manage Branches related to the logged in user...</small>
 </h3>
 
 <!-- START panel-->
 <div class="panel panel-default">
-    <div class="panel-heading">Head Office is created by default. Click on Add to add more branches.</div>
+
     <div class="panel-body">
         <div class="row">
             <div class="col-sm-12">
-
+                <div class="panel-heading">
+                    <small>Manage Branches</small>
+                </div>
                 <div class="row">
                     <div class="col-xs-10 col-lg-12">
-                        <p>
+                        <p>Head Office is created by default. Add more branches.
                             <a class="btn btn-success pull-right" ng-click="vm.addBranch($event)">
                                 <i class="fa fa-plus"></i>
                                 Add Branch</a>
@@ -53,8 +55,7 @@
                                             <i class="fa fa-edit"></i>
                                             Edit
                                         </a>
-                                        <!--spacing-->
-                                        <p></p>
+
                                         <a ng-click="vm.changeStatus(branch)">
                                             <i class="fa fa-trash-o"></i>
                                             {{branch.status=== 'active'? "Deactivate":"Activate"}}
