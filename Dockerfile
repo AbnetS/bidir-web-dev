@@ -1,4 +1,4 @@
-# Dockerfile for bidir  web admin service
+# Dockerfile for bidir terrafina web admin service
 FROM nginx
 
 WORKDIR /usr/share/nginx/html
