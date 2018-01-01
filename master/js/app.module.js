@@ -38,8 +38,7 @@
 
     function appRun($rootScope, AuthService, $http,$state,$location){
             //TODO: redirect them to an access denied state if they do not have authorization to access it.
-            
-            $rootScope.currentUser = AuthService.GetCredentials();
+            $rootScope.currentUser = AuthService.GetCurrentUser();
            
 
         //Angular UI router state changes

@@ -4,13 +4,13 @@
     "permission": "Main_Navigation",
     "heading": "true",
     "translate": "sidebar.heading.HEADER",
-    "module": ""
+    "module": "all"
   },
   {
     "text": "Welcome",
     "sref": "app.welcome",
     "icon": "icon-tag",
-    "module": ""
+    "module": "all"
   },
   {
     "text": "MFI Setup",

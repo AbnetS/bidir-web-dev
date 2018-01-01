@@ -39,8 +39,7 @@
 
     function appRun($rootScope, AuthService, $http,$state,$location){
             //TODO: redirect them to an access denied state if they do not have authorization to access it.
-            
-            $rootScope.currentUser = AuthService.GetCredentials();
+            $rootScope.currentUser = AuthService.GetCurrentUser();
            
 
         //Angular UI router state changes
@@ -112,12 +111,6 @@
     angular
         .module('app.lazyload', []);
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar', []);
-})();
 /**
  * Created by Yoni on 11/30/2017.
  */
@@ -150,7 +143,19 @@
     'use strict';
 
     angular
+        .module('app.loadingbar', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.maps', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch', []);
 })();
 (function() {
     'use strict';
@@ -159,12 +164,6 @@
         .module('app.material', [
             'ngMaterial'
           ]);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch', []);
 })();
 (function() {
     'use strict';
@@ -843,50 +842,6 @@ var API = {
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
-
-})();
 /**
  * Created by Yoni on 12/10/2017.
  */
@@ -1561,6 +1516,50 @@ var API = {
 
 })(window.angular);
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
+
+})();
 /**=========================================================
  * Module: modals.js
  * Provides a simple way to implement bootstrap modals from templates
@@ -1722,6 +1721,115 @@ var API = {
             });
           }
 
+        }
+    }
+})();
+
+/**=========================================================
+ * Module: navbar-search.js
+ * Navbar search toggler * Auto dismiss on ESC key
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .directive('searchOpen', searchOpen)
+        .directive('searchDismiss', searchDismiss);
+
+    //
+    // directives definition
+    // 
+    
+    function searchOpen () {
+        var directive = {
+            controller: searchOpenController,
+            restrict: 'A'
+        };
+        return directive;
+
+    }
+
+    function searchDismiss () {
+        var directive = {
+            controller: searchDismissController,
+            restrict: 'A'
+        };
+        return directive;
+        
+    }
+
+    //
+    // Contrller definition
+    // 
+    
+    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchOpenController ($scope, $element, NavSearch) {
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.toggle);
+    }
+
+    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchDismissController ($scope, $element, NavSearch) {
+      
+      var inputSelector = '.navbar-form input[type="text"]';
+
+      $(inputSelector)
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('keyup', function(e) {
+          if (e.keyCode === 27) // ESC
+            NavSearch.dismiss();
+        });
+        
+      // click anywhere closes the search
+      $(document).on('click', NavSearch.dismiss);
+      // dismissable options
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.dismiss);
+    }
+
+})();
+
+
+/**=========================================================
+ * Module: nav-search.js
+ * Services to share navbar search functions
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .service('NavSearch', NavSearch);
+
+    function NavSearch() {
+        this.toggle = toggle;
+        this.dismiss = dismiss;
+
+        ////////////////
+
+        var navbarFormSelector = 'form.navbar-form';
+
+        function toggle() {
+          var navbarForm = $(navbarFormSelector);
+
+          navbarForm.toggleClass('open');
+
+          var isOpen = navbarForm.hasClass('open');
+
+          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
+        }
+
+        function dismiss() {
+          $(navbarFormSelector)
+            .removeClass('open') // Close control
+            .find('input[type="text"]').blur() // remove focus
+            // .val('') // Empty input
+            ;
         }
     }
 })();
@@ -2460,115 +2568,6 @@ var API = {
         }
     }
 })();
-/**=========================================================
- * Module: navbar-search.js
- * Navbar search toggler * Auto dismiss on ESC key
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .directive('searchOpen', searchOpen)
-        .directive('searchDismiss', searchDismiss);
-
-    //
-    // directives definition
-    // 
-    
-    function searchOpen () {
-        var directive = {
-            controller: searchOpenController,
-            restrict: 'A'
-        };
-        return directive;
-
-    }
-
-    function searchDismiss () {
-        var directive = {
-            controller: searchDismissController,
-            restrict: 'A'
-        };
-        return directive;
-        
-    }
-
-    //
-    // Contrller definition
-    // 
-    
-    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchOpenController ($scope, $element, NavSearch) {
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.toggle);
-    }
-
-    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchDismissController ($scope, $element, NavSearch) {
-      
-      var inputSelector = '.navbar-form input[type="text"]';
-
-      $(inputSelector)
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('keyup', function(e) {
-          if (e.keyCode === 27) // ESC
-            NavSearch.dismiss();
-        });
-        
-      // click anywhere closes the search
-      $(document).on('click', NavSearch.dismiss);
-      // dismissable options
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.dismiss);
-    }
-
-})();
-
-
-/**=========================================================
- * Module: nav-search.js
- * Services to share navbar search functions
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .service('NavSearch', NavSearch);
-
-    function NavSearch() {
-        this.toggle = toggle;
-        this.dismiss = dismiss;
-
-        ////////////////
-
-        var navbarFormSelector = 'form.navbar-form';
-
-        function toggle() {
-          var navbarForm = $(navbarFormSelector);
-
-          navbarForm.toggleClass('open');
-
-          var isOpen = navbarForm.hasClass('open');
-
-          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
-        }
-
-        function dismiss() {
-          $(navbarFormSelector)
-            .removeClass('open') // Close control
-            .find('input[type="text"]').blur() // remove focus
-            // .val('') // Empty input
-            ;
-        }
-    }
-})();
-
 (function() {
     'use strict';
 
@@ -2975,13 +2974,29 @@ var API = {
           SidebarLoader.getMenu(sidebarReady);
 
           function sidebarReady(items) {
-             var modules = PermissionService.permittedModules();
-            $scope.menuItems = items.data;
+              $scope.menuItems = items.data;
+              SetMenuItemsVisibility($scope.menuItems);
           }
+
+          function SetMenuItemsVisibility(menuItems){
+              var isSuper = false;
+              if(!_.isUndefined($rootScope.currentUser)){
+                  isSuper = $rootScope.currentUser.username === 'super@bidir.com';
+              }
+              _.each(menuItems, function(menuItem) {
+                  if(isSuper){
+                      menuItem.showMenuItem = true;
+                  }
+                  else {
+                      menuItem.showMenuItem = PermissionService.hasThisModule(menuItem.module);
+                  }
+
+              });
+          }
+
 
           // Handle sidebar and collapse items
           // ----------------------------------
-
           $scope.getMenuItemPropClasses = function(item) {
             return (item.heading ? 'nav-heading' : '') +
                    (isActive(item) ? ' active' : '') ;
@@ -4192,14 +4207,15 @@ var API = {
     angular.module('app.auth')
         .factory('PermissionService', PermissionService);
 
-    PermissionService.$inject = ['StorageService','APP_CONSTANTS','AuthService'];
+    PermissionService.$inject = ['StorageService','$rootScope','AuthService'];
 
-    function PermissionService(StorageService,APP_CONSTANTS,AuthService) {
+    function PermissionService(StorageService,$rootScope,AuthService) {
         var factory = {
             hasThisPermission:_hasThisPermission,
             hasThesePermissions:_hasThesePermissions,
             permissions:_permissions,
-            permittedModules:_permittedModules
+            permittedModules:_permittedModules,
+            hasThisModule:_hasThisModule
         };
 
         return factory;
@@ -4256,6 +4272,12 @@ var API = {
             hasPermission = _.contains(permissions, permission);
             }
             return hasPermission;
+        }
+
+        function _hasThisModule(module) {
+            var allModules = _permittedModules();
+            var hasModule = module === 'all'? true:_.contains(allModules, module);
+            return hasModule;
         }
 
         function _hasThesePermissions(permissions) {

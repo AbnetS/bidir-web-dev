@@ -10,14 +10,15 @@
     angular.module('app.auth')
         .factory('PermissionService', PermissionService);
 
-    PermissionService.$inject = ['StorageService','APP_CONSTANTS','AuthService'];
+    PermissionService.$inject = ['StorageService','$rootScope','AuthService'];
 
-    function PermissionService(StorageService,APP_CONSTANTS,AuthService) {
+    function PermissionService(StorageService,$rootScope,AuthService) {
         var factory = {
             hasThisPermission:_hasThisPermission,
             hasThesePermissions:_hasThesePermissions,
             permissions:_permissions,
-            permittedModules:_permittedModules
+            permittedModules:_permittedModules,
+            hasThisModule:_hasThisModule
         };
 
         return factory;
@@ -74,6 +75,12 @@
             hasPermission = _.contains(permissions, permission);
             }
             return hasPermission;
+        }
+
+        function _hasThisModule(module) {
+            var allModules = _permittedModules();
+            var hasModule = module === 'all'? true:_.contains(allModules, module);
+            return hasModule;
         }
 
         function _hasThesePermissions(permissions) {

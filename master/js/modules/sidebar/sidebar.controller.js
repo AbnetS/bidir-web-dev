@@ -34,13 +34,29 @@
           SidebarLoader.getMenu(sidebarReady);
 
           function sidebarReady(items) {
-             var modules = PermissionService.permittedModules();
-            $scope.menuItems = items.data;
+              $scope.menuItems = items.data;
+              SetMenuItemsVisibility($scope.menuItems);
           }
+
+          function SetMenuItemsVisibility(menuItems){
+              var isSuper = false;
+              if(!_.isUndefined($rootScope.currentUser)){
+                  isSuper = $rootScope.currentUser.username === 'super@bidir.com';
+              }
+              _.each(menuItems, function(menuItem) {
+                  if(isSuper){
+                      menuItem.showMenuItem = true;
+                  }
+                  else {
+                      menuItem.showMenuItem = PermissionService.hasThisModule(menuItem.module);
+                  }
+
+              });
+          }
+
 
           // Handle sidebar and collapse items
           // ----------------------------------
-
           $scope.getMenuItemPropClasses = function(item) {
             return (item.heading ? 'nav-heading' : '') +
                    (isActive(item) ? ' active' : '') ;
