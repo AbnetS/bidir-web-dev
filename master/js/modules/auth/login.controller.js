@@ -27,10 +27,11 @@
                 function(response) {
                     var result = response.data;
                     vm.user = result.user;
+                    $rootScope.currentUser = vm.user;
                     $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
                     AuthService.SetCredentials(result);
 
-                    console.log('vm.user',vm.user);
+                    console.log('logged in user',vm.user);
 
                     $state.go("app.welcome");
                     // CheckMFIAndRedirect();

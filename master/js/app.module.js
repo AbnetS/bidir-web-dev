@@ -38,6 +38,7 @@
 
     function appRun($rootScope, AuthService, $http,$state,$location){
             //TODO: redirect them to an access denied state if they do not have authorization to access it.
+
             $rootScope.currentUser = AuthService.GetCurrentUser();
            
 
@@ -45,7 +46,7 @@
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
             
             if ($rootScope.currentUser !== null) {
-                $http.defaults.headers.common['Authorization'] = 'Bearer ' + $rootScope.currentUser.token;
+                $http.defaults.headers.common['Authorization'] = 'Bearer ' + AuthService.GetToken();
             }else{
                 //Clear storage and redirect
                 $location.path('/page/login');
