@@ -12,7 +12,6 @@
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
-                debugger;
                 scope.$watch(attrs.userpermission, function(value) {
                     var permission = value;
                     var hasPermission = false;

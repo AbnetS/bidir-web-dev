@@ -49,9 +49,19 @@
                   }
                   else {
                       menuItem.showMenuItem = PermissionService.hasThisModule(menuItem.module);
+                      validateSubMenus(menuItem);
                   }
 
               });
+          }
+
+          function validateSubMenus(menuItem){
+              // var permissions = PermissionService.validateSubModules();
+              // if(!_.isUndefined(menuItem.submenu)){
+              //     _.each(menuItem.submenu,function(sub){
+              //
+              //     });
+              // }
           }
 
 

@@ -18,7 +18,8 @@
             hasThesePermissions:_hasThesePermissions,
             permissions:_permissions,
             permittedModules:_permittedModules,
-            hasThisModule:_hasThisModule
+            hasThisModule:_hasThisModule,
+            validateSubModules:_validateSubModules
         };
 
         return factory;
@@ -60,6 +61,15 @@
             });
 
             return _.pluck(moduleObj, 'module');
+        }
+
+        function _validateSubModules(){
+            var permissions = _permissions().permissions;
+            var moduleObj = _.uniq(permissions,function(permi){
+                permi.entityPermission = permi.module + '_' + permi.entity;
+                return permi.entityPermission;
+            });
+            return _.pluck(moduleObj, 'entityPermission');
         }
 
         function _hasThisPermission(permission) {
