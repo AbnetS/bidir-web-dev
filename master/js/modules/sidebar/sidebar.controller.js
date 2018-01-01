@@ -56,12 +56,27 @@
           }
 
           function validateSubMenus(menuItem){
-              // var permissions = PermissionService.validateSubModules();
-              // if(!_.isUndefined(menuItem.submenu)){
-              //     _.each(menuItem.submenu,function(sub){
-              //
-              //     });
-              // }
+              var permissions = PermissionService.validateSubModules();
+              if(!_.isUndefined(menuItem.submenu)){
+                  _.each(menuItem.submenu,function(sub){
+                      var isSuper = false;
+                      if(!_.isUndefined($rootScope.currentUser)){
+                          isSuper = $rootScope.currentUser.username === 'super@bidir.com';
+                          if(isSuper){
+                              sub.showMenuItem = true;
+                          }else{
+                              if(!_.isUndefined(sub.permission)){
+                                  sub.showMenuItem = _.contains(permissions,sub.permission);
+                              }else {
+                                  sub.showMenuItem = false;
+                              }
+                          }
+                      }else {
+                          sub.showMenuItem = false;
+                      }
+
+                  });
+              }
           }
 
 

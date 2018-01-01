@@ -10,7 +10,7 @@
    <ul class="nav sidebar-subnav" ng-if="item.submenu"
        uib-collapse="isCollapse(pIndex)" ng-init="addCollapse(pIndex, item)">
       <li class="sidebar-subnav-header">{{(item.translate | translate) || item.text}}</li>
-      <li ng-repeat="item in item.submenu" ng-include="'sidebar-renderer.html'" ng-class="getMenuItemPropClasses(item)"
+      <li ng-repeat="item in item.submenu" ng-if="item.showMenuItem" ng-include="'sidebar-renderer.html'" ng-class="getMenuItemPropClasses(item)"
           ng-init="pIndex=(pIndex+'-'+$index); inSubmenu = true" ng-click="toggleCollapse(pIndex)">
       </li>
    </ul>
