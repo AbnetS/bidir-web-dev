@@ -8,7 +8,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">Roles </div>
     <div class="panel-body">
-        <div class="row">
+        <div class="row" userpermission="'USER_MANAGEMENT_ROLE_CREATE'">
             <div class="col-xs-10 col-lg-12">
                 <p><a class="btn btn-success pull-right" href="" ng-click="vm.addRole()">
                     <i class="fa fa-plus"></i>
@@ -34,7 +34,8 @@
                         <td>{{role.name}}</td>
                         <td>{{role.description }}</td>
                         <td>
-                            <a ng-click="vm.editRole(role,$event)"> <i class="fa fa-edit"></i>{{role.permissions.length}}  Permissions </a>
+                            <a userpermission="['USER_MANAGEMENT_ROLE_CREATE','USER_MANAGEMENT_ROLE_UPDATE']"
+                               ng-click="vm.editRole(role,$event)"> <i class="fa fa-edit"></i>{{role.permissions.length}}  Permissions </a>
                         </td>
                     </tr>
                     </tbody>

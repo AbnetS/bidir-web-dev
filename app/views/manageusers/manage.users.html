@@ -10,7 +10,7 @@
         <small>All users information</small>
     </div>
     <div class="panel-body">
-        <div class="row" userpermission="'USER_MANAGEMENT_CREATE'">
+        <div class="row" userpermission="'USER_MANAGEMENT_USER_CREATE'">
             <div class="col-xs-10 col-lg-12">
                 <p><a class="btn btn-success pull-right" href="" ng-click="vm.addUser()">
                     <i class="fa fa-plus"></i>
@@ -44,11 +44,13 @@
                             <span ng-class="vm.statusStyle(usr.status)">{{usr.status }}</span>
                         </td>
                         <td>
-                            <button class="btn btn-info btn-xs"
+                            <button userpermission="['USER_MANAGEMENT_USER_CREATE','USER_MANAGEMENT_USER_UPDATE']"
+                                    class="btn btn-info btn-xs"
                                ng-disabled="usr.status==='suspended'" ng-click="vm.editUser(usr,$event)">
                                 <i class="fa fa-edit"></i> Edit
                             </button>
                             <button class="btn btn-default btn-xs"
+                                    userpermission="['USER_MANAGEMENT_USER_ACTIVATE','USER_MANAGEMENT_USER_DEACTIVATE']"
                                 ng-click="vm.changeStatus(usr)">
                                     <i class="fa fa-eye"></i>
                                     {{usr.status=== 'active'? "Deactivate":"Activate"}}

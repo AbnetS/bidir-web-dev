@@ -80,7 +80,7 @@
                 hasPermission = true;
             }else{
                 var permissions = _.map(allPermissions.permissions, function(perm) {
-                    return perm.module + '_' + perm.operation; 
+                    return perm.module + '_' + perm.entity + '_'+ perm.operation;
                 });
             hasPermission = _.contains(permissions, permission);
             }

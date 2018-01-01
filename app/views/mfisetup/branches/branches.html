@@ -11,7 +11,7 @@
                 <div class="panel-heading">
                     <small>Manage Branches</small>
                 </div>
-                <div class="row">
+                <div class="row" userpermission="'MFI_SETUP_BRANCH_CREATE'">
                     <div class="col-xs-10 col-lg-12">
                         <p>Head Office is created by default. Add more branches.
                             <a class="btn btn-success pull-right" ng-click="vm.addBranch($event)">
@@ -51,12 +51,14 @@
                                         <span ng-class="branch.status==='active'?'label label-success':'label label-default'">{{branch.status}}</span>
                                     </td>
                                     <td class="text-center">
-                                        <a ng-if="branch.status==='active'" ng-click="vm.editBranch(branch)">
+                                        <a userpermission="['MFI_SETUP_BRANCH_CREATE','MFI_SETUP_BRANCH_UPDATE']"
+                                           ng-if="branch.status==='active'"  ng-click="vm.editBranch(branch)">
                                             <i class="fa fa-edit"></i>
                                             Edit
                                         </a>
 
-                                        <a ng-click="vm.changeStatus(branch)">
+                                        <a userpermission="['MFI_SETUP_BRANCH_ACTIVATE','MFI_SETUP_BRANCH_DEACTIVATE']"
+                                            ng-click="vm.changeStatus(branch)">
                                             <i class="fa fa-trash-o"></i>
                                             {{branch.status=== 'active'? "Deactivate":"Activate"}}
                                         </a>
