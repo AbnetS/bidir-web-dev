@@ -20,34 +20,34 @@
 
         function _getUsers(params){
 
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll,params),httpConfig);
+            // var httpConfig = {
+            //     headers: {
+            //         'Authorization': 'Bearer ' + AuthService.GetToken(),
+            //         'Accept': 'application/json'
+            //     }
+            // };
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll,params));
         }
         function _getRoles(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles),httpConfig);
+            // var httpConfig = {
+            //     headers: {
+            //         'Authorization': 'Bearer ' + AuthService.GetToken(),
+            //         'Accept': 'application/json'
+            //     }
+            // };
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
         }
         function _getBranches(){
             return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
         }
         function _saveUser(user) {
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user,httpConfig);
+            // var httpConfig = {
+            //     headers: {
+            //         'Authorization': 'Bearer ' + AuthService.GetToken(),
+            //         'Accept': 'application/json'
+            //     }
+            // };
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user);
         }
         function _updateUser(account) {
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);

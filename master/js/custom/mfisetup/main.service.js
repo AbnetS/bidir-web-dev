@@ -20,19 +20,13 @@
       };
 
       function _getBranches(){
-          return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.BranchGet));
+          return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
       }
       function _createBranch(branch){
         return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch), branch);
       }
       function _updateBranch(updated_branch){
           return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.Branches,updated_branch._id), updated_branch);
-      }
-      // function _changeBranchStatus(branchStatus){
-      //   return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,branchStatus._id), branchStatus);
-      // }
-      function _searchBranch(searchText){
-          return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch)+'/name=' + searchText,httpConfig);
       }
 
       function _getMFI(){
@@ -48,7 +42,6 @@
           //assigning content-type as undefined,let the browser
           //assign the correct boundary for us
           headers: {
-                  'Authorization': 'Bearer ' + AuthService.GetToken(),
                   'Content-Type': undefined},
           //prevents serializing payload.  don't do it.
           transformRequest: angular.identity

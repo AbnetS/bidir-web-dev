@@ -11,41 +11,20 @@
     vm.addBranch = addBranch;
     vm.editBranch = _editBranch;
     vm.changeStatus = _changeStatus;
-    vm.search ='';
-    vm.refresh =_refreshBranches;
-    vm.searchBranch = _searchBranches;
-
-    function _refreshBranches(){
-      vm.search ='';
-      getBranches();
-    }
 
      getBranches();
 
     function getBranches() {
-      MainService.GetMFI().then(
+      MainService.GetBranches().then(
         function(response) {
-          // console.log("mfi data",response);
-          vm.mfi = response.data[0];
-          vm.branches = response.data[0].branches;
+            // console.log("branches",response);
+          vm.branches = response.data.docs;
         },
         function(error) {
           console.log("error", error);
         }
       );
 
-    }
-    function _searchBranches(){
-      MainService.SearchBranch(vm.search).then(
-        function(response) {
-          console.log("response", response);
-          vm.branches = response.data.branches;
-          vm.branchesCopy = [].concat(vm.branches);
-        },
-        function(error) {
-          console.log("error", error);
-        }
-      );
     }
 
     function addBranch(ev) {

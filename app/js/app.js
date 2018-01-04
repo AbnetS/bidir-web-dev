@@ -1541,34 +1541,34 @@ var API = {
 
         function _getUsers(params){
 
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll,params),httpConfig);
+            // var httpConfig = {
+            //     headers: {
+            //         'Authorization': 'Bearer ' + AuthService.GetToken(),
+            //         'Accept': 'application/json'
+            //     }
+            // };
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll,params));
         }
         function _getRoles(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles),httpConfig);
+            // var httpConfig = {
+            //     headers: {
+            //         'Authorization': 'Bearer ' + AuthService.GetToken(),
+            //         'Accept': 'application/json'
+            //     }
+            // };
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
         }
         function _getBranches(){
             return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
         }
         function _saveUser(user) {
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user,httpConfig);
+            // var httpConfig = {
+            //     headers: {
+            //         'Authorization': 'Bearer ' + AuthService.GetToken(),
+            //         'Accept': 'application/json'
+            //     }
+            // };
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user);
         }
         function _updateUser(account) {
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
@@ -4471,19 +4471,13 @@ function runBlock() {
       };
 
       function _getBranches(){
-          return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.BranchGet));
+          return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
       }
       function _createBranch(branch){
         return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch), branch);
       }
       function _updateBranch(updated_branch){
           return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.Branches,updated_branch._id), updated_branch);
-      }
-      // function _changeBranchStatus(branchStatus){
-      //   return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.Branch,branchStatus._id), branchStatus);
-      // }
-      function _searchBranch(searchText){
-          return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.Branch)+'/name=' + searchText,httpConfig);
       }
 
       function _getMFI(){
@@ -4499,7 +4493,6 @@ function runBlock() {
           //assigning content-type as undefined,let the browser
           //assign the correct boundary for us
           headers: {
-                  'Authorization': 'Bearer ' + AuthService.GetToken(),
                   'Content-Type': undefined},
           //prevents serializing payload.  don't do it.
           transformRequest: angular.identity
@@ -4555,41 +4548,20 @@ function runBlock() {
     vm.addBranch = addBranch;
     vm.editBranch = _editBranch;
     vm.changeStatus = _changeStatus;
-    vm.search ='';
-    vm.refresh =_refreshBranches;
-    vm.searchBranch = _searchBranches;
-
-    function _refreshBranches(){
-      vm.search ='';
-      getBranches();
-    }
 
      getBranches();
 
     function getBranches() {
-      MainService.GetMFI().then(
+      MainService.GetBranches().then(
         function(response) {
-          // console.log("mfi data",response);
-          vm.mfi = response.data[0];
-          vm.branches = response.data[0].branches;
+            // console.log("branches",response);
+          vm.branches = response.data.docs;
         },
         function(error) {
           console.log("error", error);
         }
       );
 
-    }
-    function _searchBranches(){
-      MainService.SearchBranch(vm.search).then(
-        function(response) {
-          console.log("response", response);
-          vm.branches = response.data.branches;
-          vm.branchesCopy = [].concat(vm.branches);
-        },
-        function(error) {
-          console.log("error", error);
-        }
-      );
     }
 
     function addBranch(ev) {
