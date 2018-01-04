@@ -8,5 +8,9 @@
             // or just modules
             'app.mfi'
             /*...*/
-        ]);
+        ]).run(customRun);
+
+    function customRun() {
+        console.log("custom app run");
+    }
 })();

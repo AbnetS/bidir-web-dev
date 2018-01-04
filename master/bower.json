@@ -119,7 +119,8 @@
     "angular-messages": "1.6.4",
     "underscore": "^1.8.3",
     "ng-file-upload-shim": "^12.2.13",
-    "ng-file-upload": "^12.2.13"
+    "ng-file-upload": "^12.2.13",
+    "angular-material-data-table": "^0.10.10"
   },
   "resolutions": {
     "angular-ui-utils": "3.0.0",

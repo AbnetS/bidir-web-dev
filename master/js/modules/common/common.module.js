@@ -3,12 +3,12 @@
 
   angular
     .module("app.common", [])
-    .run(runBlock)
-    .config(routeConfig);
+      .config(routeConfig)
+      .run(runBlock);
 
   function runBlock() {
-    // console.log("common run");
+    console.log("common run");
   }
 
-  function routeConfig() {}
+  function routeConfig() {console.log("common config");}
 })(window.angular);

@@ -2,7 +2,7 @@
   "use strict";
 
   angular
-    .module("app.common")
+    .module('app.common')
     .constant("_", window._)
     .constant("APP_CONSTANTS", {
       USER_ROLES: {

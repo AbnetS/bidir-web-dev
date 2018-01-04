@@ -5,6 +5,12 @@
     'use strict';
 
     angular
-        .module('app.manage_roles', []);
+        .module('app.manage_roles', [])
+        .run(runBlock)
+        .config(routeConfig);
+
+    function runBlock() { console.log("RM run"); }
+
+    function routeConfig() {console.log("RM config");}
 
 })();
