@@ -18,7 +18,7 @@
     "sref": "#",
     "icon": "fa fa-cogs",
     "submenu": [
-      {"text": "MFI Setting",     "sref": "app.mfi_setting","permission": "MFI_SETUP_SETTING"},
+      {"text": "MFI Setting",     "sref": "app.mfi_setting","permission": "MFI_SETUP_MFI"},
       {"text": "Manage Branches",     "sref": "app.manage_branch","permission": "MFI_SETUP_BRANCH"}
     ]
   },
