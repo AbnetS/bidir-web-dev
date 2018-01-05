@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 DOCKER_PATH=$(which docker)
-SERVICE_NAME=terrafina-bidir-web
+SERVICE_NAME=bidir-web
 IMAGE_TAG=bidir/$SERVICE_NAME
 EXPOSE_PORT=18080
 CONT_PORT=80
