@@ -12,7 +12,8 @@
       StorageKey: {
         TOKEN: "token",
         SESSION: "SESSION",
-        PERMISSIONS:"PERMISSIONS"
+        PERMISSIONS:"PERMISSIONS",
+        ACCESS_BRANCHES:"ACCESS_BRANCHES"
       },
       AUTH_EVENTS: {
         loginSuccess: "auth-login-success",

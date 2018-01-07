@@ -6,16 +6,36 @@
 
 <!-- ngRepeat + ngResource-->
 <div class="panel panel-default">
-    <div class="panel-heading">Users |
-        <small>All users information</small>
+    <div class="panel-heading">
+        <!--<small>All users information</small>-->
+
+        <div class="col-xs-10 col-lg-5">
+            <ui-select ng-model="vm.selected_access_branches"
+                       theme="bootstrap" close-on-select="false" style="width:100%">
+                <ui-select-match placeholder="Select branch filter...">
+                    {{$item.name}} - {{$item.location}}
+                </ui-select-match>
+                <ui-select-choices repeat="branch in vm.user_access_branches">
+                    <div ng-bind-html="branch.name | highlight: $select.search"></div>
+                    <small>
+                        location: {{branch.location}}
+                        branch type: <span ng-bind-html="''+branch.branch_type | highlight: $select.search"></span>
+                    </small>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-xs-12 col-lg-7"></div>
     </div>
     <div class="panel-body">
         <div class="row" userpermission="'USER_MANAGEMENT_USER_CREATE'">
-            <div class="col-xs-10 col-lg-12">
-                <p><a class="btn btn-success pull-right" href="" ng-click="vm.addUser()">
-                    <i class="fa fa-plus"></i>
-                    Add User</a>
-                </p>
+            <p></p>
+                       <div class="col-xs-10 col-lg-12">
+
+                    <p><a class="btn btn-success pull-right" href="" ng-click="vm.addUser()">
+                        <i class="fa fa-plus"></i>
+                        Add User</a>
+                    </p>
+
             </div>
         </div>
         <br/>

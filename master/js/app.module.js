@@ -36,7 +36,7 @@
             'app.mfi'
         ]).run(appRun);
 
-    function appRun($rootScope, AuthService, $http,$state,$location){
+    function appRun($rootScope, AuthService, $http,$location){
             //TODO: redirect them to an access denied state if they do not have authorization to access it.
             console.log("angle app run");
             $rootScope.currentUser = AuthService.GetCurrentUser();

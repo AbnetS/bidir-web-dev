@@ -9,8 +9,8 @@
         .module('app.manage_users')
         .controller('ManageUsersController', ManageUsersController);
 
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog','AlertService'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog,AlertService) {
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog','AlertService','AuthService'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog,AlertService,AuthService) {
         var vm = this;
         $scope.pageData = {
             total:0
@@ -22,10 +22,12 @@
 
 
 
+
         activate();
 
         ////////////////
         function activate() {
+            vm.user_access_branches = AuthService.GetAccessBranches();
 
             fetchUserData();
 
