@@ -72,12 +72,6 @@
 
 
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
-})();
 (function(angular) {
   "use strict";
 
@@ -166,6 +160,12 @@
 
     angular
         .module('app.maps', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
 })();
 (function() {
     'use strict';
@@ -383,56 +383,6 @@
 })(window.angular);
 
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
-
 (function(angular) {
   "use strict";
 
@@ -520,13 +470,14 @@
 var API = {
     Config: {
        BaseUrl: 'http://api.dev.bidir.gebeya.io/' //REMOTE API
-       // BaseUrl: 'http://api.terrafina.bidir.gebeya.io/' //REMOTE API
+       //  BaseUrl: 'http://api.terrafina.bidir.gebeya.io/' //REMOTE API
     },
     Service: {
         NONE:'',
         MFI: 'MFI',
         Auth: 'auth',
-        Users: 'users'
+        Users: 'users',
+        SCREENING:'screening'
     },
     Methods: {
         Auth: {
@@ -557,6 +508,9 @@ var API = {
         Tasks: {
             Task:'tasks',
             GetAll: 'tasks/paginate?page=1&per_page=100'
+        },
+        Clients:{
+            All:'clients'
         }
     }
 };
@@ -1725,6 +1679,56 @@ var API = {
 
         }
     }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
 })();
 
 
@@ -4434,10 +4438,16 @@ function runBlock() {
 
         .service('ClientService', ClientService);
 
-    ClientService.$inject = ['$http','CommonService','AuthService'];
+    ClientService.$inject = ['$http','CommonService'];
 
-    function ClientService($http, CommonService,AuthService) {
+    function ClientService($http, CommonService) {
+        return {
+            GetClients: _getClients
+        };
 
+        function _getClients(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.SCREENING,API.Methods.Clients.All,''));
+        }
     }
 
 
@@ -4455,7 +4465,19 @@ function runBlock() {
     ClientsController.$inject = ['ClientService'];
 
     function ClientsController(ClientService) {
+        var vm = this;
+        vm.clientDetail = _clientDetail;
 
+        ClientService.GetClients().then(function(response){
+           console.log("Clients list",response);
+        },function (error) {
+            console.log("error",error);
+        });
+        
+        
+        function _clientDetail() {
+            
+        }
     }
 
 

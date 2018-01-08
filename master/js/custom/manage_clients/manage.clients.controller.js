@@ -11,7 +11,19 @@
     ClientsController.$inject = ['ClientService'];
 
     function ClientsController(ClientService) {
+        var vm = this;
+        vm.clientDetail = _clientDetail;
 
+        ClientService.GetClients().then(function(response){
+           console.log("Clients list",response);
+        },function (error) {
+            console.log("error",error);
+        });
+        
+        
+        function _clientDetail() {
+            
+        }
     }
 
 
