@@ -6,7 +6,8 @@
             // request the the entire framework
             'angle',
             // or just modules
-            'app.mfi'
+            'app.mfi',
+            'app.clients'
             /*...*/
         ]).run(customRun);
 

@@ -15,7 +15,7 @@
 (function() {
     'use strict';
 
-    appRun.$inject = ["$rootScope", "AuthService", "$http", "$state", "$location"];
+    appRun.$inject = ["$rootScope", "AuthService", "$http", "$location"];
     angular
         .module('angle', [
             'app.core',
@@ -37,7 +37,7 @@
             'app.mfi'
         ]).run(appRun);
 
-    function appRun($rootScope, AuthService, $http,$state,$location){
+    function appRun($rootScope, AuthService, $http,$location){
             //TODO: redirect them to an access denied state if they do not have authorization to access it.
             console.log("angle app run");
             $rootScope.currentUser = AuthService.GetCurrentUser();
@@ -245,51 +245,44 @@
 
     function AuthService($http, StorageService, CommonService, APP_CONSTANTS, $rootScope, $state) {
 
-        var service = {
+        return {
             login: _login,
             Logout: logout,
             GetCredentials: getCredentials,
             SetCredentials: setCredentials,
             GetToken: getToken,
-            IsAuthenticated: isAuthenticated,
-            IsAuthorized: isAuthorized,
-            GetCurrentUser:_getCurrentUser
+            GetCurrentUser:_getCurrentUser,
+            GetAccessBranches:_getAccessBranches,
+            IsSuperuser:isSuper
         };
 
-        return service;
+
 
         function getCredentials() {
             return !angular.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.SESSION)) ? StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) : null;
         }
 
         function setCredentials(session) {
-            $http.defaults.headers.common['Authorization'] = 'Bearer ' + session.token;
-            return StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
+            StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
         }
 
         function getToken() {
             return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION).token;
         }
 
-        function isAuthenticated() {
-            var session = getCredentials();
-            var loggedInUser = (angular.isUndefined(session) || session === null) ? undefined : session;
-            return (!angular.isUndefined(loggedInUser));
-        }
+
         function _getCurrentUser(){
           var credential = getCredentials();
           return credential !== null? credential.user: null;
         }
-
-        function isAuthorized(roles) {
-            if (!angular.isArray(roles)) {
-                roles = [roles];
-            }
+        function _getAccessBranches() {
             var credential = getCredentials();
-            var session = angular.isUndefined(credential) || credential === null ? null : getCredentials().user;
-            var haveAccess = session !== null ? roles.indexOf(session.role) !== -1 : false;
+            return credential !== null ?  !isSuper()? credential.user.account.access_branches : [] :null;
+        }
 
-            return isAuthenticated() && haveAccess;
+        function isSuper() {
+            var credential = getCredentials();
+            return credential.user.username === 'super@bidir.com';
         }
 
         function _login(user) {
@@ -454,7 +447,8 @@
       StorageKey: {
         TOKEN: "token",
         SESSION: "SESSION",
-        PERMISSIONS:"PERMISSIONS"
+        PERMISSIONS:"PERMISSIONS",
+        ACCESS_BRANCHES:"ACCESS_BRANCHES"
       },
       AUTH_EVENTS: {
         loginSuccess: "auth-login-success",
@@ -525,8 +519,8 @@
 })(window.angular);
 var API = {
     Config: {
-       // BaseUrl: 'http://api.dev.bidir.gebeya.io/' //REMOTE API
-        BaseUrl: 'http://api.terrafina.bidir.gebeya.io/' //REMOTE API
+       BaseUrl: 'http://api.dev.bidir.gebeya.io/' //REMOTE API
+       // BaseUrl: 'http://api.terrafina.bidir.gebeya.io/' //REMOTE API
     },
     Service: {
         NONE:'',
@@ -976,7 +970,7 @@ var API = {
 
             if(ManageRoleService.GetPermissionsFromStore() !== null){
                 vm.permissions = ManageRoleService.GetPermissionsFromStore();
-                console.log("permissions",vm.permissions);
+                console.log("permissions from storage",vm.permissions);
                 if(vm.isEdit){
                     setPermissions();
                 }
@@ -985,6 +979,7 @@ var API = {
                 ManageRoleService.GetPermissions().then(function(response){
                     vm.permissions = response.data.docs;
                     ManageRoleService.StorePermissions(vm.permissions);
+                    console.log("permissions from api",vm.permissions);
                     if(vm.isEdit){
                         setPermissions();
                     }
@@ -1304,7 +1299,7 @@ var API = {
             },function(error){
                 console.log("error",error);
             });
-
+        // console.log("access branches",ManageUserService.GetBranches());
             ManageUserService.GetBranches().then(function(response){
                 vm.branches = response.data.docs;
                 vm.user.selected_access_branches = [];
@@ -1331,6 +1326,7 @@ var API = {
 
                     });
                 }
+
             },function(error){
                 console.log("error",error);
             });
@@ -1383,8 +1379,8 @@ var API = {
         .module('app.manage_users')
         .controller('ManageUsersController', ManageUsersController);
 
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog','AlertService'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog,AlertService) {
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog','AlertService','AuthService'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog,AlertService,AuthService) {
         var vm = this;
         $scope.pageData = {
             total:0
@@ -1396,10 +1392,12 @@ var API = {
 
 
 
+
         activate();
 
         ////////////////
         function activate() {
+            vm.user_access_branches = AuthService.GetAccessBranches();
 
             fetchUserData();
 
@@ -1540,34 +1538,17 @@ var API = {
         };
 
         function _getUsers(params){
-
-            // var httpConfig = {
-            //     headers: {
-            //         'Authorization': 'Bearer ' + AuthService.GetToken(),
-            //         'Accept': 'application/json'
-            //     }
-            // };
             return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll,params));
         }
         function _getRoles(){
-            // var httpConfig = {
-            //     headers: {
-            //         'Authorization': 'Bearer ' + AuthService.GetToken(),
-            //         'Accept': 'application/json'
-            //     }
-            // };
             return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
         }
         function _getBranches(){
+            // var access_branches = AuthService.GetAccessBranches();
+
             return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
         }
         function _saveUser(user) {
-            // var httpConfig = {
-            //     headers: {
-            //         'Authorization': 'Bearer ' + AuthService.GetToken(),
-            //         'Accept': 'application/json'
-            //     }
-            // };
             return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user);
         }
         function _updateUser(account) {
@@ -2839,6 +2820,13 @@ var API = {
                 controller: "BranchController",
                 controllerAs: 'vm'
             })
+            .state("app.manage_clients", {
+                url: "/clients",
+                title: "clients",
+                templateUrl:helper.basepath('manage_clients/manage.clients.html'),
+                controller: "ClientsController",
+                controllerAs: 'vm'
+            })
 
 
           // CUSTOM RESOLVES
@@ -3935,40 +3923,11 @@ var API = {
         .module('app.welcomePage')
         .controller('WelcomeController', WelcomeController);
 
-    WelcomeController.$inject = ['$mdDialog', 'WelcomeService','RouteHelpers'];
+    WelcomeController.$inject = ['$mdDialog', 'WelcomeService','AuthService'];
 
-    function WelcomeController($mdDialog, WelcomeService ,RouteHelpers) {
+    function WelcomeController($mdDialog, WelcomeService ,AuthService) {
         var vm = this;
-        vm.viewTaskDetail = _viewTaskDetail;
 
-        // WelcomeService.GetTasks().then(function(response){
-        //     // console.log("tasks List",response);
-        //     vm.taskList = response.data.docs;
-        // },function(error){
-        //     console.log("error",error);
-        // });
-
-
-        function _viewTaskDetail(task,ev){
-            WelcomeService.GetUserAccount(task.entity_ref).then(function(response){
-                vm.userInfo = response.data.docs;
-                $mdDialog.show({
-                    locals: {items: {taskInfo:task,user:vm.userInfo}},
-                    templateUrl: RouteHelpers.basepath('task.detail.html'),
-                    parent: angular.element(document.body),
-                    targetEvent: ev,
-                    clickOutsideToClose: false,
-                    hasBackdrop: false,
-                    escapeToClose: true,
-                    controller: 'TaskDetailController',
-                    controllerAs: 'vm'
-                }).then(function (answer) {}, function () {});
-            },function(error){
-                console.log("error",error);
-            });
-
-
-        }
     }
 
 }(window.angular));
@@ -4401,7 +4360,8 @@ var API = {
             // request the the entire framework
             'angle',
             // or just modules
-            'app.mfi'
+            'app.mfi',
+            'app.clients'
             /*...*/
         ]).run(customRun);
 
@@ -4409,6 +4369,22 @@ var API = {
         console.log("custom app run");
     }
 })();
+/**
+ * Created by Yoni on 1/8/2018.
+ */
+(function() {
+    "use strict";
+
+    angular.module("app.clients", [
+    ]).run(runBlock);
+
+    function runBlock() {
+        console.log("client app run");
+    }
+
+
+})();
+
 (function() {
   "use strict";
 
@@ -4448,14 +4424,50 @@ function runBlock() {
     }
 })();
 
+/**
+ * Created by Yoni on 1/8/2018.
+ */
+
+(function(angular) {
+    'use strict';
+    angular.module('app.mfi')
+
+        .service('ClientService', ClientService);
+
+    ClientService.$inject = ['$http','CommonService','AuthService'];
+
+    function ClientService($http, CommonService,AuthService) {
+
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 1/8/2018.
+ */
+
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.clients").controller("ClientsController", ClientsController);
+
+    ClientsController.$inject = ['ClientService'];
+
+    function ClientsController(ClientService) {
+
+    }
+
+
+})(window.angular);
+
 (function(angular) {
   'use strict';
-  MainService.$inject = ["$http", "CommonService", "AuthService"];
   angular.module('app.mfi')
 
   .service('MainService', MainService);
 
-  // MainService.$inject = ['$http',' CommonService','AuthService'];
+  MainService.$inject = ['$http','CommonService','AuthService'];
 
   function MainService($http, CommonService,AuthService) {
 
@@ -4464,10 +4476,8 @@ function runBlock() {
         UpdateMFI: _updateMFI,
         CreateMFI:_createMFI,
         UpdateBranch: _updateBranch,
-        SearchBranch: _searchBranch,
         GetBranches: _getBranches,
-        CreateBranch:_createBranch,
-        // ChangeStatus:_changeBranchStatus
+        CreateBranch:_createBranch
       };
 
       function _getBranches(){

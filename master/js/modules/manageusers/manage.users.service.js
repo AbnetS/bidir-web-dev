@@ -19,34 +19,17 @@
         };
 
         function _getUsers(params){
-
-            // var httpConfig = {
-            //     headers: {
-            //         'Authorization': 'Bearer ' + AuthService.GetToken(),
-            //         'Accept': 'application/json'
-            //     }
-            // };
             return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll,params));
         }
         function _getRoles(){
-            // var httpConfig = {
-            //     headers: {
-            //         'Authorization': 'Bearer ' + AuthService.GetToken(),
-            //         'Accept': 'application/json'
-            //     }
-            // };
             return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
         }
         function _getBranches(){
+            // var access_branches = AuthService.GetAccessBranches();
+
             return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
         }
         function _saveUser(user) {
-            // var httpConfig = {
-            //     headers: {
-            //         'Authorization': 'Bearer ' + AuthService.GetToken(),
-            //         'Accept': 'application/json'
-            //     }
-            // };
             return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user);
         }
         function _updateUser(account) {

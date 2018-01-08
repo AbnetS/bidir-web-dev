@@ -15,7 +15,8 @@
             SetCredentials: setCredentials,
             GetToken: getToken,
             GetCurrentUser:_getCurrentUser,
-            GetAccessBranches:_getAccessBranches
+            GetAccessBranches:_getAccessBranches,
+            IsSuperuser:isSuper
         };
 
 

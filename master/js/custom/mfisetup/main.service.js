@@ -4,7 +4,7 @@
 
   .service('MainService', MainService);
 
-  // MainService.$inject = ['$http',' CommonService','AuthService'];
+  MainService.$inject = ['$http','CommonService','AuthService'];
 
   function MainService($http, CommonService,AuthService) {
 
@@ -13,10 +13,8 @@
         UpdateMFI: _updateMFI,
         CreateMFI:_createMFI,
         UpdateBranch: _updateBranch,
-        SearchBranch: _searchBranch,
         GetBranches: _getBranches,
-        CreateBranch:_createBranch,
-        // ChangeStatus:_changeBranchStatus
+        CreateBranch:_createBranch
       };
 
       function _getBranches(){

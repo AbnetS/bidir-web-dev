@@ -67,7 +67,7 @@
 
             if(ManageRoleService.GetPermissionsFromStore() !== null){
                 vm.permissions = ManageRoleService.GetPermissionsFromStore();
-                console.log("permissions",vm.permissions);
+                console.log("permissions from storage",vm.permissions);
                 if(vm.isEdit){
                     setPermissions();
                 }
@@ -76,6 +76,7 @@
                 ManageRoleService.GetPermissions().then(function(response){
                     vm.permissions = response.data.docs;
                     ManageRoleService.StorePermissions(vm.permissions);
+                    console.log("permissions from api",vm.permissions);
                     if(vm.isEdit){
                         setPermissions();
                     }

@@ -26,10 +26,19 @@
     "text": "User Management",
     "module": "USER_MANAGEMENT",
     "sref": "#",
-    "icon": "fa fa-shield",
+    "icon": "fa fa-user",
     "submenu": [
       {"text": "Manage Users",     "sref": "app.manage_user" ,   "permission": "USER_MANAGEMENT_USER"},
       {"text": "Manage Roles",     "sref": "app.manage_role",    "permission": "USER_MANAGEMENT_ROLE"}
+    ]
+  },
+  {
+    "text": "Client Management",
+    "module": "SCREENING",
+    "sref": "#",
+    "icon": "fa fa-shield",
+    "submenu": [
+      {"text": "Manage Clients",     "sref": "app.manage_clients" ,   "permission": "SCREENING_CLIENT"}
     ]
   }
 ]

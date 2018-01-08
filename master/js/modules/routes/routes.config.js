@@ -71,6 +71,13 @@
                 controller: "BranchController",
                 controllerAs: 'vm'
             })
+            .state("app.manage_clients", {
+                url: "/clients",
+                title: "clients",
+                templateUrl:helper.basepath('manage_clients/manage.clients.html'),
+                controller: "ClientsController",
+                controllerAs: 'vm'
+            })
 
 
           // CUSTOM RESOLVES
