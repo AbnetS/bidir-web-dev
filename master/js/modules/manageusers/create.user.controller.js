@@ -154,7 +154,6 @@
                 });
             }else{
                 vm.branches =  ManageUserService.GetUserAccessBranches();
-                vm.user.selected_access_branches = [];
                 if(vm.isEdit){
                     angular.forEach(vm.branches,function(branch){
                         //LOAD Default Branch select value
