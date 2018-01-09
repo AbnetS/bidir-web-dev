@@ -34,11 +34,11 @@
   },
   {
     "text": "Client Management",
-    "module": "SCREENING",
+    "module": "CLIENT_MANAGEMENT",
     "sref": "#",
     "icon": "fa fa-shield",
     "submenu": [
-      {"text": "Manage Clients",     "sref": "app.manage_clients" ,   "permission": "SCREENING_CLIENT"}
+      {"text": "Manage Clients",     "sref": "app.manage_clients" ,   "permission": "CLIENT_MANAGEMENT_CLIENT"}
     ]
   }
 ]

@@ -20,6 +20,7 @@
             PageSize: 10
         };
         vm.clientDetail = _clientDetail;
+        vm.setClientProfile = _setClientProfile;
 
         ClientService.GetClients().then(function(response){
            vm.clients = response.data.docs;
@@ -31,6 +32,9 @@
         
         function _clientDetail(client,ev) {
             $state.go('app.client_detail',{id:client._id});
+        }
+        function _setClientProfile(picture) {
+            return picture? picture: 'app/img/user/02.png';
         }
     }
 
