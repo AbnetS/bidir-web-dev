@@ -20,14 +20,10 @@
         vm.changeStatus = _changeStatus;
         vm.statusStyle = _statusStyle;
 
-
-
-
         activate();
 
         ////////////////
         function activate() {
-            vm.user_access_branches = AuthService.GetAccessBranches();
 
             fetchUserData();
 

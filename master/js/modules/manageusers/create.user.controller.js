@@ -12,8 +12,8 @@
         .module('app.manage_users')
         .controller('CreateUserController', CreateUserController);
 
-    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService'];
-    function CreateUserController($mdDialog, ManageUserService,items,AlertService) {
+    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService','AuthService'];
+    function CreateUserController($mdDialog, ManageUserService,items,AlertService,AuthService) {
         var vm = this;
         vm.cancel = _cancel;
         vm.saveUser = _saveUser;
@@ -114,10 +114,40 @@
             },function(error){
                 console.log("error",error);
             });
-         console.log("access branches",ManageUserService.GetUserAccessBranches());
 
-            ManageUserService.GetBranches().then(function(response){
-                vm.branches = response.data.docs;
+            if(AuthService.IsSuperuser()){
+                ManageUserService.GetBranches().then(function(response){
+                    vm.branches = response.data.docs;
+                    vm.user.selected_access_branches = [];
+                    if(vm.isEdit){
+                        angular.forEach(vm.branches,function(branch){
+                            //LOAD Default Branch select value
+                            if(!_.isUndefined(vm.user.default_branch._id)){
+
+                                if(branch._id === vm.user.default_branch._id){
+                                    vm.user.selected_default_branch = branch;
+                                }
+                            }
+                            //LOAD access branch select values
+                            if(vm.user.access_branches.length > 0)
+                            {
+                                var found = vm.user.access_branches.some(function (accBranch) {
+                                    return accBranch._id === branch._id;
+                                });
+
+                                if (found) {
+                                    vm.user.selected_access_branches.push(branch);
+                                }
+                            }
+
+                        });
+                    }
+
+                },function(error){
+                    console.log("error",error);
+                });
+            }else{
+                vm.branches =  ManageUserService.GetUserAccessBranches();
                 vm.user.selected_access_branches = [];
                 if(vm.isEdit){
                     angular.forEach(vm.branches,function(branch){
@@ -142,10 +172,10 @@
 
                     });
                 }
+            }
 
-            },function(error){
-                console.log("error",error);
-            });
+
+
         }
 
 
