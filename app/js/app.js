@@ -97,27 +97,6 @@
     'use strict';
 
     angular
-        .module('app.core', [
-            'ngRoute',
-            'ngAnimate',
-            'ngStorage',
-            'ngCookies',
-            'pascalprecht.translate',
-            'ui.bootstrap',
-            'ngSanitize',
-            'ui.router',
-            'oc.lazyLoad',
-            'cfp.loadingBar',
-            'ngResource',
-            'ui.utils',
-            'ngAria',
-            'ngMessages'
-        ]);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.lazyload', []);
 })();
 (function() {
@@ -165,7 +144,34 @@
     'use strict';
 
     angular
+        .module('app.core', [
+            'ngRoute',
+            'ngAnimate',
+            'ngStorage',
+            'ngCookies',
+            'pascalprecht.translate',
+            'ui.bootstrap',
+            'ngSanitize',
+            'ui.router',
+            'oc.lazyLoad',
+            'cfp.loadingBar',
+            'ngResource',
+            'ui.utils',
+            'ngAria',
+            'ngMessages'
+        ]);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.maps', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch', []);
 })();
 (function() {
     'use strict';
@@ -174,12 +180,6 @@
         .module('app.material', [
             'ngMaterial'
           ]);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch', []);
 })();
 (function() {
     'use strict';
@@ -519,8 +519,8 @@
 })(window.angular);
 var API = {
     Config: {
-       // BaseUrl: 'http://api.dev.bidir.gebeya.io/' //REMOTE API
-        BaseUrl: 'http://api.terrafina.bidir.gebeya.io/' //REMOTE API
+       BaseUrl: 'http://api.dev.bidir.gebeya.io/' //REMOTE API
+       //  BaseUrl: 'http://api.terrafina.bidir.gebeya.io/' //REMOTE API
     },
     Service: {
         NONE:'',
@@ -566,123 +566,6 @@ var API = {
     }
 };
 
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .config(coreConfig);
-
-    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
-    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
-
-      var core = angular.module('app.core');
-      // registering components after bootstrap
-      core.controller = $controllerProvider.register;
-      core.directive  = $compileProvider.directive;
-      core.filter     = $filterProvider.register;
-      core.factory    = $provide.factory;
-      core.service    = $provide.service;
-      core.constant   = $provide.constant;
-      core.value      = $provide.value;
-
-      // Disables animation on items with class .ng-no-animation
-      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
-
-      // Improve performance disabling debugging features
-      // $compileProvider.debugInfoEnabled(false);
-
-    }
-
-})();
-/**=========================================================
- * Module: constants.js
- * Define constants to inject across the application
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .constant('APP_MEDIAQUERY', {
-          'desktopLG':             1200,
-          'desktop':                992,
-          'tablet':                 768,
-          'mobile':                 480
-        })
-      ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .run(appRun);
-
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
-
-      // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });*/
-
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
-
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Hooks Example
-      // ----------------------------------- 
-
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
-
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
-
-    }
-
-})();
 
 
 (function() {
@@ -766,8 +649,8 @@ var API = {
                                                 files: ['vendor/angular-material-data-table/dist/md-data-table.min.css',
                                                         'vendor/angular-material-data-table/dist/md-data-table.min.js'] },
               {name: 'blockUI',
-                  files: ['vendor/angular-block-ui/angular-block-ui.css',
-                      'vendor/angular-block-ui/angular-block-ui.js'] },
+                  files: ["vendor/angular-block-ui/dist/angular-block-ui.css",
+                      "vendor/angular-block-ui/dist/angular-block-ui.js"] },
             {name: 'ngFileUpload',
                   files: ['vendor/ng-file-upload-shim/ng-file-upload-shim.min.js'] },
             {name: 'toaster',                   files: ['vendor/ng-file-upload/ng-file-upload.min.js',
@@ -1573,6 +1456,123 @@ var API = {
 
 })(window.angular);
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
+
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+      // Disables animation on items with class .ng-no-animation
+      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
+
+      // Improve performance disabling debugging features
+      // $compileProvider.debugInfoEnabled(false);
+
+    }
+
+})();
+/**=========================================================
+ * Module: constants.js
+ * Define constants to inject across the application
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .run(appRun);
+
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });*/
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
+    }
+
+})();
+
+
 /**=========================================================
  * Module: modals.js
  * Provides a simple way to implement bootstrap modals from templates
@@ -1734,6 +1734,115 @@ var API = {
             });
           }
 
+        }
+    }
+})();
+
+/**=========================================================
+ * Module: navbar-search.js
+ * Navbar search toggler * Auto dismiss on ESC key
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .directive('searchOpen', searchOpen)
+        .directive('searchDismiss', searchDismiss);
+
+    //
+    // directives definition
+    // 
+    
+    function searchOpen () {
+        var directive = {
+            controller: searchOpenController,
+            restrict: 'A'
+        };
+        return directive;
+
+    }
+
+    function searchDismiss () {
+        var directive = {
+            controller: searchDismissController,
+            restrict: 'A'
+        };
+        return directive;
+        
+    }
+
+    //
+    // Contrller definition
+    // 
+    
+    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchOpenController ($scope, $element, NavSearch) {
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.toggle);
+    }
+
+    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchDismissController ($scope, $element, NavSearch) {
+      
+      var inputSelector = '.navbar-form input[type="text"]';
+
+      $(inputSelector)
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('keyup', function(e) {
+          if (e.keyCode === 27) // ESC
+            NavSearch.dismiss();
+        });
+        
+      // click anywhere closes the search
+      $(document).on('click', NavSearch.dismiss);
+      // dismissable options
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.dismiss);
+    }
+
+})();
+
+
+/**=========================================================
+ * Module: nav-search.js
+ * Services to share navbar search functions
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .service('NavSearch', NavSearch);
+
+    function NavSearch() {
+        this.toggle = toggle;
+        this.dismiss = dismiss;
+
+        ////////////////
+
+        var navbarFormSelector = 'form.navbar-form';
+
+        function toggle() {
+          var navbarForm = $(navbarFormSelector);
+
+          navbarForm.toggleClass('open');
+
+          var isOpen = navbarForm.hasClass('open');
+
+          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
+        }
+
+        function dismiss() {
+          $(navbarFormSelector)
+            .removeClass('open') // Close control
+            .find('input[type="text"]').blur() // remove focus
+            // .val('') // Empty input
+            ;
         }
     }
 })();
@@ -2472,115 +2581,6 @@ var API = {
         }
     }
 })();
-/**=========================================================
- * Module: navbar-search.js
- * Navbar search toggler * Auto dismiss on ESC key
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .directive('searchOpen', searchOpen)
-        .directive('searchDismiss', searchDismiss);
-
-    //
-    // directives definition
-    // 
-    
-    function searchOpen () {
-        var directive = {
-            controller: searchOpenController,
-            restrict: 'A'
-        };
-        return directive;
-
-    }
-
-    function searchDismiss () {
-        var directive = {
-            controller: searchDismissController,
-            restrict: 'A'
-        };
-        return directive;
-        
-    }
-
-    //
-    // Contrller definition
-    // 
-    
-    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchOpenController ($scope, $element, NavSearch) {
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.toggle);
-    }
-
-    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchDismissController ($scope, $element, NavSearch) {
-      
-      var inputSelector = '.navbar-form input[type="text"]';
-
-      $(inputSelector)
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('keyup', function(e) {
-          if (e.keyCode === 27) // ESC
-            NavSearch.dismiss();
-        });
-        
-      // click anywhere closes the search
-      $(document).on('click', NavSearch.dismiss);
-      // dismissable options
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.dismiss);
-    }
-
-})();
-
-
-/**=========================================================
- * Module: nav-search.js
- * Services to share navbar search functions
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .service('NavSearch', NavSearch);
-
-    function NavSearch() {
-        this.toggle = toggle;
-        this.dismiss = dismiss;
-
-        ////////////////
-
-        var navbarFormSelector = 'form.navbar-form';
-
-        function toggle() {
-          var navbarForm = $(navbarFormSelector);
-
-          navbarForm.toggleClass('open');
-
-          var isOpen = navbarForm.hasClass('open');
-
-          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
-        }
-
-        function dismiss() {
-          $(navbarFormSelector)
-            .removeClass('open') // Close control
-            .find('input[type="text"]').blur() // remove focus
-            // .val('') // Empty input
-            ;
-        }
-    }
-})();
-
 (function() {
     'use strict';
 
@@ -2835,7 +2835,7 @@ var API = {
                 url: "/clients",
                 title: "clients",
                 templateUrl:helper.basepath('manage_clients/manage.clients.html'),
-                resolve:helper.resolveFor('md.data.table'),
+                resolve:helper.resolveFor('md.data.table','blockUI'),
                 controller: "ClientsController",
                 controllerAs: 'vm'
             })
@@ -2843,8 +2843,8 @@ var API = {
                 url: "/clients/:id",
                 title: "clients detail",
                 templateUrl:helper.basepath('manage_clients/client.detail.html'),
-                resolve:helper.resolveFor('md.data.table'),
                 controller: "ClientDetailController",
+                resolve:helper.resolveFor('blockUI'),
                 controllerAs: 'vm'
             })
 
@@ -4388,6 +4388,18 @@ var API = {
         console.log("custom app run");
     }
 })();
+(function() {
+  "use strict";
+
+  angular.module("app.mfi", [
+  ]).run(runBlock);
+
+function runBlock() {
+}
+
+
+})();
+
 /**
  * Created by Yoni on 1/8/2018.
  */
@@ -4400,18 +4412,6 @@ var API = {
     function runBlock() {
         console.log("client app run");
     }
-
-
-})();
-
-(function() {
-  "use strict";
-
-  angular.module("app.mfi", [
-  ]).run(runBlock);
-
-function runBlock() {
-}
 
 
 })();
@@ -4442,103 +4442,6 @@ function runBlock() {
         }
     }
 })();
-
-/**
- * Created by Yoni on 1/9/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.clients").controller("ClientDetailController", ClientDetailController);
-
-    ClientDetailController.$inject = ['ClientService','$stateParams'];
-
-    function ClientDetailController(ClientService,$stateParams) {
-        var vm = this;
-        vm.clientId =  $stateParams.id;
-
-        ClientService.GetClientDetail(vm.clientId)
-            .then(function(response){
-                vm.client = response.data;
-                console.log("client detail",response);
-            },function(error){
-                console.log("error getting client detail",error);
-            })
-
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 1/8/2018.
- */
-
-(function(angular) {
-    'use strict';
-    angular.module('app.mfi')
-
-        .service('ClientService', ClientService);
-
-    ClientService.$inject = ['$http','CommonService'];
-
-    function ClientService($http, CommonService) {
-        return {
-            GetClients: _getClients,
-            GetClientDetail:_getClientDetail
-        };
-
-        function _getClients(){
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.All));
-        }
-        function _getClientDetail(id){
-            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
-        }
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 1/8/2018.
- */
-
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.clients").controller("ClientsController", ClientsController);
-
-    ClientsController.$inject = ['ClientService','$state'];
-
-    function ClientsController(ClientService,$state) {
-        var vm = this;
-        vm.pageSizes = [10, 25, 50, 100, 250, 500];
-
-        vm.request = {
-            Start: 1,
-            limit:100,
-            PageSize: 10
-        };
-        vm.clientDetail = _clientDetail;
-        vm.setClientProfile = _setClientProfile;
-
-        ClientService.GetClients().then(function(response){
-           vm.clients = response.data.docs;
-            console.log("Clients list",response);
-        },function (error) {
-            console.log("error",error);
-        });
-        
-        
-        function _clientDetail(client,ev) {
-            $state.go('app.client_detail',{id:client._id});
-        }
-        function _setClientProfile(picture) {
-            return picture? picture: 'app/img/user/02.png';
-        }
-    }
-
-
-})(window.angular);
 
 (function(angular) {
   'use strict';
@@ -4621,6 +4524,109 @@ function runBlock() {
           return mfiData;
       }
   }
+
+})(window.angular);
+
+/**
+ * Created by Yoni on 1/9/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.clients").controller("ClientDetailController", ClientDetailController);
+
+    ClientDetailController.$inject = ['ClientService','$stateParams','blockUI'];
+
+    function ClientDetailController(ClientService,$stateParams,blockUI) {
+        var vm = this;
+        vm.clientId =  $stateParams.id;
+
+        var myBlockUI = blockUI.instances.get('ClientsListBlockUI');
+        myBlockUI.start();
+        ClientService.GetClientDetail(vm.clientId)
+            .then(function(response){
+                myBlockUI.stop();
+                vm.client = response.data;
+                console.log("client detail",response);
+            },function(error){
+                myBlockUI.stop();
+                console.log("error getting client detail",error);
+            })
+
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 1/8/2018.
+ */
+
+(function(angular) {
+    'use strict';
+    angular.module('app.mfi')
+
+        .service('ClientService', ClientService);
+
+    ClientService.$inject = ['$http','CommonService'];
+
+    function ClientService($http, CommonService) {
+        return {
+            GetClients: _getClients,
+            GetClientDetail:_getClientDetail
+        };
+
+        function _getClients(){
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.All));
+        }
+        function _getClientDetail(id){
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 1/8/2018.
+ */
+
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.clients").controller("ClientsController", ClientsController);
+
+    ClientsController.$inject = ['ClientService','$state','blockUI'];
+
+    function ClientsController(ClientService,$state,blockUI) {
+        var vm = this;
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
+
+        vm.request = {
+            Start: 1,
+            limit:100,
+            PageSize: 10
+        };
+        vm.clientDetail = _clientDetail;
+        vm.setClientProfile = _setClientProfile;
+
+        ClientService.GetClients().then(function(response){
+
+            vm.clients = response.data.docs;
+            console.log("Clients list",response);
+        },function (error) {
+            myBlockUI.stop();
+            console.log("error",error);
+        });
+        
+        
+        function _clientDetail(client,ev) {
+            $state.go('app.client_detail',{id:client._id});
+        }
+        function _setClientProfile(picture) {
+            return picture? picture: 'app/img/user/02.png';
+        }
+    }
+
 
 })(window.angular);
 

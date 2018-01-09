@@ -8,9 +8,9 @@
 
     angular.module("app.clients").controller("ClientsController", ClientsController);
 
-    ClientsController.$inject = ['ClientService','$state'];
+    ClientsController.$inject = ['ClientService','$state','blockUI'];
 
-    function ClientsController(ClientService,$state) {
+    function ClientsController(ClientService,$state,blockUI) {
         var vm = this;
         vm.pageSizes = [10, 25, 50, 100, 250, 500];
 
@@ -23,9 +23,11 @@
         vm.setClientProfile = _setClientProfile;
 
         ClientService.GetClients().then(function(response){
-           vm.clients = response.data.docs;
+
+            vm.clients = response.data.docs;
             console.log("Clients list",response);
         },function (error) {
+            myBlockUI.stop();
             console.log("error",error);
         });
         

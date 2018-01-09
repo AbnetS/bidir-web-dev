@@ -75,7 +75,7 @@
                 url: "/clients",
                 title: "clients",
                 templateUrl:helper.basepath('manage_clients/manage.clients.html'),
-                resolve:helper.resolveFor('md.data.table'),
+                resolve:helper.resolveFor('md.data.table','blockUI'),
                 controller: "ClientsController",
                 controllerAs: 'vm'
             })
@@ -83,8 +83,8 @@
                 url: "/clients/:id",
                 title: "clients detail",
                 templateUrl:helper.basepath('manage_clients/client.detail.html'),
-                resolve:helper.resolveFor('md.data.table'),
                 controller: "ClientDetailController",
+                resolve:helper.resolveFor('blockUI'),
                 controllerAs: 'vm'
             })
 

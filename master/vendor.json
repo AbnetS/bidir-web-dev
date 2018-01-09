@@ -14,5 +14,7 @@
   "bower_components/ng-file-upload-shim/ng-file-upload-shim.min.js",
   "bower_components/ng-file-upload/ng-file-upload.min.js",
   "bower_components/angular-material-data-table/dist/md-data-table.min.css",
-  "bower_components/angular-material-data-table/dist/md-data-table.min.js"
+  "bower_components/angular-material-data-table/dist/md-data-table.min.js",
+  "bower_components/angular-block-ui/dist/angular-block-ui.css",
+  "bower_components/angular-block-ui/dist/angular-block-ui.js"
 ]
