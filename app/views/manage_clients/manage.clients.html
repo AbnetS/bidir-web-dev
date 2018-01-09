@@ -9,8 +9,46 @@
     <div class="panel-heading">All Clients</div>
     <div class="panel-body">
         <!--<h2>You do not have the necessary permission to view clients list.</h2>-->
-        <div class="row" userpermission="'CLIENT_MANAGEMENT_CLIENT_VIEW_ALL'">
+        <div class="row" userpermission="['CLIENT_MANAGEMENT_CLIENT_VIEW_ALL','SCREENING_CLIENT_VIEW']">
             <div class="col-lg-12">
+
+                <md-toolbar class="md-table-toolbar">
+                    <div class="md-toolbar-tools">
+                        <!--<h2 class="md-title uppercase">-->
+                            <!--<i class=""></i>-->
+                            <!--Clients</h2>-->
+
+                        <md-button class="md-icon-button" ng-click="vm.search()">
+                            <i class="fa fa-search"></i>
+                        </md-button>
+
+                        <div flex>
+                            <input  class="form-control" placeholder="Search" type="text"
+                                    ng-model="vm.request.Search"/>
+                        </div>
+                    </div>
+                </md-toolbar>
+
+                <md-toolbar class="md-table-toolbar" ng-show="vm.filter.show">
+
+                    <div class="md-toolbar-tools">
+                        <md-button class="md-icon-button" ng-click="vm.search()">
+                            <i class="fa fa-search"></i>
+                        </md-button>
+
+                        <!-- Input Text -->
+                        <md-input-container flex>
+                            <!-- <label for="search">Search</label> -->
+                            <input id="search-input" type="text" ng-model="vm.request.Search"/>
+                        </md-input-container>
+
+                        <md-button class="md-icon-button" ng-click="vm.clearSearch()">
+                            <i class="fa fa-times"></i>
+                        </md-button>
+                    </div>
+                </md-toolbar>
+
+
                 <md-table-container>
                     <table md-table md-progress="promise" class="table-hover">
                         <thead md-head class="bg-grey">

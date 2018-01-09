@@ -41,7 +41,7 @@ var API = {
             GetAll: 'tasks/paginate?page=1&per_page=100'
         },
         Clients:{
-            All:'clients/paginate?source=app',
+            All:'clients/paginate?source=web',
             Client:'clients'
         }
     }

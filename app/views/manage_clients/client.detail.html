@@ -1,3 +1,14 @@
+<h3>{{vm.client.first_name | uppercase}} {{vm.client.last_name | uppercase}}  Detail
+    <small>Manage clients information.</small>
+    <br/>
+    <small>
+        <a ui-sref="app.manage_clients"><i class="fa fa-arrow-left"></i> Back </a>
+    </small>
+</h3>
+
+
+
+
 <div class="panel panel-default">
     <div class="panel-heading">Client Information</div>
 <div class="panel-body" block-ui="ClientsListBlockUI">
