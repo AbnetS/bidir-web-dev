@@ -30,7 +30,7 @@
               abstract: true,
               templateUrl: helper.basepath('app.html'),
               resolve: helper.resolveFor('fastclick','modernizr','sparklines', 'icons','animo','underscore',
-                        'sparklines','slimscroll','oitozero.ngSweetAlert','toaster','whirl')
+                        'sparklines','slimscroll','oitozero.ngSweetAlert','toaster','blockUI')
           })
           .state('app.welcome', {
               url: '/welcome',
@@ -75,7 +75,7 @@
                 url: "/clients",
                 title: "clients",
                 templateUrl:helper.basepath('manage_clients/manage.clients.html'),
-                resolve:helper.resolveFor('md.data.table','blockUI'),
+                resolve:helper.resolveFor('md.data.table'),
                 controller: "ClientsController",
                 controllerAs: 'vm'
             })

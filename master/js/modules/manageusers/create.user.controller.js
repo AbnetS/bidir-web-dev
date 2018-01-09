@@ -12,8 +12,8 @@
         .module('app.manage_users')
         .controller('CreateUserController', CreateUserController);
 
-    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService','AuthService'];
-    function CreateUserController($mdDialog, ManageUserService,items,AlertService,AuthService) {
+    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService','AuthService','blockUI'];
+    function CreateUserController($mdDialog, ManageUserService,items,AlertService,AuthService,blockUI) {
         var vm = this;
         vm.cancel = _cancel;
         vm.saveUser = _saveUser;
@@ -26,6 +26,8 @@
 
         function _saveUser() {
 
+            var myBlockUI = blockUI.instances.get('CreateUserForm');
+            myBlockUI.start();
             if(!_.isUndefined(vm.user.selected_role) &&  !_.isUndefined(vm.user.selected_default_branch)){
                 var userInfo = {
                     first_name: vm.user.first_name,
@@ -55,11 +57,13 @@
                     });
 
                     ManageUserService.UpdateUser( userInfo ).then(function (data) {
+                            myBlockUI.stop();
                             console.log("updated successfully", data);
                             $mdDialog.hide();
                             AlertService.showSuccess('Updated Successfully!', 'User Information is Updated');
                         },
                         function (error) {
+                            myBlockUI.stop();
                             var message = error.data.error.message;
                             AlertService.showError( 'Oops... Something went wrong', message);
                             console.log("could not be saved", error);
@@ -72,12 +76,14 @@
 
                     ManageUserService.CreateUser(userInfo).then(
                         function (data) {
+                            myBlockUI.stop();
                             AlertService.showSuccess('Saved Successfully!', 'User Information is saved successfully');
                             console.log("saved successfully", data);
                             $mdDialog.hide();
                             //TODO: Alert & fetch user collection
                         },
                         function (error) {
+                            myBlockUI.stop();
                             var message = error.data.error.message;
                             AlertService.showError( 'Oops... Something went wrong', message);
                             console.log("could not be saved", error);
