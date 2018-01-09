@@ -6,9 +6,10 @@ EXPOSE_PORT=18080
 CONT_PORT=80
 HOST_IP=10.142.0.5
 MONGODB_URL=mongodb://10.142.0.5:27017/bidir
-cd master
+
 NPM=$(which npm)
 sudo $NPM install
+cd master
 sudo $NPM install -g gulp
 sudo $NPM install bower install
 sudo $NPM install gulp
