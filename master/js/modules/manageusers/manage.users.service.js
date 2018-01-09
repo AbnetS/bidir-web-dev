@@ -13,6 +13,7 @@
             GetUsers: _getUsers,
             GetRoles: _getRoles,
             GetBranches: _getBranches,
+            GetUserAccessBranches: _getUserAccessBranches,
             CreateUser: _saveUser,
             UpdateUser: _updateUser,
             UpdateUserStatus: _updateUserStatus
@@ -25,9 +26,10 @@
             return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
         }
         function _getBranches(){
-            // var access_branches = AuthService.GetAccessBranches();
-
             return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+        }
+        function _getUserAccessBranches() {
+            return AuthService.GetAccessBranches();
         }
         function _saveUser(user) {
             return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user);

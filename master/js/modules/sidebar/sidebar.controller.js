@@ -61,7 +61,6 @@
               if(!_.isUndefined(menuItem.submenu)){
                   _.each(menuItem.submenu,function(sub){
                       var isSuper = false;
-                      debugger
                       if(!_.isUndefined($rootScope.currentUser)){
                           isSuper = $rootScope.currentUser.username === 'super@bidir.com';
                           if(isSuper){

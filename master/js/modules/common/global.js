@@ -8,7 +8,7 @@ var API = {
         MFI: 'MFI',
         Auth: 'auth',
         Users: 'users',
-        SCREENING:'screening'
+        SCREENING:'screenings'
     },
     Methods: {
         Auth: {
@@ -41,7 +41,8 @@ var API = {
             GetAll: 'tasks/paginate?page=1&per_page=100'
         },
         Clients:{
-            All:'clients'
+            All:'clients/paginate?source=app',
+            Client:'clients'
         }
     }
 };

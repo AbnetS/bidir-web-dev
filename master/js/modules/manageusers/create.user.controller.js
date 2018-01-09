@@ -114,7 +114,8 @@
             },function(error){
                 console.log("error",error);
             });
-        // console.log("access branches",ManageUserService.GetBranches());
+         console.log("access branches",ManageUserService.GetUserAccessBranches());
+
             ManageUserService.GetBranches().then(function(response){
                 vm.branches = response.data.docs;
                 vm.user.selected_access_branches = [];
