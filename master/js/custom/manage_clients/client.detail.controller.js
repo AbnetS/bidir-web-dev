@@ -12,7 +12,7 @@
         var vm = this;
         vm.clientId =  $stateParams.id;
 
-        var myBlockUI = blockUI.instances.get('ClientsListBlockUI');
+        var myBlockUI = blockUI.instances.get('ClientBlockUI');
         myBlockUI.start();
         ClientService.GetClientDetail(vm.clientId)
             .then(function(response){

@@ -215,15 +215,6 @@
     angular
         .module('app.translate', []);
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.utils', [
-          'app.colors'
-          ]);
-})();
-
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -235,6 +226,15 @@
         .module('app.welcomePage', []);
 
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.utils', [
+          'app.colors'
+          ]);
+})();
+
 (function(angular) {
     'use strict';
     angular.module('app.auth')
@@ -3460,6 +3460,139 @@ var API = {
 
     }
 })();
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.welcomePage')
+        .controller('TaskDetailController', TaskDetailController);
+
+    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items','SweetAlert'];
+
+    function TaskDetailController($mdDialog, WelcomeService ,items,SweetAlert) {
+        var vm = this
+        vm.cancel = _cancel;
+        vm.approveUser = _approveUser;
+        vm.declineUser = _declineUser;
+        vm.task = items.taskInfo;
+        console.log("task ",vm.task);
+        WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
+            // console.log("task related user",response);
+            vm.userInfo = response.data;
+
+        },function(error){
+            console.log("error",error);
+        });
+
+        function _approveUser() {
+            var task = {
+                taskId:vm.task._id ,
+                status: "approved",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
+        }
+
+        function _declineUser() {
+            var task = {
+                taskId:vm.task._id ,
+                status: "declined",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
+        }
+
+        function updateStatus(task){
+            WelcomeService.ChangeTaskStatus(task).then(
+                function(response) {
+                    SweetAlert.swal('Task Status Changed!',
+                        'Task '+ task.status + ' Successfully!',
+                        'success');
+                    console.log("task updated",response);
+                    $mdDialog.hide();
+                },
+                function(error) {
+                    SweetAlert.swal( 'Oops...',
+                        'Something went wrong!',
+                        'error');
+                    console.log("could not be updated", error);
+                }
+            );
+        }
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.welcomePage')
+        .controller('WelcomeController', WelcomeController);
+
+    WelcomeController.$inject = ['$mdDialog', 'WelcomeService','AuthService'];
+
+    function WelcomeController($mdDialog, WelcomeService ,AuthService) {
+        var vm = this;
+
+    }
+
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.welcomePage')
+
+        .service('WelcomeService', WelcomeService);
+    WelcomeService.$inject = ['$http', 'CommonService','AuthService'];
+
+    function WelcomeService($http, CommonService,AuthService) {
+        return {
+            GetTasks: _getTasks,
+            GetUserAccount:_getUserAccount,
+            ChangeTaskStatus:_changeTaskStatus
+        };
+
+        function _getUserAccount(id){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
+        }
+        function _getTasks(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Tasks.GetAll),httpConfig);
+        }
+        function _changeTaskStatus(taskObj) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
+        }
+    }
+
+})(window.angular);
 /**=========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
@@ -3890,139 +4023,6 @@ var API = {
     }
 })();
 
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.welcomePage')
-        .controller('TaskDetailController', TaskDetailController);
-
-    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items','SweetAlert'];
-
-    function TaskDetailController($mdDialog, WelcomeService ,items,SweetAlert) {
-        var vm = this
-        vm.cancel = _cancel;
-        vm.approveUser = _approveUser;
-        vm.declineUser = _declineUser;
-        vm.task = items.taskInfo;
-        console.log("task ",vm.task);
-        WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
-            // console.log("task related user",response);
-            vm.userInfo = response.data;
-
-        },function(error){
-            console.log("error",error);
-        });
-
-        function _approveUser() {
-            var task = {
-                taskId:vm.task._id ,
-                status: "approved",
-                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
-            };
-            updateStatus(task);
-        }
-
-        function _declineUser() {
-            var task = {
-                taskId:vm.task._id ,
-                status: "declined",
-                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
-            };
-            updateStatus(task);
-        }
-
-        function updateStatus(task){
-            WelcomeService.ChangeTaskStatus(task).then(
-                function(response) {
-                    SweetAlert.swal('Task Status Changed!',
-                        'Task '+ task.status + ' Successfully!',
-                        'success');
-                    console.log("task updated",response);
-                    $mdDialog.hide();
-                },
-                function(error) {
-                    SweetAlert.swal( 'Oops...',
-                        'Something went wrong!',
-                        'error');
-                    console.log("could not be updated", error);
-                }
-            );
-        }
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-    }
-
-}(window.angular));
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.welcomePage')
-        .controller('WelcomeController', WelcomeController);
-
-    WelcomeController.$inject = ['$mdDialog', 'WelcomeService','AuthService'];
-
-    function WelcomeController($mdDialog, WelcomeService ,AuthService) {
-        var vm = this;
-
-    }
-
-}(window.angular));
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.welcomePage')
-
-        .service('WelcomeService', WelcomeService);
-    WelcomeService.$inject = ['$http', 'CommonService','AuthService'];
-
-    function WelcomeService($http, CommonService,AuthService) {
-        return {
-            GetTasks: _getTasks,
-            GetUserAccount:_getUserAccount,
-            ChangeTaskStatus:_changeTaskStatus
-        };
-
-        function _getUserAccount(id){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
-        }
-        function _getTasks(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Tasks.GetAll),httpConfig);
-        }
-        function _changeTaskStatus(taskObj) {
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
-        }
-    }
-
-})(window.angular);
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -4483,7 +4483,7 @@ function runBlock() {
         var vm = this;
         vm.clientId =  $stateParams.id;
 
-        var myBlockUI = blockUI.instances.get('ClientsListBlockUI');
+        var myBlockUI = blockUI.instances.get('ClientBlockUI');
         myBlockUI.start();
         ClientService.GetClientDetail(vm.clientId)
             .then(function(response){
