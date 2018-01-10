@@ -1,7 +1,7 @@
 var API = {
     Config: {
-       BaseUrl: 'http://api.dev.bidir.gebeya.io/' //REMOTE API
-       //  BaseUrl: 'http://api.terrafina.bidir.gebeya.io/' //REMOTE API
+       // BaseUrl: 'http://api.dev.bidir.gebeya.io/' //REMOTE API
+       BaseUrl: 'http://api.terrafina.bidir.gebeya.io/' //REMOTE API
     },
     Service: {
         NONE:'',

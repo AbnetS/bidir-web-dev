@@ -20,7 +20,6 @@
         vm.onSelectedDefaultBranch = _onSelectedDefaultBranch;
         vm.isEdit = items !== null;
         vm.user = items !== null?items:null;
-        // console.log("user info", items);
 
         initialize();
 
@@ -178,8 +177,6 @@
                     });
                 }
             }
-
-
 
         }
 
