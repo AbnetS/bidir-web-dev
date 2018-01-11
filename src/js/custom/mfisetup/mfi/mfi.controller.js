@@ -3,9 +3,9 @@
 
   angular.module("app.mfi").controller("MFIController", MFIController);
 
-  MFIController.$inject = ['AlertService', '$scope','MainService','CommonService'];
+  MFIController.$inject = ['AlertService', '$scope','MainService','CommonService','blockUI'];
 
-  function MFIController(AlertService,$scope,MainService,CommonService)
+  function MFIController(AlertService,$scope,MainService,CommonService,blockUI)
 
   {
     var vm = this;
@@ -25,11 +25,15 @@
       vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFISetupForm, vm.MFI);
 
       if (vm.IsValidData) {
+          var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
+          myBlockUI.start();
         if (_.isUndefined(vm.MFI._id)) {
           MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
+              myBlockUI.stop();
               AlertService.showSuccess("Created MFI successfully","MFI Information created successfully");
               console.log("Create MFI", response);
             }, function(error) {
+              myBlockUI.stop();
               console.log("Create MFI Error", error);
               var message = error.data.error.message;
             AlertService.showError("Failed to create MFI!", message);
@@ -38,9 +42,11 @@
         } else {
           
           MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
+              myBlockUI.stop();
               AlertService.showSuccess("MFI Info updated successfully","MFI Information updated successfully");
               console.log("Update MFI", response);
             }, function(error) {
+              myBlockUI.stop();
               console.log("UpdateMFI Error", error);
               var message = error.data.error.message;
               AlertService.showError("MFI Information update failed",message);
@@ -52,8 +58,11 @@
     }
 
     function init() {
+        var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
+        myBlockUI.start();
       MainService.GetMFI().then(
         function(response) {
+            myBlockUI.stop();
           if (response.data.length > 0) {
             vm.MFI = response.data[0];
             var dt = new Date(vm.MFI.establishment_year);
@@ -62,6 +71,7 @@
           console.log("Get MFI", response);
         },
         function(error) {
+            myBlockUI.stop();
           console.log("Get MFI Error", error);
         }
       );

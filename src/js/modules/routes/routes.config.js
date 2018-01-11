@@ -51,7 +51,7 @@
                 url: '/manage_role',
                 title: 'manage roles',
                 templateUrl: helper.basepath('manageroles/manage.roles.html'),
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select'),
                 controller: 'ManageRoleController',
                 controllerAs: 'vm'
             })
@@ -84,7 +84,6 @@
                 title: "clients detail",
                 templateUrl:helper.basepath('manage_clients/client.detail.html'),
                 controller: "ClientDetailController",
-                resolve:helper.resolveFor('blockUI'),
                 controllerAs: 'vm'
             })
 
@@ -97,7 +96,7 @@
             .state('page', {
                 url: '/page',
                 templateUrl: 'app/pages/page.html',
-                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert','toaster'),
+                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert','toaster','blockUI'),
                 controller: ['$rootScope', function($rootScope) {
                     $rootScope.app.layout.isBoxed = false;
                 }]

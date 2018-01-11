@@ -4,11 +4,9 @@
 
 <!-- START panel-->
 <div class="panel panel-default">
-
     <div class="panel-body">
         <div class="row">
             <div class="col-sm-12">
-                <!--<div class="panel-heading"><small>Manage Branches</small></div>-->
                 <div class="row" userpermission="'MFI_SETUP_BRANCH_CREATE'">
                     <div class="col-xs-10 col-lg-12">
                         <p>Head Office is created by default. Add more branches.
@@ -21,8 +19,8 @@
                 <br/>
 
                 <div class="row">
-                    <div class="col-lg-12">
-                        <table class="row-border hover" datatable="ng">
+                    <div class="col-lg-12" block-ui="BranchListBlockUI">
+                        <table class="row-border hover" datatable="ng" >
                             <thead>
                                 <tr>
                                     <th>#</th>

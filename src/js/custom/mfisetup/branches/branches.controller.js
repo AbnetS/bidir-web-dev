@@ -3,9 +3,9 @@
 
     angular.module("app.mfi").controller("BranchController", BranchController);
 
-    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService'];
+    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
 
-  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService) {
+  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
     var vm = this;
 
     vm.addBranch = addBranch;
@@ -17,7 +17,6 @@
     function getBranches() {
       MainService.GetBranches().then(
         function(response) {
-            // console.log("branches",response);
           vm.branches = response.data.docs;
         },
         function(error) {

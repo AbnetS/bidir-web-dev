@@ -9,10 +9,9 @@ MONGODB_URL=mongodb://10.142.0.5:27017/bidir
 
 NPM=$(which npm)
 sudo $NPM install
-cd master
+cd src
 sudo $NPM install -g gulp
 sudo $NPM install bower install
-sudo $NPM install gulp
 sudo $NPM install node-build-web-app --save-dev
 sudo $NPM install --no-optional
 GULP=$(which gulp)

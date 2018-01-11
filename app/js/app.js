@@ -99,18 +99,6 @@
     'use strict';
 
     angular
-        .module('app.lazyload', []);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar', []);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.core', [
             'ngRoute',
             'ngAnimate',
@@ -127,6 +115,18 @@
             'ngAria',
             'ngMessages'
         ]);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.lazyload', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar', []);
 })();
 /**
  * Created by Yoni on 11/30/2017.
@@ -314,9 +314,9 @@
         .module('app.auth')
         .controller('LoginFormController', LoginFormController);
 
-    LoginFormController.$inject = ['AuthService', '$state',  '$rootScope',  'APP_CONSTANTS',  'PermissionService', 'AlertService'];
+    LoginFormController.$inject = ['AuthService', '$state',  '$rootScope',  'APP_CONSTANTS',  'blockUI', 'AlertService'];
 
-    function LoginFormController( AuthService,  $state, $rootScope,  APP_CONSTANTS, PermissionService,AlertService
+    function LoginFormController( AuthService,  $state, $rootScope,  APP_CONSTANTS, blockUI,AlertService
     ) {
         var vm = this;
         vm.userValidator = {
@@ -327,8 +327,11 @@
         vm.user = {};
 
         vm.login = function() {
+            var myBlockUI = blockUI.instances.get('loginFormBlockUI');
+            myBlockUI.start();
             AuthService.login(vm.user).then(
                 function(response) {
+                    myBlockUI.stop();
                     var result = response.data;
                     vm.user = result.user;
                     $rootScope.currentUser = vm.user;
@@ -338,9 +341,11 @@
                     console.log('logged in user',vm.user);
 
                     $state.go("app.welcome");
+                    //TODO: if no mfi redirect to mfi registration page
                     // CheckMFIAndRedirect();
                 },
                 function(error) {
+                    myBlockUI.stop();
                     console.log("error", error);
                     AlertService.showError("Error on Login", "The username or password is incorrect! Please try again.");
                     $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
@@ -574,6 +579,123 @@ var API = {
     'use strict';
 
     angular
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
+
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+      // Disables animation on items with class .ng-no-animation
+      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
+
+      // Improve performance disabling debugging features
+      // $compileProvider.debugInfoEnabled(false);
+
+    }
+
+})();
+/**=========================================================
+ * Module: constants.js
+ * Define constants to inject across the application
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .run(appRun);
+
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });*/
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
+    }
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
         .module('app.lazyload')
         .config(lazyloadConfig);
 
@@ -794,123 +916,6 @@ var API = {
     }
 
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .config(coreConfig);
-
-    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
-    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
-
-      var core = angular.module('app.core');
-      // registering components after bootstrap
-      core.controller = $controllerProvider.register;
-      core.directive  = $compileProvider.directive;
-      core.filter     = $filterProvider.register;
-      core.factory    = $provide.factory;
-      core.service    = $provide.service;
-      core.constant   = $provide.constant;
-      core.value      = $provide.value;
-
-      // Disables animation on items with class .ng-no-animation
-      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
-
-      // Improve performance disabling debugging features
-      // $compileProvider.debugInfoEnabled(false);
-
-    }
-
-})();
-/**=========================================================
- * Module: constants.js
- * Define constants to inject across the application
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .constant('APP_MEDIAQUERY', {
-          'desktopLG':             1200,
-          'desktop':                992,
-          'tablet':                 768,
-          'mobile':                 480
-        })
-      ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .run(appRun);
-
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
-
-      // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });*/
-
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
-
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Hooks Example
-      // ----------------------------------- 
-
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
-
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
-
-    }
-
-})();
-
-
 /**
  * Created by Yoni on 12/10/2017.
  */
@@ -922,14 +927,18 @@ var API = {
         .module('app.manage_roles')
         .controller('CreateRoleController', CreateRoleController);
 
-    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService'];
-    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService) {
+    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService','blockUI','$mdPanel'];
+    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService,blockUI,$mdPanel) {
         var vm = this;
         vm.cancel = _cancel;
         vm.saveRole = _saveRole;
         vm.changeModuleStyle = _modulesStyle;
+        vm.showFilterDialog = _showFilterDialog;
+        vm.showFilter = false;
         vm.isEdit = items !== null;
         vm.role = items !== null?items:null;
+
+        var myBlockUI = blockUI.instances.get('RoleBlockUI');
 
         initialize();
 
@@ -949,44 +958,19 @@ var API = {
             });
         }
 
-        function _saveRole() {
-            preparePermissions();
-            if(vm.isEdit){
-                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
-                        console.log("updated successfully", data);
-                        $mdDialog.hide();
-                        AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
-                    },
-                    function (error) {
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to update Role",message);
-                        console.log("could not be saved", error);
-                    });
-            }else {
-
-                ManageRoleService.SaveRole( vm.role).then(function (data) {
-                        AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
-                        $mdDialog.hide();
-                    },
-                    function (error) {
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to Save Role",message);
-                        console.log("could not be saved", error);
-                    });
-            }
-        }
-
         function initialize(){
-
-            if(ManageRoleService.GetPermissionsFromStore() !== null){
-                vm.permissions = ManageRoleService.GetPermissionsFromStore();
-                console.log("permissions from storage",vm.permissions);
+            myBlockUI.start();
+            var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
+            if(permissionFromStore !== null){
+                myBlockUI.stop();
+                vm.permissions = permissionFromStore;
                 if(vm.isEdit){
                     setPermissions();
                 }
 
             }else {
                 ManageRoleService.GetPermissions().then(function(response){
+                    myBlockUI.stop();
                     vm.permissions = response.data.docs;
                     ManageRoleService.StorePermissions(vm.permissions);
                     console.log("permissions from api",vm.permissions);
@@ -994,12 +978,50 @@ var API = {
                         setPermissions();
                     }
                 },function(error){
+                    myBlockUI.stop();
                     console.log("error permissions",error);
                 });
 
             }
 
         }
+
+        function _saveRole() {
+            myBlockUI.start();
+            preparePermissions();
+            if(vm.isEdit){
+                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
+                        myBlockUI.stop();
+                        $mdDialog.hide();
+                        AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
+                    },
+                    function (error) {
+                        myBlockUI.stop();
+                    var message = error.data.error.message;
+                        AlertService.showError("Failed to update Role",message);
+                        console.log("could not be saved", error);
+                    });
+            }else {
+
+                ManageRoleService.SaveRole( vm.role).then(function (data) {
+                        myBlockUI.stop();
+                        AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
+                        $mdDialog.hide();
+                    },
+                    function (error) {
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to Save Role",message);
+                        console.log("could not be saved", error);
+                    });
+            }
+        }
+
+        function _showFilterDialog(show) {
+
+        }
+
+
 
         function _modulesStyle(module){
             var style = '';
@@ -1013,7 +1035,7 @@ var API = {
                 case 'USER_MANAGEMENT':
                     style =  'label label-green';
                     break;
-                case 'SCREENING_MODULE':
+                case 'CLIENT_MANAGEMENT':
                     style =  'label label-warning';
                     break;
                 case 'MFI_SETUP':
@@ -1024,10 +1046,6 @@ var API = {
             }
             return style;
         }
-
-
-
-
 
         function _cancel() {
             $mdDialog.cancel();
@@ -1234,21 +1252,22 @@ var API = {
                     access_branches:[],
                     multi_branches: vm.multi_branches
                 };
+                userInfo.access_branches.push(userInfo.default_branch);
+
+                _.forEach(vm.user.selected_access_branches,function(accessBranch){
+
+                    var found = userInfo.access_branches.some(function (el) {
+                        return el._id === accessBranch._id;
+                    });
+
+                    if (!found) {
+                        userInfo.access_branches.push(accessBranch._id);
+                    }
+                });
                 if(vm.isEdit){
 
                     userInfo._id = vm.user.account._id;
-                    userInfo.access_branches.push(userInfo.default_branch);
 
-                    _.forEach(vm.user.selected_access_branches,function(accessBranch){
-
-                        var found = userInfo.access_branches.some(function (el) {
-                            return el._id === accessBranch._id;
-                        });
-
-                        if (!found) {
-                            userInfo.access_branches.push(accessBranch._id);
-                        }
-                    });
 
                     ManageUserService.UpdateUser( userInfo ).then(function (data) {
                             myBlockUI.stop();
@@ -2841,7 +2860,7 @@ var API = {
                 url: '/manage_role',
                 title: 'manage roles',
                 templateUrl: helper.basepath('manageroles/manage.roles.html'),
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select'),
                 controller: 'ManageRoleController',
                 controllerAs: 'vm'
             })
@@ -2874,7 +2893,6 @@ var API = {
                 title: "clients detail",
                 templateUrl:helper.basepath('manage_clients/client.detail.html'),
                 controller: "ClientDetailController",
-                resolve:helper.resolveFor('blockUI'),
                 controllerAs: 'vm'
             })
 
@@ -2887,7 +2905,7 @@ var API = {
             .state('page', {
                 url: '/page',
                 templateUrl: 'app/pages/page.html',
-                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert','toaster'),
+                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert','toaster','blockUI'),
                 controller: ['$rootScope', function($rootScope) {
                     $rootScope.app.layout.isBoxed = false;
                 }]
@@ -4674,9 +4692,9 @@ function runBlock() {
 
     angular.module("app.mfi").controller("BranchController", BranchController);
 
-    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService'];
+    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
 
-  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService) {
+  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
     var vm = this;
 
     vm.addBranch = addBranch;
@@ -4688,7 +4706,6 @@ function runBlock() {
     function getBranches() {
       MainService.GetBranches().then(
         function(response) {
-            // console.log("branches",response);
           vm.branches = response.data.docs;
         },
         function(error) {
@@ -4764,9 +4781,9 @@ function runBlock() {
 
   angular.module("app.mfi").controller("MFIController", MFIController);
 
-  MFIController.$inject = ['AlertService', '$scope','MainService','CommonService'];
+  MFIController.$inject = ['AlertService', '$scope','MainService','CommonService','blockUI'];
 
-  function MFIController(AlertService,$scope,MainService,CommonService)
+  function MFIController(AlertService,$scope,MainService,CommonService,blockUI)
 
   {
     var vm = this;
@@ -4786,11 +4803,15 @@ function runBlock() {
       vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFISetupForm, vm.MFI);
 
       if (vm.IsValidData) {
+          var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
+          myBlockUI.start();
         if (_.isUndefined(vm.MFI._id)) {
           MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
+              myBlockUI.stop();
               AlertService.showSuccess("Created MFI successfully","MFI Information created successfully");
               console.log("Create MFI", response);
             }, function(error) {
+              myBlockUI.stop();
               console.log("Create MFI Error", error);
               var message = error.data.error.message;
             AlertService.showError("Failed to create MFI!", message);
@@ -4799,9 +4820,11 @@ function runBlock() {
         } else {
           
           MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
+              myBlockUI.stop();
               AlertService.showSuccess("MFI Info updated successfully","MFI Information updated successfully");
               console.log("Update MFI", response);
             }, function(error) {
+              myBlockUI.stop();
               console.log("UpdateMFI Error", error);
               var message = error.data.error.message;
               AlertService.showError("MFI Information update failed",message);
@@ -4813,8 +4836,11 @@ function runBlock() {
     }
 
     function init() {
+        var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
+        myBlockUI.start();
       MainService.GetMFI().then(
         function(response) {
+            myBlockUI.stop();
           if (response.data.length > 0) {
             vm.MFI = response.data[0];
             var dt = new Date(vm.MFI.establishment_year);
@@ -4823,6 +4849,7 @@ function runBlock() {
           console.log("Get MFI", response);
         },
         function(error) {
+            myBlockUI.stop();
           console.log("Get MFI Error", error);
         }
       );
@@ -4858,9 +4885,9 @@ function runBlock() {
     angular.module('app.mfi')
         .controller('CreateBranchController', CreateBranchController);
 
-    CreateBranchController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService'];
+    CreateBranchController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService','blockUI'];
 
-  function CreateBranchController($mdDialog, items,AlertService,CommonService,MainService) {
+  function CreateBranchController($mdDialog, items,AlertService,CommonService,MainService,blockUI) {
       var vm = this;
       vm.cancel = _cancel;
       vm.saveBranch = _saveBranch;
@@ -4873,22 +4900,26 @@ function runBlock() {
       init();
 
       function _saveBranch() {
-
           vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFIBranchForm, vm.branch);
+
           if(vm.branchForm.inputEmail.$error.email){
               AlertService.showWarning("Branch validation failed","Please provide valid email address");
           }else if(vm.IsValidData){
+              var myBlockUI = blockUI.instances.get('CreateBranchBlockUI')
+              myBlockUI.start();
               if(!vm.isEdit){
                   //Save new branch API
                   MainService.CreateBranch(vm.branch).then(
                       function(data) {
+                          myBlockUI.stop();
                           $mdDialog.hide();
                           AlertService.showSuccess(
-                              "Saved! Branch saved successfully.",
-                              "SUCCESS"
+                              "success",
+                              "Saved! Branch saved successfully."
                           );
                       },
                       function(response) {
+                          myBlockUI.stop();
                           var message = response.data.error.message;
                           console.log("could not be saved", response.data);
                           AlertService.showError(
@@ -4898,7 +4929,7 @@ function runBlock() {
                       }
                   )
               }else {
-                  debugger
+
                   var upBranch = {
                       _id: vm.branch._id,
                       name: vm.branch.name,
@@ -4906,6 +4937,7 @@ function runBlock() {
                       branch_type: vm.branch.branch_type,
                       opening_date: vm.branch.opening_date
                   };
+
                       if(!_.isUndefined(vm.branch.email)){
                         upBranch.email =vm.branch.email;
                       }
@@ -4915,6 +4947,7 @@ function runBlock() {
                       //Update branch api
                       MainService.UpdateBranch(upBranch).then(
                         function(response) {
+                            myBlockUI.stop();
                           AlertService.showSuccess(
                             "Branch Updated",
                             "Branch updated successfully."
@@ -4922,6 +4955,7 @@ function runBlock() {
                           $mdDialog.hide();
                         },
                         function(response) {
+                            myBlockUI.stop();
                             var message = response.data.error.message;
                           console.log("could not be updated", response.data);
                           AlertService.showError(

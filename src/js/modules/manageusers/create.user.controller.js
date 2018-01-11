@@ -39,21 +39,22 @@
                     access_branches:[],
                     multi_branches: vm.multi_branches
                 };
+                userInfo.access_branches.push(userInfo.default_branch);
+
+                _.forEach(vm.user.selected_access_branches,function(accessBranch){
+
+                    var found = userInfo.access_branches.some(function (el) {
+                        return el._id === accessBranch._id;
+                    });
+
+                    if (!found) {
+                        userInfo.access_branches.push(accessBranch._id);
+                    }
+                });
                 if(vm.isEdit){
 
                     userInfo._id = vm.user.account._id;
-                    userInfo.access_branches.push(userInfo.default_branch);
 
-                    _.forEach(vm.user.selected_access_branches,function(accessBranch){
-
-                        var found = userInfo.access_branches.some(function (el) {
-                            return el._id === accessBranch._id;
-                        });
-
-                        if (!found) {
-                            userInfo.access_branches.push(accessBranch._id);
-                        }
-                    });
 
                     ManageUserService.UpdateUser( userInfo ).then(function (data) {
                             myBlockUI.stop();
