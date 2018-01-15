@@ -8,14 +8,13 @@
 
     angular.module("app.clients").controller("ClientsController", ClientsController);
 
-    ClientsController.$inject = ['ClientService','$state'];
+    ClientsController.$inject = ['ClientService','$state','$scope','$timeout'];
 
-    function ClientsController(ClientService,$state) {
+    function ClientsController(ClientService,$state,$scope,$timeout) {
         var vm = this;
         vm.pageSizes = [10, 25, 50, 100, 250, 500];
-        vm.filter = {show : false};
+        vm.filter = {show : true};
         vm.clientDetail = _clientDetail;
-        vm.setClientProfile = _setClientProfile;
         vm.clearSearch = function(){
             vm.request.Search = "";
             vm.filter.show = false;
@@ -24,18 +23,35 @@
         vm.request = {
             Start: 1,
             limit:100,
-            PageSize: 10
+            PageSize: 10,
+            Search:''
         };
+
+
 
 
         callApi();
 
 
+
         function callApi(){
-            ClientService.GetClients().then(function(response){
+            $scope.promise = ClientService.GetClients().then(function(response){
                 vm.clients = response.data.docs;
-                console.log("Clients list",response);
+                vm.clientsCopy = angular.copy(vm.clients);
             },function (error) {
+                console.log("error",error);
+            });
+
+        }
+
+        function SearchApi(SearchText){
+            $scope.promise = ClientService.SearchClient(SearchText)
+                .then(function(response){
+                vm.clients = response.data.docs;
+                vm.clientsCount = response.data.total_docs_count;
+                console.log(response);
+            },function (error) {
+                vm.clients = vm.clientsCopy;
                 console.log("error",error);
             });
         }
@@ -44,9 +60,16 @@
             $state.go('app.client_detail',{id:client._id});
         }
 
-        function _setClientProfile(picture) {
-            return picture? picture: 'app/img/user/02.png';
-        }
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.request.Search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                if(newValue.length > 2){
+                    SearchApi(newValue);
+                }
+
+            }
+        });
     }
 
 

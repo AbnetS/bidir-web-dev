@@ -13,9 +13,12 @@
     function ClientService($http, CommonService) {
         return {
             GetClients: _getClients,
-            GetClientDetail:_getClientDetail
+            GetClientDetail:_getClientDetail,
+            SearchClient:_searchClient
         };
-
+        function _searchClient(searchText) {
+            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
+        }
         function _getClients(){
             return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.All));
         }

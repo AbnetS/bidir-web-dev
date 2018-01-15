@@ -67,6 +67,7 @@
             buildUrl: _buildUrl,
             buildPaginatedUrl:_buildPaginatedUrl,
             buildUrlWithParam: _buildUrlWithParam,
+            buildUrlForSearch: _buildUrlForSearch,
             Validation: {
               ComputeValidation: function (validationObject) {
                   var isValid = true;
@@ -141,6 +142,9 @@
 
         function _buildUrlWithParam(service,url, id) {
             return url===''?API.Config.BaseUrl + service + '/' + id : API.Config.BaseUrl + service +'/'+ url + '/' + id;
+        }
+        function _buildUrlForSearch(service,url, searchText) {
+            return API.Config.BaseUrl + service +'/'+ url + '/search?search=' + searchText;
         }
     }
 

@@ -13,6 +13,24 @@
             <div class="col-lg-12">
 
 
+                <md-toolbar   class="md-table-toolbar md-default">
+
+                    <div class="md-toolbar-tools">
+                        <md-button class="md-icon-button" ng-click="vm.search()">
+                            <i class="fa fa-search"></i>
+                        </md-button>
+
+                        <!-- Input Text -->
+                        <md-input-container flex>
+                            <input id="search-input" type="text" ng-model="vm.request.Search"/>
+                        </md-input-container>
+
+                        <md-button class="md-icon-button" ng-click="vm.clearSearch()">
+                            <i class="fa fa-times"></i>
+                        </md-button>
+                    </div>
+                </md-toolbar>
+
                 <md-table-container>
                     <table md-table md-progress="promise" class="table-hover">
                         <thead md-head class="bg-grey">
@@ -35,7 +53,10 @@
                             <td md-cell>{{$index + 1}}</td>
                             <td>
                                 <div class="media">
-                                <img class="img-responsive img-circle thumb32" ng-src="{{client.picture}}" src="/app/img/user/02.jpg" alt="Client Picture">
+                                <img class="img-responsive img-circle thumb32"
+                                     ng-src="{{client.picture}}"
+                                     src="/app/img/user/02.jpg"
+                                     alt="Client Picture">
                                 </div>
                             </td>
                             <td md-cell>
@@ -57,7 +78,7 @@
                     </table>
                 </md-table-container>
 
-                <md-table-pagination   md-total="{{vm.clients.total_docs_count}}"></md-table-pagination>
+                <!--<md-table-pagination   md-total="{{vm.clientsCount}}"></md-table-pagination>-->
             </div>
         </div>
     </div>
