@@ -51,7 +51,8 @@
                                    'vendor/morris.js/morris.css'],
             'loaders.css':          ['vendor/loaders.css/loaders.css'],
             'spinkit':              ['vendor/spinkit/css/spinkit.css'],
-            'underscore':           ['vendor/underscore/underscore.js']
+            'underscore':           ['vendor/underscore/underscore.js'],
+            'selectize':           ['vendor/selectize/dist/css/selectize.default.css']
           },
           // Angular based script (use the right module name)
           modules: [

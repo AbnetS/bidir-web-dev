@@ -9,46 +9,38 @@
         .module('app.manage_users')
         .controller('ManageUsersController', ManageUsersController);
 
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder','$scope', 'DTColumnDefBuilder', 'ManageUserService','$mdDialog','AlertService','AuthService'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder,$scope, DTColumnDefBuilder, ManageUserService,$mdDialog,AlertService,AuthService) {
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'ManageUserService','$mdDialog','AlertService'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder, ManageUserService,$mdDialog,AlertService) {
         var vm = this;
-        $scope.pageData = {
-            total:0
-        };
+        vm.currentUser = {};
         vm.addUser = _addUser;
         vm.editUser = _editUser;
         vm.changeStatus = _changeStatus;
         vm.statusStyle = _statusStyle;
+        vm.onSelectedBranch = _onSelectedBranch;
 
         activate();
 
         ////////////////
         function activate() {
 
+            vm.currentUser.user_access_branches = ManageUserService.GetUserAccessBranches();
+
             fetchUserData();
 
             vm.dtOptions = DTOptionsBuilder.newOptions()
                 .withPaginationType('full_numbers')
                 .withDOM('<"html5buttons"B>lTfgitp')
-                .withButtons([
-                    {extend: 'copy',  className: 'btn-sm' },
-                    {extend: 'csv',   className: 'btn-sm' },
-                    {extend: 'excel', className: 'btn-sm', title: 'XLS-File'},
-                    {extend: 'pdf',   className: 'btn-sm', title: $('title').text() },
-                    {extend: 'print', className: 'btn-sm' }
-                ]);
-            vm.dtColumnDefs = [
-                DTColumnDefBuilder.newColumnDef(0),
-                DTColumnDefBuilder.newColumnDef(1),
-                DTColumnDefBuilder.newColumnDef(2),
-                DTColumnDefBuilder.newColumnDef(3).notSortable()
-            ];
+                .withOption('processing', true)
+                .withOption('scrollY', 430);
 
         }
+
         function fetchUserData() {
             ManageUserService.GetUsers().then(function(response){
-                console.log("users list",response);
+                // console.log("users list",response);
                 vm.users = response.data.docs;
+                vm.usersCopy = angular.copy(vm.users);
             },function(error){
                 console.log("error",error);
             });
@@ -121,7 +113,16 @@
                 });
         }
 
+        function _onSelectedBranch(){
+         vm.users = vm.usersCopy;
 
+         vm.users = _.filter(vm.users,function(user){
+                 if(!_.isUndefined(user.account)){
+                     return user.account.default_branch._id === vm.currentUser.selected_access_branch._id;
+                 }
+
+            });
+        }
         function _statusStyle(status){
             var style = '';
             switch (status){
