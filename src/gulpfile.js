@@ -322,7 +322,7 @@ gulp.task('watch', function() {
     log('Watching source files..');
 
     gulp.watch(source.scripts, ['scripts:app']);
-    gulp.watch(source.styles.watch, ['styles:app', 'styles:app:rtl']);
+    gulp.watch(source.styles.watch, ['styles:app']);
     gulp.watch(source.styles.themes, ['styles:themes']);
     gulp.watch(source.templates.views, ['templates:views']);
     gulp.watch(source.templates.index, ['templates:index']);
@@ -415,7 +415,6 @@ gulp.task('default', gulpsync.sync([
 gulp.task('assets', [
     'scripts:app',
     'styles:app',
-    'styles:app:rtl',
     'styles:themes',
     'templates:index',
     'templates:views'
