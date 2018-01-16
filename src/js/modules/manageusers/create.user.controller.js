@@ -19,7 +19,8 @@
         vm.saveUser = _saveUser;
         vm.onSelectedDefaultBranch = _onSelectedDefaultBranch;
         vm.isEdit = items !== null;
-        vm.user = items !== null?items:null;
+        vm.user = items !== null?items:{};
+        vm.user.selected_access_branches = [];
 
         initialize();
 
@@ -125,7 +126,6 @@
             if(AuthService.IsSuperuser()){
                 ManageUserService.GetBranches().then(function(response){
                     vm.branches = response.data.docs;
-                    vm.user.selected_access_branches = [];
 
                     if(vm.isEdit){
                         angular.forEach(vm.branches,function(branch){
@@ -185,10 +185,8 @@
 
 
         function _onSelectedDefaultBranch() {
-            if (vm.user.selected_access_branches.filter(function(branch)
-                { return branch._id === vm.user.selected_default_branch._id; }).length > 0) {
-                /* The branch exist on the list */
-            }else {
+            var branchExist = vm.user.selected_access_branches.indexOf(vm.user.selected_default_branch);
+            if (branchExist === -1) {
                 vm.user.selected_access_branches.push(vm.user.selected_default_branch);
             }
         }

@@ -1,6 +1,6 @@
 <md-dialog style="min-width: 800px">
     <form role="form" name="vm.roleForm" novalidate>
-        <md-toolbar class="small bg-success">
+        <md-toolbar class="small">
             <div class="md-toolbar-tools small">
                 <h2>Role</h2>
                 <span flex></span>
@@ -72,7 +72,7 @@
                                     <div class="list-group-item" ng-repeat="permission in vm.permissions | filter : vm.search">
                                         <div class="media-box">
                                             <div class="media-box-body clearfix">
-                                                <strong class="media-box-heading text-primary">
+                                                <strong class="media-box-heading">
                                                     <label class="mda-checkbox">
                                                         <input type="checkbox" ng-model="permission.checked">
                                                         <em class="bg-green-500"></em>{{ permission.name }}</label>

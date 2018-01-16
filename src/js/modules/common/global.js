@@ -42,7 +42,8 @@ var API = {
         },
         Clients:{
             All:'clients/paginate?source=web',
-            Client:'clients'
+            Client:'clients',
+            SearchClient:''
         }
     }
 };
