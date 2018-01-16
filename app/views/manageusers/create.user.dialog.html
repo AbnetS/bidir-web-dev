@@ -1,6 +1,6 @@
-<md-dialog flex="50" class="bidir-bg">
+<md-dialog flex="50">
     <form role="form" name="vm.userForm" novalidate block-ui="CreateUserForm">
-        <md-toolbar>
+        <md-toolbar class="small">
             <div class="md-toolbar-tools small">
                 <h2>User</h2>
                 <span flex></span>
@@ -59,7 +59,7 @@
                         <span class="required" aria-required="true"> * </span>
                         <br/>
                         <ui-select ng-model="vm.user.selected_default_branch" theme="select2"
-                                   on-select="vm.onSelectedDefaultBranch(branch)"
+                                   on-select="vm.onSelectedDefaultBranch()"
                                    title="Choose default branch">
                             <ui-select-match placeholder="Select or search a branch from the list...">
                                 {{$select.selected.name}} - {{$select.selected.location}}</ui-select-match>
@@ -73,10 +73,10 @@
                     </br>
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                             <label class="mda-checkbox">
-                                    <input type="checkbox" ng-model="vm.multi_branches">
+                                    <input type="checkbox" ng-model="vm.user.multi_branches">
                                     <em class="bg-green-500"></em>Access All Branches</label>
                                     <p></p>
-                        <ui-select ng-disabled="vm.multi_branches" multiple 
+                        <ui-select ng-disabled="vm.user.multi_branches" multiple
                                    ng-model="vm.user.selected_access_branches"
                                    theme="select2" close-on-select="false" style="width:100%">
                             <ui-select-match placeholder="Select access branch...">
@@ -151,12 +151,13 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
+
             <div layout="row" layout-align="start" flex>
                 <md-button class="md-raised md-button-small md-ink-ripple" ng-click="vm.cancel()">
                     Cancel
                 </md-button>
             </div>
-            <md-button class="md-raised md-button-small md-ink-ripple pull-right"
+            <md-button class="md-raised md-button-small md-success pull-right"
                        ng-click="vm.saveUser()">
                 <i class="fa fa-save"></i> {{vm.isEdit? 'Update':'Save'}}
             </md-button>

@@ -96,6 +96,7 @@
                 }, function () {
                 });
         }
+
         function _editUser(user,ev){
             $mdDialog.show({
                 locals: {items: user},
@@ -123,6 +124,7 @@
 
             });
         }
+
         function _statusStyle(status){
             var style = '';
             switch (status){

@@ -1316,6 +1316,7 @@ var API = {
 
         function initialize(){
             if(vm.isEdit){
+                console.log("user",vm.user);
                 angular.extend(vm.user, vm.user.account);
                 vm.multi_branch = vm.user.multi_branch;
                 var dt = new Date(vm.user.hired_date);
@@ -1399,12 +1400,12 @@ var API = {
 
 
         function _onSelectedDefaultBranch() {
-            if(vm.isEdit){
-                //TODO: REMOVE Branch
+            if (vm.user.selected_access_branches.filter(function(branch)
+                { return branch._id === vm.user.selected_default_branch._id; }).length > 0) {
+                /* The branch exist on the list */
             }else {
                 vm.user.selected_access_branches.push(vm.user.selected_default_branch);
             }
-
         }
 
         vm.clear = function() {
@@ -1531,6 +1532,7 @@ var API = {
                 }, function () {
                 });
         }
+
         function _editUser(user,ev){
             $mdDialog.show({
                 locals: {items: user},
@@ -1558,6 +1560,7 @@ var API = {
 
             });
         }
+
         function _statusStyle(status){
             var style = '';
             switch (status){
