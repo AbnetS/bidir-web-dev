@@ -902,11 +902,11 @@ body,
 }
 .topnavbar .navbar-header {
   background-color: transparent;
-  background-image: -webkit-linear-gradient(left, #4CAF50 0%, #4CAF50 100%);
-  background-image: -o-linear-gradient(left, #4CAF50 0%, #4CAF50 100%);
-  background-image: linear-gradient(to right, #4CAF50 0%, #4CAF50 100%);
+  background-image: -webkit-linear-gradient(left, #039661 0%, #039661 100%);
+  background-image: -o-linear-gradient(left, #039661 0%, #039661 100%);
+  background-image: linear-gradient(to right, #039661 0%, #039661 100%);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff4caf50', endColorstr='#ff4caf50', GradientType=1);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff039661', endColorstr='#ff039661', GradientType=1);
 }
 @media only screen and (min-width: 768px) {
   .topnavbar .navbar-header {
@@ -914,17 +914,17 @@ body,
   }
 }
 .topnavbar .navbar-nav > li > .navbar-text {
-  color: #4CAF50;
+  color: #039661;
 }
 .topnavbar .navbar-nav > li > a,
 .topnavbar .navbar-nav > .open > a {
-  color: #4CAF50;
+  color: #039661;
 }
 .topnavbar .navbar-nav > li > a:hover,
 .topnavbar .navbar-nav > .open > a:hover,
 .topnavbar .navbar-nav > li > a:focus,
 .topnavbar .navbar-nav > .open > a:focus {
-  color: #2d682f;
+  color: #013220;
 }
 .topnavbar .navbar-nav > .active > a,
 .topnavbar .navbar-nav > .open > a,
@@ -938,21 +938,21 @@ body,
   color: #fff;
 }
 .topnavbar .nav-wrapper {
-  background-color: #4CAF50;
-  background-image: -webkit-linear-gradient(left, #4CAF50 0%, #4CAF50 100%);
-  background-image: -o-linear-gradient(left, #4CAF50 0%, #4CAF50 100%);
-  background-image: linear-gradient(to right, #4CAF50 0%, #4CAF50 100%);
+  background-color: #039661;
+  background-image: -webkit-linear-gradient(left, #039661 0%, #039661 100%);
+  background-image: -o-linear-gradient(left, #039661 0%, #039661 100%);
+  background-image: linear-gradient(to right, #039661 0%, #039661 100%);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff4caf50', endColorstr='#ff4caf50', GradientType=1);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff039661', endColorstr='#ff039661', GradientType=1);
 }
 @media only screen and (min-width: 768px) {
   .topnavbar {
-    background-color: #4CAF50;
-    background-image: -webkit-linear-gradient(left, #4CAF50 0%, #4CAF50 100%);
-    background-image: -o-linear-gradient(left, #4CAF50 0%, #4CAF50 100%);
-    background-image: linear-gradient(to right, #4CAF50 0%, #4CAF50 100%);
+    background-color: #039661;
+    background-image: -webkit-linear-gradient(left, #039661 0%, #039661 100%);
+    background-image: -o-linear-gradient(left, #039661 0%, #039661 100%);
+    background-image: linear-gradient(to right, #039661 0%, #039661 100%);
     background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff4caf50', endColorstr='#ff4caf50', GradientType=1);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff039661', endColorstr='#ff039661', GradientType=1);
   }
   .topnavbar .navbar-nav > .open > a,
   .topnavbar .navbar-nav > .open > a:hover,
@@ -970,7 +970,7 @@ body,
   .topnavbar .navbar-nav > .open > a:hover,
   .topnavbar .navbar-nav > li > a:focus,
   .topnavbar .navbar-nav > .open > a:focus {
-    color: #2d682f;
+    color: #013220;
   }
 }
 /* ========================================================================
@@ -990,7 +990,7 @@ body,
 .sidebar .nav > li > .nav-item:focus,
 .sidebar .nav > li > a:hover,
 .sidebar .nav > li > .nav-item:hover {
-  color: #4CAF50;
+  color: #039661;
 }
 .sidebar .nav > li > a > em,
 .sidebar .nav > li > .nav-item > em {
@@ -1003,14 +1003,14 @@ body,
 .sidebar .nav > li.active .nav,
 .sidebar .nav > li.open .nav {
   background-color: #fcfcfc;
-  color: #4CAF50;
+  color: #039661;
 }
 .sidebar .nav > li.active > a > em,
 .sidebar .nav > li.open > a > em {
-  color: #4CAF50;
+  color: #039661;
 }
 .sidebar .nav > li.active {
-  border-left-color: #4CAF50;
+  border-left-color: #039661;
 }
 .sidebar-subnav {
   background-color: #fff;
@@ -1026,16 +1026,16 @@ body,
 .sidebar-subnav > li > .nav-item:focus,
 .sidebar-subnav > li > a:hover,
 .sidebar-subnav > li > .nav-item:hover {
-  color: #4CAF50;
+  color: #039661;
 }
 .sidebar-subnav > li.active > a,
 .sidebar-subnav > li.active > .nav-item {
-  color: #4CAF50;
+  color: #039661;
 }
 .sidebar-subnav > li.active > a:after,
 .sidebar-subnav > li.active > .nav-item:after {
-  border-color: #4CAF50;
-  background-color: #4CAF50;
+  border-color: #039661;
+  background-color: #039661;
 }
 /* ========================================================================
    Component: offsidebar

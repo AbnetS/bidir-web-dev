@@ -1318,7 +1318,7 @@ var API = {
             if(vm.isEdit){
                 console.log("user",vm.user);
                 angular.extend(vm.user, vm.user.account);
-                vm.multi_branch = vm.user.multi_branch;
+                // vm.multi_branch = vm.user.multi_branch;
                 var dt = new Date(vm.user.hired_date);
                 vm.user.hired_date = dt;
             }
@@ -1342,6 +1342,7 @@ var API = {
                 ManageUserService.GetBranches().then(function(response){
                     vm.branches = response.data.docs;
                     vm.user.selected_access_branches = [];
+
                     if(vm.isEdit){
                         angular.forEach(vm.branches,function(branch){
                             //LOAD Default Branch select value
@@ -1352,7 +1353,7 @@ var API = {
                                 }
                             }
                             //LOAD access branch select values
-                            if(vm.user.access_branches.length > 0)
+                            if(vm.user.access_branches.length > 0 && !vm.user.multi_branches)
                             {
                                 var found = vm.user.access_branches.some(function (accBranch) {
                                     return accBranch._id === branch._id;

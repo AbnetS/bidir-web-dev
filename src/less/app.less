@@ -70,10 +70,10 @@
 }
 .bidir-bg{
   color: #fff;
-  background-color: #4CAF50;
+  background-color: @brand-success;
 }
 .md-toolbar-tools {
-  background-color: #4CAF50;
+  background-color: @brand-success;
 }
 
 .bidir-color{
@@ -86,6 +86,7 @@
   max-height:180px;
   overflow: hidden
 }
+
 md-toolbar {
   box-sizing: border-box;
   display: -webkit-flex;
@@ -114,6 +115,7 @@ md-toolbar.small {
   min-height: 36px;
   width: 100%;
 }
+
 .md-toolbar-tools {
   font-size: 16px;
   letter-spacing: 0.005em;
@@ -164,7 +166,6 @@ md-dialog{
 
 .md-button-small{
   min-height: 26px;
-  min-height: 26px;
   font-size: 12px;
   line-height:26px;
 }
@@ -173,3 +174,20 @@ md-dialog{
   font-size: 11px;
   line-height: 25px;
 }
+
+//.md-toolbar-tools {
+//  background-color: transparent;
+//  color: #000000;
+//}
+
+.md-button.md-default-theme.md-primary.md-fab:not([disabled]),
+.md-button.md-primary.md-fab:not([disabled]),
+.md-button.md-default-theme.md-primary.md-raised:not([disabled]),
+.md-button.md-primary.md-raised:not([disabled])
+ {
+  background-color: @brand-success;
+}
+//md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.md-menu-toolbar) {
+//  background-color: @gray;
+//  color: rgba(255,255,255,0.87);
+//}

@@ -228,7 +228,7 @@ fieldset .form-group {
   border: 0;
 }
 .nav.nav-pills .active > a {
-  background-color: #3F51B5;
+  background-color: #4CAF50;
 }
 .dropdown-menu {
   border-radius: 3px;
@@ -1541,7 +1541,7 @@ _:-ms-lang(x),
   color: #909FA7;
 }
 .offsidebar .nav-tabs.nav-justified > li.active > a {
-  color: #3F51B5;
+  color: #4CAF50;
 }
 @media only screen and (min-width: 768px) {
   .offsidebar {
@@ -1582,16 +1582,16 @@ _:-ms-lang(x),
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: #4CAF50;
-  background-image: -webkit-linear-gradient(90deg, #4CAF50 10%, #449d48 90%);
+  background-color: #039661;
+  background-image: -webkit-linear-gradient(90deg, #039661 10%, #027d51 90%);
   /* Chrome 10+, Saf5.1+ */
-  background-image: -moz-linear-gradient(90deg, #4CAF50 10%, #449d48 90%);
+  background-image: -moz-linear-gradient(90deg, #039661 10%, #027d51 90%);
   /* FF3.6+ */
-  background-image: -ms-linear-gradient(90deg, #4CAF50 10%, #449d48 90%);
+  background-image: -ms-linear-gradient(90deg, #039661 10%, #027d51 90%);
   /* IE10 */
-  background-image: -o-linear-gradient(90deg, #4CAF50 10%, #449d48 90%);
+  background-image: -o-linear-gradient(90deg, #039661 10%, #027d51 90%);
   /* Opera 11.10+ */
-  background-image: linear-gradient(90deg, #4CAF50 10%, #449d48 90%);
+  background-image: linear-gradient(90deg, #039661 10%, #027d51 90%);
   /* W3C */
   z-index: 9999;
   -webkit-transition: opacity 0.65s;
@@ -1714,7 +1714,7 @@ h3 > .breadcrumb.pull-right,
   -moz-transition: width 350ms;
   -o-transition: width 350ms;
   transition: width 350ms;
-  background: #2196F3;
+  background: #FF9800;
   border-bottom-right-radius: 1px;
   border-top-right-radius: 1px;
 }
@@ -1726,10 +1726,10 @@ h3 > .breadcrumb.pull-right,
   top: 0;
   height: 2px;
   opacity: .45;
-  -moz-box-shadow: #2196F3 1px 0 6px 1px;
-  -ms-box-shadow: #2196F3 1px 0 6px 1px;
-  -webkit-box-shadow: #2196F3 1px 0 6px 1px;
-  box-shadow: #2196F3 1px 0 6px 1px;
+  -moz-box-shadow: #FF9800 1px 0 6px 1px;
+  -ms-box-shadow: #FF9800 1px 0 6px 1px;
+  -webkit-box-shadow: #FF9800 1px 0 6px 1px;
+  box-shadow: #FF9800 1px 0 6px 1px;
   -moz-border-radius: 100%;
   -webkit-border-radius: 100%;
   border-radius: 100%;
@@ -1745,8 +1745,8 @@ h3 > .breadcrumb.pull-right,
   width: 14px;
   height: 14px;
   border: solid 2px transparent;
-  border-top-color: #2196F3;
-  border-left-color: #2196F3;
+  border-top-color: #FF9800;
+  border-left-color: #FF9800;
   border-radius: 10px;
   -webkit-animation: loading-bar-spinner 400ms linear infinite;
   -moz-animation: loading-bar-spinner 400ms linear infinite;
@@ -5178,12 +5178,12 @@ fieldset[disabled] .btn-pink.focus {
   color: #333 !important;
 }
 .btn-outline.btn-primary {
-  border-color: #3F51B5;
-  color: #3F51B5;
-}
-.btn-outline.btn-success {
   border-color: #4CAF50;
   color: #4CAF50;
+}
+.btn-outline.btn-success {
+  border-color: #039661;
+  color: #039661;
 }
 .btn-outline.btn-info {
   border-color: #2196F3;
@@ -5295,7 +5295,7 @@ fieldset[disabled] .btn-pink.focus {
   margin-bottom: 0;
 }
 .panel-heading-active {
-  background-color: #4CAF50 !important;
+  background-color: #039661 !important;
   font-weight: bold;
   font-size: 16px;
 }
@@ -5507,10 +5507,10 @@ fieldset[disabled] .btn-pink.focus {
   margin-right: 0;
 }
 .circle-primary {
-  background-color: #3F51B5;
+  background-color: #4CAF50;
 }
 .circle-success {
-  background-color: #4CAF50;
+  background-color: #039661;
 }
 .circle-info {
   background-color: #2196F3;
@@ -5549,10 +5549,10 @@ fieldset[disabled] .btn-pink.focus {
   background-color: transparent;
 }
 .circle-outline.circle-primary {
-  border: 1px solid #3F51B5;
+  border: 1px solid #4CAF50;
 }
 .circle-outline.circle-success {
-  border: 1px solid #4CAF50;
+  border: 1px solid #039661;
 }
 .circle-outline.circle-info {
   border: 1px solid #2196F3;
@@ -6014,30 +6014,30 @@ fieldset[disabled] .btn-pink.focus {
   margin: 0 auto;
 }
 .bg-primary {
-  background-color: #3F51B5;
+  background-color: #4CAF50;
   color: #fff !important;
 }
 .bg-primary-light {
-  background-color: #606fc7;
+  background-color: #6ec071;
   color: #fff !important;
 }
 .bg-primary-dark {
-  background-color: #32408f;
+  background-color: #3d8b40;
   color: #fff !important;
 }
 .bg-primary small {
   color: inherit;
 }
 .bg-success {
-  background-color: #4CAF50;
+  background-color: #039661;
   color: #fff !important;
 }
 .bg-success-light {
-  background-color: #6ec071;
+  background-color: #04c881;
   color: #fff !important;
 }
 .bg-success-dark {
-  background-color: #3d8b40;
+  background-color: #026441;
   color: #fff !important;
 }
 .bg-success small {
@@ -7387,7 +7387,7 @@ fieldset[disabled] .btn-pink.focus {
   margin-bottom: 0;
 }
 .md-welcome .md-welcome-msg {
-  background-color: #3F51B5;
+  background-color: #4CAF50;
   background-image: url('../img/welcome.jpg');
   background-position: 0 75%;
   color: #fff;
@@ -7536,14 +7536,14 @@ fieldset[disabled] .btn-pink.focus {
 .mda-form-control:focus,
 .mda-form-control.focus {
   padding-bottom: 1px;
-  border-color: #3F51B5;
+  border-color: #4CAF50;
   border-bottom-width: 2px;
 }
 .mda-form-control:focus ~ label,
 .mda-form-control.focus ~ label {
   top: 0!important;
   font-size: .85em!important;
-  color: #3F51B5;
+  color: #4CAF50;
   opacity: 1;
 }
 .mda-form-control ~ label {
@@ -7596,13 +7596,13 @@ textarea.mda-form-control {
 }
 .form-validate .mda-form-control.ng-dirty.ng-valid,
 .form-validate .mda-form-control.ng-dirty.ng-valid:focus {
-  border-color: #4CAF50;
+  border-color: #039661;
 }
 .form-validate .mda-form-control.ng-dirty.ng-valid:focus ~ label,
 .form-validate .mda-form-control.ng-dirty.ng-valid:focus:focus ~ label,
 .form-validate .mda-form-control.ng-dirty.ng-valid.focus ~ label,
 .form-validate .mda-form-control.ng-dirty.ng-valid:focus.focus ~ label {
-  color: #4CAF50;
+  color: #039661;
 }
 .float-label .mda-form-control ~ label {
   top: 20px;
@@ -7879,10 +7879,10 @@ md-tabs .md-tab.md-focused md-icon {
 }
 .bidir-bg {
   color: #fff;
-  background-color: #4CAF50;
+  background-color: #039661;
 }
 .md-toolbar-tools {
-  background-color: #4CAF50;
+  background-color: #039661;
 }
 .bidir-color {
   color: #4CAF50;
@@ -7976,4 +7976,10 @@ md-dialog {
   min-height: 8px;
   font-size: 11px;
   line-height: 25px;
+}
+.md-button.md-default-theme.md-primary.md-fab:not([disabled]),
+.md-button.md-primary.md-fab:not([disabled]),
+.md-button.md-default-theme.md-primary.md-raised:not([disabled]),
+.md-button.md-primary.md-raised:not([disabled]) {
+  background-color: #039661;
 }
