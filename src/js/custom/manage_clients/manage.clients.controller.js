@@ -66,6 +66,8 @@
             if (newValue !== oldValue) {
                 if(newValue.length > 2){
                     SearchApi(newValue);
+                }else{
+                    vm.clients = vm.clientsCopy;
                 }
 
             }

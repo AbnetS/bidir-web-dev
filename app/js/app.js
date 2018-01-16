@@ -74,12 +74,6 @@
 
 
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
-})();
 (function(angular) {
   "use strict";
 
@@ -95,6 +89,12 @@
   function routeConfig() {console.log("common config");}
 })(window.angular);
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
+})();
 (function() {
     'use strict';
 
@@ -144,6 +144,20 @@
     function routeConfig() {console.log("RM config");}
 
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.material', [
+            'ngMaterial'
+          ]);
+})();
 /**
  * Created by Yoni on 11/30/2017.
  */
@@ -167,16 +181,10 @@
     'use strict';
 
     angular
-        .module('app.maps', []);
+        .module('app.preloader', []);
 })();
-(function() {
-    'use strict';
 
-    angular
-        .module('app.material', [
-            'ngMaterial'
-          ]);
-})();
+
 (function() {
     'use strict';
 
@@ -187,10 +195,8 @@
     'use strict';
 
     angular
-        .module('app.preloader', []);
+        .module('app.settings', []);
 })();
-
-
 (function() {
     'use strict';
 
@@ -198,12 +204,6 @@
         .module('app.routes', [
             'app.lazyload'
         ]);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.settings', []);
 })();
 (function() {
     'use strict';
@@ -390,56 +390,6 @@
 })(window.angular);
 
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
-
 (function(angular) {
   "use strict";
 
@@ -576,6 +526,56 @@ var API = {
 };
 
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
 
 (function() {
     'use strict';
@@ -1210,422 +1210,6 @@ var API = {
             return !_.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS)) ? StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS) : null;
         }
 
-    }
-
-})(window.angular);
-
-/**
- * Created by Yoni on 12/2/2017.
- */
-/**
- * Created by Yoni on 11/30/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_users')
-        .controller('CreateUserController', CreateUserController);
-
-    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService','AuthService','blockUI'];
-    function CreateUserController($mdDialog, ManageUserService,items,AlertService,AuthService,blockUI) {
-        var vm = this;
-        vm.cancel = _cancel;
-        vm.saveUser = _saveUser;
-        vm.onSelectedDefaultBranch = _onSelectedDefaultBranch;
-        vm.isEdit = items !== null;
-        vm.user = items !== null?items:null;
-
-        initialize();
-
-        function _saveUser() {
-
-            var myBlockUI = blockUI.instances.get('CreateUserForm');
-            myBlockUI.start();
-            if(!_.isUndefined(vm.user.selected_role) &&  !_.isUndefined(vm.user.selected_default_branch)){
-                var userInfo = {
-                    first_name: vm.user.first_name,
-                    last_name: vm.user.last_name,
-                    grandfather_name:vm.user.grandfather_name,
-                    title: vm.user.title,
-                    role : vm.user.selected_role._id,
-                    hired_date:vm.user.hired_date,
-                    default_branch : vm.user.selected_default_branch._id,
-                    access_branches:[],
-                    multi_branches: vm.multi_branches
-                };
-                userInfo.access_branches.push(userInfo.default_branch);
-
-                _.forEach(vm.user.selected_access_branches,function(accessBranch){
-
-                    var found = userInfo.access_branches.some(function (el) {
-                        return el._id === accessBranch._id;
-                    });
-
-                    if (!found) {
-                        userInfo.access_branches.push(accessBranch._id);
-                    }
-                });
-                if(vm.isEdit){
-
-                    userInfo._id = vm.user.account._id;
-
-
-                    ManageUserService.UpdateUser( userInfo ).then(function (data) {
-                            myBlockUI.stop();
-                            console.log("updated successfully", data);
-                            $mdDialog.hide();
-                            AlertService.showSuccess('Updated Successfully!', 'User Information is Updated');
-                        },
-                        function (error) {
-                            myBlockUI.stop();
-                            var message = error.data.error.message;
-                            AlertService.showError( 'Oops... Something went wrong', message);
-                            console.log("could not be saved", error);
-                        });
-
-                }else {
-
-                    userInfo.username = vm.user.username;
-                    userInfo.password = vm.user.password;
-
-                    ManageUserService.CreateUser(userInfo).then(
-                        function (data) {
-                            myBlockUI.stop();
-                            AlertService.showSuccess('Saved Successfully!', 'User Information is saved successfully');
-                            console.log("saved successfully", data);
-                            $mdDialog.hide();
-                            //TODO: Alert & fetch user collection
-                        },
-                        function (error) {
-                            myBlockUI.stop();
-                            var message = error.data.error.message;
-                            AlertService.showError( 'Oops... Something went wrong', message);
-                            console.log("could not be saved", error);
-                        }
-                    );
-                }
-            }else {
-                AlertService.showError( 'Oops... Something went wrong', "You haven't provided all required fields.");
-            }
-
-
-
-        }
-
-        function initialize(){
-            if(vm.isEdit){
-                console.log("user",vm.user);
-                angular.extend(vm.user, vm.user.account);
-                // vm.multi_branch = vm.user.multi_branch;
-                var dt = new Date(vm.user.hired_date);
-                vm.user.hired_date = dt;
-            }
-            ManageUserService.GetRoles().then(function(response){
-                vm.roles = response.data.docs;
-                if(vm.isEdit){
-                    //LOAD Role select value
-                    angular.forEach(vm.roles,function(role){
-                        if(!_.isUndefined(vm.user.account)){
-                       if(role._id === vm.user.account.role._id){
-                           vm.user.selected_role = role;
-                       }}
-
-                    });
-                }
-            },function(error){
-                console.log("error",error);
-            });
-
-            if(AuthService.IsSuperuser()){
-                ManageUserService.GetBranches().then(function(response){
-                    vm.branches = response.data.docs;
-                    vm.user.selected_access_branches = [];
-
-                    if(vm.isEdit){
-                        angular.forEach(vm.branches,function(branch){
-                            //LOAD Default Branch select value
-                            if(!_.isUndefined(vm.user.default_branch._id)){
-
-                                if(branch._id === vm.user.default_branch._id){
-                                    vm.user.selected_default_branch = branch;
-                                }
-                            }
-                            //LOAD access branch select values
-                            if(vm.user.access_branches.length > 0 && !vm.user.multi_branches)
-                            {
-                                var found = vm.user.access_branches.some(function (accBranch) {
-                                    return accBranch._id === branch._id;
-                                });
-
-                                if (found) {
-                                    vm.user.selected_access_branches.push(branch);
-                                }
-                            }
-
-                        });
-                    }
-
-                },function(error){
-                    console.log("error",error);
-                });
-            }else{
-                vm.branches =  ManageUserService.GetUserAccessBranches();
-                if(vm.isEdit){
-                    angular.forEach(vm.branches,function(branch){
-                        //LOAD Default Branch select value
-                        if(!_.isUndefined(vm.user.default_branch._id)){
-
-                            if(branch._id === vm.user.default_branch._id){
-                                vm.user.selected_default_branch = branch;
-                            }
-                        }
-                        //LOAD access branch select values
-                        if(vm.user.access_branches.length > 0)
-                        {
-                            var found = vm.user.access_branches.some(function (accBranch) {
-                                return accBranch._id === branch._id;
-                            });
-
-                            if (found) {
-                                vm.user.selected_access_branches.push(branch);
-                            }
-                        }
-
-                    });
-                }
-            }
-
-        }
-
-
-        function _onSelectedDefaultBranch() {
-            if (vm.user.selected_access_branches.filter(function(branch)
-                { return branch._id === vm.user.selected_default_branch._id; }).length > 0) {
-                /* The branch exist on the list */
-            }else {
-                vm.user.selected_access_branches.push(vm.user.selected_default_branch);
-            }
-        }
-
-        vm.clear = function() {
-            vm.dt = null;
-        };
-
-        vm.dateOptions = {
-            dateDisabled: false,
-            formatYear: "yy",
-            maxDate: new Date(2020, 5, 22),
-            startingDay: 1
-        };
-        vm.openDatePicker = function() {
-            vm.popup1.opened = true;
-        };
-        vm.format = "dd-MMMM-yyyy";
-        vm.altInputFormats = ["d!/M!/yyyy"];
-        vm.popup1 = {
-            opened: false
-        };
-
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 11/30/2017.
- */
-
-(function(angular,document) {
-    "use strict";
-
-    angular
-        .module('app.manage_users')
-        .controller('ManageUsersController', ManageUsersController);
-
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'ManageUserService','$mdDialog','AlertService'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder, ManageUserService,$mdDialog,AlertService) {
-        var vm = this;
-        vm.currentUser = {};
-        vm.addUser = _addUser;
-        vm.editUser = _editUser;
-        vm.changeStatus = _changeStatus;
-        vm.statusStyle = _statusStyle;
-        vm.onSelectedBranch = _onSelectedBranch;
-
-        activate();
-
-        ////////////////
-        function activate() {
-
-            vm.currentUser.user_access_branches = ManageUserService.GetUserAccessBranches();
-
-            fetchUserData();
-
-            vm.dtOptions = DTOptionsBuilder.newOptions()
-                .withPaginationType('full_numbers')
-                .withDOM('<"html5buttons"B>lTfgitp')
-                .withOption('processing', true)
-                .withOption('scrollY', 430);
-
-        }
-
-        function fetchUserData() {
-            ManageUserService.GetUsers().then(function(response){
-                // console.log("users list",response);
-                vm.users = response.data.docs;
-                vm.usersCopy = angular.copy(vm.users);
-            },function(error){
-                console.log("error",error);
-            });
-        }
-
-        function _changeStatus(user) {
-            vm.toaster = {
-                type:  'success',
-                title: 'Title',
-                text:  'Message'
-            };
-
-            var userAccount = {};
-            userAccount._id = user._id;
-            if(user.status === 'active'){
-                userAccount.status = 'suspended';
-                user.status = 'suspended';
-            }else{
-                userAccount.status = 'active';
-                user.status = 'active';
-            }
-        
-            ManageUserService.UpdateUserStatus(userAccount).then(function(response){
-                console.log('updated user',response);
-                var message =   userAccount.status==='active'?'activated':userAccount.status;
-                AlertService.showSuccess('Updated User Status!', 'User is ' + message  + '.');
-                // toaster.pop(vm.toaster.type, vm.toaster.title, vm.toaster.text);
-            },function(error){
-                console.log('error',error);
-                var message = error.data.error.message;
-                AlertService.showError( 'Oops... Something went wrong', message);
-                // toaster.pop(vm.toaster.type, vm.toaster.title, vm.toaster.text);
-            });
-        }
-
-        function _addUser(ev){
-
-            $mdDialog.show({
-                locals: {
-                    items: null
-                },
-                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateUserController',
-                controllerAs: 'vm'
-            })
-                .then(function (answer) {
-                    fetchUserData();
-                }, function () {
-                });
-        }
-
-        function _editUser(user,ev){
-            $mdDialog.show({
-                locals: {items: user},
-                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateUserController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                fetchUserData();
-                }, function () {
-                });
-        }
-
-        function _onSelectedBranch(){
-         vm.users = vm.usersCopy;
-
-         vm.users = _.filter(vm.users,function(user){
-                 if(!_.isUndefined(user.account)){
-                     return user.account.default_branch._id === vm.currentUser.selected_access_branch._id;
-                 }
-
-            });
-        }
-
-        function _statusStyle(status){
-            var style = '';
-            switch (status){
-                case 'active' || 'active ':
-                    style =  'label label-success';
-                    break;
-                case 'inactive':
-                    style =  'label label-default';
-                    break;
-                case 'suspended':
-                    style =  'label label-danger';
-                    break;
-                default:
-                    style =  'label label-default';
-            }
-            return style;
-        }
-    }
-})(window.angular,window.document);
-
-
-/**
- * Created by Yoni on 11/30/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.manage_users')
-
-        .service('ManageUserService', ManageUserService);
-    ManageUserService.$inject = ['$resource','$http', 'CommonService','AuthService'];
-
-    function ManageUserService($resource,$http, CommonService,AuthService) {
-        return {
-            GetUsers: _getUsers,
-            GetRoles: _getRoles,
-            GetBranches: _getBranches,
-            GetUserAccessBranches: _getUserAccessBranches,
-            CreateUser: _saveUser,
-            UpdateUser: _updateUser,
-            UpdateUserStatus: _updateUserStatus
-        };
-
-        function _getUsers(params){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll,params));
-        }
-        function _getRoles(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
-        }
-        function _getBranches(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
-        }
-        function _getUserAccessBranches() {
-            return AuthService.GetAccessBranches();
-        }
-        function _saveUser(user) {
-            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user);
-        }
-        function _updateUser(account) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
-        }
-        function _updateUserStatus(user) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id), user);
-        }
-        
     }
 
 })(window.angular);
@@ -2529,6 +2113,515 @@ var API = {
         }
     }
 })();
+/**
+ * Created by Yoni on 12/2/2017.
+ */
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_users')
+        .controller('CreateUserController', CreateUserController);
+
+    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService','AuthService','blockUI'];
+    function CreateUserController($mdDialog, ManageUserService,items,AlertService,AuthService,blockUI) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.saveUser = _saveUser;
+        vm.onSelectedDefaultBranch = _onSelectedDefaultBranch;
+        vm.isEdit = items !== null;
+        vm.user = items !== null?items:null;
+
+        initialize();
+
+        function _saveUser() {
+
+            var myBlockUI = blockUI.instances.get('CreateUserForm');
+            myBlockUI.start();
+            if(!_.isUndefined(vm.user.selected_role) &&  !_.isUndefined(vm.user.selected_default_branch)){
+                var userInfo = {
+                    first_name: vm.user.first_name,
+                    last_name: vm.user.last_name,
+                    grandfather_name:vm.user.grandfather_name,
+                    title: vm.user.title,
+                    role : vm.user.selected_role._id,
+                    hired_date:vm.user.hired_date,
+                    default_branch : vm.user.selected_default_branch._id,
+                    access_branches:[],
+                    multi_branches: vm.multi_branches
+                };
+                userInfo.access_branches.push(userInfo.default_branch);
+
+                _.forEach(vm.user.selected_access_branches,function(accessBranch){
+
+                    var found = userInfo.access_branches.some(function (el) {
+                        return el._id === accessBranch._id;
+                    });
+
+                    if (!found) {
+                        userInfo.access_branches.push(accessBranch._id);
+                    }
+                });
+                if(vm.isEdit){
+
+                    userInfo._id = vm.user.account._id;
+
+
+                    ManageUserService.UpdateUser( userInfo ).then(function (data) {
+                            myBlockUI.stop();
+                            console.log("updated successfully", data);
+                            $mdDialog.hide();
+                            AlertService.showSuccess('Updated Successfully!', 'User Information is Updated');
+                        },
+                        function (error) {
+                            myBlockUI.stop();
+                            var message = error.data.error.message;
+                            AlertService.showError( 'Oops... Something went wrong', message);
+                            console.log("could not be saved", error);
+                        });
+
+                }else {
+
+                    userInfo.username = vm.user.username;
+                    userInfo.password = vm.user.password;
+
+                    ManageUserService.CreateUser(userInfo).then(
+                        function (data) {
+                            myBlockUI.stop();
+                            AlertService.showSuccess('Saved Successfully!', 'User Information is saved successfully');
+                            console.log("saved successfully", data);
+                            $mdDialog.hide();
+                            //TODO: Alert & fetch user collection
+                        },
+                        function (error) {
+                            myBlockUI.stop();
+                            var message = error.data.error.message;
+                            AlertService.showError( 'Oops... Something went wrong', message);
+                            console.log("could not be saved", error);
+                        }
+                    );
+                }
+            }else {
+                AlertService.showError( 'Oops... Something went wrong', "You haven't provided all required fields.");
+            }
+
+
+
+        }
+
+        function initialize(){
+            if(vm.isEdit){
+                console.log("user",vm.user);
+                angular.extend(vm.user, vm.user.account);
+                // vm.multi_branch = vm.user.multi_branch;
+                var dt = new Date(vm.user.hired_date);
+                vm.user.hired_date = dt;
+            }
+            ManageUserService.GetRoles().then(function(response){
+                vm.roles = response.data.docs;
+                if(vm.isEdit){
+                    //LOAD Role select value
+                    angular.forEach(vm.roles,function(role){
+                        if(!_.isUndefined(vm.user.account)){
+                       if(role._id === vm.user.account.role._id){
+                           vm.user.selected_role = role;
+                       }}
+
+                    });
+                }
+            },function(error){
+                console.log("error",error);
+            });
+
+            if(AuthService.IsSuperuser()){
+                ManageUserService.GetBranches().then(function(response){
+                    vm.branches = response.data.docs;
+                    vm.user.selected_access_branches = [];
+
+                    if(vm.isEdit){
+                        angular.forEach(vm.branches,function(branch){
+                            //LOAD Default Branch select value
+                            if(!_.isUndefined(vm.user.default_branch._id)){
+
+                                if(branch._id === vm.user.default_branch._id){
+                                    vm.user.selected_default_branch = branch;
+                                }
+                            }
+                            //LOAD access branch select values
+                            if(vm.user.access_branches.length > 0 && !vm.user.multi_branches)
+                            {
+                                var found = vm.user.access_branches.some(function (accBranch) {
+                                    return accBranch._id === branch._id;
+                                });
+
+                                if (found) {
+                                    vm.user.selected_access_branches.push(branch);
+                                }
+                            }
+
+                        });
+                    }
+
+                },function(error){
+                    console.log("error",error);
+                });
+            }else{
+                vm.branches =  ManageUserService.GetUserAccessBranches();
+                if(vm.isEdit){
+                    angular.forEach(vm.branches,function(branch){
+                        //LOAD Default Branch select value
+                        if(!_.isUndefined(vm.user.default_branch._id)){
+
+                            if(branch._id === vm.user.default_branch._id){
+                                vm.user.selected_default_branch = branch;
+                            }
+                        }
+                        //LOAD access branch select values
+                        if(vm.user.access_branches.length > 0)
+                        {
+                            var found = vm.user.access_branches.some(function (accBranch) {
+                                return accBranch._id === branch._id;
+                            });
+
+                            if (found) {
+                                vm.user.selected_access_branches.push(branch);
+                            }
+                        }
+
+                    });
+                }
+            }
+
+        }
+
+
+        function _onSelectedDefaultBranch() {
+            if (vm.user.selected_access_branches.filter(function(branch)
+                { return branch._id === vm.user.selected_default_branch._id; }).length > 0) {
+                /* The branch exist on the list */
+            }else {
+                vm.user.selected_access_branches.push(vm.user.selected_default_branch);
+            }
+        }
+
+        vm.clear = function() {
+            vm.dt = null;
+        };
+
+        vm.dateOptions = {
+            dateDisabled: false,
+            formatYear: "yy",
+            maxDate: new Date(2020, 5, 22),
+            startingDay: 1
+        };
+        vm.openDatePicker = function() {
+            vm.popup1.opened = true;
+        };
+        vm.format = "dd-MMMM-yyyy";
+        vm.altInputFormats = ["d!/M!/yyyy"];
+        vm.popup1 = {
+            opened: false
+        };
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular,document) {
+    "use strict";
+
+    angular
+        .module('app.manage_users')
+        .controller('ManageUsersController', ManageUsersController);
+
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'ManageUserService','$mdDialog','AlertService'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder, ManageUserService,$mdDialog,AlertService) {
+        var vm = this;
+        vm.currentUser = {};
+        vm.addUser = _addUser;
+        vm.editUser = _editUser;
+        vm.changeStatus = _changeStatus;
+        vm.statusStyle = _statusStyle;
+        vm.onSelectedBranch = _onSelectedBranch;
+
+        activate();
+
+        ////////////////
+        function activate() {
+
+            vm.currentUser.user_access_branches = ManageUserService.GetUserAccessBranches();
+
+            fetchUserData();
+
+            vm.dtOptions = DTOptionsBuilder.newOptions()
+                .withPaginationType('full_numbers')
+                .withDOM('<"html5buttons"B>lTfgitp')
+                .withOption('processing', true)
+                .withOption('scrollY', 430);
+
+        }
+
+        function fetchUserData() {
+            ManageUserService.GetUsers().then(function(response){
+                // console.log("users list",response);
+                vm.users = response.data.docs;
+                vm.usersCopy = angular.copy(vm.users);
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        function _changeStatus(user) {
+            vm.toaster = {
+                type:  'success',
+                title: 'Title',
+                text:  'Message'
+            };
+
+            var userAccount = {};
+            userAccount._id = user._id;
+            if(user.status === 'active'){
+                userAccount.status = 'suspended';
+                user.status = 'suspended';
+            }else{
+                userAccount.status = 'active';
+                user.status = 'active';
+            }
+        
+            ManageUserService.UpdateUserStatus(userAccount).then(function(response){
+                console.log('updated user',response);
+                var message =   userAccount.status==='active'?'activated':userAccount.status;
+                AlertService.showSuccess('Updated User Status!', 'User is ' + message  + '.');
+                // toaster.pop(vm.toaster.type, vm.toaster.title, vm.toaster.text);
+            },function(error){
+                console.log('error',error);
+                var message = error.data.error.message;
+                AlertService.showError( 'Oops... Something went wrong', message);
+                // toaster.pop(vm.toaster.type, vm.toaster.title, vm.toaster.text);
+            });
+        }
+
+        function _addUser(ev){
+
+            $mdDialog.show({
+                locals: {
+                    items: null
+                },
+                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateUserController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                    fetchUserData();
+                }, function () {
+                });
+        }
+
+        function _editUser(user,ev){
+            $mdDialog.show({
+                locals: {items: user},
+                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateUserController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                fetchUserData();
+                }, function () {
+                });
+        }
+
+        function _onSelectedBranch(){
+         vm.users = vm.usersCopy;
+
+         vm.users = _.filter(vm.users,function(user){
+                 if(!_.isUndefined(user.account)){
+                     return user.account.default_branch._id === vm.currentUser.selected_access_branch._id;
+                 }
+
+            });
+        }
+
+        function _statusStyle(status){
+            var style = '';
+            switch (status){
+                case 'active' || 'active ':
+                    style =  'label label-success';
+                    break;
+                case 'inactive':
+                    style =  'label label-default';
+                    break;
+                case 'suspended':
+                    style =  'label label-danger';
+                    break;
+                default:
+                    style =  'label label-default';
+            }
+            return style;
+        }
+    }
+})(window.angular,window.document);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.manage_users')
+
+        .service('ManageUserService', ManageUserService);
+    ManageUserService.$inject = ['$resource','$http', 'CommonService','AuthService'];
+
+    function ManageUserService($resource,$http, CommonService,AuthService) {
+        return {
+            GetUsers: _getUsers,
+            GetRoles: _getRoles,
+            GetBranches: _getBranches,
+            GetUserAccessBranches: _getUserAccessBranches,
+            CreateUser: _saveUser,
+            UpdateUser: _updateUser,
+            UpdateUserStatus: _updateUserStatus
+        };
+
+        function _getUsers(params){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll,params));
+        }
+        function _getRoles(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
+        }
+        function _getBranches(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+        }
+        function _getUserAccessBranches() {
+            return AuthService.GetAccessBranches();
+        }
+        function _saveUser(user) {
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user);
+        }
+        function _updateUser(account) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
+        }
+        function _updateUserStatus(user) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id), user);
+        }
+        
+    }
+
+})(window.angular);
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.preloader')
+        .directive('preloader', preloader);
+
+    preloader.$inject = ['$animate', '$timeout', '$q'];
+    function preloader ($animate, $timeout, $q) {
+
+        var directive = {
+            restrict: 'EAC',
+            template: 
+              '<div class="preloader-progress">' +
+                  '<div class="preloader-progress-bar" ' +
+                       'ng-style="{width: loadCounter + \'%\'}"></div>' +
+              '</div>'
+            ,
+            link: link
+        };
+        return directive;
+
+        ///////
+
+        function link(scope, el) {
+
+          scope.loadCounter = 0;
+
+          var counter  = 0,
+              timeout;
+
+          // disables scrollbar
+          angular.element('body').css('overflow', 'hidden');
+          // ensure class is present for styling
+          el.addClass('preloader');
+
+          appReady().then(endCounter);
+
+          timeout = $timeout(startCounter);
+
+          ///////
+
+          function startCounter() {
+
+            var remaining = 100 - counter;
+            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
+
+            scope.loadCounter = parseInt(counter, 10);
+
+            timeout = $timeout(startCounter, 20);
+          }
+
+          function endCounter() {
+
+            $timeout.cancel(timeout);
+
+            scope.loadCounter = 100;
+
+            $timeout(function(){
+              // animate preloader hiding
+              $animate.addClass(el, 'preloader-hidden');
+              // retore scrollbar
+              angular.element('body').css('overflow', '');
+            }, 300);
+          }
+
+          function appReady() {
+            var deferred = $q.defer();
+            var viewsLoaded = 0;
+            // if this doesn't sync with the real app ready
+            // a custom event must be used instead
+            var off = scope.$on('$viewContentLoaded', function () {
+              viewsLoaded ++;
+              // we know there are at least two views to be loaded 
+              // before the app is ready (1-index.html 2-app*.html)
+              if ( viewsLoaded === 2) {
+                // with resolve this fires only once
+                $timeout(function(){
+                  deferred.resolve();
+                }, 3000);
+
+                off();
+              }
+
+            });
+
+            return deferred.promise;
+          }
+
+        } //link
+    }
+
+})();
 /**=========================================================
  * Module: navbar-search.js
  * Navbar search toggler * Auto dismiss on ESC key
@@ -2642,95 +2735,78 @@ var API = {
     'use strict';
 
     angular
-        .module('app.preloader')
-        .directive('preloader', preloader);
+        .module('app.settings')
+        .run(settingsRun);
 
-    preloader.$inject = ['$animate', '$timeout', '$q'];
-    function preloader ($animate, $timeout, $q) {
+    settingsRun.$inject = ['$rootScope', 'AuthService'];
 
-        var directive = {
-            restrict: 'EAC',
-            template: 
-              '<div class="preloader-progress">' +
-                  '<div class="preloader-progress-bar" ' +
-                       'ng-style="{width: loadCounter + \'%\'}"></div>' +
-              '</div>'
-            ,
-            link: link
-        };
-        return directive;
+    function settingsRun($rootScope, AuthService){
 
-        ///////
 
-        function link(scope, el) {
+      // User Settings
+      // -----------------------------------
+      $rootScope.user = {
+        name:     'Yonas',
+        job:      'System Admin',
+        picture:  'app/img/user/02.jpg'
+      };
 
-          scope.loadCounter = 0;
+      // Hides/show user avatar on sidebar from any element
+      $rootScope.toggleUserBlock = function(){
+        $rootScope.$broadcast('toggleUserBlock');
+      };
+      $rootScope.logoutUser = function (){
+            AuthService.Logout();
+      };
 
-          var counter  = 0,
-              timeout;
+      // Global Settings
+      // -----------------------------------
+      $rootScope.app = {
+        name: 'Bidir Web',
+        description: 'Bidir Web Application',
+        year: ((new Date()).getFullYear()),
+        layout: {
+          isFixed: true,
+          isCollapsed: false,
+          isBoxed: false,
+          isRTL: false,
+          horizontal: false,
+          isFloat: false,
+          asideHover: false,
+          theme: 'app/css/theme-d.css',
+          asideScrollbar: false,
+          isCollapsedText: false
+        },
+        useFullLayout: false,
+        hiddenFooter: false,
+        offsidebarOpen: false,
+        asideToggled: false,
+        viewAnimation: 'ng-fadeInUp'
+      };
 
-          // disables scrollbar
-          angular.element('body').css('overflow', 'hidden');
-          // ensure class is present for styling
-          el.addClass('preloader');
+      // Setup the layout mode
+      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
 
-          appReady().then(endCounter);
+      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
+      // if( angular.isDefined($localStorage.layout) )
+      //   $rootScope.app.layout = $localStorage.layout;
+      // else
+      //   $localStorage.layout = $rootScope.app.layout;
+      //
+      // $rootScope.$watch('app.layout', function () {
+      //   $localStorage.layout = $rootScope.app.layout;
+      // }, true);
 
-          timeout = $timeout(startCounter);
+      // Close submenu when sidebar change from collapsed to normal
+      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
+        if( newValue === false )
+          $rootScope.$broadcast('closeSidebarMenu');
+      });
 
-          ///////
-
-          function startCounter() {
-
-            var remaining = 100 - counter;
-            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
-
-            scope.loadCounter = parseInt(counter, 10);
-
-            timeout = $timeout(startCounter, 20);
-          }
-
-          function endCounter() {
-
-            $timeout.cancel(timeout);
-
-            scope.loadCounter = 100;
-
-            $timeout(function(){
-              // animate preloader hiding
-              $animate.addClass(el, 'preloader-hidden');
-              // retore scrollbar
-              angular.element('body').css('overflow', '');
-            }, 300);
-          }
-
-          function appReady() {
-            var deferred = $q.defer();
-            var viewsLoaded = 0;
-            // if this doesn't sync with the real app ready
-            // a custom event must be used instead
-            var off = scope.$on('$viewContentLoaded', function () {
-              viewsLoaded ++;
-              // we know there are at least two views to be loaded 
-              // before the app is ready (1-index.html 2-app*.html)
-              if ( viewsLoaded === 2) {
-                // with resolve this fires only once
-                $timeout(function(){
-                  deferred.resolve();
-                }, 3000);
-
-                off();
-              }
-
-            });
-
-            return deferred.promise;
-          }
-
-        } //link
     }
 
 })();
+
 /**=========================================================
  * Module: helpers.js
  * Provides helper functions for routes definition
@@ -2946,82 +3022,6 @@ var API = {
 
 })();
 
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.settings')
-        .run(settingsRun);
-
-    settingsRun.$inject = ['$rootScope', 'AuthService'];
-
-    function settingsRun($rootScope, AuthService){
-
-
-      // User Settings
-      // -----------------------------------
-      $rootScope.user = {
-        name:     'Yonas',
-        job:      'System Admin',
-        picture:  'app/img/user/02.jpg'
-      };
-
-      // Hides/show user avatar on sidebar from any element
-      $rootScope.toggleUserBlock = function(){
-        $rootScope.$broadcast('toggleUserBlock');
-      };
-      $rootScope.logoutUser = function (){
-            AuthService.Logout();
-      };
-
-      // Global Settings
-      // -----------------------------------
-      $rootScope.app = {
-        name: 'Bidir Web',
-        description: 'Bidir Web Application',
-        year: ((new Date()).getFullYear()),
-        layout: {
-          isFixed: true,
-          isCollapsed: false,
-          isBoxed: false,
-          isRTL: false,
-          horizontal: false,
-          isFloat: false,
-          asideHover: false,
-          theme: 'app/css/theme-d.css',
-          asideScrollbar: false,
-          isCollapsedText: false
-        },
-        useFullLayout: false,
-        hiddenFooter: false,
-        offsidebarOpen: false,
-        asideToggled: false,
-        viewAnimation: 'ng-fadeInUp'
-      };
-
-      // Setup the layout mode
-      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
-
-      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
-      // if( angular.isDefined($localStorage.layout) )
-      //   $rootScope.app.layout = $localStorage.layout;
-      // else
-      //   $localStorage.layout = $rootScope.app.layout;
-      //
-      // $rootScope.$watch('app.layout', function () {
-      //   $localStorage.layout = $rootScope.app.layout;
-      // }, true);
-
-      // Close submenu when sidebar change from collapsed to normal
-      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
-        if( newValue === false )
-          $rootScope.$broadcast('closeSidebarMenu');
-      });
-
-    }
-
-})();
 
 /**=========================================================
  * Module: sidebar-menu.js
@@ -4632,6 +4632,8 @@ function runBlock() {
             if (newValue !== oldValue) {
                 if(newValue.length > 2){
                     SearchApi(newValue);
+                }else{
+                    vm.clients = vm.clientsCopy;
                 }
 
             }
@@ -4935,6 +4937,7 @@ function runBlock() {
           IsnameValid: true,
           IslocationValid: true
       };
+
       init();
 
       function _saveBranch() {
@@ -5031,12 +5034,16 @@ function runBlock() {
       function _cancel() {
           $mdDialog.cancel();
       }
+
       function init(){
-          vm.branchTypes =['Satellite office','Rural Service','Regional office','Urban office'];
+          vm.branchTypes =['Select Branch Type','Satellite office','Rural Service','Regional office','Urban office'];
+
           if(vm.isEdit)
           {
               var dt =_.isUndefined(vm.branch.opening_date)?undefined: new Date(vm.branch.opening_date);
               vm.branch.opening_date = dt;
+          }else{
+              vm.branch = { branch_type : vm.branchTypes[0] }; //SET DEFAULT SELECT OPTION FOR BRANCH TYPE
           }
       }
   }

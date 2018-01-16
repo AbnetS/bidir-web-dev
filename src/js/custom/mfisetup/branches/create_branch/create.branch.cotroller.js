@@ -16,6 +16,7 @@
           IsnameValid: true,
           IslocationValid: true
       };
+
       init();
 
       function _saveBranch() {
@@ -112,12 +113,16 @@
       function _cancel() {
           $mdDialog.cancel();
       }
+
       function init(){
-          vm.branchTypes =['Satellite office','Rural Service','Regional office','Urban office'];
+          vm.branchTypes =['Select Branch Type','Satellite office','Rural Service','Regional office','Urban office'];
+
           if(vm.isEdit)
           {
               var dt =_.isUndefined(vm.branch.opening_date)?undefined: new Date(vm.branch.opening_date);
               vm.branch.opening_date = dt;
+          }else{
+              vm.branch = { branch_type : vm.branchTypes[0] }; //SET DEFAULT SELECT OPTION FOR BRANCH TYPE
           }
       }
   }

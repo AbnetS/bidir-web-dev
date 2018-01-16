@@ -70,12 +70,13 @@
                         </ui-select>
                     </div>
 
-                    </br>
+                    <!-- multi Branches && access branches-->
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                             <label class="mda-checkbox">
                                     <input type="checkbox" ng-model="vm.user.multi_branches">
                                     <em class="bg-green-500"></em>Access All Branches</label>
                                     <p></p>
+                        <!--access branches-->
                         <ui-select ng-disabled="vm.user.multi_branches" multiple
                                    ng-model="vm.user.selected_access_branches"
                                    theme="select2" close-on-select="false" style="width:100%">
@@ -92,7 +93,7 @@
                         </ui-select>
 
                     </div>
-
+                    <!--Hire Date-->
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                             <label class="control-label small">Hire Date</label>
                             <span class="required" aria-required="true"> </span>
@@ -112,7 +113,7 @@
                             </p>
                     </div>
 
-
+                    <!--Role-->
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Role</label>
                         <span class="required" aria-required="true"> * </span>
@@ -124,7 +125,7 @@
                         </md-select>
                     </div>
 
-
+                    <!--Username-->
                     <div  class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Username</label>
                         <span class="required" aria-required="true"> * </span>
@@ -135,7 +136,7 @@
                                class="form-control input-sm" required>
                     </div>
 
-
+                    <!--Password-->
                     <div ng-if="!vm.isEdit" class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Password</label>
                         <span class="required" aria-required="true"> * </span>
