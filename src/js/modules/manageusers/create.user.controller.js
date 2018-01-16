@@ -12,8 +12,8 @@
         .module('app.manage_users')
         .controller('CreateUserController', CreateUserController);
 
-    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService','AuthService','blockUI'];
-    function CreateUserController($mdDialog, ManageUserService,items,AlertService,AuthService,blockUI) {
+    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService','AuthService','blockUI','$scope'];
+    function CreateUserController($mdDialog, ManageUserService,items,AlertService,AuthService,blockUI,$scope) {
         var vm = this;
         vm.cancel = _cancel;
         vm.saveUser = _saveUser;
@@ -21,6 +21,7 @@
         vm.isEdit = items !== null;
         vm.user = items !== null?items:{};
         vm.user.selected_access_branches = [];
+
 
         initialize();
 
@@ -38,7 +39,7 @@
                     hired_date:vm.user.hired_date,
                     default_branch : vm.user.selected_default_branch._id,
                     access_branches:[],
-                    multi_branches: vm.multi_branches
+                    multi_branches: vm.user.multi_branches
                 };
                 userInfo.access_branches.push(userInfo.default_branch);
 
@@ -48,14 +49,14 @@
                         return el._id === accessBranch._id;
                     });
 
-                    if (!found) {
+                    if (!found && !userInfo.multi_branches) {
                         userInfo.access_branches.push(accessBranch._id);
                     }
                 });
+
                 if(vm.isEdit){
 
                     userInfo._id = vm.user.account._id;
-
 
                     ManageUserService.UpdateUser( userInfo ).then(function (data) {
                             myBlockUI.stop();
@@ -100,101 +101,98 @@
         }
 
         function initialize(){
+
             if(vm.isEdit){
-                console.log("user",vm.user);
                 angular.extend(vm.user, vm.user.account);
-                // vm.multi_branch = vm.user.multi_branch;
                 var dt = new Date(vm.user.hired_date);
                 vm.user.hired_date = dt;
             }
-            ManageUserService.GetRoles().then(function(response){
-                vm.roles = response.data.docs;
-                if(vm.isEdit){
-                    //LOAD Role select value
-                    angular.forEach(vm.roles,function(role){
-                        if(!_.isUndefined(vm.user.account)){
-                       if(role._id === vm.user.account.role._id){
-                           vm.user.selected_role = role;
-                       }}
 
-                    });
-                }
-            },function(error){
-                console.log("error",error);
-            });
+            GetRolesAndSetSelectedValue();
 
             if(AuthService.IsSuperuser()){
                 ManageUserService.GetBranches().then(function(response){
                     vm.branches = response.data.docs;
-
                     if(vm.isEdit){
-                        angular.forEach(vm.branches,function(branch){
-                            //LOAD Default Branch select value
-                            if(!_.isUndefined(vm.user.default_branch._id)){
-
-                                if(branch._id === vm.user.default_branch._id){
-                                    vm.user.selected_default_branch = branch;
-                                }
-                            }
-                            //LOAD access branch select values
-                            if(vm.user.access_branches.length > 0 && !vm.user.multi_branches)
-                            {
-                                var found = vm.user.access_branches.some(function (accBranch) {
-                                    return accBranch._id === branch._id;
-                                });
-
-                                if (found) {
-                                    vm.user.selected_access_branches.push(branch);
-                                }
-                            }
-
-                        });
+                        setBranchesSelectedValue(vm.branches);
                     }
-
                 },function(error){
                     console.log("error",error);
                 });
             }else{
                 vm.branches =  ManageUserService.GetUserAccessBranches();
                 if(vm.isEdit){
-                    angular.forEach(vm.branches,function(branch){
-                        //LOAD Default Branch select value
-                        if(!_.isUndefined(vm.user.default_branch._id)){
-
-                            if(branch._id === vm.user.default_branch._id){
-                                vm.user.selected_default_branch = branch;
-                            }
-                        }
-                        //LOAD access branch select values
-                        if(vm.user.access_branches.length > 0)
-                        {
-                            var found = vm.user.access_branches.some(function (accBranch) {
-                                return accBranch._id === branch._id;
-                            });
-
-                            if (found) {
-                                vm.user.selected_access_branches.push(branch);
-                            }
-                        }
-
-                    });
+                    setBranchesSelectedValue(vm.branches);
                 }
             }
 
         }
 
+        function GetRolesAndSetSelectedValue() {
+            ManageUserService.GetRoles().then(function(response){
+                vm.roles = response.data.docs;
+                if(vm.isEdit){
+                    //LOAD Role select value
+                    angular.forEach(vm.roles,function(role){
+                        if(!_.isUndefined(vm.user.account)){
+                            if(role._id === vm.user.account.role._id){
+                                vm.user.selected_role = role;
+                            }}
+
+                    });
+                }
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        function setBranchesSelectedValue(branches) {
+            angular.forEach(branches,function(branch){
+                //LOAD Default Branch select value
+                if(!_.isUndefined(vm.user.default_branch._id)){
+
+                    if(branch._id === vm.user.default_branch._id){
+                        vm.user.selected_default_branch = branch;
+                    }
+                }
+                //LOAD access branch select values
+                if(vm.user.access_branches.length > 0 && !vm.user.multi_branches)
+                {
+                    var found = vm.user.access_branches.some(function (accBranch) {
+                        return accBranch._id === branch._id;
+                    });
+
+                    if (found) {
+                        vm.user.selected_access_branches.push(branch);
+                    }
+                }
+
+            });
+        }
 
         function _onSelectedDefaultBranch() {
             var branchExist = vm.user.selected_access_branches.indexOf(vm.user.selected_default_branch);
-            if (branchExist === -1) {
+            if (branchExist === -1 && !vm.user.multi_branches) {
                 vm.user.selected_access_branches.push(vm.user.selected_default_branch);
             }
+        }
+
+        $scope.$watch(function() {
+            return vm.user.multi_branches;
+        }, function(current, original) {
+            //if multi_branch is on clear access branch list
+            if(current){
+                vm.user.selected_access_branches = [];
+            }
+        });
+
+        function _cancel() {
+            $mdDialog.cancel();
         }
 
         vm.clear = function() {
             vm.dt = null;
         };
-
         vm.dateOptions = {
             dateDisabled: false,
             formatYear: "yy",
@@ -209,10 +207,6 @@
         vm.popup1 = {
             opened: false
         };
-
-        function _cancel() {
-            $mdDialog.cancel();
-        }
     }
 })(window.angular);
 

@@ -50,7 +50,7 @@
                 $http.defaults.headers.common['Authorization'] = 'Bearer ' + AuthService.GetToken();
             }
             else{
-                console.log("tostate",toState);
+                // console.log("tostate",toState);
                 //Clear storage and redirect
                 $location.path('/page/login');
             }
@@ -80,6 +80,21 @@
     angular
         .module('app.colors', []);
 })();
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common", [])
+      .config(routeConfig)
+      .run(runBlock);
+
+  function runBlock() {
+    console.log("common run");
+  }
+
+  function routeConfig() {console.log("common config");}
+})(window.angular);
+
 (function() {
     'use strict';
 
@@ -101,21 +116,6 @@
             'ngMessages'
         ]);
 })();
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common", [])
-      .config(routeConfig)
-      .run(runBlock);
-
-  function runBlock() {
-    console.log("common run");
-  }
-
-  function routeConfig() {console.log("common config");}
-})(window.angular);
-
 (function() {
     'use strict';
 
@@ -440,123 +440,6 @@
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .config(coreConfig);
-
-    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
-    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
-
-      var core = angular.module('app.core');
-      // registering components after bootstrap
-      core.controller = $controllerProvider.register;
-      core.directive  = $compileProvider.directive;
-      core.filter     = $filterProvider.register;
-      core.factory    = $provide.factory;
-      core.service    = $provide.service;
-      core.constant   = $provide.constant;
-      core.value      = $provide.value;
-
-      // Disables animation on items with class .ng-no-animation
-      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
-
-      // Improve performance disabling debugging features
-      // $compileProvider.debugInfoEnabled(false);
-
-    }
-
-})();
-/**=========================================================
- * Module: constants.js
- * Define constants to inject across the application
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .constant('APP_MEDIAQUERY', {
-          'desktopLG':             1200,
-          'desktop':                992,
-          'tablet':                 768,
-          'mobile':                 480
-        })
-      ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .run(appRun);
-
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
-
-      // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });*/
-
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
-
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Hooks Example
-      // ----------------------------------- 
-
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
-
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
-
-    }
-
-})();
-
-
 (function(angular) {
   "use strict";
 
@@ -691,6 +574,123 @@ var API = {
     }
 };
 
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
+
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+      // Disables animation on items with class .ng-no-animation
+      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
+
+      // Improve performance disabling debugging features
+      // $compileProvider.debugInfoEnabled(false);
+
+    }
+
+})();
+/**=========================================================
+ * Module: constants.js
+ * Define constants to inject across the application
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .run(appRun);
+
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });*/
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
+    }
+
+})();
 
 
 (function() {
@@ -1227,8 +1227,8 @@ var API = {
         .module('app.manage_users')
         .controller('CreateUserController', CreateUserController);
 
-    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService','AuthService','blockUI'];
-    function CreateUserController($mdDialog, ManageUserService,items,AlertService,AuthService,blockUI) {
+    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService','AuthService','blockUI','$scope'];
+    function CreateUserController($mdDialog, ManageUserService,items,AlertService,AuthService,blockUI,$scope) {
         var vm = this;
         vm.cancel = _cancel;
         vm.saveUser = _saveUser;
@@ -1236,6 +1236,7 @@ var API = {
         vm.isEdit = items !== null;
         vm.user = items !== null?items:{};
         vm.user.selected_access_branches = [];
+
 
         initialize();
 
@@ -1253,7 +1254,7 @@ var API = {
                     hired_date:vm.user.hired_date,
                     default_branch : vm.user.selected_default_branch._id,
                     access_branches:[],
-                    multi_branches: vm.multi_branches
+                    multi_branches: vm.user.multi_branches
                 };
                 userInfo.access_branches.push(userInfo.default_branch);
 
@@ -1263,14 +1264,14 @@ var API = {
                         return el._id === accessBranch._id;
                     });
 
-                    if (!found) {
+                    if (!found && !userInfo.multi_branches) {
                         userInfo.access_branches.push(accessBranch._id);
                     }
                 });
+
                 if(vm.isEdit){
 
                     userInfo._id = vm.user.account._id;
-
 
                     ManageUserService.UpdateUser( userInfo ).then(function (data) {
                             myBlockUI.stop();
@@ -1315,101 +1316,98 @@ var API = {
         }
 
         function initialize(){
+
             if(vm.isEdit){
-                console.log("user",vm.user);
                 angular.extend(vm.user, vm.user.account);
-                // vm.multi_branch = vm.user.multi_branch;
                 var dt = new Date(vm.user.hired_date);
                 vm.user.hired_date = dt;
             }
-            ManageUserService.GetRoles().then(function(response){
-                vm.roles = response.data.docs;
-                if(vm.isEdit){
-                    //LOAD Role select value
-                    angular.forEach(vm.roles,function(role){
-                        if(!_.isUndefined(vm.user.account)){
-                       if(role._id === vm.user.account.role._id){
-                           vm.user.selected_role = role;
-                       }}
 
-                    });
-                }
-            },function(error){
-                console.log("error",error);
-            });
+            GetRolesAndSetSelectedValue();
 
             if(AuthService.IsSuperuser()){
                 ManageUserService.GetBranches().then(function(response){
                     vm.branches = response.data.docs;
-
                     if(vm.isEdit){
-                        angular.forEach(vm.branches,function(branch){
-                            //LOAD Default Branch select value
-                            if(!_.isUndefined(vm.user.default_branch._id)){
-
-                                if(branch._id === vm.user.default_branch._id){
-                                    vm.user.selected_default_branch = branch;
-                                }
-                            }
-                            //LOAD access branch select values
-                            if(vm.user.access_branches.length > 0 && !vm.user.multi_branches)
-                            {
-                                var found = vm.user.access_branches.some(function (accBranch) {
-                                    return accBranch._id === branch._id;
-                                });
-
-                                if (found) {
-                                    vm.user.selected_access_branches.push(branch);
-                                }
-                            }
-
-                        });
+                        setBranchesSelectedValue(vm.branches);
                     }
-
                 },function(error){
                     console.log("error",error);
                 });
             }else{
                 vm.branches =  ManageUserService.GetUserAccessBranches();
                 if(vm.isEdit){
-                    angular.forEach(vm.branches,function(branch){
-                        //LOAD Default Branch select value
-                        if(!_.isUndefined(vm.user.default_branch._id)){
-
-                            if(branch._id === vm.user.default_branch._id){
-                                vm.user.selected_default_branch = branch;
-                            }
-                        }
-                        //LOAD access branch select values
-                        if(vm.user.access_branches.length > 0)
-                        {
-                            var found = vm.user.access_branches.some(function (accBranch) {
-                                return accBranch._id === branch._id;
-                            });
-
-                            if (found) {
-                                vm.user.selected_access_branches.push(branch);
-                            }
-                        }
-
-                    });
+                    setBranchesSelectedValue(vm.branches);
                 }
             }
 
         }
 
+        function GetRolesAndSetSelectedValue() {
+            ManageUserService.GetRoles().then(function(response){
+                vm.roles = response.data.docs;
+                if(vm.isEdit){
+                    //LOAD Role select value
+                    angular.forEach(vm.roles,function(role){
+                        if(!_.isUndefined(vm.user.account)){
+                            if(role._id === vm.user.account.role._id){
+                                vm.user.selected_role = role;
+                            }}
+
+                    });
+                }
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        function setBranchesSelectedValue(branches) {
+            angular.forEach(branches,function(branch){
+                //LOAD Default Branch select value
+                if(!_.isUndefined(vm.user.default_branch._id)){
+
+                    if(branch._id === vm.user.default_branch._id){
+                        vm.user.selected_default_branch = branch;
+                    }
+                }
+                //LOAD access branch select values
+                if(vm.user.access_branches.length > 0 && !vm.user.multi_branches)
+                {
+                    var found = vm.user.access_branches.some(function (accBranch) {
+                        return accBranch._id === branch._id;
+                    });
+
+                    if (found) {
+                        vm.user.selected_access_branches.push(branch);
+                    }
+                }
+
+            });
+        }
 
         function _onSelectedDefaultBranch() {
             var branchExist = vm.user.selected_access_branches.indexOf(vm.user.selected_default_branch);
-            if (branchExist === -1) {
+            if (branchExist === -1 && !vm.user.multi_branches) {
                 vm.user.selected_access_branches.push(vm.user.selected_default_branch);
             }
+        }
+
+        $scope.$watch(function() {
+            return vm.user.multi_branches;
+        }, function(current, original) {
+            //if multi_branch is on clear access branch list
+            if(current){
+                vm.user.selected_access_branches = [];
+            }
+        });
+
+        function _cancel() {
+            $mdDialog.cancel();
         }
 
         vm.clear = function() {
             vm.dt = null;
         };
-
         vm.dateOptions = {
             dateDisabled: false,
             formatYear: "yy",
@@ -1424,10 +1422,6 @@ var API = {
         vm.popup1 = {
             opened: false
         };
-
-        function _cancel() {
-            $mdDialog.cancel();
-        }
     }
 })(window.angular);
 
@@ -1443,10 +1437,12 @@ var API = {
         .module('app.manage_users')
         .controller('ManageUsersController', ManageUsersController);
 
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'ManageUserService','$mdDialog','AlertService'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder, ManageUserService,$mdDialog,AlertService) {
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'ManageUserService','$mdDialog','AlertService','AuthService'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder, ManageUserService,$mdDialog,AlertService,AuthService) {
         var vm = this;
-        vm.currentUser = {};
+        vm.currentUser = {
+            selected_access_branch:undefined
+        };
         vm.addUser = _addUser;
         vm.editUser = _editUser;
         vm.changeStatus = _changeStatus;
@@ -1458,7 +1454,18 @@ var API = {
         ////////////////
         function activate() {
 
-            vm.currentUser.user_access_branches = ManageUserService.GetUserAccessBranches();
+
+            if(AuthService.IsSuperuser()){
+                ManageUserService.GetBranches().then(function(response){
+                    vm.currentUser.user_access_branches = response.data.docs;
+                },function(error){
+                    vm.currentUser.user_access_branches = [];
+                });
+            }
+            else {
+                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
+            }
+
 
             fetchUserData();
 
@@ -1553,10 +1560,12 @@ var API = {
 
          vm.users = _.filter(vm.users,function(user){
                  if(!_.isUndefined(user.account)){
-                     return user.account.default_branch._id === vm.currentUser.selected_access_branch._id;
+                     if(user.account.default_branch !== null){
+                         return user.account.default_branch._id === vm.currentUser.selected_access_branch._id;
+                     }
                  }
-
             });
+
         }
 
         function _statusStyle(status){
@@ -1588,14 +1597,13 @@ var API = {
     angular.module('app.manage_users')
 
         .service('ManageUserService', ManageUserService);
-    ManageUserService.$inject = ['$resource','$http', 'CommonService','AuthService'];
+    ManageUserService.$inject = ['$http', 'CommonService'];
 
-    function ManageUserService($resource,$http, CommonService,AuthService) {
+    function ManageUserService($http, CommonService) {
         return {
             GetUsers: _getUsers,
             GetRoles: _getRoles,
             GetBranches: _getBranches,
-            GetUserAccessBranches: _getUserAccessBranches,
             CreateUser: _saveUser,
             UpdateUser: _updateUser,
             UpdateUserStatus: _updateUserStatus
@@ -1609,9 +1617,6 @@ var API = {
         }
         function _getBranches(){
             return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
-        }
-        function _getUserAccessBranches() {
-            return AuthService.GetAccessBranches();
         }
         function _saveUser(user) {
             return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user);

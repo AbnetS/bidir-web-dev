@@ -49,7 +49,7 @@
                 $http.defaults.headers.common['Authorization'] = 'Bearer ' + AuthService.GetToken();
             }
             else{
-                console.log("tostate",toState);
+                // console.log("tostate",toState);
                 //Clear storage and redirect
                 $location.path('/page/login');
             }

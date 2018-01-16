@@ -9,10 +9,12 @@
         .module('app.manage_users')
         .controller('ManageUsersController', ManageUsersController);
 
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'ManageUserService','$mdDialog','AlertService'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder, ManageUserService,$mdDialog,AlertService) {
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'ManageUserService','$mdDialog','AlertService','AuthService'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder, ManageUserService,$mdDialog,AlertService,AuthService) {
         var vm = this;
-        vm.currentUser = {};
+        vm.currentUser = {
+            selected_access_branch:undefined
+        };
         vm.addUser = _addUser;
         vm.editUser = _editUser;
         vm.changeStatus = _changeStatus;
@@ -24,7 +26,18 @@
         ////////////////
         function activate() {
 
-            vm.currentUser.user_access_branches = ManageUserService.GetUserAccessBranches();
+
+            if(AuthService.IsSuperuser()){
+                ManageUserService.GetBranches().then(function(response){
+                    vm.currentUser.user_access_branches = response.data.docs;
+                },function(error){
+                    vm.currentUser.user_access_branches = [];
+                });
+            }
+            else {
+                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
+            }
+
 
             fetchUserData();
 
@@ -119,10 +132,12 @@
 
          vm.users = _.filter(vm.users,function(user){
                  if(!_.isUndefined(user.account)){
-                     return user.account.default_branch._id === vm.currentUser.selected_access_branch._id;
+                     if(user.account.default_branch !== null){
+                         return user.account.default_branch._id === vm.currentUser.selected_access_branch._id;
+                     }
                  }
-
             });
+
         }
 
         function _statusStyle(status){

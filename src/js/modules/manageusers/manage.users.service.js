@@ -6,14 +6,13 @@
     angular.module('app.manage_users')
 
         .service('ManageUserService', ManageUserService);
-    ManageUserService.$inject = ['$resource','$http', 'CommonService','AuthService'];
+    ManageUserService.$inject = ['$http', 'CommonService'];
 
-    function ManageUserService($resource,$http, CommonService,AuthService) {
+    function ManageUserService($http, CommonService) {
         return {
             GetUsers: _getUsers,
             GetRoles: _getRoles,
             GetBranches: _getBranches,
-            GetUserAccessBranches: _getUserAccessBranches,
             CreateUser: _saveUser,
             UpdateUser: _updateUser,
             UpdateUserStatus: _updateUserStatus
@@ -27,9 +26,6 @@
         }
         function _getBranches(){
             return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
-        }
-        function _getUserAccessBranches() {
-            return AuthService.GetAccessBranches();
         }
         function _saveUser(user) {
             return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user);
