@@ -77,8 +77,11 @@
           return API.Config.BaseUrl + service +'/' + url;
         }
         function _buildPaginatedUrl(service,url,params) {
-            return url===''?API.Config.BaseUrl + service + '/paginate':
-                API.Config.BaseUrl + service +'/' + url + '/paginate';
+            // return url===''?API.Config.BaseUrl + service + '/paginate':
+            //     API.Config.BaseUrl + service +'/' + url + '/paginate';
+            var parameters = {start:1,limit:500};
+            return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
+                API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
         }
 
         function _buildUrlWithParam(service,url, id) {

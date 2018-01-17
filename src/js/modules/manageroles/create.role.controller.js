@@ -117,6 +117,9 @@
                 case 'SCREENING':
                     style =  'label label-primary';
                     break;
+                case 'SCREENING_MODULE':
+                    style =  'label label-primary';
+                    break;
                 case 'FORM_BUILDER':
                     style =  'label label-danger';
                     break;
@@ -126,7 +129,7 @@
                 case 'CLIENT_MANAGEMENT':
                     style =  'label label-warning';
                     break;
-                case 'MFI_SETUP':
+                case 'LOAN_MODULE':
                     style =  'label label-purple';
                     break;
                 default:

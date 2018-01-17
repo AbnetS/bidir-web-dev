@@ -525,8 +525,7 @@
 })(window.angular);
 var API = {
     Config: {
-        // BaseUrl: 'http://api.dev.bidir.gebeya.io/' //REMOTE API
-       BaseUrl: 'http://api.terrafina.bidir.gebeya.io/' //REMOTE API
+        BaseUrl: 'http://api.dev.bidir.gebeya.io/' //REMOTE API
     },
     Service: {
         NONE:'',
@@ -1036,6 +1035,9 @@ var API = {
                 case 'SCREENING':
                     style =  'label label-primary';
                     break;
+                case 'SCREENING_MODULE':
+                    style =  'label label-primary';
+                    break;
                 case 'FORM_BUILDER':
                     style =  'label label-danger';
                     break;
@@ -1045,7 +1047,7 @@ var API = {
                 case 'CLIENT_MANAGEMENT':
                     style =  'label label-warning';
                     break;
-                case 'MFI_SETUP':
+                case 'LOAN_MODULE':
                     style =  'label label-purple';
                     break;
                 default:
@@ -1159,52 +1161,22 @@ var API = {
         };
 
         function _getRoles(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles),httpConfig);
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
         }
 
         function _getPermissions(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions),httpConfig);
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions));
         }
         function _getPermissionsbyGroup(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup),httpConfig);
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup));
         }
 
         function _saveRole(role) {
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role,httpConfig);
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role);
         }
 
         function _updateRole(role) {
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role,httpConfig);
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role);
         }
 
         function _storePermissions(permissions) {
@@ -4221,8 +4193,11 @@ var API = {
           return API.Config.BaseUrl + service +'/' + url;
         }
         function _buildPaginatedUrl(service,url,params) {
-            return url===''?API.Config.BaseUrl + service + '/paginate':
-                API.Config.BaseUrl + service +'/' + url + '/paginate';
+            // return url===''?API.Config.BaseUrl + service + '/paginate':
+            //     API.Config.BaseUrl + service +'/' + url + '/paginate';
+            var parameters = {start:1,limit:500};
+            return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
+                API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
         }
 
         function _buildUrlWithParam(service,url, id) {
