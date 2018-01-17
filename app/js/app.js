@@ -135,13 +135,16 @@
     'use strict';
 
     angular
-        .module('app.manage_roles', [])
-        .run(runBlock)
-        .config(routeConfig);
+        .module('app.manage_users', []).config(configUM).run(runUM);
 
-    function runBlock() { console.log("RM run"); }
+    function runUM() {
+        console.log("UM run");
+    }
+    function configUM() {
+        console.log("UM config");
+    }
 
-    function routeConfig() {console.log("RM config");}
+
 
 })();
 (function() {
@@ -164,25 +167,6 @@
     angular
         .module('app.navsearch', []);
 })();
-/**
- * Created by Yoni on 11/30/2017.
- */
-(function() {
-    'use strict';
-
-    angular
-        .module('app.manage_users', []).config(configUM).run(runUM);
-
-    function runUM() {
-        console.log("UM run");
-    }
-    function configUM() {
-        console.log("UM config");
-    }
-
-
-
-})();
 (function() {
     'use strict';
 
@@ -204,6 +188,22 @@
 
     angular
         .module('app.settings', []);
+})();
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+(function() {
+    'use strict';
+
+    angular
+        .module('app.manage_roles', [])
+        .run(runBlock)
+        .config(routeConfig);
+
+    function runBlock() { console.log("RM run"); }
+
+    function routeConfig() {console.log("RM config");}
+
 })();
 (function() {
     'use strict';
@@ -918,140 +918,8 @@ var API = {
 
 })();
 /**
- * Created by Yoni on 12/10/2017.
+ * Created by Yoni on 12/2/2017.
  */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_roles')
-        .controller('CreateRoleController', CreateRoleController);
-
-    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService','blockUI','$mdPanel'];
-    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService,blockUI,$mdPanel) {
-        var vm = this;
-        vm.cancel = _cancel;
-        vm.saveRole = _saveRole;
-        vm.changeModuleStyle = _modulesStyle;
-        vm.showFilterDialog = _showFilterDialog;
-        vm.showFilter = false;
-        vm.isEdit = items !== null;
-        vm.role = items !== null?items:null;
-
-
-
-        initialize();
-
-        function setPermissions() {
-            _.each(vm.role.permissions, function(oldPermission){
-                _.each(vm.permissions, function(permission) {
-                    if(permission.name === oldPermission.name && !permission.checked){
-                        permission.checked = permission.name === oldPermission.name;
-                    }
-                });
-            });
-        }
-
-        function preparePermissions() {
-            vm.role.permissions = _.filter(vm.permissions,function(permission){
-                return permission.checked? permission._id : null;
-            });
-        }
-
-        function initialize(){
-            var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
-            if(permissionFromStore !== null){
-                vm.permissions = permissionFromStore;
-                if(vm.isEdit){
-                    setPermissions();
-                }
-
-            }else {
-                ManageRoleService.GetPermissions().then(function(response){
-                    vm.permissions = response.data.docs;
-                    ManageRoleService.StorePermissions(vm.permissions);
-                    console.log("permissions from api",vm.permissions);
-                    if(vm.isEdit){
-                        setPermissions();
-                    }
-                },function(error){
-                    console.log("error permissions",error);
-                });
-
-            }
-
-        }
-
-        function _saveRole() {
-            var myBlockUI = blockUI.instances.get('RoleBlockUI');
-            myBlockUI.start();
-            preparePermissions();
-            if(vm.isEdit){
-                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
-                        myBlockUI.stop();
-                        $mdDialog.hide();
-                        AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
-                    },
-                    function (error) {
-                        myBlockUI.stop();
-                    var message = error.data.error.message;
-                        AlertService.showError("Failed to update Role",message);
-                        console.log("could not be saved", error);
-                    });
-            }else {
-
-                ManageRoleService.SaveRole( vm.role).then(function (data) {
-                        myBlockUI.stop();
-                        AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
-                        $mdDialog.hide();
-                    },
-                    function (error) {
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to Save Role",message);
-                        console.log("could not be saved", error);
-                    });
-            }
-        }
-
-        function _showFilterDialog(show) {
-
-        }
-
-
-
-        function _modulesStyle(module){
-            var style = '';
-            switch (module){
-                case 'SCREENING':
-                    style =  'label label-primary';
-                    break;
-                case 'FORM_BUILDER':
-                    style =  'label label-danger';
-                    break;
-                case 'USER_MANAGEMENT':
-                    style =  'label label-green';
-                    break;
-                case 'CLIENT_MANAGEMENT':
-                    style =  'label label-warning';
-                    break;
-                case 'MFI_SETUP':
-                    style =  'label label-purple';
-                    break;
-                default:
-                    style =  'label label-default';
-            }
-            return style;
-        }
-
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-    }
-})(window.angular);
-
-
 /**
  * Created by Yoni on 11/30/2017.
  */
@@ -1060,151 +928,415 @@ var API = {
     "use strict";
 
     angular
-        .module('app.manage_roles')
-        .controller('ManageRoleController', ManageRoleController);
+        .module('app.manage_users')
+        .controller('CreateUserController', CreateUserController);
 
-    ManageRoleController.$inject = ['ManageRoleService', '$mdDialog', 'RouteHelpers'];
-
-    function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
-    {
+    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService','AuthService','blockUI','$scope'];
+    function CreateUserController($mdDialog, ManageUserService,items,AlertService,AuthService,blockUI,$scope) {
         var vm = this;
-        vm.addRole = _addRole;
-        vm.editRole = _editRole;
+        vm.cancel = _cancel;
+        vm.saveUser = _saveUser;
+        vm.onSelectedDefaultBranch = _onSelectedDefaultBranch;
+        vm.isEdit = items !== null;
+        vm.user = items !== null?items:{};
+        vm.user.selected_access_branches = [];
 
-        fetchRoles();
 
-       function fetchRoles() {
-           ManageRoleService.GetRoles().then(function(response){
-               vm.roles = response.data.docs;
-               // console.log("vm.roles on RM",vm.roles);
-           },function(error){
-               console.log("error role",error);
-           });
-       }
+        initialize();
 
-        function _addRole(ev){
+        function _saveUser() {
 
-            $mdDialog.show({
-                locals: {
-                    items: null
-                },
-                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateRoleController',
-                controllerAs: 'vm'
-            })
-                .then(function (answer) {
-                    fetchRoles();
-                }, function () {
+            var myBlockUI = blockUI.instances.get('CreateUserForm');
+
+            if(!_.isUndefined(vm.user.selected_role) &&  !_.isUndefined(vm.user.selected_default_branch)){
+                myBlockUI.start("Storing User");
+                var userInfo = {
+                    first_name: vm.user.first_name,
+                    last_name: vm.user.last_name,
+                    grandfather_name:vm.user.grandfather_name,
+                    title: vm.user.title,
+                    role : vm.user.selected_role._id,
+                    hired_date:vm.user.hired_date,
+                    default_branch : vm.user.selected_default_branch._id,
+                    access_branches:[],
+                    multi_branches: vm.user.multi_branches
+                };
+                userInfo.access_branches.push(userInfo.default_branch);
+
+                _.forEach(vm.user.selected_access_branches,function(accessBranch){
+
+                    var found = userInfo.access_branches.some(function (el) {
+                        return el._id === accessBranch._id;
+                    });
+
+                    if (!found && !userInfo.multi_branches) {
+                        userInfo.access_branches.push(accessBranch._id);
+                    }
                 });
+
+                if(vm.isEdit){
+
+                    userInfo._id = vm.user.account._id;
+
+                    ManageUserService.UpdateUser( userInfo ).then(function (data) {
+                            myBlockUI.stop();
+                            console.log("updated successfully", data);
+                            $mdDialog.hide();
+                            AlertService.showSuccess('Updated Successfully!', 'User Information is Updated');
+                        },
+                        function (error) {
+                            myBlockUI.stop();
+                            var message = error.data.error.message;
+                            AlertService.showError( 'Oops... Something went wrong', message);
+                            console.log("could not be saved", error);
+                        });
+
+                }else {
+
+                    userInfo.username = vm.user.username;
+                    userInfo.password = vm.user.password;
+
+                    ManageUserService.CreateUser(userInfo).then(
+                        function (data) {
+                            myBlockUI.stop();
+                            AlertService.showSuccess('Saved Successfully!', 'User Information is saved successfully');
+                            console.log("saved successfully", data);
+                            $mdDialog.hide();
+                            //TODO: Alert & fetch user collection
+                        },
+                        function (error) {
+                            myBlockUI.stop();
+                            var message = error.data.error.message;
+                            AlertService.showError( 'Oops... Something went wrong', message);
+                            console.log("could not be saved", error);
+                        }
+                    );
+                }
+            }
+            else {
+                AlertService.showError( 'Oops... Something went wrong', "You haven't provided all required fields.");
+            }
+
+
+
         }
 
-        function _editRole(role,ev) {
-            $mdDialog.show({
-                locals: {
-                    items: role
-                },
-                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateRoleController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                    fetchRoles();
-                }, function () {
+        function initialize(){
+            if(vm.isEdit){
+                var myLoadingBlockUI = blockUI.instances.get('UserFormLoader');
+                myLoadingBlockUI.start("Loading User Information");
+                angular.extend(vm.user, vm.user.account);
+                var dt = new Date(vm.user.hired_date);
+                vm.user.hired_date = dt;
+            }
+
+            GetRolesAndSetSelectedValue();
+
+            if(AuthService.IsSuperuser()){
+                ManageUserService.GetBranches().then(function(response){
+                    vm.branches = response.data.docs;
+                    if(vm.isEdit){
+                        setBranchesSelectedValue(vm.branches);
+                        myLoadingBlockUI.stop();
+                    }
+                },function(error){
+                    console.log("error",error);
                 });
+            }else{
+                vm.branches =  AuthService.GetAccessBranches();
+                if(vm.isEdit){
+                    setBranchesSelectedValue(vm.branches);
+                    myLoadingBlockUI.stop();
+                }
+            }
+
         }
 
+        function GetRolesAndSetSelectedValue() {
+            ManageUserService.GetRoles().then(function(response){
+                vm.roles = response.data.docs;
+                if(vm.isEdit){
+                    //LOAD Role select value
+                    angular.forEach(vm.roles,function(role){
+                        if(!_.isUndefined(vm.user.account)){
+                            if(role._id === vm.user.account.role._id){
+                                vm.user.selected_role = role;
+                            }}
 
+                    });
+                }
+            },function(error){
+                console.log("error",error);
+            });
+        }
 
+        function setBranchesSelectedValue(branches) {
+            angular.forEach(branches,function(branch){
+                //LOAD Default Branch select value
+                if(!_.isUndefined(vm.user.default_branch._id)){
+
+                    if(branch._id === vm.user.default_branch._id){
+                        vm.user.selected_default_branch = branch;
+                    }
+                }
+                //LOAD access branch select values
+                if(vm.user.access_branches.length > 0 && !vm.user.multi_branches)
+                {
+                    var found = vm.user.access_branches.some(function (accBranch) {
+                        return accBranch._id === branch._id;
+                    });
+
+                    if (found) {
+                        vm.user.selected_access_branches.push(branch);
+                    }
+                }
+
+            });
+        }
+
+        function _onSelectedDefaultBranch() {
+            var branchExist = vm.user.selected_access_branches.indexOf(vm.user.selected_default_branch);
+            if (branchExist === -1 && !vm.user.multi_branches) {
+                vm.user.selected_access_branches.push(vm.user.selected_default_branch);
+            }
+        }
+
+        $scope.$watch(function() {
+            return vm.user.multi_branches;
+        }, function(current, original) {
+            //if multi_branch is on clear access branch list
+            if(current){
+                vm.user.selected_access_branches = [];
+            }
+        });
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+
+        vm.clear = function() {
+            vm.dt = null;
+        };
+        vm.dateOptions = {
+            dateDisabled: false,
+            formatYear: "yy",
+            maxDate: new Date(2020, 5, 22),
+            startingDay: 1
+        };
+        vm.openDatePicker = function() {
+            vm.popup1.opened = true;
+        };
+        vm.format = "dd-MMMM-yyyy";
+        vm.altInputFormats = ["d!/M!/yyyy"];
+        vm.popup1 = {
+            opened: false
+        };
     }
 })(window.angular);
 
 
 /**
- * Created by Yoni on 12/11/2017.
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular,document) {
+    "use strict";
+
+    angular
+        .module('app.manage_users')
+        .controller('ManageUsersController', ManageUsersController);
+
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'ManageUserService','$mdDialog','AlertService','AuthService'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder, ManageUserService,$mdDialog,AlertService,AuthService) {
+        var vm = this;
+        vm.currentUser = {
+            selected_access_branch:undefined
+        };
+        vm.addUser = _addUser;
+        vm.editUser = _editUser;
+        vm.changeStatus = _changeStatus;
+        vm.statusStyle = _statusStyle;
+        vm.onSelectedBranch = _onSelectedBranch;
+
+        activate();
+
+        ////////////////
+        function activate() {
+
+
+            if(AuthService.IsSuperuser()){
+                ManageUserService.GetBranches().then(function(response){
+                    vm.currentUser.user_access_branches = response.data.docs;
+                },function(error){
+                    vm.currentUser.user_access_branches = [];
+                });
+            }
+            else {
+                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
+            }
+
+
+            fetchUserData();
+
+            vm.dtOptions = DTOptionsBuilder.newOptions()
+                .withPaginationType('full_numbers')
+                .withDOM('<"html5buttons"B>lTfgitp')
+                .withOption('processing', true)
+                .withOption('scrollY', 430);
+
+        }
+
+        function fetchUserData() {
+            ManageUserService.GetUsers().then(function(response){
+                // console.log("users list",response);
+                vm.users = response.data.docs;
+                vm.usersCopy = angular.copy(vm.users);
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        function _changeStatus(user) {
+            vm.toaster = {
+                type:  'success',
+                title: 'Title',
+                text:  'Message'
+            };
+
+            var userAccount = {};
+            userAccount._id = user._id;
+            if(user.status === 'active'){
+                userAccount.status = 'suspended';
+                user.status = 'suspended';
+            }else{
+                userAccount.status = 'active';
+                user.status = 'active';
+            }
+        
+            ManageUserService.UpdateUserStatus(userAccount).then(function(response){
+                console.log('updated user',response);
+                var message =   userAccount.status==='active'?'activated':userAccount.status;
+                AlertService.showSuccess('Updated User Status!', 'User is ' + message  + '.');
+                // toaster.pop(vm.toaster.type, vm.toaster.title, vm.toaster.text);
+            },function(error){
+                console.log('error',error);
+                var message = error.data.error.message;
+                AlertService.showError( 'Oops... Something went wrong', message);
+                // toaster.pop(vm.toaster.type, vm.toaster.title, vm.toaster.text);
+            });
+        }
+
+        function _addUser(ev){
+
+            $mdDialog.show({
+                locals: {
+                    items: null
+                },
+                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateUserController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                    fetchUserData();
+                }, function () {
+                });
+        }
+
+        function _editUser(user,ev){
+            $mdDialog.show({
+                locals: {items: user},
+                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateUserController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                fetchUserData();
+                }, function () {
+                });
+        }
+
+        function _onSelectedBranch(){
+         vm.users = vm.usersCopy;
+
+         vm.users = _.filter(vm.users,function(user){
+                 if(!_.isUndefined(user.account)){
+                     if(user.account.default_branch !== null){
+                         return user.account.default_branch._id === vm.currentUser.selected_access_branch._id;
+                     }
+                 }
+            });
+
+        }
+
+        function _statusStyle(status){
+            var style = '';
+            switch (status){
+                case 'active' || 'active ':
+                    style =  'label label-success';
+                    break;
+                case 'inactive':
+                    style =  'label label-default';
+                    break;
+                case 'suspended':
+                    style =  'label label-danger';
+                    break;
+                default:
+                    style =  'label label-default';
+            }
+            return style;
+        }
+    }
+})(window.angular,window.document);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
  */
 (function(angular) {
     'use strict';
-    angular.module('app.manage_roles')
+    angular.module('app.manage_users')
 
-        .service('ManageRoleService', ManageRoleService);
-    ManageRoleService.$inject = ['$http', 'CommonService','AuthService','StorageService','APP_CONSTANTS'];
+        .service('ManageUserService', ManageUserService);
+    ManageUserService.$inject = ['$http', 'CommonService'];
 
-    function ManageRoleService($http, CommonService,AuthService,StorageService,APP_CONSTANTS) {
+    function ManageUserService($http, CommonService) {
         return {
+            GetUsers: _getUsers,
             GetRoles: _getRoles,
-            GetPermissions: _getPermissions,
-            GetPermissionsbyGroup:_getPermissionsbyGroup,
-            SaveRole: _saveRole,
-            UpdateRole:_updateRole,
-            StorePermissions:_storePermissions,
-            GetPermissionsFromStore:_getPermissionsFromStorage
+            GetBranches: _getBranches,
+            CreateUser: _saveUser,
+            UpdateUser: _updateUser,
+            UpdateUserStatus: _updateUserStatus
         };
 
+        function _getUsers(params){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll,params));
+        }
         function _getRoles(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles),httpConfig);
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
         }
-
-        function _getPermissions(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions),httpConfig);
+        function _getBranches(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
         }
-        function _getPermissionsbyGroup(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup),httpConfig);
+        function _saveUser(user) {
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user);
         }
-
-        function _saveRole(role) {
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role,httpConfig);
+        function _updateUser(account) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
         }
-
-        function _updateRole(role) {
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role,httpConfig);
+        function _updateUserStatus(user) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id), user);
         }
-
-        function _storePermissions(permissions) {
-            return StorageService.Set(APP_CONSTANTS.StorageKey.PERMISSIONS, permissions);
-        }
-        function _getPermissionsFromStorage() {
-            return !_.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS)) ? StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS) : null;
-        }
-
+        
     }
 
 })(window.angular);
@@ -2217,430 +2349,6 @@ var API = {
     }
 })();
 
-/**
- * Created by Yoni on 12/2/2017.
- */
-/**
- * Created by Yoni on 11/30/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_users')
-        .controller('CreateUserController', CreateUserController);
-
-    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService','AuthService','blockUI','$scope'];
-    function CreateUserController($mdDialog, ManageUserService,items,AlertService,AuthService,blockUI,$scope) {
-        var vm = this;
-        vm.cancel = _cancel;
-        vm.saveUser = _saveUser;
-        vm.onSelectedDefaultBranch = _onSelectedDefaultBranch;
-        vm.isEdit = items !== null;
-        vm.user = items !== null?items:{};
-        vm.user.selected_access_branches = [];
-
-
-        initialize();
-
-        function _saveUser() {
-
-            var myBlockUI = blockUI.instances.get('CreateUserForm');
-
-            if(!_.isUndefined(vm.user.selected_role) &&  !_.isUndefined(vm.user.selected_default_branch)){
-                myBlockUI.start("Storing User");
-                var userInfo = {
-                    first_name: vm.user.first_name,
-                    last_name: vm.user.last_name,
-                    grandfather_name:vm.user.grandfather_name,
-                    title: vm.user.title,
-                    role : vm.user.selected_role._id,
-                    hired_date:vm.user.hired_date,
-                    default_branch : vm.user.selected_default_branch._id,
-                    access_branches:[],
-                    multi_branches: vm.user.multi_branches
-                };
-                userInfo.access_branches.push(userInfo.default_branch);
-
-                _.forEach(vm.user.selected_access_branches,function(accessBranch){
-
-                    var found = userInfo.access_branches.some(function (el) {
-                        return el._id === accessBranch._id;
-                    });
-
-                    if (!found && !userInfo.multi_branches) {
-                        userInfo.access_branches.push(accessBranch._id);
-                    }
-                });
-
-                if(vm.isEdit){
-
-                    userInfo._id = vm.user.account._id;
-
-                    ManageUserService.UpdateUser( userInfo ).then(function (data) {
-                            myBlockUI.stop();
-                            console.log("updated successfully", data);
-                            $mdDialog.hide();
-                            AlertService.showSuccess('Updated Successfully!', 'User Information is Updated');
-                        },
-                        function (error) {
-                            myBlockUI.stop();
-                            var message = error.data.error.message;
-                            AlertService.showError( 'Oops... Something went wrong', message);
-                            console.log("could not be saved", error);
-                        });
-
-                }else {
-
-                    userInfo.username = vm.user.username;
-                    userInfo.password = vm.user.password;
-
-                    ManageUserService.CreateUser(userInfo).then(
-                        function (data) {
-                            myBlockUI.stop();
-                            AlertService.showSuccess('Saved Successfully!', 'User Information is saved successfully');
-                            console.log("saved successfully", data);
-                            $mdDialog.hide();
-                            //TODO: Alert & fetch user collection
-                        },
-                        function (error) {
-                            myBlockUI.stop();
-                            var message = error.data.error.message;
-                            AlertService.showError( 'Oops... Something went wrong', message);
-                            console.log("could not be saved", error);
-                        }
-                    );
-                }
-            }
-            else {
-                AlertService.showError( 'Oops... Something went wrong', "You haven't provided all required fields.");
-            }
-
-
-
-        }
-
-        function initialize(){
-            if(vm.isEdit){
-                var myLoadingBlockUI = blockUI.instances.get('UserFormLoader');
-                myLoadingBlockUI.start("Loading User Information");
-                angular.extend(vm.user, vm.user.account);
-                var dt = new Date(vm.user.hired_date);
-                vm.user.hired_date = dt;
-            }
-
-            GetRolesAndSetSelectedValue();
-
-            if(AuthService.IsSuperuser()){
-                ManageUserService.GetBranches().then(function(response){
-                    vm.branches = response.data.docs;
-                    if(vm.isEdit){
-                        setBranchesSelectedValue(vm.branches);
-                        myLoadingBlockUI.stop();
-                    }
-                },function(error){
-                    console.log("error",error);
-                });
-            }else{
-                vm.branches =  AuthService.GetAccessBranches();
-                if(vm.isEdit){
-                    setBranchesSelectedValue(vm.branches);
-                    myLoadingBlockUI.stop();
-                }
-            }
-
-        }
-
-        function GetRolesAndSetSelectedValue() {
-            ManageUserService.GetRoles().then(function(response){
-                vm.roles = response.data.docs;
-                if(vm.isEdit){
-                    //LOAD Role select value
-                    angular.forEach(vm.roles,function(role){
-                        if(!_.isUndefined(vm.user.account)){
-                            if(role._id === vm.user.account.role._id){
-                                vm.user.selected_role = role;
-                            }}
-
-                    });
-                }
-            },function(error){
-                console.log("error",error);
-            });
-        }
-
-        function setBranchesSelectedValue(branches) {
-            angular.forEach(branches,function(branch){
-                //LOAD Default Branch select value
-                if(!_.isUndefined(vm.user.default_branch._id)){
-
-                    if(branch._id === vm.user.default_branch._id){
-                        vm.user.selected_default_branch = branch;
-                    }
-                }
-                //LOAD access branch select values
-                if(vm.user.access_branches.length > 0 && !vm.user.multi_branches)
-                {
-                    var found = vm.user.access_branches.some(function (accBranch) {
-                        return accBranch._id === branch._id;
-                    });
-
-                    if (found) {
-                        vm.user.selected_access_branches.push(branch);
-                    }
-                }
-
-            });
-        }
-
-        function _onSelectedDefaultBranch() {
-            var branchExist = vm.user.selected_access_branches.indexOf(vm.user.selected_default_branch);
-            if (branchExist === -1 && !vm.user.multi_branches) {
-                vm.user.selected_access_branches.push(vm.user.selected_default_branch);
-            }
-        }
-
-        $scope.$watch(function() {
-            return vm.user.multi_branches;
-        }, function(current, original) {
-            //if multi_branch is on clear access branch list
-            if(current){
-                vm.user.selected_access_branches = [];
-            }
-        });
-
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-
-        vm.clear = function() {
-            vm.dt = null;
-        };
-        vm.dateOptions = {
-            dateDisabled: false,
-            formatYear: "yy",
-            maxDate: new Date(2020, 5, 22),
-            startingDay: 1
-        };
-        vm.openDatePicker = function() {
-            vm.popup1.opened = true;
-        };
-        vm.format = "dd-MMMM-yyyy";
-        vm.altInputFormats = ["d!/M!/yyyy"];
-        vm.popup1 = {
-            opened: false
-        };
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 11/30/2017.
- */
-
-(function(angular,document) {
-    "use strict";
-
-    angular
-        .module('app.manage_users')
-        .controller('ManageUsersController', ManageUsersController);
-
-    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'ManageUserService','$mdDialog','AlertService','AuthService'];
-    function ManageUsersController(RouteHelpers, DTOptionsBuilder, ManageUserService,$mdDialog,AlertService,AuthService) {
-        var vm = this;
-        vm.currentUser = {
-            selected_access_branch:undefined
-        };
-        vm.addUser = _addUser;
-        vm.editUser = _editUser;
-        vm.changeStatus = _changeStatus;
-        vm.statusStyle = _statusStyle;
-        vm.onSelectedBranch = _onSelectedBranch;
-
-        activate();
-
-        ////////////////
-        function activate() {
-
-
-            if(AuthService.IsSuperuser()){
-                ManageUserService.GetBranches().then(function(response){
-                    vm.currentUser.user_access_branches = response.data.docs;
-                },function(error){
-                    vm.currentUser.user_access_branches = [];
-                });
-            }
-            else {
-                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
-            }
-
-
-            fetchUserData();
-
-            vm.dtOptions = DTOptionsBuilder.newOptions()
-                .withPaginationType('full_numbers')
-                .withDOM('<"html5buttons"B>lTfgitp')
-                .withOption('processing', true)
-                .withOption('scrollY', 430);
-
-        }
-
-        function fetchUserData() {
-            ManageUserService.GetUsers().then(function(response){
-                // console.log("users list",response);
-                vm.users = response.data.docs;
-                vm.usersCopy = angular.copy(vm.users);
-            },function(error){
-                console.log("error",error);
-            });
-        }
-
-        function _changeStatus(user) {
-            vm.toaster = {
-                type:  'success',
-                title: 'Title',
-                text:  'Message'
-            };
-
-            var userAccount = {};
-            userAccount._id = user._id;
-            if(user.status === 'active'){
-                userAccount.status = 'suspended';
-                user.status = 'suspended';
-            }else{
-                userAccount.status = 'active';
-                user.status = 'active';
-            }
-        
-            ManageUserService.UpdateUserStatus(userAccount).then(function(response){
-                console.log('updated user',response);
-                var message =   userAccount.status==='active'?'activated':userAccount.status;
-                AlertService.showSuccess('Updated User Status!', 'User is ' + message  + '.');
-                // toaster.pop(vm.toaster.type, vm.toaster.title, vm.toaster.text);
-            },function(error){
-                console.log('error',error);
-                var message = error.data.error.message;
-                AlertService.showError( 'Oops... Something went wrong', message);
-                // toaster.pop(vm.toaster.type, vm.toaster.title, vm.toaster.text);
-            });
-        }
-
-        function _addUser(ev){
-
-            $mdDialog.show({
-                locals: {
-                    items: null
-                },
-                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateUserController',
-                controllerAs: 'vm'
-            })
-                .then(function (answer) {
-                    fetchUserData();
-                }, function () {
-                });
-        }
-
-        function _editUser(user,ev){
-            $mdDialog.show({
-                locals: {items: user},
-                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateUserController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                fetchUserData();
-                }, function () {
-                });
-        }
-
-        function _onSelectedBranch(){
-         vm.users = vm.usersCopy;
-
-         vm.users = _.filter(vm.users,function(user){
-                 if(!_.isUndefined(user.account)){
-                     if(user.account.default_branch !== null){
-                         return user.account.default_branch._id === vm.currentUser.selected_access_branch._id;
-                     }
-                 }
-            });
-
-        }
-
-        function _statusStyle(status){
-            var style = '';
-            switch (status){
-                case 'active' || 'active ':
-                    style =  'label label-success';
-                    break;
-                case 'inactive':
-                    style =  'label label-default';
-                    break;
-                case 'suspended':
-                    style =  'label label-danger';
-                    break;
-                default:
-                    style =  'label label-default';
-            }
-            return style;
-        }
-    }
-})(window.angular,window.document);
-
-
-/**
- * Created by Yoni on 11/30/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.manage_users')
-
-        .service('ManageUserService', ManageUserService);
-    ManageUserService.$inject = ['$http', 'CommonService'];
-
-    function ManageUserService($http, CommonService) {
-        return {
-            GetUsers: _getUsers,
-            GetRoles: _getRoles,
-            GetBranches: _getBranches,
-            CreateUser: _saveUser,
-            UpdateUser: _updateUser,
-            UpdateUserStatus: _updateUserStatus
-        };
-
-        function _getUsers(params){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll,params));
-        }
-        function _getRoles(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
-        }
-        function _getBranches(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
-        }
-        function _saveUser(user) {
-            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user);
-        }
-        function _updateUser(account) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
-        }
-        function _updateUserStatus(user) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id), user);
-        }
-        
-    }
-
-})(window.angular);
-
 (function() {
     'use strict';
 
@@ -3025,6 +2733,307 @@ var API = {
     }
 
 })();
+
+/**
+ * Created by Yoni on 12/10/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('CreateRoleController', CreateRoleController);
+
+    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService','blockUI','$mdPanel'];
+    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService,blockUI,$mdPanel) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.saveRole = _saveRole;
+        vm.changeModuleStyle = _modulesStyle;
+        vm.showFilterDialog = _showFilterDialog;
+        vm.showFilter = false;
+        vm.isEdit = items !== null;
+        vm.role = items !== null?items:null;
+
+
+
+        initialize();
+
+        function setPermissions() {
+            _.each(vm.role.permissions, function(oldPermission){
+                _.each(vm.permissions, function(permission) {
+                    if(permission.name === oldPermission.name && !permission.checked){
+                        permission.checked = permission.name === oldPermission.name;
+                    }
+                });
+            });
+        }
+
+        function preparePermissions() {
+            vm.role.permissions = _.filter(vm.permissions,function(permission){
+                return permission.checked? permission._id : null;
+            });
+        }
+
+        function initialize(){
+           if(vm.isEdit){
+               var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
+               myLoadingBlockUI.start("Loading Role and Permissions");
+           }
+            var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
+            if(permissionFromStore !== null){
+                vm.permissions = permissionFromStore;
+                if(vm.isEdit){
+                    setPermissions();
+                    myLoadingBlockUI.stop();
+                }
+
+            }else {
+                ManageRoleService.GetPermissions().then(function(response){
+                    vm.permissions = response.data.docs;
+                    ManageRoleService.StorePermissions(vm.permissions);
+                    console.log("permissions from api",vm.permissions);
+                    if(vm.isEdit){
+                        setPermissions();
+                        myLoadingBlockUI.stop();
+                    }
+                },function(error){
+                    if(vm.isEdit){
+                        myLoadingBlockUI.stop();
+                    }
+                    console.log("error permissions",error);
+                });
+
+            }
+
+        }
+
+        function _saveRole() {
+            var myBlockUI = blockUI.instances.get('RoleBlockUI');
+            myBlockUI.start();
+            preparePermissions();
+            if(vm.isEdit){
+                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
+                        myBlockUI.stop();
+                        $mdDialog.hide();
+                        AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
+                    },
+                    function (error) {
+                        myBlockUI.stop();
+                    var message = error.data.error.message;
+                        AlertService.showError("Failed to update Role",message);
+                        console.log("could not be saved", error);
+                    });
+            }else {
+
+                ManageRoleService.SaveRole( vm.role).then(function (data) {
+                        myBlockUI.stop();
+                        AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
+                        $mdDialog.hide();
+                    },
+                    function (error) {
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to Save Role",message);
+                        console.log("could not be saved", error);
+                    });
+            }
+        }
+
+        function _showFilterDialog(show) {
+
+        }
+
+
+
+        function _modulesStyle(module){
+            var style = '';
+            switch (module){
+                case 'SCREENING':
+                    style =  'label label-primary';
+                    break;
+                case 'FORM_BUILDER':
+                    style =  'label label-danger';
+                    break;
+                case 'USER_MANAGEMENT':
+                    style =  'label label-green';
+                    break;
+                case 'CLIENT_MANAGEMENT':
+                    style =  'label label-warning';
+                    break;
+                case 'MFI_SETUP':
+                    style =  'label label-purple';
+                    break;
+                default:
+                    style =  'label label-default';
+            }
+            return style;
+        }
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('ManageRoleController', ManageRoleController);
+
+    ManageRoleController.$inject = ['ManageRoleService', '$mdDialog', 'RouteHelpers'];
+
+    function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
+    {
+        var vm = this;
+        vm.addRole = _addRole;
+        vm.editRole = _editRole;
+
+        fetchRoles();
+
+       function fetchRoles() {
+           ManageRoleService.GetRoles().then(function(response){
+               vm.roles = response.data.docs;
+               // console.log("vm.roles on RM",vm.roles);
+           },function(error){
+               console.log("error role",error);
+           });
+       }
+
+        function _addRole(ev){
+
+            $mdDialog.show({
+                locals: {
+                    items: null
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
+        }
+
+        function _editRole(role,ev) {
+            $mdDialog.show({
+                locals: {
+                    items: role
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
+        }
+
+
+
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 12/11/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.manage_roles')
+
+        .service('ManageRoleService', ManageRoleService);
+    ManageRoleService.$inject = ['$http', 'CommonService','AuthService','StorageService','APP_CONSTANTS'];
+
+    function ManageRoleService($http, CommonService,AuthService,StorageService,APP_CONSTANTS) {
+        return {
+            GetRoles: _getRoles,
+            GetPermissions: _getPermissions,
+            GetPermissionsbyGroup:_getPermissionsbyGroup,
+            SaveRole: _saveRole,
+            UpdateRole:_updateRole,
+            StorePermissions:_storePermissions,
+            GetPermissionsFromStore:_getPermissionsFromStorage
+        };
+
+        function _getRoles(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles),httpConfig);
+        }
+
+        function _getPermissions(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions),httpConfig);
+        }
+        function _getPermissionsbyGroup(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup),httpConfig);
+        }
+
+        function _saveRole(role) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role,httpConfig);
+        }
+
+        function _updateRole(role) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role,httpConfig);
+        }
+
+        function _storePermissions(permissions) {
+            return StorageService.Set(APP_CONSTANTS.StorageKey.PERMISSIONS, permissions);
+        }
+        function _getPermissionsFromStorage() {
+            return !_.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS)) ? StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS) : null;
+        }
+
+    }
+
+})(window.angular);
 
 /**=========================================================
  * Module: sidebar-menu.js

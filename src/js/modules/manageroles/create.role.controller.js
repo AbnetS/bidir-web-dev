@@ -41,11 +41,16 @@
         }
 
         function initialize(){
+           if(vm.isEdit){
+               var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
+               myLoadingBlockUI.start("Loading Role and Permissions");
+           }
             var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
             if(permissionFromStore !== null){
                 vm.permissions = permissionFromStore;
                 if(vm.isEdit){
                     setPermissions();
+                    myLoadingBlockUI.stop();
                 }
 
             }else {
@@ -55,8 +60,12 @@
                     console.log("permissions from api",vm.permissions);
                     if(vm.isEdit){
                         setPermissions();
+                        myLoadingBlockUI.stop();
                     }
                 },function(error){
+                    if(vm.isEdit){
+                        myLoadingBlockUI.stop();
+                    }
                     console.log("error permissions",error);
                 });
 

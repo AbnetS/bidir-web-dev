@@ -10,7 +10,7 @@
         </md-toolbar>
 
         <md-dialog-content style="width:800px;max-height:500px;">
-            <md-content class="md-padding">
+            <md-content class="md-padding" block-ui="RoleLoadingBlockUI">
                 <form class="mb-xl"  name="vm.roleForm" ng-submit="vm.addRole()"  block-ui="RoleBlockUI">
                     <div class="row">
                         <div ng-show="!vm.showFilter" ng-class="vm.showFilter?'col-lg-40':'col-lg-4'" style="max-height: 120px;">
