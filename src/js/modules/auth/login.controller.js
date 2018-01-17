@@ -24,16 +24,15 @@
 
         vm.login = function() {
             var myBlockUI = blockUI.instances.get('loginFormBlockUI');
-            myBlockUI.start();
+            myBlockUI.start("Login Loading");
             AuthService.login(vm.user).then(
                 function(response) {
-                    myBlockUI.stop();
                     var result = response.data;
                     vm.user = result.user;
                     $rootScope.currentUser = vm.user;
                     $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
                     AuthService.SetCredentials(result);
-
+                    myBlockUI.stop();
                     console.log('logged in user',vm.user);
 
                     $state.go("app.welcome");

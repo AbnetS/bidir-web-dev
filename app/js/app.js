@@ -64,20 +64,6 @@
     'use strict';
 
     angular
-        .module('app.auth', [])
-        .run(runBlock)
-        .config(routeConfig);
-
-    function runBlock() { console.log("auth run"); }
-
-    function routeConfig() {console.log("auth config");}
-
-
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.colors', []);
 })();
 (function(angular) {
@@ -187,6 +173,20 @@
     'use strict';
 
     angular
+        .module('app.auth', [])
+        .run(runBlock)
+        .config(routeConfig);
+
+    function runBlock() { console.log("auth run"); }
+
+    function routeConfig() {console.log("auth config");}
+
+
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.preloader', []);
 })();
 
@@ -237,159 +237,6 @@
         .module('app.welcomePage', []);
 
 })();
-(function(angular) {
-    'use strict';
-    angular.module('app.auth')
-
-    .service('AuthService', AuthService);
-
-     AuthService.$inject = ['$http', 'StorageService', 'CommonService', 'APP_CONSTANTS', '$rootScope', '$state'];
-
-    function AuthService($http, StorageService, CommonService, APP_CONSTANTS, $rootScope, $state) {
-
-        return {
-            login: _login,
-            Logout: logout,
-            GetCredentials: getCredentials,
-            SetCredentials: setCredentials,
-            GetToken: getToken,
-            GetCurrentUser:_getCurrentUser,
-            GetAccessBranches:_getAccessBranches,
-            IsSuperuser:isSuper
-        };
-
-
-
-        function getCredentials() {
-            return !angular.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.SESSION)) ? StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) : null;
-        }
-
-        function setCredentials(session) {
-            StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
-        }
-
-        function getToken() {
-            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION).token;
-        }
-
-
-        function _getCurrentUser(){
-          var credential = getCredentials();
-          return credential !== null? credential.user: null;
-        }
-        function _getAccessBranches() {
-            var credential = getCredentials();
-            return credential !== null ?  !isSuper()? credential.user.account.access_branches : [] :null;
-        }
-
-        function isSuper() {
-            var credential = getCredentials();
-            return credential.user.username === 'super@bidir.com';
-        }
-
-        function _login(user) {
-          return $http.post(CommonService.buildUrl(API.Service.Auth,API.Methods.Auth.Login), user);
-        }
-
-        function logout() {
-            StorageService.Reset();
-            $rootScope.currentUser = null;
-            $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
-            $state.go('page.login');
-        }
-
-    }
-
-})(window.angular);
-
-/**=========================================================
- * Module: access-login.js
- * Demo for login api
- =========================================================*/
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.auth')
-        .controller('LoginFormController', LoginFormController);
-
-    LoginFormController.$inject = ['AuthService', '$state',  '$rootScope',  'APP_CONSTANTS',  'blockUI', 'AlertService'];
-
-    function LoginFormController( AuthService,  $state, $rootScope,  APP_CONSTANTS, blockUI,AlertService
-    ) {
-        var vm = this;
-        vm.userValidator = {
-            usernameMin: 4,
-            usernameMax: 20,
-            passwordMin: 6
-        };
-        vm.user = {};
-
-        vm.login = function() {
-            var myBlockUI = blockUI.instances.get('loginFormBlockUI');
-            myBlockUI.start();
-            AuthService.login(vm.user).then(
-                function(response) {
-                    myBlockUI.stop();
-                    var result = response.data;
-                    vm.user = result.user;
-                    $rootScope.currentUser = vm.user;
-                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
-                    AuthService.SetCredentials(result);
-
-                    console.log('logged in user',vm.user);
-
-                    $state.go("app.welcome");
-                    //TODO: if no mfi redirect to mfi registration page
-                    // CheckMFIAndRedirect();
-                },
-                function(error) {
-                    myBlockUI.stop();
-                    console.log("error", error);
-                    AlertService.showError("Error on Login", "The username or password is incorrect! Please try again.");
-                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
-                }
-            );
-
-            function CheckMFIAndRedirect(){
-                MainService.GetMFI().then(
-                    function(response) {
-                        debugger
-                        if (response.data.length > 0) {
-                            $state.go("index.branch");
-                            toastr.success(
-                                "Welcome Back " +
-                                vm.user.admin.first_name ,
-                                "Success"
-                            );
-                        }else{
-                            $state.go("home.mfi");
-                            toastr.success(
-                                "Welcome " +
-                                vm.user.admin.first_name +
-                                " " +
-                                vm.user.admin.last_name +
-                                " to Bidir Web App",
-                                "Success"
-                            );
-                        }
-                    },
-                    function(error) {
-                        console.log("error", error);
-                        toastr.error(
-                            "Error occured while trying to connect! Please try again.",
-                            "ERROR!"
-                        );
-                    }
-                );
-            }
-
-        };
-    }
-})(window.angular);
-
-
 (function() {
     'use strict';
 
@@ -940,7 +787,7 @@ var API = {
         vm.isEdit = items !== null;
         vm.role = items !== null?items:null;
 
-        var myBlockUI = blockUI.instances.get('RoleBlockUI');
+
 
         initialize();
 
@@ -961,10 +808,8 @@ var API = {
         }
 
         function initialize(){
-            myBlockUI.start();
             var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
             if(permissionFromStore !== null){
-                myBlockUI.stop();
                 vm.permissions = permissionFromStore;
                 if(vm.isEdit){
                     setPermissions();
@@ -972,7 +817,6 @@ var API = {
 
             }else {
                 ManageRoleService.GetPermissions().then(function(response){
-                    myBlockUI.stop();
                     vm.permissions = response.data.docs;
                     ManageRoleService.StorePermissions(vm.permissions);
                     console.log("permissions from api",vm.permissions);
@@ -980,7 +824,6 @@ var API = {
                         setPermissions();
                     }
                 },function(error){
-                    myBlockUI.stop();
                     console.log("error permissions",error);
                 });
 
@@ -989,6 +832,7 @@ var API = {
         }
 
         function _saveRole() {
+            var myBlockUI = blockUI.instances.get('RoleBlockUI');
             myBlockUI.start();
             preparePermissions();
             if(vm.isEdit){
@@ -2639,6 +2483,158 @@ var API = {
         }
     }
 })();
+
+(function(angular) {
+    'use strict';
+    angular.module('app.auth')
+
+    .service('AuthService', AuthService);
+
+     AuthService.$inject = ['$http', 'StorageService', 'CommonService', 'APP_CONSTANTS', '$rootScope', '$state'];
+
+    function AuthService($http, StorageService, CommonService, APP_CONSTANTS, $rootScope, $state) {
+
+        return {
+            login: _login,
+            Logout: logout,
+            GetCredentials: getCredentials,
+            SetCredentials: setCredentials,
+            GetToken: getToken,
+            GetCurrentUser:_getCurrentUser,
+            GetAccessBranches:_getAccessBranches,
+            IsSuperuser:isSuper
+        };
+
+
+
+        function getCredentials() {
+            return !angular.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.SESSION)) ? StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) : null;
+        }
+
+        function setCredentials(session) {
+            StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
+        }
+
+        function getToken() {
+            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION).token;
+        }
+
+
+        function _getCurrentUser(){
+          var credential = getCredentials();
+          return credential !== null? credential.user: null;
+        }
+        function _getAccessBranches() {
+            var credential = getCredentials();
+            return credential !== null ?  !isSuper()? credential.user.account.access_branches : [] :null;
+        }
+
+        function isSuper() {
+            var credential = getCredentials();
+            return credential.user.username === 'super@bidir.com';
+        }
+
+        function _login(user) {
+          return $http.post(CommonService.buildUrl(API.Service.Auth,API.Methods.Auth.Login), user);
+        }
+
+        function logout() {
+            StorageService.Reset();
+            $rootScope.currentUser = null;
+            $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
+            $state.go('page.login');
+        }
+
+    }
+
+})(window.angular);
+
+/**=========================================================
+ * Module: access-login.js
+ * Demo for login api
+ =========================================================*/
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.auth')
+        .controller('LoginFormController', LoginFormController);
+
+    LoginFormController.$inject = ['AuthService', '$state',  '$rootScope',  'APP_CONSTANTS',  'blockUI', 'AlertService'];
+
+    function LoginFormController( AuthService,  $state, $rootScope,  APP_CONSTANTS, blockUI,AlertService
+    ) {
+        var vm = this;
+        vm.userValidator = {
+            usernameMin: 4,
+            usernameMax: 20,
+            passwordMin: 6
+        };
+        vm.user = {};
+
+        vm.login = function() {
+            var myBlockUI = blockUI.instances.get('loginFormBlockUI');
+            myBlockUI.start("Login Loading");
+            AuthService.login(vm.user).then(
+                function(response) {
+                    var result = response.data;
+                    vm.user = result.user;
+                    $rootScope.currentUser = vm.user;
+                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
+                    AuthService.SetCredentials(result);
+                    myBlockUI.stop();
+                    console.log('logged in user',vm.user);
+
+                    $state.go("app.welcome");
+                    //TODO: if no mfi redirect to mfi registration page
+                    // CheckMFIAndRedirect();
+                },
+                function(error) {
+                    myBlockUI.stop();
+                    console.log("error", error);
+                    AlertService.showError("Error on Login", "The username or password is incorrect! Please try again.");
+                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
+                }
+            );
+
+            function CheckMFIAndRedirect(){
+                MainService.GetMFI().then(
+                    function(response) {
+                        debugger
+                        if (response.data.length > 0) {
+                            $state.go("index.branch");
+                            toastr.success(
+                                "Welcome Back " +
+                                vm.user.admin.first_name ,
+                                "Success"
+                            );
+                        }else{
+                            $state.go("home.mfi");
+                            toastr.success(
+                                "Welcome " +
+                                vm.user.admin.first_name +
+                                " " +
+                                vm.user.admin.last_name +
+                                " to Bidir Web App",
+                                "Success"
+                            );
+                        }
+                    },
+                    function(error) {
+                        console.log("error", error);
+                        toastr.error(
+                            "Error occured while trying to connect! Please try again.",
+                            "ERROR!"
+                        );
+                    }
+                );
+            }
+
+        };
+    }
+})(window.angular);
+
 
 (function() {
     'use strict';

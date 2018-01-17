@@ -20,7 +20,7 @@
         vm.isEdit = items !== null;
         vm.role = items !== null?items:null;
 
-        var myBlockUI = blockUI.instances.get('RoleBlockUI');
+
 
         initialize();
 
@@ -41,10 +41,8 @@
         }
 
         function initialize(){
-            myBlockUI.start();
             var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
             if(permissionFromStore !== null){
-                myBlockUI.stop();
                 vm.permissions = permissionFromStore;
                 if(vm.isEdit){
                     setPermissions();
@@ -52,7 +50,6 @@
 
             }else {
                 ManageRoleService.GetPermissions().then(function(response){
-                    myBlockUI.stop();
                     vm.permissions = response.data.docs;
                     ManageRoleService.StorePermissions(vm.permissions);
                     console.log("permissions from api",vm.permissions);
@@ -60,7 +57,6 @@
                         setPermissions();
                     }
                 },function(error){
-                    myBlockUI.stop();
                     console.log("error permissions",error);
                 });
 
@@ -69,6 +65,7 @@
         }
 
         function _saveRole() {
+            var myBlockUI = blockUI.instances.get('RoleBlockUI');
             myBlockUI.start();
             preparePermissions();
             if(vm.isEdit){
