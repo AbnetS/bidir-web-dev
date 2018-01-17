@@ -75,7 +75,7 @@
                 url: "/clients",
                 title: "clients",
                 templateUrl:helper.basepath('manage_clients/manage.clients.html'),
-                resolve:helper.resolveFor('md.data.table'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
                 controller: "ClientsController",
                 controllerAs: 'vm'
             })

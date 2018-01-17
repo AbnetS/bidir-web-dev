@@ -6,9 +6,28 @@
 
 <!-- ngRepeat + ngResource-->
 <div class="panel panel-default">
-    <div class="panel-heading">All Clients</div>
+    <div class="panel-heading">
+        <div class="col-xs-10 col-lg-5">
+            <label class="control-label small">Filter By Branches</label>
+            <ui-select ng-model="vm.currentUser.selected_access_branch"
+                       theme="select2"  on-select="vm.onSelectedBranch()"
+                       title="select branch" style="width: 100%;">
+                <ui-select-match allow-clear="true" placeholder="Select access branch to filter...">
+                    {{$select.selected.name}} - {{$select.selected.location}}
+                </ui-select-match>
+                <ui-select-choices repeat="branch in vm.currentUser.user_access_branches | filter: $select.search">
+                    <div ng-bind-html="branch.name | highlight: $select.search"></div>
+                    <small>
+                        <strong>location:</strong> {{branch.location}}
+                    </small>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-xs-12 col-lg-7"></div>
+        <br/>
+    </div>
     <div class="panel-body">
-        <!--<h2>You do not have the necessary permission to view clients list.</h2>-->
+        <p></p>
         <div class="row" userpermission="['CLIENT_MANAGEMENT_CLIENT_VIEW_ALL','CLIENT_MANAGEMENT_CLIENT_VIEW']">
             <div class="col-lg-12">
 

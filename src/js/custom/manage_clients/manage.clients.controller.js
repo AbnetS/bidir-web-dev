@@ -8,18 +8,15 @@
 
     angular.module("app.clients").controller("ClientsController", ClientsController);
 
-    ClientsController.$inject = ['ClientService','$state','$scope','$timeout'];
+    ClientsController.$inject = ['ClientService','$state','$scope','AuthService'];
 
-    function ClientsController(ClientService,$state,$scope,$timeout) {
+    function ClientsController(ClientService,$state,$scope,AuthService) {
         var vm = this;
+        vm.currentUser = {
+            selected_access_branch:undefined
+        };
         vm.pageSizes = [10, 25, 50, 100, 250, 500];
         vm.filter = {show : true};
-        vm.clientDetail = _clientDetail;
-        vm.clearSearch = function(){
-            vm.request.Search = "";
-            vm.filter.show = false;
-            callApi();
-        };
         vm.request = {
             Start: 1,
             limit:100,
@@ -27,12 +24,33 @@
             Search:''
         };
 
+        vm.clientDetail = _clientDetail;
+        vm.onSelectedBranch = _onSelectedBranch;
+
+        vm.clearSearch = function(){
+            vm.request.Search = "";
+            vm.filter.show = false;
+            callApi();
+        };
 
 
 
         callApi();
+        GetBranchFilter();
 
 
+        function GetBranchFilter() {
+            if(AuthService.IsSuperuser()){
+                ClientService.GetBranches().then(function(response){
+                    vm.currentUser.user_access_branches = response.data.docs;
+                },function(error){
+                    vm.currentUser.user_access_branches = [];
+                });
+            }
+            else {
+                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
+            }
+        }
 
         function callApi(){
             $scope.promise = ClientService.GetClients().then(function(response){
@@ -58,6 +76,17 @@
 
         function _clientDetail(client,ev) {
             $state.go('app.client_detail',{id:client._id});
+        }
+
+        function _onSelectedBranch(){
+            vm.clients = vm.clientsCopy;
+
+            vm.clients = _.filter(vm.clients,function(client){
+                if(!_.isUndefined(client.branch)){
+                        return client.branch._id === vm.currentUser.selected_access_branch._id;
+                }
+            });
+
         }
 
         $scope.$watch(angular.bind(vm, function () {

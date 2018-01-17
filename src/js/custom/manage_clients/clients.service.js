@@ -14,7 +14,8 @@
         return {
             GetClients: _getClients,
             GetClientDetail:_getClientDetail,
-            SearchClient:_searchClient
+            SearchClient:_searchClient,
+            GetBranches: _getBranches
         };
         function _searchClient(searchText) {
             return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
@@ -24,6 +25,9 @@
         }
         function _getClientDetail(id){
             return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
+        }
+        function _getBranches(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
         }
     }
 

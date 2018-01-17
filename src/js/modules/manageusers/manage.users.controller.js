@@ -23,23 +23,13 @@
 
         activate();
 
+
         ////////////////
         function activate() {
 
-
-            if(AuthService.IsSuperuser()){
-                ManageUserService.GetBranches().then(function(response){
-                    vm.currentUser.user_access_branches = response.data.docs;
-                },function(error){
-                    vm.currentUser.user_access_branches = [];
-                });
-            }
-            else {
-                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
-            }
-
-
             fetchUserData();
+
+            GetBranchFilter();
 
             vm.dtOptions = DTOptionsBuilder.newOptions()
                 .withPaginationType('full_numbers')
@@ -59,6 +49,18 @@
             });
         }
 
+        function GetBranchFilter() {
+            if(AuthService.IsSuperuser()){
+                ManageUserService.GetBranches().then(function(response){
+                    vm.currentUser.user_access_branches = response.data.docs;
+                },function(error){
+                    vm.currentUser.user_access_branches = [];
+                });
+            }
+            else {
+                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
+            }
+        }
         function _changeStatus(user) {
             vm.toaster = {
                 type:  'success',
