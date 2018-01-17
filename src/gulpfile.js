@@ -30,10 +30,10 @@ var ignored_files = '!' + hidden_files;
 // MAIN PATHS
 var paths = {
     app: '../app/',
-    markup: 'pug/',
+    markup: 'js/',
     styles: 'less/',
     scripts: 'js/'
-}
+};
 
 // if sass -> switch to sass folder
 if (useSass) {

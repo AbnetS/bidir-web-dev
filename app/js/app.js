@@ -173,15 +173,15 @@
     'use strict';
 
     angular
-        .module('app.material', [
-            'ngMaterial'
-          ]);
+        .module('app.navsearch', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.navsearch', []);
+        .module('app.material', [
+            'ngMaterial'
+          ]);
 })();
 (function() {
     'use strict';
@@ -215,17 +215,17 @@
     'use strict';
 
     angular
+        .module('app.translate', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.utils', [
           'app.colors'
           ]);
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate', []);
-})();
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -525,7 +525,7 @@
 })(window.angular);
 var API = {
     Config: {
-        BaseUrl: 'http://api.terrafina.bidir.gebeya.io/' //REMOTE API
+        BaseUrl: 'http://api.dev.bidir.gebeya.io/' //REMOTE API
     },
     Service: {
         NONE:'',
@@ -1781,6 +1781,115 @@ var API = {
     }
 })();
 
+/**=========================================================
+ * Module: navbar-search.js
+ * Navbar search toggler * Auto dismiss on ESC key
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .directive('searchOpen', searchOpen)
+        .directive('searchDismiss', searchDismiss);
+
+    //
+    // directives definition
+    // 
+    
+    function searchOpen () {
+        var directive = {
+            controller: searchOpenController,
+            restrict: 'A'
+        };
+        return directive;
+
+    }
+
+    function searchDismiss () {
+        var directive = {
+            controller: searchDismissController,
+            restrict: 'A'
+        };
+        return directive;
+        
+    }
+
+    //
+    // Contrller definition
+    // 
+    
+    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchOpenController ($scope, $element, NavSearch) {
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.toggle);
+    }
+
+    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchDismissController ($scope, $element, NavSearch) {
+      
+      var inputSelector = '.navbar-form input[type="text"]';
+
+      $(inputSelector)
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('keyup', function(e) {
+          if (e.keyCode === 27) // ESC
+            NavSearch.dismiss();
+        });
+        
+      // click anywhere closes the search
+      $(document).on('click', NavSearch.dismiss);
+      // dismissable options
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.dismiss);
+    }
+
+})();
+
+
+/**=========================================================
+ * Module: nav-search.js
+ * Services to share navbar search functions
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .service('NavSearch', NavSearch);
+
+    function NavSearch() {
+        this.toggle = toggle;
+        this.dismiss = dismiss;
+
+        ////////////////
+
+        var navbarFormSelector = 'form.navbar-form';
+
+        function toggle() {
+          var navbarForm = $(navbarFormSelector);
+
+          navbarForm.toggleClass('open');
+
+          var isOpen = navbarForm.hasClass('open');
+
+          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
+        }
+
+        function dismiss() {
+          $(navbarFormSelector)
+            .removeClass('open') // Close control
+            .find('input[type="text"]').blur() // remove focus
+            // .val('') // Empty input
+            ;
+        }
+    }
+})();
+
 
 (function() {
     'use strict';
@@ -2515,115 +2624,6 @@ var API = {
         }
     }
 })();
-/**=========================================================
- * Module: navbar-search.js
- * Navbar search toggler * Auto dismiss on ESC key
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .directive('searchOpen', searchOpen)
-        .directive('searchDismiss', searchDismiss);
-
-    //
-    // directives definition
-    // 
-    
-    function searchOpen () {
-        var directive = {
-            controller: searchOpenController,
-            restrict: 'A'
-        };
-        return directive;
-
-    }
-
-    function searchDismiss () {
-        var directive = {
-            controller: searchDismissController,
-            restrict: 'A'
-        };
-        return directive;
-        
-    }
-
-    //
-    // Contrller definition
-    // 
-    
-    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchOpenController ($scope, $element, NavSearch) {
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.toggle);
-    }
-
-    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchDismissController ($scope, $element, NavSearch) {
-      
-      var inputSelector = '.navbar-form input[type="text"]';
-
-      $(inputSelector)
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('keyup', function(e) {
-          if (e.keyCode === 27) // ESC
-            NavSearch.dismiss();
-        });
-        
-      // click anywhere closes the search
-      $(document).on('click', NavSearch.dismiss);
-      // dismissable options
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.dismiss);
-    }
-
-})();
-
-
-/**=========================================================
- * Module: nav-search.js
- * Services to share navbar search functions
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .service('NavSearch', NavSearch);
-
-    function NavSearch() {
-        this.toggle = toggle;
-        this.dismiss = dismiss;
-
-        ////////////////
-
-        var navbarFormSelector = 'form.navbar-form';
-
-        function toggle() {
-          var navbarForm = $(navbarFormSelector);
-
-          navbarForm.toggleClass('open');
-
-          var isOpen = navbarForm.hasClass('open');
-
-          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
-        }
-
-        function dismiss() {
-          $(navbarFormSelector)
-            .removeClass('open') // Close control
-            .find('input[type="text"]').blur() // remove focus
-            // .val('') // Empty input
-            ;
-        }
-    }
-})();
-
 (function() {
     'use strict';
 
@@ -3412,6 +3412,70 @@ var API = {
     }
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .config(translateConfig)
+        ;
+    translateConfig.$inject = ['$translateProvider'];
+    function translateConfig($translateProvider){
+
+      $translateProvider.useStaticFilesLoader({
+          prefix : 'app/i18n/',
+          suffix : '.json'
+      });
+
+      $translateProvider.preferredLanguage('en');
+      $translateProvider.useLocalStorage();
+      $translateProvider.usePostCompiling(true);
+      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
+
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .run(translateRun)
+        ;
+    translateRun.$inject = ['$rootScope', '$translate'];
+    
+    function translateRun($rootScope, $translate){
+
+      // Internationalization
+      // ----------------------
+
+      $rootScope.language = {
+        // Handles language dropdown
+        listIsOpen: false,
+        // list of available languages
+        available: {
+          'en':       'English',
+          'es_AR':    'Español'
+        },
+        // display always the current ui language
+        init: function () {
+          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
+          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
+          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
+        },
+        set: function (localeId) {
+          // Set the new idiom
+          $translate.use(localeId);
+          // save a reference for the current language
+          $rootScope.language.selected = $rootScope.language.available[localeId];
+          // finally toggle dropdown
+          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
+        }
+      };
+
+      $rootScope.language.init();
+
+    }
+})();
 /**=========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
@@ -3842,70 +3906,6 @@ var API = {
     }
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .config(translateConfig)
-        ;
-    translateConfig.$inject = ['$translateProvider'];
-    function translateConfig($translateProvider){
-
-      $translateProvider.useStaticFilesLoader({
-          prefix : 'app/i18n/',
-          suffix : '.json'
-      });
-
-      $translateProvider.preferredLanguage('en');
-      $translateProvider.useLocalStorage();
-      $translateProvider.usePostCompiling(true);
-      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
-
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .run(translateRun)
-        ;
-    translateRun.$inject = ['$rootScope', '$translate'];
-    
-    function translateRun($rootScope, $translate){
-
-      // Internationalization
-      // ----------------------
-
-      $rootScope.language = {
-        // Handles language dropdown
-        listIsOpen: false,
-        // list of available languages
-        available: {
-          'en':       'English',
-          'es_AR':    'Español'
-        },
-        // display always the current ui language
-        init: function () {
-          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
-          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
-          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
-        },
-        set: function (localeId) {
-          // Set the new idiom
-          $translate.use(localeId);
-          // save a reference for the current language
-          $rootScope.language.selected = $rootScope.language.available[localeId];
-          // finally toggle dropdown
-          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
-        }
-      };
-
-      $rootScope.language.init();
-
-    }
-})();
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -4125,6 +4125,7 @@ var API = {
         var factory = {
             buildUrl: _buildUrl,
             buildPaginatedUrl:_buildPaginatedUrl,
+            buildPerPageUrl:_buildPerPageUrl,
             buildUrlWithParam: _buildUrlWithParam,
             buildUrlForSearch: _buildUrlForSearch,
             Validation: {
@@ -4192,14 +4193,15 @@ var API = {
         function _buildUrl(service,url) {
           return API.Config.BaseUrl + service +'/' + url;
         }
-        function _buildPaginatedUrl(service,url,params) {
-            // return url===''?API.Config.BaseUrl + service + '/paginate':
-            //     API.Config.BaseUrl + service +'/' + url + '/paginate';
+        function _buildPaginatedUrl(service,url) {
             var parameters = {start:1,limit:500};
             return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
                 API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
         }
-
+        function _buildPerPageUrl(service,url,parameters) {
+            return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
+                API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
+        }
         function _buildUrlWithParam(service,url, id) {
             return url===''?API.Config.BaseUrl + service + '/' + id : API.Config.BaseUrl + service +'/'+ url + '/' + id;
         }
