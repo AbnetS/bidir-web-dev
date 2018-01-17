@@ -11,7 +11,7 @@
         </md-toolbar>
 
         <md-dialog-content>
-            <md-content class="md-padding">
+            <md-content class="md-padding" block-ui="UserFormLoader">
                 <div class="row">
                     <!-- FIRST NAME -->
                     <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -133,7 +133,7 @@
                         <input ng-disabled="vm.isEdit" name="inputUsername"
                                ng-model="vm.user.username"
                                placeholder="Username"
-                               type="text"
+                               type="text" minlength="5"
                                class="form-control input-sm" required>
                     </div>
 

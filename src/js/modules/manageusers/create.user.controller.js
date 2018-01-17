@@ -28,8 +28,9 @@
         function _saveUser() {
 
             var myBlockUI = blockUI.instances.get('CreateUserForm');
-            myBlockUI.start();
+
             if(!_.isUndefined(vm.user.selected_role) &&  !_.isUndefined(vm.user.selected_default_branch)){
+                myBlockUI.start("Storing User");
                 var userInfo = {
                     first_name: vm.user.first_name,
                     last_name: vm.user.last_name,
@@ -92,7 +93,8 @@
                         }
                     );
                 }
-            }else {
+            }
+            else {
                 AlertService.showError( 'Oops... Something went wrong', "You haven't provided all required fields.");
             }
 
@@ -101,8 +103,9 @@
         }
 
         function initialize(){
-
             if(vm.isEdit){
+                var myLoadingBlockUI = blockUI.instances.get('UserFormLoader');
+                myLoadingBlockUI.start("Loading User Information");
                 angular.extend(vm.user, vm.user.account);
                 var dt = new Date(vm.user.hired_date);
                 vm.user.hired_date = dt;
@@ -115,14 +118,16 @@
                     vm.branches = response.data.docs;
                     if(vm.isEdit){
                         setBranchesSelectedValue(vm.branches);
+                        myLoadingBlockUI.stop();
                     }
                 },function(error){
                     console.log("error",error);
                 });
             }else{
-                vm.branches =  ManageUserService.GetUserAccessBranches();
+                vm.branches =  AuthService.GetAccessBranches();
                 if(vm.isEdit){
                     setBranchesSelectedValue(vm.branches);
+                    myLoadingBlockUI.stop();
                 }
             }
 

@@ -24,7 +24,7 @@
 
         vm.login = function() {
             var myBlockUI = blockUI.instances.get('loginFormBlockUI');
-            myBlockUI.start("Login Loading");
+            myBlockUI.start("Logging in");
             AuthService.login(vm.user).then(
                 function(response) {
                     var result = response.data;
