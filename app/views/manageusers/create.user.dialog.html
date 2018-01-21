@@ -14,7 +14,8 @@
             <md-content class="md-padding" block-ui="UserFormLoader">
                 <div class="row">
                     <!-- FIRST NAME -->
-                    <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6"
+                         ng-class="{false:'has-error'}[vm.UserValidationForm.Isfirst_nameValid]">
                         <label class="control-label small">First Name</label>
                         <span class="required" aria-required="true"> * </span>
                         <input name="inputFirstName"
@@ -24,7 +25,8 @@
                                class="form-control input-sm" required>
                     </div>
                     <!-- LAST NAME -->
-                    <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6"
+                         ng-class="{false:'has-error'}[vm.UserValidationForm.Islast_nameValid]">
                         <label class="control-label small">Last Name</label>
                         <span class="required" aria-required="true"> * </span>
                         <input name="inputLastName"
@@ -34,7 +36,8 @@
                                class="form-control input-sm" required>
                     </div>
                     <!-- Grand Father Name -->
-                    <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6"
+                         ng-class="{false:'has-error'}[vm.UserValidationForm.Isgrandfather_nameValid]">
                         <label class="control-label small">Grand Father Name</label>
                         <span class="required" aria-required="true"> * </span>
                         <input name="inputSurName"
@@ -54,7 +57,8 @@
                                    class="form-control input-sm">
                         </div>
                     <!-- Default Branch -->
-                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6"
+                         ng-class="{false:'has-error'}[vm.UserValidationForm.Isselected_default_branchValid]">
                         <label class="control-label small">Based at Branch</label>
                         <span class="required" aria-required="true"> * </span>
                         <br/>
@@ -115,7 +119,8 @@
                     </div>
 
                     <!--Role-->
-                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                    <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6"
+                         ng-class="{false:'has-error'}[vm.UserValidationForm.Isselected_roleValid]">
                         <label class="control-label small">Role</label>
                         <span class="required" aria-required="true"> * </span>
                         <md-select ng-model="vm.user.selected_role">
@@ -127,7 +132,8 @@
                     </div>
 
                     <!--Username-->
-                    <div  class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                    <div  class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6"
+                          ng-class="{false:'has-error'}[vm.UserValidationForm.IsusernameValid]">
                         <label class="control-label small">Username</label>
                         <span class="required" aria-required="true"> * </span>
                         <input ng-disabled="vm.isEdit" name="inputUsername"
@@ -135,6 +141,7 @@
                                placeholder="Username"
                                type="text" minlength="5"
                                class="form-control input-sm" required>
+                        <span ng-show="vm.userForm.inputUsername.$error.minlength"  class="text-danger help-block">username should be a min of 5 characters.</span>
                     </div>
 
                     <!--Password-->

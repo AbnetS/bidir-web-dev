@@ -12,8 +12,8 @@
         .module('app.manage_users')
         .controller('CreateUserController', CreateUserController);
 
-    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService','AuthService','blockUI','$scope'];
-    function CreateUserController($mdDialog, ManageUserService,items,AlertService,AuthService,blockUI,$scope) {
+    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService','AuthService','blockUI','$scope','CommonService'];
+    function CreateUserController($mdDialog, ManageUserService,items,AlertService,AuthService,blockUI,$scope,CommonService) {
         var vm = this;
         vm.cancel = _cancel;
         vm.saveUser = _saveUser;
@@ -21,15 +21,22 @@
         vm.isEdit = items !== null;
         vm.user = items !== null?items:{};
         vm.user.selected_access_branches = [];
-
+        vm.UserValidationForm = {
+            Isfirst_nameValid: true,
+            Islast_nameValid: true,
+            Isgrandfather_nameValid: true,
+            Isselected_default_branchValid: true,
+            Isselected_roleValid: true,
+            IsusernameValid: true
+        };
 
         initialize();
 
         function _saveUser() {
+            vm.IsValidData = CommonService.Validation.ValidateForm(vm.UserValidationForm, vm.user);
 
-            var myBlockUI = blockUI.instances.get('CreateUserForm');
-
-            if(!_.isUndefined(vm.user.selected_role) &&  !_.isUndefined(vm.user.selected_default_branch)){
+            if(vm.IsValidData){
+                var myBlockUI = blockUI.instances.get('CreateUserForm');
                 myBlockUI.start("Storing User");
                 var userInfo = {
                     first_name: vm.user.first_name,
