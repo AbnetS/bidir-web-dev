@@ -42,7 +42,6 @@
                     access_branches:[],
                     multi_branches: vm.user.multi_branches
                 };
-                userInfo.access_branches.push(userInfo.default_branch);
 
                 _.forEach(vm.user.selected_access_branches,function(accessBranch){
 
