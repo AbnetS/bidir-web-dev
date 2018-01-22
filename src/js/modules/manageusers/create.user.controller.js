@@ -24,7 +24,6 @@
         vm.UserValidationForm = {
             Isfirst_nameValid: true,
             Islast_nameValid: true,
-            Isgrandfather_nameValid: true,
             Isselected_default_branchValid: true,
             Isselected_roleValid: true,
             IsusernameValid: true

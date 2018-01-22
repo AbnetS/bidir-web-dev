@@ -36,15 +36,13 @@
                                class="form-control input-sm" required>
                     </div>
                     <!-- Grand Father Name -->
-                    <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6"
-                         ng-class="{false:'has-error'}[vm.UserValidationForm.Isgrandfather_nameValid]">
+                    <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
                         <label class="control-label small">Grand Father Name</label>
-                        <span class="required" aria-required="true"> * </span>
                         <input name="inputSurName"
                                ng-model="vm.user.grandfather_name"
                                placeholder="Grand Father Name"
                                type="text"
-                               class="form-control input-sm" required>
+                               class="form-control input-sm">
                     </div>
                      <!-- Grand Father Name -->
                      <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -60,7 +58,7 @@
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6"
                          ng-class="{false:'has-error'}[vm.UserValidationForm.Isselected_default_branchValid]">
                         <label class="control-label small">Based at Branch</label>
-                        <span class="required" aria-required="true"> * </span>
+                        <span class="control-label required" aria-required="true"> * </span>
                         <br/>
                         <ui-select ng-model="vm.user.selected_default_branch" theme="select2"
                                    on-select="vm.onSelectedDefaultBranch()"
@@ -122,7 +120,7 @@
                     <div class="form-group col-xs-10 col-sm-6 col-md-6 col-lg-6"
                          ng-class="{false:'has-error'}[vm.UserValidationForm.Isselected_roleValid]">
                         <label class="control-label small">Role</label>
-                        <span class="required" aria-required="true"> * </span>
+                        <span class="control-label required" aria-required="true"> * </span>
                         <md-select ng-model="vm.user.selected_role">
                             <md-option><em>None</em></md-option>
                             <md-option ng-repeat="role in vm.roles" ng-value="role">
