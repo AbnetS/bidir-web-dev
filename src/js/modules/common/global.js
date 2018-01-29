@@ -7,7 +7,8 @@ var API = {
         MFI: 'MFI',
         Auth: 'auth',
         Users: 'users',
-        SCREENING:'screenings'
+        SCREENING:'screenings',
+        FORM:'forms'
     },
     Methods: {
         Auth: {
@@ -43,6 +44,9 @@ var API = {
             All:'clients/paginate?source=web',
             Client:'clients',
             SearchClient:''
+        },
+        Form:{
+            All: ''
         }
     }
 };

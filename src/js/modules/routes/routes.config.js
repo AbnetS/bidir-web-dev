@@ -94,6 +94,13 @@
                 controller: "FormsController",
                 controllerAs: 'vm'
             })
+            .state("app.builder", {
+                url: "/forms/builder",
+                title: 'Form Builder',
+                templateUrl:helper.basepath('forms/builder.html'),
+                controller: 'FormBuilderController',
+                controllerAs: 'vm'
+            })
 
 
           // CUSTOM RESOLVES

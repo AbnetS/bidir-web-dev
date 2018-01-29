@@ -10,7 +10,12 @@
     FormService.$inject = ['$http','CommonService'];
 
     function FormService($http, CommonService) {
-        return {       };
+        return {
+            GetForms: _getForms
+        };
+        function _getForms() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.FORM,API.Methods.Form.All));
+        }
     }
 
 

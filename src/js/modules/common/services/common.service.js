@@ -9,6 +9,7 @@
         var factory = {
             buildUrl: _buildUrl,
             buildPaginatedUrl:_buildPaginatedUrl,
+            buildPageUrl:_buildPageUrl,
             buildPerPageUrl:_buildPerPageUrl,
             buildUrlWithParam: _buildUrlWithParam,
             buildUrlForSearch: _buildUrlForSearch,
@@ -79,6 +80,10 @@
         }
         function _buildPaginatedUrl(service,url) {
             var parameters = {start:1,limit:500};
+            return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
+                API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
+        }
+        function _buildPageUrl(service,url,parameters) {
             return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
                 API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
         }
