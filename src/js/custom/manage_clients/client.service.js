@@ -4,7 +4,7 @@
 
 (function(angular) {
     'use strict';
-    angular.module('app.mfi')
+    angular.module('app.clients')
 
         .service('ClientService', ClientService);
 
