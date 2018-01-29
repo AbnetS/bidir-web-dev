@@ -7,8 +7,9 @@
             'angle',
             // or just modules
             'app.mfi',
-            'app.clients'
-            /*...*/
+            'app.clients',
+            'app.forms'
+
         ]).run(customRun);
 
     function customRun() {

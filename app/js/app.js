@@ -60,6 +60,26 @@
 })();
 
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.auth', [])
+        .run(runBlock)
+        .config(routeConfig);
+
+    function runBlock() { console.log("auth run"); }
+
+    function routeConfig() {console.log("auth config");}
+
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
+})();
 (function(angular) {
   "use strict";
 
@@ -75,6 +95,12 @@
   function routeConfig() {console.log("common config");}
 })(window.angular);
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.lazyload', []);
+})();
 (function() {
     'use strict';
 
@@ -100,27 +126,7 @@
     'use strict';
 
     angular
-        .module('app.lazyload', []);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.loadingbar', []);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.auth', [])
-        .run(runBlock)
-        .config(routeConfig);
-
-    function runBlock() { console.log("auth run"); }
-
-    function routeConfig() {console.log("auth config");}
-
-
 })();
 /**
  * Created by Yoni on 11/30/2017.
@@ -137,12 +143,6 @@
 
     function routeConfig() {console.log("RM config");}
 
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
 })();
 /**
  * Created by Yoni on 11/30/2017.
@@ -181,12 +181,6 @@
     'use strict';
 
     angular
-        .module('app.navsearch', []);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.preloader', []);
 })();
 
@@ -195,15 +189,15 @@
     'use strict';
 
     angular
-        .module('app.routes', [
-            'app.lazyload'
-        ]);
+        .module('app.navsearch', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.translate', []);
+        .module('app.routes', [
+            'app.lazyload'
+        ]);
 })();
 (function() {
     'use strict';
@@ -237,6 +231,214 @@
         .module('app.welcomePage', []);
 
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate', []);
+})();
+(function(angular) {
+    'use strict';
+    angular.module('app.auth')
+
+    .service('AuthService', AuthService);
+
+     AuthService.$inject = ['$http', 'StorageService', 'CommonService', 'APP_CONSTANTS', '$rootScope', '$state'];
+
+    function AuthService($http, StorageService, CommonService, APP_CONSTANTS, $rootScope, $state) {
+
+        return {
+            login: _login,
+            Logout: logout,
+            GetCredentials: getCredentials,
+            SetCredentials: setCredentials,
+            GetToken: getToken,
+            GetCurrentUser:_getCurrentUser,
+            GetAccessBranches:_getAccessBranches,
+            IsSuperuser:isSuper
+        };
+
+
+
+        function getCredentials() {
+            return !angular.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.SESSION)) ? StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) : null;
+        }
+
+        function setCredentials(session) {
+            StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
+        }
+
+        function getToken() {
+            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION).token;
+        }
+
+
+        function _getCurrentUser(){
+          var credential = getCredentials();
+          return credential !== null? credential.user: null;
+        }
+        function _getAccessBranches() {
+            var credential = getCredentials();
+            return credential !== null ?  !isSuper()? credential.user.account.access_branches : [] :null;
+        }
+
+        function isSuper() {
+            var credential = getCredentials();
+            return credential.user.username === 'super@bidir.com';
+        }
+
+        function _login(user) {
+          return $http.post(CommonService.buildUrl(API.Service.Auth,API.Methods.Auth.Login), user);
+        }
+
+        function logout() {
+            StorageService.Reset();
+            $rootScope.currentUser = null;
+            $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
+            $state.go('page.login');
+        }
+
+    }
+
+})(window.angular);
+
+/**=========================================================
+ * Module: access-login.js
+ * Demo for login api
+ =========================================================*/
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.auth')
+        .controller('LoginFormController', LoginFormController);
+
+    LoginFormController.$inject = ['AuthService', '$state',  '$rootScope',  'APP_CONSTANTS',  'blockUI', 'AlertService'];
+
+    function LoginFormController( AuthService,  $state, $rootScope,  APP_CONSTANTS, blockUI,AlertService
+    ) {
+        var vm = this;
+        vm.userValidator = {
+            usernameMin: 4,
+            usernameMax: 20,
+            passwordMin: 6
+        };
+        vm.user = {};
+
+        vm.login = function() {
+            var myBlockUI = blockUI.instances.get('loginFormBlockUI');
+            myBlockUI.start("Logging in");
+            AuthService.login(vm.user).then(
+                function(response) {
+                    var result = response.data;
+                    vm.user = result.user;
+                    $rootScope.currentUser = vm.user;
+                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
+                    AuthService.SetCredentials(result);
+                    myBlockUI.stop();
+                    console.log('logged in user',vm.user);
+
+                    $state.go("app.welcome");
+                    //TODO: if no mfi redirect to mfi registration page
+                    // CheckMFIAndRedirect();
+                },
+                function(error) {
+                    myBlockUI.stop();
+                    console.log("error", error);
+                    AlertService.showError("Error on Login", "The username or password is incorrect! Please try again.");
+                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
+                }
+            );
+
+            function CheckMFIAndRedirect(){
+                MainService.GetMFI().then(
+                    function(response) {
+                        debugger
+                        if (response.data.length > 0) {
+                            $state.go("index.branch");
+                            toastr.success(
+                                "Welcome Back " +
+                                vm.user.admin.first_name ,
+                                "Success"
+                            );
+                        }else{
+                            $state.go("home.mfi");
+                            toastr.success(
+                                "Welcome " +
+                                vm.user.admin.first_name +
+                                " " +
+                                vm.user.admin.last_name +
+                                " to Bidir Web App",
+                                "Success"
+                            );
+                        }
+                    },
+                    function(error) {
+                        console.log("error", error);
+                        toastr.error(
+                            "Error occured while trying to connect! Please try again.",
+                            "ERROR!"
+                        );
+                    }
+                );
+            }
+
+        };
+    }
+})(window.angular);
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
+
 (function(angular) {
   "use strict";
 
@@ -370,123 +572,6 @@ var API = {
     }
 };
 
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .config(coreConfig);
-
-    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
-    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
-
-      var core = angular.module('app.core');
-      // registering components after bootstrap
-      core.controller = $controllerProvider.register;
-      core.directive  = $compileProvider.directive;
-      core.filter     = $filterProvider.register;
-      core.factory    = $provide.factory;
-      core.service    = $provide.service;
-      core.constant   = $provide.constant;
-      core.value      = $provide.value;
-
-      // Disables animation on items with class .ng-no-animation
-      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
-
-      // Improve performance disabling debugging features
-      // $compileProvider.debugInfoEnabled(false);
-
-    }
-
-})();
-/**=========================================================
- * Module: constants.js
- * Define constants to inject across the application
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .constant('APP_MEDIAQUERY', {
-          'desktopLG':             1200,
-          'desktop':                992,
-          'tablet':                 768,
-          'mobile':                 480
-        })
-      ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .run(appRun);
-
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
-
-      // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });*/
-
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
-
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Hooks Example
-      // ----------------------------------- 
-
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
-
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
-
-    }
-
-})();
 
 
 (function() {
@@ -674,6 +759,123 @@ var API = {
     'use strict';
 
     angular
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
+
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+      // Disables animation on items with class .ng-no-animation
+      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
+
+      // Improve performance disabling debugging features
+      // $compileProvider.debugInfoEnabled(false);
+
+    }
+
+})();
+/**=========================================================
+ * Module: constants.js
+ * Define constants to inject across the application
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .run(appRun);
+
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });*/
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
+    }
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
         .module('app.loadingbar')
         .config(loadingbarConfig)
         ;
@@ -714,158 +916,6 @@ var API = {
     }
 
 })();
-(function(angular) {
-    'use strict';
-    angular.module('app.auth')
-
-    .service('AuthService', AuthService);
-
-     AuthService.$inject = ['$http', 'StorageService', 'CommonService', 'APP_CONSTANTS', '$rootScope', '$state'];
-
-    function AuthService($http, StorageService, CommonService, APP_CONSTANTS, $rootScope, $state) {
-
-        return {
-            login: _login,
-            Logout: logout,
-            GetCredentials: getCredentials,
-            SetCredentials: setCredentials,
-            GetToken: getToken,
-            GetCurrentUser:_getCurrentUser,
-            GetAccessBranches:_getAccessBranches,
-            IsSuperuser:isSuper
-        };
-
-
-
-        function getCredentials() {
-            return !angular.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.SESSION)) ? StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) : null;
-        }
-
-        function setCredentials(session) {
-            StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
-        }
-
-        function getToken() {
-            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION).token;
-        }
-
-
-        function _getCurrentUser(){
-          var credential = getCredentials();
-          return credential !== null? credential.user: null;
-        }
-        function _getAccessBranches() {
-            var credential = getCredentials();
-            return credential !== null ?  !isSuper()? credential.user.account.access_branches : [] :null;
-        }
-
-        function isSuper() {
-            var credential = getCredentials();
-            return credential.user.username === 'super@bidir.com';
-        }
-
-        function _login(user) {
-          return $http.post(CommonService.buildUrl(API.Service.Auth,API.Methods.Auth.Login), user);
-        }
-
-        function logout() {
-            StorageService.Reset();
-            $rootScope.currentUser = null;
-            $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
-            $state.go('page.login');
-        }
-
-    }
-
-})(window.angular);
-
-/**=========================================================
- * Module: access-login.js
- * Demo for login api
- =========================================================*/
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.auth')
-        .controller('LoginFormController', LoginFormController);
-
-    LoginFormController.$inject = ['AuthService', '$state',  '$rootScope',  'APP_CONSTANTS',  'blockUI', 'AlertService'];
-
-    function LoginFormController( AuthService,  $state, $rootScope,  APP_CONSTANTS, blockUI,AlertService
-    ) {
-        var vm = this;
-        vm.userValidator = {
-            usernameMin: 4,
-            usernameMax: 20,
-            passwordMin: 6
-        };
-        vm.user = {};
-
-        vm.login = function() {
-            var myBlockUI = blockUI.instances.get('loginFormBlockUI');
-            myBlockUI.start("Logging in");
-            AuthService.login(vm.user).then(
-                function(response) {
-                    var result = response.data;
-                    vm.user = result.user;
-                    $rootScope.currentUser = vm.user;
-                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
-                    AuthService.SetCredentials(result);
-                    myBlockUI.stop();
-                    console.log('logged in user',vm.user);
-
-                    $state.go("app.welcome");
-                    //TODO: if no mfi redirect to mfi registration page
-                    // CheckMFIAndRedirect();
-                },
-                function(error) {
-                    myBlockUI.stop();
-                    console.log("error", error);
-                    AlertService.showError("Error on Login", "The username or password is incorrect! Please try again.");
-                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
-                }
-            );
-
-            function CheckMFIAndRedirect(){
-                MainService.GetMFI().then(
-                    function(response) {
-                        debugger
-                        if (response.data.length > 0) {
-                            $state.go("index.branch");
-                            toastr.success(
-                                "Welcome Back " +
-                                vm.user.admin.first_name ,
-                                "Success"
-                            );
-                        }else{
-                            $state.go("home.mfi");
-                            toastr.success(
-                                "Welcome " +
-                                vm.user.admin.first_name +
-                                " " +
-                                vm.user.admin.last_name +
-                                " to Bidir Web App",
-                                "Success"
-                            );
-                        }
-                    },
-                    function(error) {
-                        console.log("error", error);
-                        toastr.error(
-                            "Error occured while trying to connect! Please try again.",
-                            "ERROR!"
-                        );
-                    }
-                );
-            }
-
-        };
-    }
-})(window.angular);
-
-
 /**
  * Created by Yoni on 12/10/2017.
  */
@@ -1139,56 +1189,6 @@ var API = {
     }
 
 })(window.angular);
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
 
 /**
  * Created by Yoni on 12/2/2017.
@@ -2520,6 +2520,99 @@ var API = {
         }
     }
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.preloader')
+        .directive('preloader', preloader);
+
+    preloader.$inject = ['$animate', '$timeout', '$q'];
+    function preloader ($animate, $timeout, $q) {
+
+        var directive = {
+            restrict: 'EAC',
+            template: 
+              '<div class="preloader-progress">' +
+                  '<div class="preloader-progress-bar" ' +
+                       'ng-style="{width: loadCounter + \'%\'}"></div>' +
+              '</div>'
+            ,
+            link: link
+        };
+        return directive;
+
+        ///////
+
+        function link(scope, el) {
+
+          scope.loadCounter = 0;
+
+          var counter  = 0,
+              timeout;
+
+          // disables scrollbar
+          angular.element('body').css('overflow', 'hidden');
+          // ensure class is present for styling
+          el.addClass('preloader');
+
+          appReady().then(endCounter);
+
+          timeout = $timeout(startCounter);
+
+          ///////
+
+          function startCounter() {
+
+            var remaining = 100 - counter;
+            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
+
+            scope.loadCounter = parseInt(counter, 10);
+
+            timeout = $timeout(startCounter, 20);
+          }
+
+          function endCounter() {
+
+            $timeout.cancel(timeout);
+
+            scope.loadCounter = 100;
+
+            $timeout(function(){
+              // animate preloader hiding
+              $animate.addClass(el, 'preloader-hidden');
+              // retore scrollbar
+              angular.element('body').css('overflow', '');
+            }, 300);
+          }
+
+          function appReady() {
+            var deferred = $q.defer();
+            var viewsLoaded = 0;
+            // if this doesn't sync with the real app ready
+            // a custom event must be used instead
+            var off = scope.$on('$viewContentLoaded', function () {
+              viewsLoaded ++;
+              // we know there are at least two views to be loaded 
+              // before the app is ready (1-index.html 2-app*.html)
+              if ( viewsLoaded === 2) {
+                // with resolve this fires only once
+                $timeout(function(){
+                  deferred.resolve();
+                }, 3000);
+
+                off();
+              }
+
+            });
+
+            return deferred.promise;
+          }
+
+        } //link
+    }
+
+})();
 /**=========================================================
  * Module: navbar-search.js
  * Navbar search toggler * Auto dismiss on ESC key
@@ -2629,99 +2722,6 @@ var API = {
     }
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.preloader')
-        .directive('preloader', preloader);
-
-    preloader.$inject = ['$animate', '$timeout', '$q'];
-    function preloader ($animate, $timeout, $q) {
-
-        var directive = {
-            restrict: 'EAC',
-            template: 
-              '<div class="preloader-progress">' +
-                  '<div class="preloader-progress-bar" ' +
-                       'ng-style="{width: loadCounter + \'%\'}"></div>' +
-              '</div>'
-            ,
-            link: link
-        };
-        return directive;
-
-        ///////
-
-        function link(scope, el) {
-
-          scope.loadCounter = 0;
-
-          var counter  = 0,
-              timeout;
-
-          // disables scrollbar
-          angular.element('body').css('overflow', 'hidden');
-          // ensure class is present for styling
-          el.addClass('preloader');
-
-          appReady().then(endCounter);
-
-          timeout = $timeout(startCounter);
-
-          ///////
-
-          function startCounter() {
-
-            var remaining = 100 - counter;
-            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
-
-            scope.loadCounter = parseInt(counter, 10);
-
-            timeout = $timeout(startCounter, 20);
-          }
-
-          function endCounter() {
-
-            $timeout.cancel(timeout);
-
-            scope.loadCounter = 100;
-
-            $timeout(function(){
-              // animate preloader hiding
-              $animate.addClass(el, 'preloader-hidden');
-              // retore scrollbar
-              angular.element('body').css('overflow', '');
-            }, 300);
-          }
-
-          function appReady() {
-            var deferred = $q.defer();
-            var viewsLoaded = 0;
-            // if this doesn't sync with the real app ready
-            // a custom event must be used instead
-            var off = scope.$on('$viewContentLoaded', function () {
-              viewsLoaded ++;
-              // we know there are at least two views to be loaded 
-              // before the app is ready (1-index.html 2-app*.html)
-              if ( viewsLoaded === 2) {
-                // with resolve this fires only once
-                $timeout(function(){
-                  deferred.resolve();
-                }, 3000);
-
-                off();
-              }
-
-            });
-
-            return deferred.promise;
-          }
-
-        } //link
-    }
-
-})();
 /**=========================================================
  * Module: helpers.js
  * Provides helper functions for routes definition
@@ -2894,6 +2894,14 @@ var API = {
                 controller: "ClientDetailController",
                 controllerAs: 'vm'
             })
+            .state("app.forms", {
+                url: "/forms",
+                title: "forms",
+                templateUrl:helper.basepath('forms/forms.list.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "FormsController",
+                controllerAs: 'vm'
+            })
 
 
           // CUSTOM RESOLVES
@@ -2938,70 +2946,6 @@ var API = {
 })();
 
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .config(translateConfig)
-        ;
-    translateConfig.$inject = ['$translateProvider'];
-    function translateConfig($translateProvider){
-
-      $translateProvider.useStaticFilesLoader({
-          prefix : 'app/i18n/',
-          suffix : '.json'
-      });
-
-      $translateProvider.preferredLanguage('en');
-      $translateProvider.useLocalStorage();
-      $translateProvider.usePostCompiling(true);
-      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
-
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .run(translateRun)
-        ;
-    translateRun.$inject = ['$rootScope', '$translate'];
-    
-    function translateRun($rootScope, $translate){
-
-      // Internationalization
-      // ----------------------
-
-      $rootScope.language = {
-        // Handles language dropdown
-        listIsOpen: false,
-        // list of available languages
-        available: {
-          'en':       'English',
-          'es_AR':    'Español'
-        },
-        // display always the current ui language
-        init: function () {
-          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
-          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
-          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
-        },
-        set: function (localeId) {
-          // Set the new idiom
-          $translate.use(localeId);
-          // save a reference for the current language
-          $rootScope.language.selected = $rootScope.language.available[localeId];
-          // finally toggle dropdown
-          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
-        }
-      };
-
-      $rootScope.language.init();
-
-    }
-})();
 (function() {
     'use strict';
 
@@ -4044,6 +3988,70 @@ var API = {
     }
 
 })(window.angular);
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .config(translateConfig)
+        ;
+    translateConfig.$inject = ['$translateProvider'];
+    function translateConfig($translateProvider){
+
+      $translateProvider.useStaticFilesLoader({
+          prefix : 'app/i18n/',
+          suffix : '.json'
+      });
+
+      $translateProvider.preferredLanguage('en');
+      $translateProvider.useLocalStorage();
+      $translateProvider.usePostCompiling(true);
+      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
+
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .run(translateRun)
+        ;
+    translateRun.$inject = ['$rootScope', '$translate'];
+    
+    function translateRun($rootScope, $translate){
+
+      // Internationalization
+      // ----------------------
+
+      $rootScope.language = {
+        // Handles language dropdown
+        listIsOpen: false,
+        // list of available languages
+        available: {
+          'en':       'English',
+          'es_AR':    'Español'
+        },
+        // display always the current ui language
+        init: function () {
+          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
+          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
+          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
+        },
+        set: function (localeId) {
+          // Set the new idiom
+          $translate.use(localeId);
+          // save a reference for the current language
+          $rootScope.language.selected = $rootScope.language.available[localeId];
+          // finally toggle dropdown
+          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
+        }
+      };
+
+      $rootScope.language.init();
+
+    }
+})();
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -4377,13 +4385,27 @@ var API = {
             'angle',
             // or just modules
             'app.mfi',
-            'app.clients'
-            /*...*/
+            'app.clients',
+            'app.forms'
+
         ]).run(customRun);
 
     function customRun() {
         console.log("custom app run");
     }
+})();
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function() {
+    "use strict";
+
+    angular.module("app.forms", [
+    ]).run(runBlock);
+
+    function runBlock() {}
+
+
 })();
 /**
  * Created by Yoni on 1/8/2018.
@@ -4441,6 +4463,46 @@ function runBlock() {
 })();
 
 /**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.forms").controller("FormsController", FormsController);
+
+    FormsController.$inject = ['FormService','blockUI'];
+
+    function FormsController(FormService,blockUI) {
+        var vm = this;
+        vm.forms = [];
+        vm.editForm = _editForm;
+
+
+        function _editForm(form, ev) {
+
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.forms')
+
+        .service('FormService', FormService);
+
+    FormService.$inject = ['$http','CommonService'];
+
+    function FormService($http, CommonService) {
+        return {       };
+    }
+
+
+})(window.angular);
+/**
  * Created by Yoni on 1/9/2018.
  */
 (function(angular) {
@@ -4476,7 +4538,7 @@ function runBlock() {
 
 (function(angular) {
     'use strict';
-    angular.module('app.mfi')
+    angular.module('app.clients')
 
         .service('ClientService', ClientService);
 

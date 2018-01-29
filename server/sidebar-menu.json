@@ -40,5 +40,14 @@
     "submenu": [
       {"text": "Manage Clients",     "sref": "app.manage_clients" ,   "permission": "CLIENT_MANAGEMENT_CLIENT"}
     ]
+  },
+  {
+    "text": "Forms",
+    "module": "FORM_BUILDER",
+    "sref": "#",
+    "icon": "fa fa-table",
+    "submenu": [
+      {"text": "Form List",     "sref": "app.forms" ,   "permission": "FORM_BUILDER_VIEW"}
+    ]
   }
 ]

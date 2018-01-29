@@ -86,6 +86,14 @@
                 controller: "ClientDetailController",
                 controllerAs: 'vm'
             })
+            .state("app.forms", {
+                url: "/forms",
+                title: "forms",
+                templateUrl:helper.basepath('forms/forms.list.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "FormsController",
+                controllerAs: 'vm'
+            })
 
 
           // CUSTOM RESOLVES
