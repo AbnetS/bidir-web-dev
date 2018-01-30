@@ -7983,3 +7983,13 @@ md-dialog {
 .md-button.md-primary.md-raised:not([disabled]) {
   background-color: #039661;
 }
+.line {
+  min-height: 25px;
+  border-bottom: 2px solid #039661;
+}
+.centerPageText {
+  color: #e8e8e8;
+  text-align: center;
+  padding: 150px;
+  font-size: 20px;
+}

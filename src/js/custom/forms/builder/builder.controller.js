@@ -10,7 +10,7 @@
 
     function FormBuilderController(FormService,blockUI) {
         var vm = this;
-
+        // vm.formData = {};
 
 
         initialize();
