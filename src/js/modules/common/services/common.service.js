@@ -9,7 +9,6 @@
         var factory = {
             buildUrl: _buildUrl,
             buildPaginatedUrl:_buildPaginatedUrl,
-            buildPageUrl:_buildPageUrl,
             buildPerPageUrl:_buildPerPageUrl,
             buildUrlWithParam: _buildUrlWithParam,
             buildUrlForSearch: _buildUrlForSearch,
@@ -83,13 +82,8 @@
             return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
                 API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
         }
-        function _buildPageUrl(service,url,parameters) {
-            return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
-                API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
-        }
         function _buildPerPageUrl(service,url,parameters) {
-            return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
-                API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
+            return url === '' ? API.Config.BaseUrl + service + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page : API.Config.BaseUrl + service + '/' + url + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page;
         }
         function _buildUrlWithParam(service,url, id) {
             return url===''?API.Config.BaseUrl + service + '/' + id : API.Config.BaseUrl + service +'/'+ url + '/' + id;

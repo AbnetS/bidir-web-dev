@@ -6,18 +6,12 @@
 
 
 <div class="panel panel-default">
-    <!--<div class="panel-heading">-->
-        <!--<div class="col-xs-10 col-lg-5">-->
-            <!--<label class="control-label small">Form List</label>-->
-        <!--</div>-->
-        <!--<div class="col-xs-12 col-lg-7"></div>-->
-        <!--<br/>-->
-    <!--</div>-->
+
     <div class="panel-body">
         <p></p>
         <div class="row" userpermission="['FORM_BUILDER_FORM_VIEW','FORM_BUILDER_FORM_VIEW']">
             <div class="col-xs-10 col-lg-12">
-                <p><a class="btn btn-success pull-right" href="" ng-click="vm.buildForm()">
+                <p><a class="btn btn-success pull-right" ui-sref="app.builder">
                     <i class="fa fa-plus"></i>
                     Add</a>
                 </p>
@@ -75,7 +69,7 @@
                 </md-table-container>
 
                 <md-table-pagination md-limit="vm.request.PageSize" md-limit-options="vm.pageSizes"
-                                     md-page="vm.request.Draw" md-total="{{vm.items.RecordsTotal}}"
+                                     md-page="vm.request.Draw" md-total="{{vm.totalCount}}"
                                      md-page-select="vm.options.pageSelect"
                                      md-boundary-links="vm.options.boundaryLinks"
                                      md-on-paginate="vm.logPagination">

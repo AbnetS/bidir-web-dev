@@ -11,10 +11,10 @@
 
     function FormService($http, CommonService) {
         return {
-            GetForms: _getForms
+            GetFormsPerPage: _getFormsPerPage
         };
-        function _getForms() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.FORM,API.Methods.Form.All));
+        function _getFormsPerPage(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
         }
     }
 

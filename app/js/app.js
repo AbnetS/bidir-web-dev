@@ -74,6 +74,12 @@
 
 
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
+})();
 (function(angular) {
   "use strict";
 
@@ -89,12 +95,6 @@
   function routeConfig() {console.log("common config");}
 })(window.angular);
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
-})();
 (function() {
     'use strict';
 
@@ -389,6 +389,56 @@
 })(window.angular);
 
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
+
 (function(angular) {
   "use strict";
 
@@ -527,56 +577,6 @@ var API = {
 };
 
 
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
 
 (function() {
     'use strict';
@@ -4149,7 +4149,6 @@ var API = {
         var factory = {
             buildUrl: _buildUrl,
             buildPaginatedUrl:_buildPaginatedUrl,
-            buildPageUrl:_buildPageUrl,
             buildPerPageUrl:_buildPerPageUrl,
             buildUrlWithParam: _buildUrlWithParam,
             buildUrlForSearch: _buildUrlForSearch,
@@ -4223,13 +4222,8 @@ var API = {
             return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
                 API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
         }
-        function _buildPageUrl(service,url,parameters) {
-            return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
-                API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
-        }
         function _buildPerPageUrl(service,url,parameters) {
-            return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
-                API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
+            return url === '' ? API.Config.BaseUrl + service + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page : API.Config.BaseUrl + service + '/' + url + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page;
         }
         function _buildUrlWithParam(service,url, id) {
             return url===''?API.Config.BaseUrl + service + '/' + id : API.Config.BaseUrl + service +'/'+ url + '/' + id;
@@ -4411,19 +4405,6 @@ var API = {
     }
 })();
 /**
- * Created by Yoni on 1/29/2018.
- */
-(function() {
-    "use strict";
-
-    angular.module("app.forms", [
-    ]).run(runBlock);
-
-    function runBlock() {}
-
-
-})();
-/**
  * Created by Yoni on 1/8/2018.
  */
 (function() {
@@ -4451,6 +4432,19 @@ function runBlock() {
 
 })();
 
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function() {
+    "use strict";
+
+    angular.module("app.forms", [
+    ]).run(runBlock);
+
+    function runBlock() {}
+
+
+})();
 
 // To run this code, edit file index.html or index.jade and change
 // html data-ng-app attribute from angle to myAppName
@@ -4478,67 +4472,6 @@ function runBlock() {
     }
 })();
 
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.forms").controller("FormsController", FormsController);
-
-    FormsController.$inject = ['FormService','blockUI'];
-
-    function FormsController(FormService,blockUI) {
-        var vm = this;
-        vm.forms = [];
-        vm.buildForm = _buildForm;
-        vm.editForm = _editForm;
-        initialize();
-
-
-        function initialize() {
-            FormService.GetForms().then(function(response){
-                console.log(response);
-                vm.forms = response.data.docs;
-                vm.totalCount =  response.data.total_docs_count;
-            },function (error) {
-                console.log(error);
-            })
-        }
-
-
-        function _buildForm() {
-
-        }
-        function _editForm(form, ev) {
-            console.log("edit Form",form);
-        }
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.forms')
-
-        .service('FormService', FormService);
-
-    FormService.$inject = ['$http','CommonService'];
-
-    function FormService($http, CommonService) {
-        return {
-            GetForms: _getForms
-        };
-        function _getForms() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.FORM,API.Methods.Form.All));
-        }
-    }
-
-
-})(window.angular);
 /**
  * Created by Yoni on 1/9/2018.
  */
@@ -4802,12 +4735,16 @@ function runBlock() {
 (function(angular) {
     "use strict";
 
-    angular.module("app.forms").controller("FormBuilderController", FormBuilderController);
+    angular.module("app.forms").controller("FormsController", FormsController);
 
-    FormBuilderController.$inject = ['FormService','blockUI'];
+    FormsController.$inject = ['FormService','blockUI'];
 
-    function FormBuilderController(FormService,blockUI) {
+    function FormsController(FormService,blockUI) {
         var vm = this;
+        vm.forms = [];
+        vm.logPagination = _logPagination;
+        vm.editForm = _editForm;
+
         vm.pageSizes = [10, 25, 50, 100, 250, 500];
 
         vm.options = {
@@ -4822,28 +4759,62 @@ function runBlock() {
         };
 
         vm.request = {
-            Draw: 1,
-            Start: 0,
-            PageSize: 10,
+            page: 1,
+            per_page: 10,
             Search: ""
         };
+
+
 
 
         initialize();
 
 
         function initialize() {
-
+            callApi();//fetch first page data initially
         }
 
-        vm.logPagination = function (page, pageSize) {
-            vm.request.Draw = page;
-            vm.request.PageSize = pageSize;
+        function _logPagination(page, pageSize) {
+            vm.request.page = page;
+            vm.request.per_page = pageSize;
             vm.request.Start = page - 1;
-            // callApi();
+            callApi();
+        }
+
+        function callApi() {
+            FormService.GetFormsPerPage(vm.request).then(function (response) {
+                console.log("response per page page#:" + vm.request.page, response);
+                vm.forms = response.data.docs;
+            },function (error) {
+                console.log(error);
+            })
+        }
+
+        function _editForm(form, ev) {
+            console.log("edit Form",form);
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.forms')
+
+        .service('FormService', FormService);
+
+    FormService.$inject = ['$http','CommonService'];
+
+    function FormService($http, CommonService) {
+        return {
+            GetFormsPerPage: _getFormsPerPage
         };
-
-
+        function _getFormsPerPage(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
+        }
     }
 
 
@@ -5040,6 +5011,34 @@ function runBlock() {
   }
 })(window.angular);
 
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.forms").controller("FormBuilderController", FormBuilderController);
+
+    FormBuilderController.$inject = ['FormService','blockUI'];
+
+    function FormBuilderController(FormService,blockUI) {
+        var vm = this;
+
+
+
+        initialize();
+
+
+        function initialize() {
+
+        }
+
+
+
+    }
+
+
+})(window.angular);
 (function(angular) {
   'use strict';
 
