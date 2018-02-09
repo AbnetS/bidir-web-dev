@@ -4840,6 +4840,9 @@ function runBlock() {
     function FormBuilderController(FormService,$mdDialog,RouteHelpers) {
         var vm = this;
         vm.addQuestion = _addQuestion;
+        vm.formData = {
+            hasSection:0
+        };
 
 
         initialize();

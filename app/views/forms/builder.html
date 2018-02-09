@@ -24,6 +24,13 @@
                        <input type="text" class="form-control" name="formPurpose" id="formPurpose"
                               ng-model="vm.formData.purpose" required>
                    </md-input-container>
+                   <md-input-container class="md-block">
+                       <md-radio-group layout="row" ng-model="vm.formData.hasSection" >
+                           <md-radio-button value=0 class="md-primary"> No Section </md-radio-button>
+                           <md-radio-button value=1 class="md-primary">Has Section</md-radio-button>
+                       </md-radio-group>
+                   </md-input-container>
+
                </div>
                 <div class="col-md-4">
                     <div class="main-img-preview">
