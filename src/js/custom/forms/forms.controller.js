@@ -33,9 +33,6 @@
             Search: ""
         };
 
-
-
-
         initialize();
 
 

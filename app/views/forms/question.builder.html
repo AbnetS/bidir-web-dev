@@ -23,40 +23,23 @@
                             </md-input-container>
                         </div>
                         <div class="mw-question-type" layout="row" layout-align="start center">
-                            <md-input-container flex-gt-md="40">
+                            <md-input-container flex-gt-md="50">
                                 <label label-for="question-type-{{vm.id}}" label-class="col-sm-2 control-label"
                                           label-key="mwForm.question.type">Question Type</label>
                                 <md-select ng-attr-id="question-type-{{vm.id}}"
                                            ng-model="vm.question.type"
                                            ng-change="vm.questionTypeChanged()"
                                            ng-disabled="vm.readOnly" required>
-                                    <md-option ng-repeat="qType in vm.questionTypes" ng-value="qType.type">
+                                    <md-option ng-repeat="qType in vm.questionTypes" ng-value="qType">
                                         {{qType.label}}
                                     </md-option>
                                 </md-select>
                             </md-input-container>
-                        </div>
-
-                        <div ng-if="vm.question.type">
-                            <div class="mw-form-question-answers-builder" ng-switch="vm.question.type">
-                                <div ng-switch-when="text">
-                                    <md-input-container class="md-block">
-                                        <input class="form-control" type="text"
-                                               disabled value="{{'mwForm.question.preview.text'}}">
-                                    </md-input-container>
-                                </div>
-                                <div ng-switch-when="number">
-                                    <md-input-container class="md-block">
-                                        <input class="form-control" type="number"
-                                               disabled value="{{'mwForm.question.preview.number'}}">
-                                    </md-input-container>
-                                </div>
-                                <div ng-switch-when="textarea">
-                                    <md-input-container class="md-block">
-                                        <textarea class="form-control" maxlength="150" rows="5" disabled>
-                                            {{'mwForm.question.preview.textarea'}}</textarea>
-                                    </md-input-container>
-                                </div>
+                            <div flex-gt-md="10"></div>
+                            <div flex-gt-md="20">
+                                <md-checkbox class="md-primary"  ng-model="vm.question.required" ng-disabled="vm.readOnly" flex>
+                                    <span>Mandatory</span>
+                                </md-checkbox>
                             </div>
                         </div>
 
@@ -69,12 +52,51 @@
                             </md-input-container>
                         </div>
 
-                        <div layout="row" layout-align="start center">
-                            <div flex>
-                                <md-checkbox class="md-primary"  ng-model="vm.question.required" ng-disabled="vm.readOnly" flex>
-                                    <span>Required</span>
-                                </md-checkbox>
+                        <div ng-if="vm.question.type">
+                            <div class="section-divider">
+                                <span class="grey">Preview Section</span>
                             </div>
+                            <div class="mw-form-question-answers-builder" ng-switch="vm.question.type.type">
+                                <div ng-switch-when="text">
+                                    <md-input-container >
+                                        <label label-for="fibValidation" label-class="col-sm-2 control-label"
+                                               label-key="fibValidation">Validation</label>
+
+                                        <md-select  ng-attr-id="fibValidation"
+                                                    ng-change="vm.questionTypeChanged()"
+                                                    ng-model="vm.question.validation"
+                                                   ng-disabled="vm.readOnly" required>
+                                            <md-option ng-value="validation"
+                                                       ng-repeat="validation in vm.fibvalidation">
+                                                {{ validation.name }}</md-option>
+                                        </md-select>
+
+                                    </md-input-container>
+                                    <md-input-container class="md-block">
+                                        <input class="form-control" type="{{vm.question.validation.code}}"
+                                               value="">
+                                    </md-input-container>
+                                </div>
+                                <div ng-switch-when="number">
+                                    <md-input-container class="md-block">
+                                        <input class="form-control" type="number"
+                                               disabled value="{{vm.questionForm.preview.number}}">
+                                    </md-input-container>
+                                </div>
+                                <div ng-switch-when="textarea">
+                                    <md-input-container class="md-block">
+                                        <textarea class="form-control" maxlength="150" rows="5" disabled>
+                                            {{vm.questionForm.preview.textarea}}</textarea>
+                                    </md-input-container>
+                                </div>
+                                <div ng-switch-when="yn">
+                                    <md-radio-group layout="row">
+                                        <md-radio-button value=1 class="md-primary">Yes</md-radio-button>
+                                        <md-radio-button value=0> No </md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                            <hr/>
                         </div>
 
 
@@ -91,12 +113,14 @@
                     Cancel
                 </md-button>
             </div>
-            <!--<md-button class="md-raised md-button-small pull-right"-->
-                       <!--ng-click="vm.addAnother()">-->
-                <!--<i class="fa fa-plus"></i>  Add Another-->
-            <!--</md-button>-->
+            <md-button class="md-raised md-button-small pull-right"
+                       ng-disabled="vm.QuestionBuilderForm.$invalid"
+                       ng-click="vm.addAnother()">
+                <i class="fa fa-plus"></i>  Add Another
+            </md-button>
             <md-button class="md-raised md-primary md-button-small pull-right"
-                       ng-click="vm.save()">
+                       ng-disabled="vm.QuestionBuilderForm.$invalid"
+                       ng-click="vm.saveQuestion()">
                 <i class="fa fa-save"></i> Save
             </md-button>
 

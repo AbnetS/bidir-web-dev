@@ -11,14 +11,21 @@
 
     function QuestionBuilderController(FormService,$mdDialog) {
         var vm = this;
-        vm.save = _save;
+        vm.saveQuestion = _save;
         vm.cancel = _cancel;
         vm.addAnother = _addAnother;
         vm.questionTypeChanged = _questionTypeChanged;
-
+        vm.questionForm = {
+            preview:{
+                text:'type text',
+                number: '0'
+            }
+        };
         vm.id =1;
         vm.formSubmitted=false;
         vm.readOnly = false;
+
+        vm.fibvalidation = [{name:'NONE',code:'text'},{name:'ALPHANUMERIC',code:'text'},{name:'NUMERIC',code:'number'}, 'ALPHABETIC'];
 
         vm.questionTypes = FormService.QuestionTypes;
 

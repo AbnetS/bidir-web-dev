@@ -7993,3 +7993,30 @@ md-dialog {
   padding: 150px;
   font-size: 20px;
 }
+.section-divider {
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.section-divider > span {
+  position: relative;
+  display: inline-block;
+}
+.section-divider > span:before,
+.section-divider > span:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: rgba(195, 195, 195, 0.61);
+}
+.section-divider > span:before {
+  right: 100%;
+  margin-right: 15px;
+}
+.section-divider > span:after {
+  left: 100%;
+  margin-left: 15px;
+}

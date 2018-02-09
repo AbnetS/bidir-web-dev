@@ -2,7 +2,6 @@
     <small>Form Builder.</small>
 </h3>
 
-
 <div class="panel panel-default">
 
     <div class="panel-body">
@@ -11,16 +10,19 @@
             <div class="row">
                <div class="col-md-8">
                    <md-input-container class="md-block">
-                       <label label-for="formName" >Name</label>
+                       <label label-for="formName" >Title</label>
                        <input type="text" class="form-control" name="formName" id="formName"
-                              ng-model="vm.formData.name" required>
+                              ng-model="vm.formData.title" required>
                    </md-input-container>
-
-
                    <md-input-container class="md-block">
-                       <label label-for="formDescription" >Description</label>
-                       <textarea msd-elastic class="form-control" name="formDescription"
-                                 ng-model="vm.formData.description" id="formDescription" required></textarea>
+                       <label label-for="formSubtitle" >Subtitle</label>
+                       <input type="text" class="form-control" name="formSubtitle" id="formSubtitle"
+                              ng-model="vm.formData.subtitle" required>
+                   </md-input-container>
+                   <md-input-container class="md-block">
+                       <label label-for="formPurpose" >Purpose</label>
+                       <input type="text" class="form-control" name="formPurpose" id="formPurpose"
+                              ng-model="vm.formData.purpose" required>
                    </md-input-container>
                </div>
                 <div class="col-md-4">
