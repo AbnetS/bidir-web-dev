@@ -7,11 +7,12 @@
 
         .service('FormService', FormService);
 
-    FormService.$inject = ['$http','CommonService'];
+    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES'];
 
-    function FormService($http, CommonService) {
+    function FormService($http, CommonService,MW_QUESTION_TYPES) {
         return {
-            GetFormsPerPage: _getFormsPerPage
+            GetFormsPerPage: _getFormsPerPage,
+            QuestionTypes: MW_QUESTION_TYPES
         };
         function _getFormsPerPage(parameters) {
             return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));

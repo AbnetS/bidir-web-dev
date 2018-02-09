@@ -1,0 +1,105 @@
+<md-dialog flex="50">
+    <form role="form" name="vm.QuestionBuilderForm" novalidate block-ui="QuestionBuilderBlockUI">
+        <md-toolbar class="small">
+            <div class="md-toolbar-tools small">
+                <h2>Question</h2>
+                <span flex></span>
+                <md-button aria-label="button" class="md-icon-button" ng-click="vm.cancel()">
+                    <i class="icon-close"></i>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <md-content class="md-padding">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-horizontal">
+                            <md-input-container class="md-block">
+                                <label label-for="question-text-{{vm.id}}"
+                                          label-key="mwForm.question.text">Question Text</label>
+                                <input type="text" name="text" ng-attr-id="question-text-{{vm.id}}"
+                                       ng-model="vm.question.text" required>
+                            </md-input-container>
+                        </div>
+                        <div class="mw-question-type" layout="row" layout-align="start center">
+                            <md-input-container flex-gt-md="40">
+                                <label label-for="question-type-{{vm.id}}" label-class="col-sm-2 control-label"
+                                          label-key="mwForm.question.type">Question Type</label>
+                                <md-select ng-attr-id="question-type-{{vm.id}}"
+                                           ng-model="vm.question.type"
+                                           ng-change="vm.questionTypeChanged()"
+                                           ng-disabled="vm.readOnly" required>
+                                    <md-option ng-repeat="qType in vm.questionTypes" ng-value="qType.type">
+                                        {{qType.label}}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+
+                        <div ng-if="vm.question.type">
+                            <div class="mw-form-question-answers-builder" ng-switch="vm.question.type">
+                                <div ng-switch-when="text">
+                                    <md-input-container class="md-block">
+                                        <input class="form-control" type="text"
+                                               disabled value="{{'mwForm.question.preview.text'}}">
+                                    </md-input-container>
+                                </div>
+                                <div ng-switch-when="number">
+                                    <md-input-container class="md-block">
+                                        <input class="form-control" type="number"
+                                               disabled value="{{'mwForm.question.preview.number'}}">
+                                    </md-input-container>
+                                </div>
+                                <div ng-switch-when="textarea">
+                                    <md-input-container class="md-block">
+                                        <textarea class="form-control" maxlength="150" rows="5" disabled>
+                                            {{'mwForm.question.preview.textarea'}}</textarea>
+                                    </md-input-container>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-horizontal">
+                            <md-input-container class="md-block">
+                                <label label-for="question-remark-{{vm.id}}"
+                                       label-key="mwForm.question.remark"><em>Remark</em></label>
+                                <input type="text" name="text" ng-attr-id="question-remark-{{vm.id}}"
+                                       ng-model="vm.question.remark" required>
+                            </md-input-container>
+                        </div>
+
+                        <div layout="row" layout-align="start center">
+                            <div flex>
+                                <md-checkbox class="md-primary"  ng-model="vm.question.required" ng-disabled="vm.readOnly" flex>
+                                    <span>Required</span>
+                                </md-checkbox>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </md-content>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+
+            <div layout="row" layout-align="start" flex>
+                <md-button class="md-raised md-button-small md-ink-ripple" ng-click="vm.cancel()">
+                    Cancel
+                </md-button>
+            </div>
+            <!--<md-button class="md-raised md-button-small pull-right"-->
+                       <!--ng-click="vm.addAnother()">-->
+                <!--<i class="fa fa-plus"></i>  Add Another-->
+            <!--</md-button>-->
+            <md-button class="md-raised md-primary md-button-small pull-right"
+                       ng-click="vm.save()">
+                <i class="fa fa-save"></i> Save
+            </md-button>
+
+        </md-dialog-actions>
+    </form>
+</md-dialog>
