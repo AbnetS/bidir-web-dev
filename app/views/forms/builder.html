@@ -6,7 +6,7 @@
 
     <div class="panel-body">
 
-        <form name="vm.form" role="form" novalidate>
+        <form name="vm.formBuilderForm" role="form" novalidate>
             <div class="row">
                <div class="col-md-8">
                    <md-input-container class="md-block">
@@ -17,36 +17,73 @@
                    <md-input-container class="md-block">
                        <label label-for="formSubtitle" >Subtitle</label>
                        <input type="text" class="form-control" name="formSubtitle" id="formSubtitle"
-                              ng-model="vm.formData.subtitle" required>
+                              ng-model="vm.formData.subtitle">
                    </md-input-container>
                    <md-input-container class="md-block">
                        <label label-for="formPurpose" >Purpose</label>
                        <input type="text" class="form-control" name="formPurpose" id="formPurpose"
                               ng-model="vm.formData.purpose" required>
                    </md-input-container>
-                   <md-input-container class="md-block">
-                       <md-radio-group layout="row" ng-model="vm.formData.hasSection" >
-                           <md-radio-button value=0 class="md-primary"> No Section </md-radio-button>
-                           <md-radio-button value=1 class="md-primary">Has Section</md-radio-button>
-                       </md-radio-group>
-                   </md-input-container>
-
                </div>
                 <div class="col-md-4">
                     <div class="main-img-preview">
-                        <img src="/app/img/no-img.png" class="thumbnail img-preview" title="Preview Logo">
+                        <img ng-show="vm.picFile" ngf-thumbnail="vm.picFile" class="thumbnail img-preview" title="Preview Logo">
+                        <img ng-hide="vm.picFile" src="/app/img/no-img.png"  ng-src="{{vm.formdata.logo}}" class="thumbnail img-preview" title="Preview Logo">
                     </div>
                     <input class="form-control"
                            type="file" ngf-select ng-model="vm.picFile"
                            name="logo" accept="image/*" ngf-max-size="1MB" ngf-model-invalid="errorFile">
-
                 </div>
-
+            </div>
+            <div class="row">
+                <div class="col-xs-10 col-sm-4 col-md-4 col-lg-4">
+                    <md-input-container class="md-block">
+                        <p>Section:</p>
+                        <md-radio-group layout="row" ng-model="vm.formData.hasSection" >
+                            <md-radio-button value=0 class="md-primary"> No Section </md-radio-button>
+                            <md-radio-button value=1 class="md-primary">Has Section</md-radio-button>
+                        </md-radio-group>
+                    </md-input-container>
+                </div>
+                <div class="col-xs-10 col-sm-4 col-md-4 col-lg-4">
+                    <md-input-container class="md-block">
+                        <p>Layout:</p>
+                        <md-radio-group id="formLayout" layout="row" ng-model="vm.formData.layout" >
+                            <md-radio-button value=0 > TWO COLUMNS </md-radio-button>
+                            <md-radio-button value=1 > THREE COLUMNS</md-radio-button>
+                        </md-radio-group>
+                    </md-input-container>
+                </div>
+                <div class="col-xs-10 col-sm-4 col-md-4 col-lg-4">
+                    <!-- FORM TYPE -->
+                    <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                        <label class="control-label small">Type</label>
+                        <span class="control-label required" aria-required="true"> * </span>
+                        <br/>
+                        <ui-select ng-model="vm.formdata.selected_formType"
+                                   theme="select2"
+                                   title="Choose Form Type">
+                            <ui-select-match placeholder="Select or search form type from the list...">
+                                {{$select.selected.name}}
+                            </ui-select-match>
+                            <ui-select-choices repeat="ftype in vm.formTypes | filter: $select.search">
+                                <span ng-bind-html="ftype.name | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-sm-12">
+                    <md-button ng-disabled="vm.formBuilderForm.$invalid"
+                            class="md-raised md-primary pull-right"
+                               ng-click="vm.saveForm()">
+                        <i class="fa fa-save"></i> Save
+                    </md-button>
+                </div>
             </div>
 
-            <div class="line"></div>
+            <div ng-show="false" class="line"></div>
 
-            <div class="row">
+            <div ng-show="false" class="row">
 
                 <div ng-show="!vm.formData.questions" class="col-lg-12">
                     <h4 class="centerPageText">

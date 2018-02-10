@@ -11,12 +11,18 @@
     function FormBuilderController(FormService,$mdDialog,RouteHelpers) {
         var vm = this;
         vm.addQuestion = _addQuestion;
+        vm.saveForm = _saveForm;
         vm.formData = {
-            hasSection:0
+            hasSection:0,
+            layout:1
         };
+        vm.formTypes = FormService.FormTypes;
 
 
         initialize();
+        function _saveForm() {
+            console.log("Form",vm.formData);
+        }
 
         function _addQuestion(ev) {
             $mdDialog.show({

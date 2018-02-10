@@ -98,6 +98,7 @@
                 url: "/forms/builder",
                 title: 'Form Builder',
                 templateUrl:helper.basepath('forms/builder.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
                 controller: 'FormBuilderController',
                 controllerAs: 'vm'
             })

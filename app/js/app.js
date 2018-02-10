@@ -167,15 +167,15 @@
     'use strict';
 
     angular
-        .module('app.maps', []);
+        .module('app.material', [
+            'ngMaterial'
+          ]);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.material', [
-            'ngMaterial'
-          ]);
+        .module('app.maps', []);
 })();
 (function() {
     'use strict';
@@ -191,14 +191,6 @@
 })();
 
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.routes', [
-            'app.lazyload'
-        ]);
-})();
 (function() {
     'use strict';
 
@@ -226,6 +218,14 @@
           ]);
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.routes', [
+            'app.lazyload'
+        ]);
+})();
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -1625,171 +1625,6 @@ var API = {
 
 })(window.angular);
 
-/**=========================================================
- * Module: modals.js
- * Provides a simple way to implement bootstrap modals from templates
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.maps')
-        .controller('ModalGmapController', ModalGmapController);
-
-    ModalGmapController.$inject = ['$uibModal'];
-    function ModalGmapController($uibModal) {
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-
-          vm.open = function (size) {
-
-            //var modalInstance =
-            $uibModal.open({
-              templateUrl: '/myModalContent.html',
-              controller: ModalInstanceCtrl,
-              size: size
-            });
-          };
-
-          // Please note that $uibModalInstance represents a modal window (instance) dependency.
-          // It is not the same as the $uibModal service used above.
-
-          ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout'];
-          function ModalInstanceCtrl($scope, $uibModalInstance, $timeout) {
-
-            $uibModalInstance.opened.then(function () {
-              var position = new google.maps.LatLng(33.790807, -117.835734);
-
-              $scope.mapOptionsModal = {
-                zoom: 14,
-                center: position,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-              };
-
-              // we use timeout to wait maps to be ready before add a markers
-              $timeout(function(){
-                // 1. Add a marker at the position it was initialized
-                new google.maps.Marker({
-                  map: $scope.myMapModal,
-                  position: position
-                });
-                // 2. Trigger a resize so the map is redrawed
-                google.maps.event.trigger($scope.myMapModal, 'resize');
-                // 3. Move to the center if it is misaligned
-                $scope.myMapModal.panTo(position);
-              });
-
-            });
-
-            $scope.ok = function () {
-              $uibModalInstance.close('closed');
-            };
-
-            $scope.cancel = function () {
-              $uibModalInstance.dismiss('cancel');
-            };
-
-          }
-
-        }
-    }
-
-})();
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.maps')
-        .controller('GMapController', GMapController);
-
-    GMapController.$inject = ['$timeout'];
-    function GMapController($timeout) {
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-          var position = [
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.787453, -117.835858)
-            ];
-          
-          vm.addMarker = addMarker;
-          // we use timeout to wait maps to be ready before add a markers
-          $timeout(function(){
-            addMarker(vm.myMap1, position[0]);
-            addMarker(vm.myMap2, position[1]);
-            addMarker(vm.myMap3, position[2]);
-            addMarker(vm.myMap5, position[3]);
-          });
-
-          vm.mapOptions1 = {
-            zoom: 14,
-            center: position[0],
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            scrollwheel: false
-          };
-
-          vm.mapOptions2 = {
-            zoom: 19,
-            center: position[1],
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
-
-          vm.mapOptions3 = {
-            zoom: 14,
-            center: position[2],
-            mapTypeId: google.maps.MapTypeId.SATELLITE
-          };
-
-          vm.mapOptions4 = {
-            zoom: 14,
-            center: position[3],
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
-
-          // for multiple markers
-          $timeout(function(){
-            addMarker(vm.myMap4, position[3]);
-            addMarker(vm.myMap4, position[4]);
-          });
-
-          // custom map style
-          var MapStyles = [{'featureType':'water','stylers':[{'visibility':'on'},{'color':'#bdd1f9'}]},{'featureType':'all','elementType':'labels.text.fill','stylers':[{'color':'#334165'}]},{featureType:'landscape',stylers:[{color:'#e9ebf1'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#c5c6c6'}]},{featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'road.local',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'transit',elementType:'geometry',stylers:[{color:'#d8dbe0'}]},{featureType:'poi',elementType:'geometry',stylers:[{color:'#cfd5e0'}]},{featureType:'administrative',stylers:[{visibility:'on'},{lightness:33}]},{featureType:'poi.park',elementType:'labels',stylers:[{visibility:'on'},{lightness:20}]},{featureType:'road',stylers:[{color:'#d8dbe0',lightness:20}]}];
-          vm.mapOptions5 = {
-            zoom: 14,
-            center: position[3],
-            styles: MapStyles,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            scrollwheel: false
-          };
-
-          ///////////////
-          
-          function addMarker(map, position) {
-            return new google.maps.Marker({
-              map: map,
-              position: position
-            });
-          }
-
-        }
-    }
-})();
-
 
 (function() {
     'use strict';
@@ -2525,6 +2360,171 @@ var API = {
     }
 })();
 /**=========================================================
+ * Module: modals.js
+ * Provides a simple way to implement bootstrap modals from templates
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps')
+        .controller('ModalGmapController', ModalGmapController);
+
+    ModalGmapController.$inject = ['$uibModal'];
+    function ModalGmapController($uibModal) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+
+          vm.open = function (size) {
+
+            //var modalInstance =
+            $uibModal.open({
+              templateUrl: '/myModalContent.html',
+              controller: ModalInstanceCtrl,
+              size: size
+            });
+          };
+
+          // Please note that $uibModalInstance represents a modal window (instance) dependency.
+          // It is not the same as the $uibModal service used above.
+
+          ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout'];
+          function ModalInstanceCtrl($scope, $uibModalInstance, $timeout) {
+
+            $uibModalInstance.opened.then(function () {
+              var position = new google.maps.LatLng(33.790807, -117.835734);
+
+              $scope.mapOptionsModal = {
+                zoom: 14,
+                center: position,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+              };
+
+              // we use timeout to wait maps to be ready before add a markers
+              $timeout(function(){
+                // 1. Add a marker at the position it was initialized
+                new google.maps.Marker({
+                  map: $scope.myMapModal,
+                  position: position
+                });
+                // 2. Trigger a resize so the map is redrawed
+                google.maps.event.trigger($scope.myMapModal, 'resize');
+                // 3. Move to the center if it is misaligned
+                $scope.myMapModal.panTo(position);
+              });
+
+            });
+
+            $scope.ok = function () {
+              $uibModalInstance.close('closed');
+            };
+
+            $scope.cancel = function () {
+              $uibModalInstance.dismiss('cancel');
+            };
+
+          }
+
+        }
+    }
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps')
+        .controller('GMapController', GMapController);
+
+    GMapController.$inject = ['$timeout'];
+    function GMapController($timeout) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+          var position = [
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.787453, -117.835858)
+            ];
+          
+          vm.addMarker = addMarker;
+          // we use timeout to wait maps to be ready before add a markers
+          $timeout(function(){
+            addMarker(vm.myMap1, position[0]);
+            addMarker(vm.myMap2, position[1]);
+            addMarker(vm.myMap3, position[2]);
+            addMarker(vm.myMap5, position[3]);
+          });
+
+          vm.mapOptions1 = {
+            zoom: 14,
+            center: position[0],
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+          };
+
+          vm.mapOptions2 = {
+            zoom: 19,
+            center: position[1],
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+
+          vm.mapOptions3 = {
+            zoom: 14,
+            center: position[2],
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+          };
+
+          vm.mapOptions4 = {
+            zoom: 14,
+            center: position[3],
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+
+          // for multiple markers
+          $timeout(function(){
+            addMarker(vm.myMap4, position[3]);
+            addMarker(vm.myMap4, position[4]);
+          });
+
+          // custom map style
+          var MapStyles = [{'featureType':'water','stylers':[{'visibility':'on'},{'color':'#bdd1f9'}]},{'featureType':'all','elementType':'labels.text.fill','stylers':[{'color':'#334165'}]},{featureType:'landscape',stylers:[{color:'#e9ebf1'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#c5c6c6'}]},{featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'road.local',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'transit',elementType:'geometry',stylers:[{color:'#d8dbe0'}]},{featureType:'poi',elementType:'geometry',stylers:[{color:'#cfd5e0'}]},{featureType:'administrative',stylers:[{visibility:'on'},{lightness:33}]},{featureType:'poi.park',elementType:'labels',stylers:[{visibility:'on'},{lightness:20}]},{featureType:'road',stylers:[{color:'#d8dbe0',lightness:20}]}];
+          vm.mapOptions5 = {
+            zoom: 14,
+            center: position[3],
+            styles: MapStyles,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+          };
+
+          ///////////////
+          
+          function addMarker(map, position) {
+            return new google.maps.Marker({
+              map: map,
+              position: position
+            });
+          }
+
+        }
+    }
+})();
+
+/**=========================================================
  * Module: navbar-search.js
  * Navbar search toggler * Auto dismiss on ESC key
  =========================================================*/
@@ -2726,237 +2726,6 @@ var API = {
     }
 
 })();
-/**=========================================================
- * Module: helpers.js
- * Provides helper functions for routes definition
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.routes')
-        .provider('RouteHelpers', RouteHelpersProvider)
-        ;
-
-    RouteHelpersProvider.$inject = ['APP_REQUIRES'];
-    function RouteHelpersProvider(APP_REQUIRES) {
-
-      /* jshint validthis:true */
-      return {
-        // provider access level
-        basepath: basepath,
-        resolveFor: resolveFor,
-        // controller access level
-        $get: function() {
-          return {
-            basepath: basepath,
-            resolveFor: resolveFor
-          };
-        }
-      };
-
-      // Set here the base of the relative path
-      // for all app views
-      function basepath(uri) {
-        return 'app/views/' + uri;
-      }
-
-      // Generates a resolve object by passing script names
-      // previously configured in constant.APP_REQUIRES
-      function resolveFor() {
-        var _args = arguments;
-        return {
-          deps: ['$ocLazyLoad','$q', function ($ocLL, $q) {
-            // Creates a promise chain for each argument
-            var promise = $q.when(1); // empty promise
-            for(var i=0, len=_args.length; i < len; i ++){
-              promise = andThen(_args[i]);
-            }
-            return promise;
-
-            // creates promise to chain dynamically
-            function andThen(_arg) {
-              // also support a function that returns a promise
-              if(typeof _arg === 'function')
-                  return promise.then(_arg);
-              else
-                  return promise.then(function() {
-                    // if is a module, pass the name. If not, pass the array
-                    var whatToLoad = getRequired(_arg);
-                    // simple error check
-                    if(!whatToLoad) return $.error('Route resolve: Bad resource name [' + _arg + ']');
-                    // finally, return a promise
-                    return $ocLL.load( whatToLoad );
-                  });
-            }
-            // check and returns required data
-            // analyze module items with the form [name: '', files: []]
-            // and also simple array of script files (for not angular js)
-            function getRequired(name) {
-              if (APP_REQUIRES.modules)
-                  for(var m in APP_REQUIRES.modules)
-                      if(APP_REQUIRES.modules[m].name && APP_REQUIRES.modules[m].name === name)
-                          return APP_REQUIRES.modules[m];
-              return APP_REQUIRES.scripts && APP_REQUIRES.scripts[name];
-            }
-
-          }]};
-      } // resolveFor
-
-    }
-
-
-})();
-
-
-/**=========================================================
- * Module: config.js
- * App routes and resources configuration
- =========================================================*/
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.routes')
-        .config(routesConfig);
-
-    routesConfig.$inject = ['$stateProvider', '$locationProvider', '$urlRouterProvider', 'RouteHelpersProvider'];
-    function routesConfig($stateProvider, $locationProvider, $urlRouterProvider, helper){
-        
-        // Set the following to true to enable the HTML5 Mode
-        // You may have to set <base> tag in index and a routing configuration in your server
-        $locationProvider.html5Mode(false);
-
-        // defaults to login
-        $urlRouterProvider.otherwise('/page/login');
-
-        // 
-        // Application Routes
-        // -----------------------------------   
-        $stateProvider
-          .state('app', {
-              url: '/app',
-              abstract: true,
-              templateUrl: helper.basepath('app.html'),
-              resolve: helper.resolveFor('fastclick','modernizr','sparklines', 'icons','animo','underscore',
-                        'sparklines','slimscroll','oitozero.ngSweetAlert','toaster','blockUI')
-          })
-          .state('app.welcome', {
-              url: '/welcome',
-              title: 'Welcome',
-              templateUrl: helper.basepath('welcome.html'),
-              controller: 'WelcomeController',
-              controllerAs: 'vm'
-          })
-           .state('app.manage_user', {
-                url: '/manage_user',
-                title: 'manage users',
-                templateUrl: helper.basepath('manageusers/manage.users.html'),
-               resolve: angular.extend(helper.resolveFor('datatables','ngDialog','ui.select'),{}),
-               controller: 'ManageUsersController',
-               controllerAs: 'vm'
-            })
-            .state('app.manage_role', {
-                url: '/manage_role',
-                title: 'manage roles',
-                templateUrl: helper.basepath('manageroles/manage.roles.html'),
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select'),
-                controller: 'ManageRoleController',
-                controllerAs: 'vm'
-            })
-            .state('app.mfi_setting', {
-                url: '/mfi_setup',
-                title: 'MFI Setting',
-                templateUrl:helper.basepath('mfisetup/mfi.html'),
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment','inputmask','ngFileUpload'),
-                controller: 'MFIController',
-                controllerAs: 'vm'
-            })
-
-            .state("app.manage_branch", {
-                url: "/branches",
-                title: "branches",
-                templateUrl:helper.basepath('mfisetup/branches/branches.html'),
-                controller: "BranchController",
-                controllerAs: 'vm'
-            })
-            .state("app.manage_clients", {
-                url: "/clients",
-                title: "clients",
-                templateUrl:helper.basepath('manage_clients/manage.clients.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "ClientsController",
-                controllerAs: 'vm'
-            })
-            .state("app.client_detail", {
-                url: "/clients/:id",
-                title: "clients detail",
-                templateUrl:helper.basepath('manage_clients/client.detail.html'),
-                controller: "ClientDetailController",
-                controllerAs: 'vm'
-            })
-            .state("app.forms", {
-                url: "/forms",
-                title: "forms",
-                templateUrl:helper.basepath('forms/forms.list.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "FormsController",
-                controllerAs: 'vm'
-            })
-            .state("app.builder", {
-                url: "/forms/builder",
-                title: 'Form Builder',
-                templateUrl:helper.basepath('forms/builder.html'),
-                controller: 'FormBuilderController',
-                controllerAs: 'vm'
-            })
-
-
-          // CUSTOM RESOLVES
-          //   Add your own resolves properties
-          //   following this object extend
-          //   method
-          // -----------------------------------
-            .state('page', {
-                url: '/page',
-                templateUrl: 'app/pages/page.html',
-                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert','toaster','blockUI'),
-                controller: ['$rootScope', function($rootScope) {
-                    $rootScope.app.layout.isBoxed = false;
-                }]
-            })
-            .state('page.login', {
-                url: '/login',
-                title: 'Login',
-                templateUrl: 'app/pages/login.html',
-                controller: 'LoginFormController',
-                controllerAs: 'login'
-            })
-            .state('page.404', {
-                url: '/404',
-                title: 'Not Found',
-                templateUrl: 'app/pages/404.html'
-            })
-            .state('page.500', {
-                url: '/500',
-                title: 'Server error',
-                templateUrl: 'app/pages/500.html'
-            })
-            .state('page.maintenance', {
-                url: '/maintenance',
-                title: 'Maintenance',
-                templateUrl: 'app/pages/maintenance.html'
-            })
-          ;
-
-    } // routesConfig
-
-})();
-
-
 (function() {
     'use strict';
 
@@ -3930,6 +3699,238 @@ var API = {
     }
 })();
 
+/**=========================================================
+ * Module: helpers.js
+ * Provides helper functions for routes definition
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.routes')
+        .provider('RouteHelpers', RouteHelpersProvider)
+        ;
+
+    RouteHelpersProvider.$inject = ['APP_REQUIRES'];
+    function RouteHelpersProvider(APP_REQUIRES) {
+
+      /* jshint validthis:true */
+      return {
+        // provider access level
+        basepath: basepath,
+        resolveFor: resolveFor,
+        // controller access level
+        $get: function() {
+          return {
+            basepath: basepath,
+            resolveFor: resolveFor
+          };
+        }
+      };
+
+      // Set here the base of the relative path
+      // for all app views
+      function basepath(uri) {
+        return 'app/views/' + uri;
+      }
+
+      // Generates a resolve object by passing script names
+      // previously configured in constant.APP_REQUIRES
+      function resolveFor() {
+        var _args = arguments;
+        return {
+          deps: ['$ocLazyLoad','$q', function ($ocLL, $q) {
+            // Creates a promise chain for each argument
+            var promise = $q.when(1); // empty promise
+            for(var i=0, len=_args.length; i < len; i ++){
+              promise = andThen(_args[i]);
+            }
+            return promise;
+
+            // creates promise to chain dynamically
+            function andThen(_arg) {
+              // also support a function that returns a promise
+              if(typeof _arg === 'function')
+                  return promise.then(_arg);
+              else
+                  return promise.then(function() {
+                    // if is a module, pass the name. If not, pass the array
+                    var whatToLoad = getRequired(_arg);
+                    // simple error check
+                    if(!whatToLoad) return $.error('Route resolve: Bad resource name [' + _arg + ']');
+                    // finally, return a promise
+                    return $ocLL.load( whatToLoad );
+                  });
+            }
+            // check and returns required data
+            // analyze module items with the form [name: '', files: []]
+            // and also simple array of script files (for not angular js)
+            function getRequired(name) {
+              if (APP_REQUIRES.modules)
+                  for(var m in APP_REQUIRES.modules)
+                      if(APP_REQUIRES.modules[m].name && APP_REQUIRES.modules[m].name === name)
+                          return APP_REQUIRES.modules[m];
+              return APP_REQUIRES.scripts && APP_REQUIRES.scripts[name];
+            }
+
+          }]};
+      } // resolveFor
+
+    }
+
+
+})();
+
+
+/**=========================================================
+ * Module: config.js
+ * App routes and resources configuration
+ =========================================================*/
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.routes')
+        .config(routesConfig);
+
+    routesConfig.$inject = ['$stateProvider', '$locationProvider', '$urlRouterProvider', 'RouteHelpersProvider'];
+    function routesConfig($stateProvider, $locationProvider, $urlRouterProvider, helper){
+        
+        // Set the following to true to enable the HTML5 Mode
+        // You may have to set <base> tag in index and a routing configuration in your server
+        $locationProvider.html5Mode(false);
+
+        // defaults to login
+        $urlRouterProvider.otherwise('/page/login');
+
+        // 
+        // Application Routes
+        // -----------------------------------   
+        $stateProvider
+          .state('app', {
+              url: '/app',
+              abstract: true,
+              templateUrl: helper.basepath('app.html'),
+              resolve: helper.resolveFor('fastclick','modernizr','sparklines', 'icons','animo','underscore',
+                        'sparklines','slimscroll','oitozero.ngSweetAlert','toaster','blockUI')
+          })
+          .state('app.welcome', {
+              url: '/welcome',
+              title: 'Welcome',
+              templateUrl: helper.basepath('welcome.html'),
+              controller: 'WelcomeController',
+              controllerAs: 'vm'
+          })
+           .state('app.manage_user', {
+                url: '/manage_user',
+                title: 'manage users',
+                templateUrl: helper.basepath('manageusers/manage.users.html'),
+               resolve: angular.extend(helper.resolveFor('datatables','ngDialog','ui.select'),{}),
+               controller: 'ManageUsersController',
+               controllerAs: 'vm'
+            })
+            .state('app.manage_role', {
+                url: '/manage_role',
+                title: 'manage roles',
+                templateUrl: helper.basepath('manageroles/manage.roles.html'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select'),
+                controller: 'ManageRoleController',
+                controllerAs: 'vm'
+            })
+            .state('app.mfi_setting', {
+                url: '/mfi_setup',
+                title: 'MFI Setting',
+                templateUrl:helper.basepath('mfisetup/mfi.html'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment','inputmask','ngFileUpload'),
+                controller: 'MFIController',
+                controllerAs: 'vm'
+            })
+
+            .state("app.manage_branch", {
+                url: "/branches",
+                title: "branches",
+                templateUrl:helper.basepath('mfisetup/branches/branches.html'),
+                controller: "BranchController",
+                controllerAs: 'vm'
+            })
+            .state("app.manage_clients", {
+                url: "/clients",
+                title: "clients",
+                templateUrl:helper.basepath('manage_clients/manage.clients.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "ClientsController",
+                controllerAs: 'vm'
+            })
+            .state("app.client_detail", {
+                url: "/clients/:id",
+                title: "clients detail",
+                templateUrl:helper.basepath('manage_clients/client.detail.html'),
+                controller: "ClientDetailController",
+                controllerAs: 'vm'
+            })
+            .state("app.forms", {
+                url: "/forms",
+                title: "forms",
+                templateUrl:helper.basepath('forms/forms.list.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "FormsController",
+                controllerAs: 'vm'
+            })
+            .state("app.builder", {
+                url: "/forms/builder",
+                title: 'Form Builder',
+                templateUrl:helper.basepath('forms/builder.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: 'FormBuilderController',
+                controllerAs: 'vm'
+            })
+
+
+          // CUSTOM RESOLVES
+          //   Add your own resolves properties
+          //   following this object extend
+          //   method
+          // -----------------------------------
+            .state('page', {
+                url: '/page',
+                templateUrl: 'app/pages/page.html',
+                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert','toaster','blockUI'),
+                controller: ['$rootScope', function($rootScope) {
+                    $rootScope.app.layout.isBoxed = false;
+                }]
+            })
+            .state('page.login', {
+                url: '/login',
+                title: 'Login',
+                templateUrl: 'app/pages/login.html',
+                controller: 'LoginFormController',
+                controllerAs: 'login'
+            })
+            .state('page.404', {
+                url: '/404',
+                title: 'Not Found',
+                templateUrl: 'app/pages/404.html'
+            })
+            .state('page.500', {
+                url: '/500',
+                title: 'Server error',
+                templateUrl: 'app/pages/500.html'
+            })
+            .state('page.maintenance', {
+                url: '/maintenance',
+                title: 'Maintenance',
+                templateUrl: 'app/pages/maintenance.html'
+            })
+          ;
+
+    } // routesConfig
+
+})();
+
+
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -4410,11 +4411,14 @@ var API = {
 (function() {
     "use strict";
 
+    config.$inject = ["$mdIconProvider"];
     angular.module("app.forms", [
-    ]).run(runBlock);
+    ]).run(runBlock).config(config);
 
     function runBlock() {}
-
+    function config($mdIconProvider) {
+        $mdIconProvider.iconSet("avatars", 'app/img/icons/avatar-icons.svg',128);
+    };
 
 })();
 /**
@@ -4561,7 +4565,8 @@ function runBlock() {
     function FormService($http, CommonService,MW_QUESTION_TYPES) {
         return {
             GetFormsPerPage: _getFormsPerPage,
-            QuestionTypes: MW_QUESTION_TYPES
+            QuestionTypes: MW_QUESTION_TYPES,
+            FormTypes: [{name:'ACAT',code:'ACAT'},{name:'LOAN APPLICATION',code:'LOAN_APPLICATION'},{name:'SCREENING',code:'SCREENING'},{name:'Other',code:'OTHER'}]
         };
         function _getFormsPerPage(parameters) {
             return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
@@ -4840,12 +4845,18 @@ function runBlock() {
     function FormBuilderController(FormService,$mdDialog,RouteHelpers) {
         var vm = this;
         vm.addQuestion = _addQuestion;
+        vm.saveForm = _saveForm;
         vm.formData = {
-            hasSection:0
+            hasSection:0,
+            layout:1
         };
+        vm.formTypes = FormService.FormTypes;
 
 
         initialize();
+        function _saveForm() {
+            console.log("Form",vm.formData);
+        }
 
         function _addQuestion(ev) {
             $mdDialog.show({
@@ -4883,9 +4894,9 @@ function runBlock() {
 
     angular.module("app.forms").controller("QuestionBuilderController", QuestionBuilderController);
 
-    QuestionBuilderController.$inject = ['FormService','$mdDialog'];
+    QuestionBuilderController.$inject = ['FormService','$mdDialog','$scope'];
 
-    function QuestionBuilderController(FormService,$mdDialog) {
+    function QuestionBuilderController(FormService,$mdDialog,$scope) {
         var vm = this;
         vm.saveQuestion = _save;
         vm.cancel = _cancel;
@@ -4911,10 +4922,10 @@ function runBlock() {
 
         }
         function _save() {
-
+            console.log("question",vm.question);
         }
         function _addAnother() {
-            
+            console.log("question",vm.question);
         }
         function _cancel() {
             $mdDialog.cancel();

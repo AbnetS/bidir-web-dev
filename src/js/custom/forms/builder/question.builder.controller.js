@@ -7,9 +7,9 @@
 
     angular.module("app.forms").controller("QuestionBuilderController", QuestionBuilderController);
 
-    QuestionBuilderController.$inject = ['FormService','$mdDialog'];
+    QuestionBuilderController.$inject = ['FormService','$mdDialog','$scope'];
 
-    function QuestionBuilderController(FormService,$mdDialog) {
+    function QuestionBuilderController(FormService,$mdDialog,$scope) {
         var vm = this;
         vm.saveQuestion = _save;
         vm.cancel = _cancel;
@@ -35,10 +35,10 @@
 
         }
         function _save() {
-
+            console.log("question",vm.question);
         }
         function _addAnother() {
-            
+            console.log("question",vm.question);
         }
         function _cancel() {
             $mdDialog.cancel();
