@@ -68,9 +68,9 @@
         .run(runBlock)
         .config(routeConfig);
 
-    function runBlock() { console.log("auth run"); }
+    function runBlock() { }
 
-    function routeConfig() {console.log("auth config");}
+    function routeConfig() {}
 
 
 })();
@@ -88,11 +88,9 @@
       .config(routeConfig)
       .run(runBlock);
 
-  function runBlock() {
-    console.log("common run");
-  }
+  function runBlock() {}
+  function routeConfig() {}
 
-  function routeConfig() {console.log("common config");}
 })(window.angular);
 
 (function() {
@@ -139,9 +137,9 @@
         .run(runBlock)
         .config(routeConfig);
 
-    function runBlock() { console.log("RM run"); }
+    function runBlock() {  }
 
-    function routeConfig() {console.log("RM config");}
+    function routeConfig() {}
 
 })();
 /**
@@ -153,12 +151,8 @@
     angular
         .module('app.manage_users', []).config(configUM).run(runUM);
 
-    function runUM() {
-        console.log("UM run");
-    }
-    function configUM() {
-        console.log("UM config");
-    }
+    function runUM() {}
+    function configUM() {}
 
 
 
@@ -4432,7 +4426,7 @@ var API = {
     ]).run(runBlock);
 
     function runBlock() {
-        console.log("client app run");
+        // console.log("client app run");
     }
 
 
@@ -4446,7 +4440,6 @@ var API = {
 
 function runBlock() {
 }
-
 
 })();
 
@@ -4538,7 +4531,6 @@ function runBlock() {
 
         function callApi() {
             FormService.GetFormsPerPage(vm.request).then(function (response) {
-                console.log("response per page page#:" + vm.request.page, response);
                 vm.forms = response.data.docs;
             },function (error) {
                 console.log(error);
@@ -4934,12 +4926,10 @@ function runBlock() {
                     console.log("error",error);
                 });
             }else{
-
                 vm.formData = {
                     has_sections:0,
                     layout:'TWO_COLUMNS'
                 };
-                console.log("vm.formData for new form",vm.formData);
             }
         }
 

@@ -9,8 +9,8 @@
         .run(runBlock)
         .config(routeConfig);
 
-    function runBlock() { console.log("RM run"); }
+    function runBlock() {  }
 
-    function routeConfig() {console.log("RM config");}
+    function routeConfig() {}
 
 })();

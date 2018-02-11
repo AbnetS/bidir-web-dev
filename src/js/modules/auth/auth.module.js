@@ -6,9 +6,9 @@
         .run(runBlock)
         .config(routeConfig);
 
-    function runBlock() { console.log("auth run"); }
+    function runBlock() { }
 
-    function routeConfig() {console.log("auth config");}
+    function routeConfig() {}
 
 
 })();

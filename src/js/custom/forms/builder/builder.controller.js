@@ -86,12 +86,10 @@
                     console.log("error",error);
                 });
             }else{
-
                 vm.formData = {
                     has_sections:0,
                     layout:'TWO_COLUMNS'
                 };
-                console.log("vm.formData for new form",vm.formData);
             }
         }
 

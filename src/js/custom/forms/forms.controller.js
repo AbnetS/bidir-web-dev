@@ -49,7 +49,6 @@
 
         function callApi() {
             FormService.GetFormsPerPage(vm.request).then(function (response) {
-                console.log("response per page page#:" + vm.request.page, response);
                 vm.forms = response.data.docs;
             },function (error) {
                 console.log(error);

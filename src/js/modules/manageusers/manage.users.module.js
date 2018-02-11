@@ -7,12 +7,8 @@
     angular
         .module('app.manage_users', []).config(configUM).run(runUM);
 
-    function runUM() {
-        console.log("UM run");
-    }
-    function configUM() {
-        console.log("UM config");
-    }
+    function runUM() {}
+    function configUM() {}
 
 
 

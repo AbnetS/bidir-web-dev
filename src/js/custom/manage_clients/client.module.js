@@ -8,7 +8,7 @@
     ]).run(runBlock);
 
     function runBlock() {
-        console.log("client app run");
+        // console.log("client app run");
     }
 
 

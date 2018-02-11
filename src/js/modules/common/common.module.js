@@ -6,9 +6,7 @@
       .config(routeConfig)
       .run(runBlock);
 
-  function runBlock() {
-    console.log("common run");
-  }
+  function runBlock() {}
+  function routeConfig() {}
 
-  function routeConfig() {console.log("common config");}
 })(window.angular);
