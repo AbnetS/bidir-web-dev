@@ -4401,22 +4401,6 @@ var API = {
     }
 })();
 /**
- * Created by Yoni on 1/29/2018.
- */
-(function() {
-    "use strict";
-
-    config.$inject = ["$mdIconProvider"];
-    angular.module("app.forms", [
-    ]).run(runBlock).config(config);
-
-    function runBlock() {}
-    function config($mdIconProvider) {
-        $mdIconProvider.iconSet("avatars", 'app/img/icons/avatar-icons.svg',128);
-    };
-
-})();
-/**
  * Created by Yoni on 1/8/2018.
  */
 (function() {
@@ -4432,6 +4416,22 @@ var API = {
 
 })();
 
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function() {
+    "use strict";
+
+    config.$inject = ["$mdIconProvider"];
+    angular.module("app.forms", [
+    ]).run(runBlock).config(config);
+
+    function runBlock() {}
+    function config($mdIconProvider) {
+        $mdIconProvider.iconSet("avatars", 'app/img/icons/avatar-icons.svg',128);
+    };
+
+})();
 (function() {
   "use strict";
 
@@ -4470,117 +4470,6 @@ function runBlock() {
     }
 })();
 
-/**
- * Created by Yoni on 2/9/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.forms')
-        .constant('MW_QUESTION_TYPES', [{label:'Fill in the blank',code:'fib',type:'text'}, {label:'Yes/No',code:'yn',type:'yn',options:['Yes','No']}, {label:'Multiple Choice',code:'mc',type:'checkbox'}, {label:'Single Choice',code:'sc',type:'select'}])
-})(window.angular);
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.forms").controller("FormsController", FormsController);
-
-    FormsController.$inject = ['FormService','$state'];
-
-    function FormsController(FormService,$state) {
-        var vm = this;
-        vm.forms = [];
-        vm.logPagination = _logPagination;
-        vm.editForm = _editForm;
-
-        vm.pageSizes = [10, 25, 50, 100, 250, 500];
-
-        vm.options = {
-            rowSelection: true,
-            multiSelect: true,
-            autoSelect: true,
-            decapitate: false,
-            largeEditDialog: false,
-            boundaryLinks: true,
-            limitSelect: true,
-            pageSelect: false
-        };
-
-        vm.request = {
-            page: 1,
-            per_page: 10,
-            Search: ""
-        };
-
-        initialize();
-
-
-        function initialize() {
-            callApi();//fetch first page data initially
-        }
-
-        function _logPagination(page, pageSize) {
-            vm.request.page = page;
-            vm.request.per_page = pageSize;
-            vm.request.Start = page - 1;
-            callApi();
-        }
-
-        function callApi() {
-            FormService.GetFormsPerPage(vm.request).then(function (response) {
-                vm.forms = response.data.docs;
-            },function (error) {
-                console.log(error);
-            })
-        }
-
-        function _editForm(form, ev) {
-            $state.go('app.builder',{id:form._id});
-            console.log("edit Form",form);
-        }
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.forms')
-
-        .service('FormService', FormService);
-
-    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES'];
-
-    function FormService($http, CommonService,MW_QUESTION_TYPES) {
-        return {
-            GetFormsPerPage: _getFormsPerPage,
-            CreateForm:_createForm,
-            GetForm:_getForm,
-            UpdateForm:_updateForm,
-            QuestionTypes: MW_QUESTION_TYPES,
-            FormTypes: [{name:'ACAT',code:'ACAT'},{name:'LOAN APPLICATION',code:'LOAN_APPLICATION'},{name:'SCREENING',code:'SCREENING'},{name:'Group Application',code:'GROUP_APPLICATION'}]
-        };
-        function _getFormsPerPage(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
-        }
-        function _getForm(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM, API.Methods.Form.All, id));
-        }
-        function _updateForm(form) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,form._id), form);
-        }
-        function _createForm(form){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
-        }
-    }
-
-
-})(window.angular);
 /**
  * Created by Yoni on 1/9/2018.
  */
@@ -4754,6 +4643,117 @@ function runBlock() {
 
 })(window.angular);
 
+/**
+ * Created by Yoni on 2/9/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.forms')
+        .constant('MW_QUESTION_TYPES', [{label:'Fill in the blank',code:'fib',type:'text'}, {label:'Yes/No',code:'yn',type:'yn',options:['Yes','No']}, {label:'Multiple Choice',code:'mc',type:'checkbox'}, {label:'Single Choice',code:'sc',type:'select'}])
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.forms").controller("FormsController", FormsController);
+
+    FormsController.$inject = ['FormService','$state'];
+
+    function FormsController(FormService,$state) {
+        var vm = this;
+        vm.forms = [];
+        vm.logPagination = _logPagination;
+        vm.editForm = _editForm;
+
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
+
+        vm.options = {
+            rowSelection: true,
+            multiSelect: true,
+            autoSelect: true,
+            decapitate: false,
+            largeEditDialog: false,
+            boundaryLinks: true,
+            limitSelect: true,
+            pageSelect: false
+        };
+
+        vm.request = {
+            page: 1,
+            per_page: 10,
+            Search: ""
+        };
+
+        initialize();
+
+
+        function initialize() {
+            callApi();//fetch first page data initially
+        }
+
+        function _logPagination(page, pageSize) {
+            vm.request.page = page;
+            vm.request.per_page = pageSize;
+            vm.request.Start = page - 1;
+            callApi();
+        }
+
+        function callApi() {
+            FormService.GetFormsPerPage(vm.request).then(function (response) {
+                vm.forms = response.data.docs;
+            },function (error) {
+                console.log(error);
+            })
+        }
+
+        function _editForm(form, ev) {
+            $state.go('app.builder',{id:form._id});
+            console.log("edit Form",form);
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.forms')
+
+        .service('FormService', FormService);
+
+    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES'];
+
+    function FormService($http, CommonService,MW_QUESTION_TYPES) {
+        return {
+            GetFormsPerPage: _getFormsPerPage,
+            CreateForm:_createForm,
+            GetForm:_getForm,
+            UpdateForm:_updateForm,
+            QuestionTypes: MW_QUESTION_TYPES,
+            FormTypes: [{name:'ACAT',code:'ACAT'},{name:'LOAN APPLICATION',code:'LOAN_APPLICATION'},{name:'SCREENING',code:'SCREENING'},{name:'Group Application',code:'GROUP_APPLICATION'}]
+        };
+        function _getFormsPerPage(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
+        }
+        function _getForm(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM, API.Methods.Form.All, id));
+        }
+        function _updateForm(form) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,form._id), form);
+        }
+        function _createForm(form){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
+        }
+    }
+
+
+})(window.angular);
 (function(angular) {
   'use strict';
   angular.module('app.mfi')
@@ -4846,12 +4846,13 @@ function runBlock() {
 
     angular.module("app.forms").controller("FormBuilderController", FormBuilderController);
 
-    FormBuilderController.$inject = ['FormService','$mdDialog','RouteHelpers','$stateParams'];
+    FormBuilderController.$inject = ['FormService','$mdDialog','RouteHelpers','$stateParams','AlertService','blockUI'];
 
-    function FormBuilderController(FormService,$mdDialog,RouteHelpers,$stateParams) {
+    function FormBuilderController(FormService,$mdDialog,RouteHelpers,$stateParams,AlertService,blockUI) {
         var vm = this;
         vm.addQuestion = _addQuestion;
         vm.saveForm = _saveForm;
+        vm.typeStyle = _typeStyle;
 
         vm.formTypes = FormService.FormTypes;
         vm.isEdit = $stateParams.id !== "0";
@@ -4860,6 +4861,9 @@ function runBlock() {
         initialize();
 
         function _saveForm() {
+            var myBlockUI = blockUI.instances.get('formBuilderBlockUI');
+            myBlockUI.start();
+
             if(vm.isEdit){
 
                 var editForm = {
@@ -4872,8 +4876,14 @@ function runBlock() {
                 };
 
                 FormService.UpdateForm(editForm).then(function (response) {
+                    myBlockUI.stop();
                     vm.formData = response.data;
+                    vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+                    AlertService.showSuccess("Form Updated","Form updated successfully");
                 },function (error) {
+                    myBlockUI.stop();
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to Save Form",message);
                     console.log("error",error);
                 });
 
@@ -4891,8 +4901,14 @@ function runBlock() {
                 };
 
                 FormService.CreateForm(preparedForm).then(function (response) {
+                    myBlockUI.stop();
                     vm.formData = response.data;
+                    vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+                    AlertService.showSuccess("Form Saved","Form saved successfully");
                 },function (error) {
+                    myBlockUI.stop();
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to Save Form",message);
                     console.log("error",error);
                 });
 
@@ -4939,7 +4955,23 @@ function runBlock() {
             }));
         }
 
-
+        function _typeStyle(type){
+            var style = '';
+            switch (type.trim()){
+                case 'Fill In Blank':
+                    style =  'label bg-green';
+                    break;
+                case 'Yes/No':
+                    style =  'label bg-info';
+                    break;
+                case 'GROUPED':
+                    style =  'label bg-purple';
+                    break;
+                default:
+                    style =  'label bg-inverse';
+            }
+            return style;
+        }
 
     }
 

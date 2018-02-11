@@ -6,12 +6,13 @@
 
     angular.module("app.forms").controller("FormBuilderController", FormBuilderController);
 
-    FormBuilderController.$inject = ['FormService','$mdDialog','RouteHelpers','$stateParams'];
+    FormBuilderController.$inject = ['FormService','$mdDialog','RouteHelpers','$stateParams','AlertService','blockUI'];
 
-    function FormBuilderController(FormService,$mdDialog,RouteHelpers,$stateParams) {
+    function FormBuilderController(FormService,$mdDialog,RouteHelpers,$stateParams,AlertService,blockUI) {
         var vm = this;
         vm.addQuestion = _addQuestion;
         vm.saveForm = _saveForm;
+        vm.typeStyle = _typeStyle;
 
         vm.formTypes = FormService.FormTypes;
         vm.isEdit = $stateParams.id !== "0";
@@ -20,6 +21,9 @@
         initialize();
 
         function _saveForm() {
+            var myBlockUI = blockUI.instances.get('formBuilderBlockUI');
+            myBlockUI.start();
+
             if(vm.isEdit){
 
                 var editForm = {
@@ -32,8 +36,14 @@
                 };
 
                 FormService.UpdateForm(editForm).then(function (response) {
+                    myBlockUI.stop();
                     vm.formData = response.data;
+                    vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+                    AlertService.showSuccess("Form Updated","Form updated successfully");
                 },function (error) {
+                    myBlockUI.stop();
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to Save Form",message);
                     console.log("error",error);
                 });
 
@@ -51,8 +61,14 @@
                 };
 
                 FormService.CreateForm(preparedForm).then(function (response) {
+                    myBlockUI.stop();
                     vm.formData = response.data;
+                    vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+                    AlertService.showSuccess("Form Saved","Form saved successfully");
                 },function (error) {
+                    myBlockUI.stop();
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to Save Form",message);
                     console.log("error",error);
                 });
 
@@ -99,7 +115,23 @@
             }));
         }
 
-
+        function _typeStyle(type){
+            var style = '';
+            switch (type.trim()){
+                case 'Fill In Blank':
+                    style =  'label bg-green';
+                    break;
+                case 'Yes/No':
+                    style =  'label bg-info';
+                    break;
+                case 'GROUPED':
+                    style =  'label bg-purple';
+                    break;
+                default:
+                    style =  'label bg-inverse';
+            }
+            return style;
+        }
 
     }
 

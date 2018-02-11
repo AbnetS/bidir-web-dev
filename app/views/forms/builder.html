@@ -6,7 +6,7 @@
 
     <div class="panel-body">
 
-        <form name="vm.formBuilderForm" role="form" novalidate>
+        <form name="vm.formBuilderForm" role="form" block-ui="formBuilderBlockUI" novalidate>
             <div class="row">
                <div class="col-md-8">
                    <md-input-container class="md-block">
@@ -35,6 +35,7 @@
                            name="logo" accept="image/*" ngf-max-size="1MB" ngf-model-invalid="errorFile">
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-xs-10 col-sm-4 col-md-4 col-lg-4">
                     <md-input-container class="md-block">
@@ -100,7 +101,6 @@
                                 <th md-column ><span> No</span></th>
                                 <th md-column ><span>Question</span></th>
                                 <th md-column ><span>Type</span></th>
-                                <th md-column ><span>Answer</span></th>
                                 <th md-column ><span>Remark</span></th>
                                 <th md-column>Action</th>
                             </tr>
@@ -111,8 +111,11 @@
 
                                 <td md-cell>{{$index + 1}}</td>
                                 <td md-cell>{{question.question_text}}</td>
-                                <td md-cell>{{question.type}}</td>
-                                <td md-cell>{{question.value}}</td>
+                                <td md-cell>
+                                    <span ng-class="vm.typeStyle(question.type)">
+                                        {{question.type}}
+                                    </span>
+                                </td>
                                 <td md-cell>{{question.remark}}</td>
                                 <td md-cell>
                                     <a ng-click="vm.editQuestion(question,$event)">
