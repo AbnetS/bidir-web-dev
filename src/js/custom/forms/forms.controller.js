@@ -6,9 +6,9 @@
 
     angular.module("app.forms").controller("FormsController", FormsController);
 
-    FormsController.$inject = ['FormService','blockUI'];
+    FormsController.$inject = ['FormService','$state'];
 
-    function FormsController(FormService,blockUI) {
+    function FormsController(FormService,$state) {
         var vm = this;
         vm.forms = [];
         vm.logPagination = _logPagination;
@@ -57,6 +57,7 @@
         }
 
         function _editForm(form, ev) {
+            $state.go('app.builder',{id:form._id});
             console.log("edit Form",form);
         }
     }

@@ -46,7 +46,8 @@ var API = {
             SearchClient:''
         },
         Form:{
-            All: ''
+            All: '',
+            Create: 'create'
         }
     }
 };

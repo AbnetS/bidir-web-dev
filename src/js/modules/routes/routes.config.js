@@ -95,7 +95,7 @@
                 controllerAs: 'vm'
             })
             .state("app.builder", {
-                url: "/forms/builder",
+                url: "/forms/builder/:id",
                 title: 'Form Builder',
                 templateUrl:helper.basepath('forms/builder.html'),
                 resolve:helper.resolveFor('md.data.table','ui.select'),
