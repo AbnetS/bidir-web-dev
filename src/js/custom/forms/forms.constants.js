@@ -6,5 +6,5 @@
 
     angular
         .module('app.forms')
-        .constant('MW_QUESTION_TYPES', [{label:'Fill in the blank',code:'fib',type:'text'}, {label:'Yes/No',code:'yn',type:'yn',options:['Yes','No']}, {label:'Multiple Choice',code:'mc',type:'checkbox'}, {label:'Single Choice',code:'sc',type:'select'}])
+        .constant('MW_QUESTION_TYPES', [{name:'Fill In Blank',code:'fib',type:'text'}, {name:'Yes/No',code:'yn',type:'yn',options:['Yes','No']}, {name:'MULTIPLE_CHOICE',code:'mc',type:'checkbox'},{name:'SINGLE_CHOICE',code:'sc',type:'select'},{name:'GROUPED',code:'GROUPED',type:''}])
 })(window.angular);

@@ -86,17 +86,17 @@
 
             <div ng-show="vm.isEdit" class="row">
 
-                <div ng-show="!vm.formData.questions" class="col-lg-12">
+                <div ng-show="vm.formData.questions.length === 0" class="col-lg-12">
                     <h4 class="centerPageText">
                         PLEASE! <strong>Add new Question</strong>
                         <a ng-click="vm.addQuestion()"><i class="fa fa-plus"></i></a>
                     </h4>
                 </div>
 
-                <div ng-show="vm.formData.questions" class="col-lg-12">
-                     <md-table-container>
+                <div ng-show="vm.formData.questions.length > 0" class="col-lg-12">
+                    <md-table-container>
                         <table md-table md-progress="promise" class="table-hover">
-                            <thead md-head class="bg-grey md-head">
+                            <thead md-head class="bg-gray-lighter">
                             <tr md-row>
                                 <th md-column ><span> No</span></th>
                                 <th md-column ><span>Question</span></th>

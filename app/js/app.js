@@ -4401,22 +4401,6 @@ var API = {
     }
 })();
 /**
- * Created by Yoni on 1/8/2018.
- */
-(function() {
-    "use strict";
-
-    angular.module("app.clients", [
-    ]).run(runBlock);
-
-    function runBlock() {
-        // console.log("client app run");
-    }
-
-
-})();
-
-/**
  * Created by Yoni on 1/29/2018.
  */
 (function() {
@@ -4432,6 +4416,22 @@ var API = {
     };
 
 })();
+/**
+ * Created by Yoni on 1/8/2018.
+ */
+(function() {
+    "use strict";
+
+    angular.module("app.clients", [
+    ]).run(runBlock);
+
+    function runBlock() {
+        // console.log("client app run");
+    }
+
+
+})();
+
 (function() {
   "use strict";
 
@@ -4470,6 +4470,117 @@ function runBlock() {
     }
 })();
 
+/**
+ * Created by Yoni on 2/9/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.forms')
+        .constant('MW_QUESTION_TYPES', [{name:'Fill In Blank',code:'fib',type:'text'}, {name:'Yes/No',code:'yn',type:'yn',options:['Yes','No']}, {name:'MULTIPLE_CHOICE',code:'mc',type:'checkbox'},{name:'SINGLE_CHOICE',code:'sc',type:'select'},{name:'GROUPED',code:'GROUPED',type:''}])
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.forms").controller("FormsController", FormsController);
+
+    FormsController.$inject = ['FormService','$state'];
+
+    function FormsController(FormService,$state) {
+        var vm = this;
+        vm.forms = [];
+        vm.logPagination = _logPagination;
+        vm.editForm = _editForm;
+
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
+
+        vm.options = {
+            rowSelection: true,
+            multiSelect: true,
+            autoSelect: true,
+            decapitate: false,
+            largeEditDialog: false,
+            boundaryLinks: true,
+            limitSelect: true,
+            pageSelect: false
+        };
+
+        vm.request = {
+            page: 1,
+            per_page: 10,
+            Search: ""
+        };
+
+        initialize();
+
+
+        function initialize() {
+            callApi();//fetch first page data initially
+        }
+
+        function _logPagination(page, pageSize) {
+            vm.request.page = page;
+            vm.request.per_page = pageSize;
+            vm.request.Start = page - 1;
+            callApi();
+        }
+
+        function callApi() {
+            FormService.GetFormsPerPage(vm.request).then(function (response) {
+                vm.forms = response.data.docs;
+            },function (error) {
+                console.log(error);
+            })
+        }
+
+        function _editForm(form, ev) {
+            $state.go('app.builder',{id:form._id});
+            console.log("edit Form",form);
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.forms')
+
+        .service('FormService', FormService);
+
+    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES'];
+
+    function FormService($http, CommonService,MW_QUESTION_TYPES) {
+        return {
+            GetFormsPerPage: _getFormsPerPage,
+            CreateForm:_createForm,
+            GetForm:_getForm,
+            UpdateForm:_updateForm,
+            QuestionTypes: MW_QUESTION_TYPES,
+            FormTypes: [{name:'ACAT',code:'ACAT'},{name:'LOAN APPLICATION',code:'LOAN_APPLICATION'},{name:'SCREENING',code:'SCREENING'},{name:'Group Application',code:'GROUP_APPLICATION'}]
+        };
+        function _getFormsPerPage(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
+        }
+        function _getForm(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM, API.Methods.Form.All, id));
+        }
+        function _updateForm(form) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,form._id), form);
+        }
+        function _createForm(form){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
+        }
+    }
+
+
+})(window.angular);
 /**
  * Created by Yoni on 1/9/2018.
  */
@@ -4643,117 +4754,6 @@ function runBlock() {
 
 })(window.angular);
 
-/**
- * Created by Yoni on 2/9/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.forms')
-        .constant('MW_QUESTION_TYPES', [{label:'Fill in the blank',code:'fib',type:'text'}, {label:'Yes/No',code:'yn',type:'yn',options:['Yes','No']}, {label:'Multiple Choice',code:'mc',type:'checkbox'}, {label:'Single Choice',code:'sc',type:'select'}])
-})(window.angular);
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.forms").controller("FormsController", FormsController);
-
-    FormsController.$inject = ['FormService','$state'];
-
-    function FormsController(FormService,$state) {
-        var vm = this;
-        vm.forms = [];
-        vm.logPagination = _logPagination;
-        vm.editForm = _editForm;
-
-        vm.pageSizes = [10, 25, 50, 100, 250, 500];
-
-        vm.options = {
-            rowSelection: true,
-            multiSelect: true,
-            autoSelect: true,
-            decapitate: false,
-            largeEditDialog: false,
-            boundaryLinks: true,
-            limitSelect: true,
-            pageSelect: false
-        };
-
-        vm.request = {
-            page: 1,
-            per_page: 10,
-            Search: ""
-        };
-
-        initialize();
-
-
-        function initialize() {
-            callApi();//fetch first page data initially
-        }
-
-        function _logPagination(page, pageSize) {
-            vm.request.page = page;
-            vm.request.per_page = pageSize;
-            vm.request.Start = page - 1;
-            callApi();
-        }
-
-        function callApi() {
-            FormService.GetFormsPerPage(vm.request).then(function (response) {
-                vm.forms = response.data.docs;
-            },function (error) {
-                console.log(error);
-            })
-        }
-
-        function _editForm(form, ev) {
-            $state.go('app.builder',{id:form._id});
-            console.log("edit Form",form);
-        }
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.forms')
-
-        .service('FormService', FormService);
-
-    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES'];
-
-    function FormService($http, CommonService,MW_QUESTION_TYPES) {
-        return {
-            GetFormsPerPage: _getFormsPerPage,
-            CreateForm:_createForm,
-            GetForm:_getForm,
-            UpdateForm:_updateForm,
-            QuestionTypes: MW_QUESTION_TYPES,
-            FormTypes: [{name:'ACAT',code:'ACAT'},{name:'LOAN APPLICATION',code:'LOAN_APPLICATION'},{name:'SCREENING',code:'SCREENING'},{name:'Group Application',code:'GROUP_APPLICATION'}]
-        };
-        function _getFormsPerPage(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
-        }
-        function _getForm(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM, API.Methods.Form.All, id));
-        }
-        function _updateForm(form) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,form._id), form);
-        }
-        function _createForm(form){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
-        }
-    }
-
-
-})(window.angular);
 (function(angular) {
   'use strict';
   angular.module('app.mfi')
@@ -4850,13 +4850,14 @@ function runBlock() {
 
     function FormBuilderController(FormService,$mdDialog,RouteHelpers,$stateParams,AlertService,blockUI) {
         var vm = this;
-        vm.addQuestion = _addQuestion;
-        vm.saveForm = _saveForm;
-        vm.typeStyle = _typeStyle;
-
-        vm.formTypes = FormService.FormTypes;
         vm.isEdit = $stateParams.id !== "0";
         vm.formId = $stateParams.id;
+        vm.formTypes = FormService.FormTypes;
+
+        vm.addQuestion = _addQuestion;
+        vm.editQuestion = _editQuestion;
+        vm.saveForm = _saveForm;
+        vm.typeStyle = _typeStyle;
 
         initialize();
 
@@ -4916,9 +4917,9 @@ function runBlock() {
 
         }
 
-        function _addQuestion(ev) {
+        function _editQuestion(question,ev) {
             $mdDialog.show({
-                locals: {data: vm.formData},
+                locals: {data: {question:question,form: {_id: vm.formData._id}}},
                 templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
                 parent: angular.element(document.body),
                 targetEvent: ev,
@@ -4931,6 +4932,25 @@ function runBlock() {
 
             }, function () {
             });
+        }
+
+        function _addQuestion(ev) {
+
+            $mdDialog.show({
+                locals: {data: {question:null,form: {_id: vm.formData._id}}},
+                templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'QuestionBuilderController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+
+            }, function () {
+            });
+
         }
 
         function initialize() {
@@ -4967,6 +4987,12 @@ function runBlock() {
                 case 'GROUPED':
                     style =  'label bg-purple';
                     break;
+                case 'SINGLE_CHOICE':
+                    style =  'label bg-primary';
+                    break;
+                case 'MULTIPLE_CHOICE':
+                    style =  'label bg-pink';
+                    break;
                 default:
                     style =  'label bg-inverse';
             }
@@ -4986,33 +5012,33 @@ function runBlock() {
 
     angular.module("app.forms").controller("QuestionBuilderController", QuestionBuilderController);
 
-    QuestionBuilderController.$inject = ['FormService','$mdDialog','$scope'];
+    QuestionBuilderController.$inject = ['FormService','$mdDialog','data'];
 
-    function QuestionBuilderController(FormService,$mdDialog,$scope) {
+    function QuestionBuilderController(FormService,$mdDialog,data) {
         var vm = this;
+        vm.questionTypes = FormService.QuestionTypes;
+        vm.readOnly = false;
+
+        vm.isEdit = data.question !== null;
+        vm.form = data.form;
+
         vm.saveQuestion = _save;
         vm.cancel = _cancel;
         vm.addAnother = _addAnother;
         vm.questionTypeChanged = _questionTypeChanged;
-        vm.questionForm = {
-            preview:{
-                text:'type text',
-                number: '0'
-            }
-        };
-        vm.id =1;
-        vm.formSubmitted=false;
-        vm.readOnly = false;
+        vm.showQuestionOn = _showQuestionOn;
 
-        vm.fibvalidation = [{name:'NONE',code:'text'},{name:'ALPHANUMERIC',code:'text'},{name:'NUMERIC',code:'number'}, 'ALPHABETIC'];
-
-        vm.questionTypes = FormService.QuestionTypes;
-
+        vm.fibvalidation = [{name:'NONE',code:'text'},{name:'ALPHANUMERIC',code:'text'},{name:'NUMERIC',code:'number'},{name:'ALPHABETIC',code:'text'}];
 
         initialize();
+        function _showQuestionOn() {
+            console.log("Question show",vm.question.show);
+        }
+
         function _questionTypeChanged() {
 
         }
+
         function _save() {
             console.log("question",vm.question);
         }
@@ -5024,10 +5050,21 @@ function runBlock() {
         }
 
         function initialize() {
+            if(vm.isEdit){
+                vm.question = data.question;
+                vm.question.selected_type = getQuestionTypeObj(vm.question.type);
+                // console.log("vm.question.selected_type",vm.question.selected_type);
+            }else {
+                console.log("new Qn");
+            }
 
         }
 
-
+        function getQuestionTypeObj(name) {
+            return _.first(_.filter(vm.questionTypes,function (type) {
+                return type.name === name;
+            }));
+        }
 
     }
 

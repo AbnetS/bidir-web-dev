@@ -10,13 +10,14 @@
 
     function FormBuilderController(FormService,$mdDialog,RouteHelpers,$stateParams,AlertService,blockUI) {
         var vm = this;
-        vm.addQuestion = _addQuestion;
-        vm.saveForm = _saveForm;
-        vm.typeStyle = _typeStyle;
-
-        vm.formTypes = FormService.FormTypes;
         vm.isEdit = $stateParams.id !== "0";
         vm.formId = $stateParams.id;
+        vm.formTypes = FormService.FormTypes;
+
+        vm.addQuestion = _addQuestion;
+        vm.editQuestion = _editQuestion;
+        vm.saveForm = _saveForm;
+        vm.typeStyle = _typeStyle;
 
         initialize();
 
@@ -76,9 +77,9 @@
 
         }
 
-        function _addQuestion(ev) {
+        function _editQuestion(question,ev) {
             $mdDialog.show({
-                locals: {data: vm.formData},
+                locals: {data: {question:question,form: {_id: vm.formData._id}}},
                 templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
                 parent: angular.element(document.body),
                 targetEvent: ev,
@@ -91,6 +92,25 @@
 
             }, function () {
             });
+        }
+
+        function _addQuestion(ev) {
+
+            $mdDialog.show({
+                locals: {data: {question:null,form: {_id: vm.formData._id}}},
+                templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'QuestionBuilderController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+
+            }, function () {
+            });
+
         }
 
         function initialize() {
@@ -126,6 +146,12 @@
                     break;
                 case 'GROUPED':
                     style =  'label bg-purple';
+                    break;
+                case 'SINGLE_CHOICE':
+                    style =  'label bg-primary';
+                    break;
+                case 'MULTIPLE_CHOICE':
+                    style =  'label bg-pink';
                     break;
                 default:
                     style =  'label bg-inverse';

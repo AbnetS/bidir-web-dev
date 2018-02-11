@@ -7,33 +7,33 @@
 
     angular.module("app.forms").controller("QuestionBuilderController", QuestionBuilderController);
 
-    QuestionBuilderController.$inject = ['FormService','$mdDialog','$scope'];
+    QuestionBuilderController.$inject = ['FormService','$mdDialog','data'];
 
-    function QuestionBuilderController(FormService,$mdDialog,$scope) {
+    function QuestionBuilderController(FormService,$mdDialog,data) {
         var vm = this;
+        vm.questionTypes = FormService.QuestionTypes;
+        vm.readOnly = false;
+
+        vm.isEdit = data.question !== null;
+        vm.form = data.form;
+
         vm.saveQuestion = _save;
         vm.cancel = _cancel;
         vm.addAnother = _addAnother;
         vm.questionTypeChanged = _questionTypeChanged;
-        vm.questionForm = {
-            preview:{
-                text:'type text',
-                number: '0'
-            }
-        };
-        vm.id =1;
-        vm.formSubmitted=false;
-        vm.readOnly = false;
+        vm.showQuestionOn = _showQuestionOn;
 
-        vm.fibvalidation = [{name:'NONE',code:'text'},{name:'ALPHANUMERIC',code:'text'},{name:'NUMERIC',code:'number'}, 'ALPHABETIC'];
-
-        vm.questionTypes = FormService.QuestionTypes;
-
+        vm.fibvalidation = [{name:'NONE',code:'text'},{name:'ALPHANUMERIC',code:'text'},{name:'NUMERIC',code:'number'},{name:'ALPHABETIC',code:'text'}];
 
         initialize();
+        function _showQuestionOn() {
+            console.log("Question show",vm.question.show);
+        }
+
         function _questionTypeChanged() {
 
         }
+
         function _save() {
             console.log("question",vm.question);
         }
@@ -45,10 +45,21 @@
         }
 
         function initialize() {
+            if(vm.isEdit){
+                vm.question = data.question;
+                vm.question.selected_type = getQuestionTypeObj(vm.question.type);
+                // console.log("vm.question.selected_type",vm.question.selected_type);
+            }else {
+                console.log("new Qn");
+            }
 
         }
 
-
+        function getQuestionTypeObj(name) {
+            return _.first(_.filter(vm.questionTypes,function (type) {
+                return type.name === name;
+            }));
+        }
 
     }
 
