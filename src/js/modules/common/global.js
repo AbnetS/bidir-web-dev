@@ -47,9 +47,17 @@ var API = {
         },
         Form:{
             All: '',
-            Create: 'create'
+            Create: 'create',
+            Create_Question:'questions/create'
         }
     }
 };
 
 
+var QUESTION_TYPE = {
+    FILL_IN_BLANK: "FILL_IN_BLANK",
+    YES_NO: "YES_NO",
+    MULTIPLE_CHOICE: "MULTIPLE_CHOICE",
+    SINGLE_CHOICE: "SINGLE_CHOICE",
+    GROUPED: "GROUPED"
+};

@@ -139,9 +139,11 @@
             var style = '';
             switch (type.trim()){
                 case 'Fill In Blank':
+                case 'FILL_IN_BLANK':
                     style =  'label bg-green';
                     break;
                 case 'Yes/No':
+                case 'YES_NO':
                     style =  'label bg-info';
                     break;
                 case 'GROUPED':

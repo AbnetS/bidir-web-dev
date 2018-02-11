@@ -13,11 +13,10 @@
         <md-dialog-content>
             <md-content class="md-padding">
                 <div class="row">
-                    <div class="col-lg-7">
+                    <div ng-class="vm.question.selected_type?'col-lg-7':'col-lg-12'">
                         <div class="mw-question-type" layout="row" layout-align="start center">
                             <md-input-container flex-gt-md="50">
-                                <label label-for="question-type-{{vm.id}}" class="col-sm-2 control-label"
-                                       >Question Type</label>
+                                <label label-for="question-type-{{vm.id}}" class="col-sm-2 control-label">Question Type</label>
                                 <ui-select ng-model="vm.question.selected_type"
                                            theme="select2"
                                            title="Select question type">
@@ -33,10 +32,11 @@
 
                         <div class="form-horizontal">
                             <md-input-container class="md-block">
-                                <label label-for="question-text-{{vm.id}}"
-                                          label-key="vm.question.question_text">Question Text</label>
-                                <input type="text" name="text" ng-attr-id="question-text-{{vm.id}}"
-                                       ng-model="vm.question.question_text" required>
+                                <label for="question-text-{{vm.id}}">Question Text</label>
+                                <textarea ng-model="vm.question.question_text"
+                                          class="form-control" maxlength="500"
+                                          id="question-text-{{vm.id}}" required>
+                                            {{vm.questionForm.preview.textarea}}</textarea>
                             </md-input-container>
                         </div>
 
@@ -48,18 +48,21 @@
                                 <input type="text" name="text" ng-attr-id="question-remark-{{vm.id}}"
                                        ng-model="vm.question.remark" required>
                             </md-input-container>
+                        </div>
 
-                            <div flex-gt-md="20">
+                        <div class="form-horizontal">
+                            <md-input-container class="md-block" flex-gt-md="20">
                                 <md-checkbox class="md-primary"
                                              ng-model="vm.question.required"
                                              ng-disabled="vm.readOnly" flex>
-                                    <span>Mandatory</span>
+                                    <span>Required</span>
                                 </md-checkbox>
-                            </div>
+                            </md-input-container>
                         </div>
 
                     </div>
-                    <div class="col-lg-5" ng-if="vm.question.selected_type">
+                    <div style="border-left: solid rgba(195, 195, 195, 0.61) 1px;min-height: 100px" ng-class="vm.question.selected_type?'col-lg-5':''"
+                         ng-if="vm.question.selected_type">
                         <div class="section-divider">
                         <span class="grey">{{vm.question.selected_type.name }} Settings</span>
                         </div>
@@ -68,10 +71,10 @@
                             <div ng-switch-when="text">
                                 <md-input-container >
                                     <label label-for="fibValidation" label-class="col-sm-2 control-label"
-                                           label-key="fibValidation">Validation</label>
+                                           label-key="fibValidatio2n">Validation</label>
                                     <md-select  ng-attr-id="fibValidation"
                                                 ng-change="vm.questionTypeChanged()"
-                                                ng-model="vm.question.validation"
+                                                ng-model="vm.question.selected_validation"
                                                 ng-disabled="vm.readOnly" required>
                                         <md-option ng-value="validation"
                                                    ng-repeat="validation in vm.fibvalidation">
@@ -79,20 +82,8 @@
                                     </md-select>
 
                                 </md-input-container>
-                                <md-input-container class="md-block">
-                                    <p>Show this Question:</p>
-                                    <md-radio-group layout="row" ng-model="vm.question.show" ng-change="vm.showQuestionOn()">
-                                        <md-radio-button value=1 class="md-primary"> Always </md-radio-button>
-                                        <md-radio-button value=0 class="md-primary">When</md-radio-button>
-                                    </md-radio-group>
-                                </md-input-container>
                             </div>
-                            <div ng-switch-when="number">
-                                <md-input-container class="md-block">
-                                    <input class="form-control" type="number"
-                                           disabled value="{{vm.questionForm.preview.number}}">
-                                </md-input-container>
-                            </div>
+
                             <div ng-switch-when="textarea">
                                 <md-input-container class="md-block">
                                         <textarea class="form-control" maxlength="150" rows="5" disabled>
@@ -105,6 +96,13 @@
                                     <md-radio-button value=0> No </md-radio-button>
                                 </md-radio-group>
                             </div>
+                            <md-input-container class="md-block">
+                                <p>Show this Question:</p>
+                                <md-radio-group layout="row" ng-model="vm.question.show" ng-change="vm.showQuestionOn()">
+                                    <md-radio-button value=1 class="md-primary"> Always </md-radio-button>
+                                    <md-radio-button value=0 class="md-primary">When</md-radio-button>
+                                </md-radio-group>
+                            </md-input-container>
                         </div>
                     </div>
                 </div>
@@ -119,7 +117,7 @@
                     Cancel
                 </md-button>
             </div>
-            <md-button ng-show="!vm.isEdit" class="md-raised md-button-small pull-right"
+            <md-button ng-hide="true" ng-show="!vm.isEdit" class="md-raised md-button-small pull-right"
                        ng-disabled="vm.QuestionBuilderForm.$invalid"
                        ng-click="vm.addAnother()">
                 <i class="fa fa-plus"></i>  Add Another

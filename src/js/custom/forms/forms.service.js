@@ -7,16 +7,17 @@
 
         .service('FormService', FormService);
 
-    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES'];
+    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES','MW_FORM_TYPES'];
 
-    function FormService($http, CommonService,MW_QUESTION_TYPES) {
+    function FormService($http, CommonService,MW_QUESTION_TYPES,MW_FORM_TYPES) {
         return {
             GetFormsPerPage: _getFormsPerPage,
             CreateForm:_createForm,
             GetForm:_getForm,
             UpdateForm:_updateForm,
+            CreateQuestion:_createQuestion,
             QuestionTypes: MW_QUESTION_TYPES,
-            FormTypes: [{name:'ACAT',code:'ACAT'},{name:'LOAN APPLICATION',code:'LOAN_APPLICATION'},{name:'SCREENING',code:'SCREENING'},{name:'Group Application',code:'GROUP_APPLICATION'}]
+            FormTypes: MW_FORM_TYPES
         };
         function _getFormsPerPage(parameters) {
             return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
@@ -29,6 +30,9 @@
         }
         function _createForm(form){
             return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
+        }
+        function _createQuestion(question,type){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question) + '/' + type, question);
         }
     }
 
