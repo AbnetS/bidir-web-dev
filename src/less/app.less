@@ -231,3 +231,84 @@ md-dialog{
   left: 100%;
   margin-left: 15px;
 }
+
+
+#inputs {
+  width: 50%;
+  margin: auto;
+  position: absolute;
+  bottom: 5px;
+  left: 35px;
+}
+
+//input[type="text"] {
+//  position: relative;
+//  font-family: Roboto;
+//  font-size: 16px;
+//}
+
+//input[type="submit"] {
+//  height: 25px;
+//  margin: 0 0 0 5px;
+//  position: absolute;
+//}
+//
+//input[type="radio"] {
+//  float: left;
+//}
+
+.editableTextInput {
+  border: none;
+  background-color: #EDD46D;
+  outline: 0;
+}
+
+legend {
+  background-color: white;
+}
+
+.editableTextInput:focus {
+  border: none;
+  background-color: none;
+  outline: 0;
+}
+
+.dynamic-text {
+  cursor: pointer;
+}
+
+.Absolute-Center {
+  height: 50%;
+  /* Set your own height: percents, ems, whatever! */
+
+  width: 50%;
+  /* Set your own width: percents, ems, whatever! */
+
+  overflow: auto;
+  /* Recommended in case content is larger than the container */
+
+  margin: auto;
+  /* Center the item vertically & horizontally */
+
+  position: absolute;
+  /* Break it out of the regular flow */
+
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  /* Set the bounds in which to center it, relative to its parent/container */
+}
+
+.raised {
+  transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition-delay: 0.2s;
+  box-shadow: 0 2px 25px 0 rgba(0, 0, 0, 0.35);
+}
+
+::selection {
+  background: #D3EB7E; /* WebKit/Blink Browsers */
+}
+::-moz-selection {
+  background: #D3EB7E; /* Gecko Browsers */
+}

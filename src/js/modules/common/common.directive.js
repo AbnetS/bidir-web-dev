@@ -33,8 +33,60 @@
                 }
             }
         };
-    });
-
+    })
+        // Text Editor template directive
+        .directive('editor', function() {
+        return {
+            restrict: 'E',
+            template: "<div ng-show='vm.editorEnabledForElement === (radioOption);'>" +
+            "<input class='editableTextInput' type='text' ng-model='vm.text' ng-required='true' " +
+            "show-focus='vm.editorEnabledForElement === (radioOption);' " +
+            "keypress-enter='vm.saveOption(radioOption, vm.text)' " +
+            "ng-blur='vm.saveOption(radioOption, vm.text)'" +
+            " show-focus select-on-click >" +
+            "</div>"
+        };
+    })
+        .directive('keypressEnter', function() {
+            return function(scope, element, attrs) {
+                element.bind("keydown keypress", function(event) {
+                    if (event.which === 13) {
+                        scope.$apply(function() {
+                            scope.$eval(attrs.keypressEnter);
+                        });
+                        console.log("Pressed enter.");
+                        event.preventDefault();
+                    }
+                });
+            };
+        })
+    // Put focus on element when event is triggered.
+// https://coderwall.com/p/a41lwa/angularjs-auto-focus-into-input-field-when-ng-show-event-is-triggered
+    .directive('showFocus', function($timeout) {
+        return function(scope, element, attrs) {
+            scope.$watch(attrs.showFocus,
+                function(newValue) {
+                    $timeout(function() {
+                        newValue && element.focus();
+                    });
+                }, true);
+        };
+    })
+    // Select text on focus.
+// http://stackoverflow.com/questions/14995884/select-text-on-input-focus
+    .directive('selectOnClick', ['$window', function($window) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                element.on('focus', function() {
+                    if (!$window.getSelection().toString()) {
+                        // Required for mobile Safari
+                        this.setSelectionRange(0, this.value.length)
+                    }
+                });
+            }
+        };
+    }]);
 
 
 })(window.angular);

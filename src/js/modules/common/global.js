@@ -48,6 +48,7 @@ var API = {
         Form:{
             All: '',
             Create: 'create',
+            Question:'questions',
             Create_Question:'questions/create'
         }
     }

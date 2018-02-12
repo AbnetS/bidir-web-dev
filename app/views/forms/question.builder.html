@@ -16,12 +16,11 @@
                     <div ng-class="vm.question.selected_type?'col-lg-7':'col-lg-12'">
                         <div class="mw-question-type" layout="row" layout-align="start center">
                             <md-input-container flex-gt-md="50">
-                                <label label-for="question-type-{{vm.id}}" class="col-sm-2 control-label">Question Type</label>
-                                <ui-select ng-model="vm.question.selected_type"
-                                           theme="select2"
-                                           title="Select question type">
+                                <label label-for="question-type-{{vm.id}}" class="col-sm-2 control-label">Question Type
+                                </label>
+                                <ui-select ng-model="vm.question.selected_type" theme="select2" title="Select question type">
                                     <ui-select-match placeholder="Select question type...">
-                                        {{$select.selected.name | lowercase }}
+                                        {{$select.selected.name }}
                                     </ui-select-match>
                                     <ui-select-choices repeat="qnType in vm.questionTypes | filter: $select.search">
                                         <span ng-bind-html="qnType.name | highlight: $select.search"></span>
@@ -33,28 +32,24 @@
                         <div class="form-horizontal">
                             <md-input-container class="md-block">
                                 <label for="question-text-{{vm.id}}">Question Text</label>
-                                <textarea ng-model="vm.question.question_text"
-                                          class="form-control" maxlength="500"
-                                          id="question-text-{{vm.id}}" required>
-                                            {{vm.questionForm.preview.textarea}}</textarea>
+                                <textarea ng-model="vm.question.question_text" class="form-control" maxlength="500" id="question-text-{{vm.id}}" required>
+                                    {{vm.questionForm.preview.textarea}}</textarea>
                             </md-input-container>
                         </div>
 
 
                         <div class="form-horizontal">
                             <md-input-container class="md-block">
-                                <label label-for="question-remark-{{vm.id}}"
-                                       label-key="vm.question.remark"><em>Remark</em></label>
-                                <input type="text" name="text" ng-attr-id="question-remark-{{vm.id}}"
-                                       ng-model="vm.question.remark" required>
+                                <label label-for="question-remark-{{vm.id}}" label-key="vm.question.remark">
+                                    <em>Remark</em>
+                                </label>
+                                <input type="text" name="text" ng-attr-id="question-remark-{{vm.id}}" ng-model="vm.question.remark" required>
                             </md-input-container>
                         </div>
 
                         <div class="form-horizontal">
                             <md-input-container class="md-block" flex-gt-md="20">
-                                <md-checkbox class="md-primary"
-                                             ng-model="vm.question.required"
-                                             ng-disabled="vm.readOnly" flex>
+                                <md-checkbox class="md-primary" ng-model="vm.question.required" ng-disabled="vm.readOnly" flex>
                                     <span>Required</span>
                                 </md-checkbox>
                             </md-input-container>
@@ -62,44 +57,68 @@
 
                     </div>
                     <div style="border-left: solid rgba(195, 195, 195, 0.61) 1px;min-height: 100px" ng-class="vm.question.selected_type?'col-lg-5':''"
-                         ng-if="vm.question.selected_type">
+                        ng-if="vm.question.selected_type">
                         <div class="section-divider">
-                        <span class="grey">{{vm.question.selected_type.name }} Settings</span>
+                            <span class="grey">{{vm.question.selected_type.name }} Settings</span>
                         </div>
-                        <div class="mw-form-question-answers-builder"
-                             ng-switch="vm.question.selected_type.type">
+                        <div class="mw-form-question-answers-builder" ng-switch="vm.question.selected_type.type">
                             <div ng-switch-when="text">
-                                <md-input-container >
-                                    <label label-for="fibValidation" label-class="col-sm-2 control-label"
-                                           label-key="fibValidatio2n">Validation</label>
-                                    <md-select  ng-attr-id="fibValidation"
-                                                ng-change="vm.questionTypeChanged()"
-                                                ng-model="vm.question.selected_validation"
-                                                ng-disabled="vm.readOnly" required>
-                                        <md-option ng-value="validation"
-                                                   ng-repeat="validation in vm.fibvalidation">
-                                            {{ validation.name }}</md-option>
+                                <md-input-container ng-if="vm.question.selected_type.type === 'text'">
+                                    <label label-for="fibValidation" label-class="col-sm-2 control-label" label-key="fibValidatio2n">Validation</label>
+                                    <md-select ng-attr-id="fibValidation"
+                                               ng-change="vm.questionTypeChanged()"
+                                               ng-model="vm.question.selected_validation" ng-disabled="vm.readOnly"
+                                    required>
+                                        <md-option ng-value="validation" ng-repeat="validation in vm.fibvalidation">
+                                            {{ validation.name }}
+                                        </md-option>
                                     </md-select>
 
                                 </md-input-container>
                             </div>
 
-                            <div ng-switch-when="textarea">
-                                <md-input-container class="md-block">
-                                        <textarea class="form-control" maxlength="150" rows="5" disabled>
-                                            {{vm.questionForm.preview.textarea}}</textarea>
-                                </md-input-container>
-                            </div>
                             <div ng-switch-when="yn">
                                 <md-radio-group layout="row">
                                     <md-radio-button value=1 class="md-primary">Yes</md-radio-button>
-                                    <md-radio-button value=0> No </md-radio-button>
+                                    <md-radio-button value=0> No</md-radio-button>
                                 </md-radio-group>
                             </div>
+
+                            <div ng-switch-when="select" class="question-offered-answer-list-builder">
+                                <div class="question-answer-options" >
+                                    <ul class="radio">
+                                        <li ng-repeat="radioOption in vm.question.options">
+                                            <input type="radio" name="radioList" value="{{radioOption}}">
+
+                                            <label class='dynamic-text'
+                                                   ng-click='vm.openTextEditor(radioOption);'>{{radioOption}}</label>
+                                            <div ng-show='vm.editorEnabledForElement === radioOption'>
+                                                <input class='editableTextInput' type='text'
+                                                       ng-model='vm.text'
+                                                       show-focus='vm.editorEnabledForElement === (radioOption);'
+                                                       keypress-enter='vm.saveOption(radioOption, vm.text)'
+                                                       ng-blur='vm.saveOption(radioOption, vm.text)'
+                                                       show-focus select-on-click >
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <input type="text" ng-model="vm.newRadioValue"
+                                                   keypress-enter='vm.addRadio(vm.newRadioValue)'>
+                                            <input type="button" ng-click='vm.addRadio(vm.newRadioValue)' value="ADD">
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div ng-switch-when="checkbox">
+                                <small>Multi select setting</small>
+                            </div>
+
+
                             <md-input-container class="md-block">
                                 <p>Show this Question:</p>
                                 <md-radio-group layout="row" ng-model="vm.question.show" ng-change="vm.showQuestionOn()">
-                                    <md-radio-button value=1 class="md-primary"> Always </md-radio-button>
+                                    <md-radio-button value=1 class="md-primary"> Always</md-radio-button>
                                     <md-radio-button value=0 class="md-primary">When</md-radio-button>
                                 </md-radio-group>
                             </md-input-container>
@@ -117,13 +136,11 @@
                     Cancel
                 </md-button>
             </div>
-            <md-button ng-hide="true" ng-show="!vm.isEdit" class="md-raised md-button-small pull-right"
-                       ng-disabled="vm.QuestionBuilderForm.$invalid"
-                       ng-click="vm.addAnother()">
-                <i class="fa fa-plus"></i>  Add Another
+            <md-button ng-hide="true" ng-show="!vm.isEdit" class="md-raised md-button-small pull-right" ng-disabled="vm.QuestionBuilderForm.$invalid"
+                ng-click="vm.addAnother()">
+                <i class="fa fa-plus"></i> Add Another
             </md-button>
-            <md-button class="md-raised md-primary md-button-small pull-right"
-                       ng-disabled="vm.QuestionBuilderForm.$invalid"
+            <md-button class="md-raised md-primary md-button-small pull-right" ng-disabled="vm.QuestionBuilderForm.$invalid"
                        ng-click="vm.saveQuestion()">
                 <i class="fa fa-save"></i> {{vm.isEdit?'Update':'Save'}}
             </md-button>

@@ -16,6 +16,7 @@
             GetForm:_getForm,
             UpdateForm:_updateForm,
             CreateQuestion:_createQuestion,
+            UpdateQuestion:_updateQuestion,
             QuestionTypes: MW_QUESTION_TYPES,
             FormTypes: MW_FORM_TYPES
         };
@@ -34,6 +35,11 @@
         function _createQuestion(question,type){
             return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question) + '/' + type, question);
         }
+        function _updateQuestion(question) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id), question);
+        }
+
+
     }
 
 
