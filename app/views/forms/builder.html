@@ -74,7 +74,7 @@
                     </div>
                 </div>
                 <div class="col-lg-12 col-sm-12">
-                    <md-button ng-disabled="vm.formBuilderForm.$invalid"
+                    <md-button ng-disabled="vm.formBuilderForm.$invalid || vm.formBuilderForm.$pristine"
                             class="md-raised md-primary pull-right"
                                ng-click="vm.saveForm()">
                         <i class="fa fa-save"></i> {{vm.isEdit?'Update':'save'}}
@@ -87,9 +87,7 @@
             </div>
             <div class="row" ng-show="vm.isEdit">
                 <div class="col-lg-12 col-sm-12">
-
                 </div>
-
             </div>
 
             <div ng-show="vm.isEdit" class="row">

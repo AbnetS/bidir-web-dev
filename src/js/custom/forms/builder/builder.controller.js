@@ -107,7 +107,7 @@
                 controller: 'QuestionBuilderController',
                 controllerAs: 'vm'
             }).then(function (answer) {
-
+                callAPI();
             }, function () {
             });
 
@@ -115,18 +115,22 @@
 
         function initialize() {
             if(vm.isEdit){
-                FormService.GetForm(vm.formId).then(function (response) {
-                    vm.formData = response.data;
-                    vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
-                },function (error) {
-                    console.log("error",error);
-                });
+                callAPI();
             }else{
                 vm.formData = {
                     has_sections:0,
                     layout:'TWO_COLUMNS'
                 };
             }
+        }
+
+        function callAPI() {
+            FormService.GetForm(vm.formId).then(function (response) {
+                vm.formData = response.data;
+                vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+            },function (error) {
+                console.log("error",error);
+            });
         }
 
         function getFormTypeObj(code) {

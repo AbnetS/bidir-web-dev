@@ -2,7 +2,7 @@
     <form role="form" name="vm.QuestionBuilderForm" novalidate block-ui="QuestionBuilderBlockUI">
         <md-toolbar class="small">
             <div class="md-toolbar-tools small">
-                <h2>Question</h2>
+                <h2>{{vm.isEdit?'Edit ':'Add '}}Question</h2>
                 <span flex></span>
                 <md-button aria-label="button" class="md-icon-button" ng-click="vm.cancel()">
                     <i class="icon-close"></i>
@@ -32,8 +32,10 @@
                         <div class="form-horizontal">
                             <md-input-container class="md-block">
                                 <label for="question-text-{{vm.id}}">Question Text</label>
-                                <textarea ng-model="vm.question.question_text" class="form-control" maxlength="500" id="question-text-{{vm.id}}" required>
-                                    {{vm.questionForm.preview.textarea}}</textarea>
+                                <textarea ng-model="vm.question.question_text" class="form-control"
+                                          maxlength="500" id="question-text-{{vm.id}}"
+                                          required>
+                                </textarea>
                             </md-input-container>
                         </div>
 
@@ -62,6 +64,7 @@
                             <span class="grey">{{vm.question.selected_type.name }} Settings</span>
                         </div>
                         <div class="mw-form-question-answers-builder" ng-switch="vm.question.selected_type.type">
+                            <!--Fill in the blank-->
                             <div ng-switch-when="text">
                                 <md-input-container ng-if="vm.question.selected_type.type === 'text'">
                                     <label label-for="fibValidation" label-class="col-sm-2 control-label" label-key="fibValidatio2n">Validation</label>
@@ -76,14 +79,14 @@
 
                                 </md-input-container>
                             </div>
-
+                            <!--Yes NO-->
                             <div ng-switch-when="yn">
                                 <md-radio-group layout="row">
                                     <md-radio-button value=1 class="md-primary">Yes</md-radio-button>
                                     <md-radio-button value=0> No</md-radio-button>
                                 </md-radio-group>
                             </div>
-
+                            <!--SINGLE SELECT-->
                             <div ng-switch-when="select">
                                 <div class="question-answer-options" >
                                     <ul class="radio">
@@ -92,6 +95,7 @@
 
                                             <label class='dynamic-text'
                                                    ng-click='vm.openTextEditor(radioOption);'>{{radioOption}}</label>
+
                                             <div ng-show='vm.editorEnabledForElement === radioOption'>
                                                 <input class='editableTextInput' type='text'
                                                        ng-model='vm.text'
@@ -109,7 +113,7 @@
                                     </ul>
                                 </div>
                             </div>
-
+                            <!--MULTI SELECT-->
                             <div ng-switch-when="checkbox">
                                 <div class="question-answer-options" >
                                     <ul class="radio">
@@ -118,6 +122,7 @@
 
                                             <label class='dynamic-text'
                                                    ng-click='vm.openTextEditor(radioOption);'>{{radioOption}}</label>
+
                                             <div ng-show='vm.editorEnabledForElement === radioOption'>
                                                 <input class='editableTextInput' type='text'
                                                        ng-model='vm.text'
@@ -135,8 +140,7 @@
                                     </ul>
                                 </div>
                             </div>
-
-
+                            <!--SHOW THIS QUESTION-->
                             <md-input-container class="md-block">
                                 <p>Show this Question:</p>
                                 <md-radio-group layout="row" ng-model="vm.question.show" ng-change="vm.showQuestionOn()">

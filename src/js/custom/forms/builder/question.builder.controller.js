@@ -46,7 +46,7 @@
             if(vm.question.selected_type.code === QUESTION_TYPE.FILL_IN_BLANK){
                 preparedQn.validation_factor = vm.question.selected_validation.name;
             }
-            if(!_.isUndefined(vm.question.options)){
+            if(!_.isUndefined(vm.question.options) && vm.question.options.length > 0 ){
                 preparedQn.options = vm.question.options;
             }
             if(!vm.isEdit){
