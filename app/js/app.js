@@ -64,6 +64,12 @@
     'use strict';
 
     angular
+        .module('app.colors', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.auth', [])
         .run(runBlock)
         .config(routeConfig);
@@ -74,25 +80,6 @@
 
 
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
-})();
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common", [])
-      .config(routeConfig)
-      .run(runBlock);
-
-  function runBlock() {}
-  function routeConfig() {}
-
-})(window.angular);
-
 (function() {
     'use strict';
 
@@ -114,6 +101,19 @@
             'ngMessages'
         ]);
 })();
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common", [])
+      .config(routeConfig)
+      .run(runBlock);
+
+  function runBlock() {}
+  function routeConfig() {}
+
+})(window.angular);
+
 (function() {
     'use strict';
 
@@ -133,13 +133,12 @@
     'use strict';
 
     angular
-        .module('app.manage_roles', [])
-        .run(runBlock)
-        .config(routeConfig);
+        .module('app.manage_users', []).config(configUM).run(runUM);
 
-    function runBlock() {  }
+    function runUM() {}
+    function configUM() {}
 
-    function routeConfig() {}
+
 
 })();
 /**
@@ -149,13 +148,20 @@
     'use strict';
 
     angular
-        .module('app.manage_users', []).config(configUM).run(runUM);
+        .module('app.manage_roles', [])
+        .run(runBlock)
+        .config(routeConfig);
 
-    function runUM() {}
-    function configUM() {}
+    function runBlock() {  }
 
+    function routeConfig() {}
 
+})();
+(function() {
+    'use strict';
 
+    angular
+        .module('app.maps', []);
 })();
 (function() {
     'use strict';
@@ -169,13 +175,15 @@
     'use strict';
 
     angular
-        .module('app.maps', []);
+        .module('app.navsearch', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.navsearch', []);
+        .module('app.routes', [
+            'app.lazyload'
+        ]);
 })();
 (function() {
     'use strict';
@@ -185,14 +193,6 @@
 })();
 
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.routes', [
-            'app.lazyload'
-        ]);
-})();
 (function() {
     'use strict';
 
@@ -231,6 +231,56 @@
         .module('app.welcomePage', []);
 
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
+
 (function(angular) {
     'use strict';
     angular.module('app.auth')
@@ -387,51 +437,118 @@
     'use strict';
 
     angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
+
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+      // Disables animation on items with class .ng-no-animation
+      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
+
+      // Improve performance disabling debugging features
+      // $compileProvider.debugInfoEnabled(false);
+
+    }
+
 })();
 /**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
+ * Module: constants.js
+ * Define constants to inject across the application
  =========================================================*/
 
 (function() {
     'use strict';
 
     angular
-        .module('app.colors')
-        .service('Colors', Colors);
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
 
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
+})();
+(function() {
+    'use strict';
 
-        ////////////////
+    angular
+        .module('app.core')
+        .run(appRun);
 
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });*/
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
     }
 
 })();
+
 
 (function(angular) {
   "use strict";
@@ -633,123 +750,6 @@ var QUESTION_TYPE = {
     SINGLE_CHOICE: "SINGLE_CHOICE",
     GROUPED: "GROUPED"
 };
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .config(coreConfig);
-
-    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
-    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
-
-      var core = angular.module('app.core');
-      // registering components after bootstrap
-      core.controller = $controllerProvider.register;
-      core.directive  = $compileProvider.directive;
-      core.filter     = $filterProvider.register;
-      core.factory    = $provide.factory;
-      core.service    = $provide.service;
-      core.constant   = $provide.constant;
-      core.value      = $provide.value;
-
-      // Disables animation on items with class .ng-no-animation
-      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
-
-      // Improve performance disabling debugging features
-      // $compileProvider.debugInfoEnabled(false);
-
-    }
-
-})();
-/**=========================================================
- * Module: constants.js
- * Define constants to inject across the application
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .constant('APP_MEDIAQUERY', {
-          'desktopLG':             1200,
-          'desktop':                992,
-          'tablet':                 768,
-          'mobile':                 480
-        })
-      ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .run(appRun);
-
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
-
-      // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });*/
-
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
-
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Hooks Example
-      // ----------------------------------- 
-
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
-
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
-
-    }
-
-})();
-
-
 (function() {
     'use strict';
 
@@ -975,280 +975,6 @@ var QUESTION_TYPE = {
     }
 
 })();
-/**
- * Created by Yoni on 12/10/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_roles')
-        .controller('CreateRoleController', CreateRoleController);
-
-    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService','blockUI','$mdPanel'];
-    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService,blockUI,$mdPanel) {
-        var vm = this;
-        vm.cancel = _cancel;
-        vm.saveRole = _saveRole;
-        vm.changeModuleStyle = _modulesStyle;
-        vm.showFilterDialog = _showFilterDialog;
-        vm.showFilter = false;
-        vm.isEdit = items !== null;
-        vm.role = items !== null?items:null;
-
-
-
-        initialize();
-
-        function setPermissions() {
-            _.each(vm.role.permissions, function(oldPermission){
-                _.each(vm.permissions, function(permission) {
-                    if(permission.name === oldPermission.name && !permission.checked){
-                        permission.checked = permission.name === oldPermission.name;
-                    }
-                });
-            });
-        }
-
-        function preparePermissions() {
-            vm.role.permissions = _.filter(vm.permissions,function(permission){
-                return permission.checked? permission._id : null;
-            });
-        }
-
-        function initialize(){
-           if(vm.isEdit){
-               var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
-               myLoadingBlockUI.start("Loading Role and Permissions");
-           }
-            var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
-            if(permissionFromStore !== null){
-                vm.permissions = permissionFromStore;
-                if(vm.isEdit){
-                    setPermissions();
-                    myLoadingBlockUI.stop();
-                }
-
-            }else {
-                ManageRoleService.GetPermissions().then(function(response){
-                    vm.permissions = response.data.docs;
-                    ManageRoleService.StorePermissions(vm.permissions);
-                    console.log("permissions from api",vm.permissions);
-                    if(vm.isEdit){
-                        setPermissions();
-                        myLoadingBlockUI.stop();
-                    }
-                },function(error){
-                    if(vm.isEdit){
-                        myLoadingBlockUI.stop();
-                    }
-                    console.log("error permissions",error);
-                });
-
-            }
-
-        }
-
-        function _saveRole() {
-            var myBlockUI = blockUI.instances.get('RoleBlockUI');
-            myBlockUI.start();
-            preparePermissions();
-            if(vm.isEdit){
-                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
-                        myBlockUI.stop();
-                        $mdDialog.hide();
-                        AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
-                    },
-                    function (error) {
-                        myBlockUI.stop();
-                    var message = error.data.error.message;
-                        AlertService.showError("Failed to update Role",message);
-                        console.log("could not be saved", error);
-                    });
-            }else {
-
-                ManageRoleService.SaveRole( vm.role).then(function (data) {
-                        myBlockUI.stop();
-                        AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
-                        $mdDialog.hide();
-                    },
-                    function (error) {
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to Save Role",message);
-                        console.log("could not be saved", error);
-                    });
-            }
-        }
-
-        function _showFilterDialog(show) {
-
-        }
-
-
-
-        function _modulesStyle(module){
-            var style = '';
-            switch (module){
-                case 'SCREENING':
-                    style =  'label label-primary';
-                    break;
-                case 'SCREENING_MODULE':
-                    style =  'label label-primary';
-                    break;
-                case 'FORM_BUILDER':
-                    style =  'label label-danger';
-                    break;
-                case 'USER_MANAGEMENT':
-                    style =  'label label-green';
-                    break;
-                case 'CLIENT_MANAGEMENT':
-                    style =  'label label-warning';
-                    break;
-                case 'LOAN_MODULE':
-                    style =  'label label-purple';
-                    break;
-                default:
-                    style =  'label label-default';
-            }
-            return style;
-        }
-
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 11/30/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_roles')
-        .controller('ManageRoleController', ManageRoleController);
-
-    ManageRoleController.$inject = ['ManageRoleService', '$mdDialog', 'RouteHelpers'];
-
-    function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
-    {
-        var vm = this;
-        vm.addRole = _addRole;
-        vm.editRole = _editRole;
-
-        fetchRoles();
-
-       function fetchRoles() {
-           ManageRoleService.GetRoles().then(function(response){
-               vm.roles = response.data.docs;
-               // console.log("vm.roles on RM",vm.roles);
-           },function(error){
-               console.log("error role",error);
-           });
-       }
-
-        function _addRole(ev){
-
-            $mdDialog.show({
-                locals: {
-                    items: null
-                },
-                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateRoleController',
-                controllerAs: 'vm'
-            })
-                .then(function (answer) {
-                    fetchRoles();
-                }, function () {
-                });
-        }
-
-        function _editRole(role,ev) {
-            $mdDialog.show({
-                locals: {
-                    items: role
-                },
-                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateRoleController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                    fetchRoles();
-                }, function () {
-                });
-        }
-
-
-
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 12/11/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.manage_roles')
-
-        .service('ManageRoleService', ManageRoleService);
-    ManageRoleService.$inject = ['$http', 'CommonService','AuthService','StorageService','APP_CONSTANTS'];
-
-    function ManageRoleService($http, CommonService,AuthService,StorageService,APP_CONSTANTS) {
-        return {
-            GetRoles: _getRoles,
-            GetPermissions: _getPermissions,
-            GetPermissionsbyGroup:_getPermissionsbyGroup,
-            SaveRole: _saveRole,
-            UpdateRole:_updateRole,
-            StorePermissions:_storePermissions,
-            GetPermissionsFromStore:_getPermissionsFromStorage
-        };
-
-        function _getRoles(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
-        }
-
-        function _getPermissions(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions));
-        }
-        function _getPermissionsbyGroup(){
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup));
-        }
-
-        function _saveRole(role) {
-            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role);
-        }
-
-        function _updateRole(role) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role);
-        }
-
-        function _storePermissions(permissions) {
-            return StorageService.Set(APP_CONSTANTS.StorageKey.PERMISSIONS, permissions);
-        }
-        function _getPermissionsFromStorage() {
-            return !_.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS)) ? StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS) : null;
-        }
-
-    }
-
-})(window.angular);
-
 /**
  * Created by Yoni on 12/2/2017.
  */
@@ -1679,6 +1405,445 @@ var QUESTION_TYPE = {
     }
 
 })(window.angular);
+
+/**
+ * Created by Yoni on 12/10/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('CreateRoleController', CreateRoleController);
+
+    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService','blockUI','$mdPanel'];
+    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService,blockUI,$mdPanel) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.saveRole = _saveRole;
+        vm.changeModuleStyle = _modulesStyle;
+        vm.showFilterDialog = _showFilterDialog;
+        vm.showFilter = false;
+        vm.isEdit = items !== null;
+        vm.role = items !== null?items:null;
+
+
+
+        initialize();
+
+        function setPermissions() {
+            _.each(vm.role.permissions, function(oldPermission){
+                _.each(vm.permissions, function(permission) {
+                    if(permission.name === oldPermission.name && !permission.checked){
+                        permission.checked = permission.name === oldPermission.name;
+                    }
+                });
+            });
+        }
+
+        function preparePermissions() {
+            vm.role.permissions = _.filter(vm.permissions,function(permission){
+                return permission.checked? permission._id : null;
+            });
+        }
+
+        function initialize(){
+           if(vm.isEdit){
+               var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
+               myLoadingBlockUI.start("Loading Role and Permissions");
+           }
+            var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
+            if(permissionFromStore !== null){
+                vm.permissions = permissionFromStore;
+                if(vm.isEdit){
+                    setPermissions();
+                    myLoadingBlockUI.stop();
+                }
+
+            }else {
+                ManageRoleService.GetPermissions().then(function(response){
+                    vm.permissions = response.data.docs;
+                    ManageRoleService.StorePermissions(vm.permissions);
+                    console.log("permissions from api",vm.permissions);
+                    if(vm.isEdit){
+                        setPermissions();
+                        myLoadingBlockUI.stop();
+                    }
+                },function(error){
+                    if(vm.isEdit){
+                        myLoadingBlockUI.stop();
+                    }
+                    console.log("error permissions",error);
+                });
+
+            }
+
+        }
+
+        function _saveRole() {
+            var myBlockUI = blockUI.instances.get('RoleBlockUI');
+            myBlockUI.start();
+            preparePermissions();
+            if(vm.isEdit){
+                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
+                        myBlockUI.stop();
+                        $mdDialog.hide();
+                        AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
+                    },
+                    function (error) {
+                        myBlockUI.stop();
+                    var message = error.data.error.message;
+                        AlertService.showError("Failed to update Role",message);
+                        console.log("could not be saved", error);
+                    });
+            }else {
+
+                ManageRoleService.SaveRole( vm.role).then(function (data) {
+                        myBlockUI.stop();
+                        AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
+                        $mdDialog.hide();
+                    },
+                    function (error) {
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to Save Role",message);
+                        console.log("could not be saved", error);
+                    });
+            }
+        }
+
+        function _showFilterDialog(show) {
+
+        }
+
+
+
+        function _modulesStyle(module){
+            var style = '';
+            switch (module){
+                case 'SCREENING':
+                    style =  'label label-primary';
+                    break;
+                case 'SCREENING_MODULE':
+                    style =  'label label-primary';
+                    break;
+                case 'FORM_BUILDER':
+                    style =  'label label-danger';
+                    break;
+                case 'USER_MANAGEMENT':
+                    style =  'label label-green';
+                    break;
+                case 'CLIENT_MANAGEMENT':
+                    style =  'label label-warning';
+                    break;
+                case 'LOAN_MODULE':
+                    style =  'label label-purple';
+                    break;
+                default:
+                    style =  'label label-default';
+            }
+            return style;
+        }
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('ManageRoleController', ManageRoleController);
+
+    ManageRoleController.$inject = ['ManageRoleService', '$mdDialog', 'RouteHelpers'];
+
+    function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
+    {
+        var vm = this;
+        vm.addRole = _addRole;
+        vm.editRole = _editRole;
+
+        fetchRoles();
+
+       function fetchRoles() {
+           ManageRoleService.GetRoles().then(function(response){
+               vm.roles = response.data.docs;
+               // console.log("vm.roles on RM",vm.roles);
+           },function(error){
+               console.log("error role",error);
+           });
+       }
+
+        function _addRole(ev){
+
+            $mdDialog.show({
+                locals: {
+                    items: null
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
+        }
+
+        function _editRole(role,ev) {
+            $mdDialog.show({
+                locals: {
+                    items: role
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
+        }
+
+
+
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 12/11/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.manage_roles')
+
+        .service('ManageRoleService', ManageRoleService);
+    ManageRoleService.$inject = ['$http', 'CommonService','AuthService','StorageService','APP_CONSTANTS'];
+
+    function ManageRoleService($http, CommonService,AuthService,StorageService,APP_CONSTANTS) {
+        return {
+            GetRoles: _getRoles,
+            GetPermissions: _getPermissions,
+            GetPermissionsbyGroup:_getPermissionsbyGroup,
+            SaveRole: _saveRole,
+            UpdateRole:_updateRole,
+            StorePermissions:_storePermissions,
+            GetPermissionsFromStore:_getPermissionsFromStorage
+        };
+
+        function _getRoles(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
+        }
+
+        function _getPermissions(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions));
+        }
+        function _getPermissionsbyGroup(){
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup));
+        }
+
+        function _saveRole(role) {
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role);
+        }
+
+        function _updateRole(role) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role);
+        }
+
+        function _storePermissions(permissions) {
+            return StorageService.Set(APP_CONSTANTS.StorageKey.PERMISSIONS, permissions);
+        }
+        function _getPermissionsFromStorage() {
+            return !_.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS)) ? StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS) : null;
+        }
+
+    }
+
+})(window.angular);
+
+/**=========================================================
+ * Module: modals.js
+ * Provides a simple way to implement bootstrap modals from templates
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps')
+        .controller('ModalGmapController', ModalGmapController);
+
+    ModalGmapController.$inject = ['$uibModal'];
+    function ModalGmapController($uibModal) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+
+          vm.open = function (size) {
+
+            //var modalInstance =
+            $uibModal.open({
+              templateUrl: '/myModalContent.html',
+              controller: ModalInstanceCtrl,
+              size: size
+            });
+          };
+
+          // Please note that $uibModalInstance represents a modal window (instance) dependency.
+          // It is not the same as the $uibModal service used above.
+
+          ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout'];
+          function ModalInstanceCtrl($scope, $uibModalInstance, $timeout) {
+
+            $uibModalInstance.opened.then(function () {
+              var position = new google.maps.LatLng(33.790807, -117.835734);
+
+              $scope.mapOptionsModal = {
+                zoom: 14,
+                center: position,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+              };
+
+              // we use timeout to wait maps to be ready before add a markers
+              $timeout(function(){
+                // 1. Add a marker at the position it was initialized
+                new google.maps.Marker({
+                  map: $scope.myMapModal,
+                  position: position
+                });
+                // 2. Trigger a resize so the map is redrawed
+                google.maps.event.trigger($scope.myMapModal, 'resize');
+                // 3. Move to the center if it is misaligned
+                $scope.myMapModal.panTo(position);
+              });
+
+            });
+
+            $scope.ok = function () {
+              $uibModalInstance.close('closed');
+            };
+
+            $scope.cancel = function () {
+              $uibModalInstance.dismiss('cancel');
+            };
+
+          }
+
+        }
+    }
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps')
+        .controller('GMapController', GMapController);
+
+    GMapController.$inject = ['$timeout'];
+    function GMapController($timeout) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+          var position = [
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.787453, -117.835858)
+            ];
+          
+          vm.addMarker = addMarker;
+          // we use timeout to wait maps to be ready before add a markers
+          $timeout(function(){
+            addMarker(vm.myMap1, position[0]);
+            addMarker(vm.myMap2, position[1]);
+            addMarker(vm.myMap3, position[2]);
+            addMarker(vm.myMap5, position[3]);
+          });
+
+          vm.mapOptions1 = {
+            zoom: 14,
+            center: position[0],
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+          };
+
+          vm.mapOptions2 = {
+            zoom: 19,
+            center: position[1],
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+
+          vm.mapOptions3 = {
+            zoom: 14,
+            center: position[2],
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+          };
+
+          vm.mapOptions4 = {
+            zoom: 14,
+            center: position[3],
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+
+          // for multiple markers
+          $timeout(function(){
+            addMarker(vm.myMap4, position[3]);
+            addMarker(vm.myMap4, position[4]);
+          });
+
+          // custom map style
+          var MapStyles = [{'featureType':'water','stylers':[{'visibility':'on'},{'color':'#bdd1f9'}]},{'featureType':'all','elementType':'labels.text.fill','stylers':[{'color':'#334165'}]},{featureType:'landscape',stylers:[{color:'#e9ebf1'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#c5c6c6'}]},{featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'road.local',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'transit',elementType:'geometry',stylers:[{color:'#d8dbe0'}]},{featureType:'poi',elementType:'geometry',stylers:[{color:'#cfd5e0'}]},{featureType:'administrative',stylers:[{visibility:'on'},{lightness:33}]},{featureType:'poi.park',elementType:'labels',stylers:[{visibility:'on'},{lightness:20}]},{featureType:'road',stylers:[{color:'#d8dbe0',lightness:20}]}];
+          vm.mapOptions5 = {
+            zoom: 14,
+            center: position[3],
+            styles: MapStyles,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+          };
+
+          ///////////////
+          
+          function addMarker(map, position) {
+            return new google.maps.Marker({
+              map: map,
+              position: position
+            });
+          }
+
+        }
+    }
+})();
 
 
 (function() {
@@ -2415,171 +2580,6 @@ var QUESTION_TYPE = {
     }
 })();
 /**=========================================================
- * Module: modals.js
- * Provides a simple way to implement bootstrap modals from templates
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.maps')
-        .controller('ModalGmapController', ModalGmapController);
-
-    ModalGmapController.$inject = ['$uibModal'];
-    function ModalGmapController($uibModal) {
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-
-          vm.open = function (size) {
-
-            //var modalInstance =
-            $uibModal.open({
-              templateUrl: '/myModalContent.html',
-              controller: ModalInstanceCtrl,
-              size: size
-            });
-          };
-
-          // Please note that $uibModalInstance represents a modal window (instance) dependency.
-          // It is not the same as the $uibModal service used above.
-
-          ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout'];
-          function ModalInstanceCtrl($scope, $uibModalInstance, $timeout) {
-
-            $uibModalInstance.opened.then(function () {
-              var position = new google.maps.LatLng(33.790807, -117.835734);
-
-              $scope.mapOptionsModal = {
-                zoom: 14,
-                center: position,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-              };
-
-              // we use timeout to wait maps to be ready before add a markers
-              $timeout(function(){
-                // 1. Add a marker at the position it was initialized
-                new google.maps.Marker({
-                  map: $scope.myMapModal,
-                  position: position
-                });
-                // 2. Trigger a resize so the map is redrawed
-                google.maps.event.trigger($scope.myMapModal, 'resize');
-                // 3. Move to the center if it is misaligned
-                $scope.myMapModal.panTo(position);
-              });
-
-            });
-
-            $scope.ok = function () {
-              $uibModalInstance.close('closed');
-            };
-
-            $scope.cancel = function () {
-              $uibModalInstance.dismiss('cancel');
-            };
-
-          }
-
-        }
-    }
-
-})();
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.maps')
-        .controller('GMapController', GMapController);
-
-    GMapController.$inject = ['$timeout'];
-    function GMapController($timeout) {
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-          var position = [
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.787453, -117.835858)
-            ];
-          
-          vm.addMarker = addMarker;
-          // we use timeout to wait maps to be ready before add a markers
-          $timeout(function(){
-            addMarker(vm.myMap1, position[0]);
-            addMarker(vm.myMap2, position[1]);
-            addMarker(vm.myMap3, position[2]);
-            addMarker(vm.myMap5, position[3]);
-          });
-
-          vm.mapOptions1 = {
-            zoom: 14,
-            center: position[0],
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            scrollwheel: false
-          };
-
-          vm.mapOptions2 = {
-            zoom: 19,
-            center: position[1],
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
-
-          vm.mapOptions3 = {
-            zoom: 14,
-            center: position[2],
-            mapTypeId: google.maps.MapTypeId.SATELLITE
-          };
-
-          vm.mapOptions4 = {
-            zoom: 14,
-            center: position[3],
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
-
-          // for multiple markers
-          $timeout(function(){
-            addMarker(vm.myMap4, position[3]);
-            addMarker(vm.myMap4, position[4]);
-          });
-
-          // custom map style
-          var MapStyles = [{'featureType':'water','stylers':[{'visibility':'on'},{'color':'#bdd1f9'}]},{'featureType':'all','elementType':'labels.text.fill','stylers':[{'color':'#334165'}]},{featureType:'landscape',stylers:[{color:'#e9ebf1'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#c5c6c6'}]},{featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'road.local',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'transit',elementType:'geometry',stylers:[{color:'#d8dbe0'}]},{featureType:'poi',elementType:'geometry',stylers:[{color:'#cfd5e0'}]},{featureType:'administrative',stylers:[{visibility:'on'},{lightness:33}]},{featureType:'poi.park',elementType:'labels',stylers:[{visibility:'on'},{lightness:20}]},{featureType:'road',stylers:[{color:'#d8dbe0',lightness:20}]}];
-          vm.mapOptions5 = {
-            zoom: 14,
-            center: position[3],
-            styles: MapStyles,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            scrollwheel: false
-          };
-
-          ///////////////
-          
-          function addMarker(map, position) {
-            return new google.maps.Marker({
-              map: map,
-              position: position
-            });
-          }
-
-        }
-    }
-})();
-
-/**=========================================================
  * Module: navbar-search.js
  * Navbar search toggler * Auto dismiss on ESC key
  =========================================================*/
@@ -2688,99 +2688,6 @@ var QUESTION_TYPE = {
     }
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.preloader')
-        .directive('preloader', preloader);
-
-    preloader.$inject = ['$animate', '$timeout', '$q'];
-    function preloader ($animate, $timeout, $q) {
-
-        var directive = {
-            restrict: 'EAC',
-            template: 
-              '<div class="preloader-progress">' +
-                  '<div class="preloader-progress-bar" ' +
-                       'ng-style="{width: loadCounter + \'%\'}"></div>' +
-              '</div>'
-            ,
-            link: link
-        };
-        return directive;
-
-        ///////
-
-        function link(scope, el) {
-
-          scope.loadCounter = 0;
-
-          var counter  = 0,
-              timeout;
-
-          // disables scrollbar
-          angular.element('body').css('overflow', 'hidden');
-          // ensure class is present for styling
-          el.addClass('preloader');
-
-          appReady().then(endCounter);
-
-          timeout = $timeout(startCounter);
-
-          ///////
-
-          function startCounter() {
-
-            var remaining = 100 - counter;
-            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
-
-            scope.loadCounter = parseInt(counter, 10);
-
-            timeout = $timeout(startCounter, 20);
-          }
-
-          function endCounter() {
-
-            $timeout.cancel(timeout);
-
-            scope.loadCounter = 100;
-
-            $timeout(function(){
-              // animate preloader hiding
-              $animate.addClass(el, 'preloader-hidden');
-              // retore scrollbar
-              angular.element('body').css('overflow', '');
-            }, 300);
-          }
-
-          function appReady() {
-            var deferred = $q.defer();
-            var viewsLoaded = 0;
-            // if this doesn't sync with the real app ready
-            // a custom event must be used instead
-            var off = scope.$on('$viewContentLoaded', function () {
-              viewsLoaded ++;
-              // we know there are at least two views to be loaded 
-              // before the app is ready (1-index.html 2-app*.html)
-              if ( viewsLoaded === 2) {
-                // with resolve this fires only once
-                $timeout(function(){
-                  deferred.resolve();
-                }, 3000);
-
-                off();
-              }
-
-            });
-
-            return deferred.promise;
-          }
-
-        } //link
-    }
-
-})();
 /**=========================================================
  * Module: helpers.js
  * Provides helper functions for routes definition
@@ -3013,6 +2920,99 @@ var QUESTION_TYPE = {
 })();
 
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.preloader')
+        .directive('preloader', preloader);
+
+    preloader.$inject = ['$animate', '$timeout', '$q'];
+    function preloader ($animate, $timeout, $q) {
+
+        var directive = {
+            restrict: 'EAC',
+            template: 
+              '<div class="preloader-progress">' +
+                  '<div class="preloader-progress-bar" ' +
+                       'ng-style="{width: loadCounter + \'%\'}"></div>' +
+              '</div>'
+            ,
+            link: link
+        };
+        return directive;
+
+        ///////
+
+        function link(scope, el) {
+
+          scope.loadCounter = 0;
+
+          var counter  = 0,
+              timeout;
+
+          // disables scrollbar
+          angular.element('body').css('overflow', 'hidden');
+          // ensure class is present for styling
+          el.addClass('preloader');
+
+          appReady().then(endCounter);
+
+          timeout = $timeout(startCounter);
+
+          ///////
+
+          function startCounter() {
+
+            var remaining = 100 - counter;
+            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
+
+            scope.loadCounter = parseInt(counter, 10);
+
+            timeout = $timeout(startCounter, 20);
+          }
+
+          function endCounter() {
+
+            $timeout.cancel(timeout);
+
+            scope.loadCounter = 100;
+
+            $timeout(function(){
+              // animate preloader hiding
+              $animate.addClass(el, 'preloader-hidden');
+              // retore scrollbar
+              angular.element('body').css('overflow', '');
+            }, 300);
+          }
+
+          function appReady() {
+            var deferred = $q.defer();
+            var viewsLoaded = 0;
+            // if this doesn't sync with the real app ready
+            // a custom event must be used instead
+            var off = scope.$on('$viewContentLoaded', function () {
+              viewsLoaded ++;
+              // we know there are at least two views to be loaded 
+              // before the app is ready (1-index.html 2-app*.html)
+              if ( viewsLoaded === 2) {
+                // with resolve this fires only once
+                $timeout(function(){
+                  deferred.resolve();
+                }, 3000);
+
+                off();
+              }
+
+            });
+
+            return deferred.promise;
+          }
+
+        } //link
+    }
+
+})();
 (function() {
     'use strict';
 
@@ -4476,6 +4476,17 @@ var QUESTION_TYPE = {
     };
 
 })();
+(function() {
+  "use strict";
+
+  angular.module("app.mfi", [
+  ]).run(runBlock);
+
+function runBlock() {
+}
+
+})();
+
 /**
  * Created by Yoni on 1/8/2018.
  */
@@ -4489,17 +4500,6 @@ var QUESTION_TYPE = {
         // console.log("client app run");
     }
 
-
-})();
-
-(function() {
-  "use strict";
-
-  angular.module("app.mfi", [
-  ]).run(runBlock);
-
-function runBlock() {
-}
 
 })();
 
@@ -4661,6 +4661,90 @@ function runBlock() {
 
 
 })(window.angular);
+(function(angular) {
+  'use strict';
+  angular.module('app.mfi')
+
+  .service('MainService', MainService);
+
+  MainService.$inject = ['$http','CommonService','AuthService'];
+
+  function MainService($http, CommonService,AuthService) {
+
+      return {
+        GetMFI: _getMFI,
+        UpdateMFI: _updateMFI,
+        CreateMFI:_createMFI,
+        UpdateBranch: _updateBranch,
+        GetBranches: _getBranches,
+        CreateBranch:_createBranch
+      };
+
+      function _getBranches(){
+          return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+      }
+      function _createBranch(branch){
+        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch), branch);
+      }
+      function _updateBranch(updated_branch){
+          return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.Branches,updated_branch._id), updated_branch);
+      }
+
+      function _getMFI(){
+        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll));
+      }
+      function _updateMFI(data,logo){
+        var updatedMFI = setAttribute(data,logo);
+
+        return $http({
+          url: CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.MFIUpdate,data._id),
+          method: 'PUT',
+          data: updatedMFI,
+          //assigning content-type as undefined,let the browser
+          //assign the correct boundary for us
+          headers: {
+                  'Content-Type': undefined},
+          //prevents serializing payload.  don't do it.
+          transformRequest: angular.identity
+      });
+      }
+
+      function _createMFI(data,logo){
+        var mfiData = setAttribute(data,logo);
+
+        return $http({
+          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFIUpdate),
+          method: 'POST',
+          data: mfiData,
+          //assigning content-type as undefined,let the browser handle it
+          headers: {
+            'Authorization': 'Bearer ' + AuthService.GetToken(),
+            'Content-Type': undefined},
+          //prevents serializing data.  don't do it.
+          transformRequest: angular.identity
+      });
+
+      }
+
+      function setAttribute(mfi,picFile){
+          var mfiData = new FormData();
+          mfiData.append("name", mfi.name);
+          mfiData.append("location", mfi.location);
+          mfiData.append("establishment_year", mfi.establishment_year);
+          mfiData.append("contact_person", _.isUndefined(mfi.contact_person)?'':mfi.contact_person);
+          mfiData.append("phone", _.isUndefined(mfi.phone)?'':mfi.phone);
+          mfiData.append("email", _.isUndefined(mfi.email)?'':mfi.email);
+          mfiData.append("website_link", _.isUndefined(mfi.website_link)?'':mfi.website_link);
+          if(!_.isUndefined(picFile)){
+              mfiData.append("logo", picFile);
+          }
+
+          return mfiData;
+      }
+  }
+
+})(window.angular);
+
 /**
  * Created by Yoni on 1/9/2018.
  */
@@ -4831,90 +4915,6 @@ function runBlock() {
         });
     }
 
-
-})(window.angular);
-
-(function(angular) {
-  'use strict';
-  angular.module('app.mfi')
-
-  .service('MainService', MainService);
-
-  MainService.$inject = ['$http','CommonService','AuthService'];
-
-  function MainService($http, CommonService,AuthService) {
-
-      return {
-        GetMFI: _getMFI,
-        UpdateMFI: _updateMFI,
-        CreateMFI:_createMFI,
-        UpdateBranch: _updateBranch,
-        GetBranches: _getBranches,
-        CreateBranch:_createBranch
-      };
-
-      function _getBranches(){
-          return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
-      }
-      function _createBranch(branch){
-        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch), branch);
-      }
-      function _updateBranch(updated_branch){
-          return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.Branches,updated_branch._id), updated_branch);
-      }
-
-      function _getMFI(){
-        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll));
-      }
-      function _updateMFI(data,logo){
-        var updatedMFI = setAttribute(data,logo);
-
-        return $http({
-          url: CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.MFIUpdate,data._id),
-          method: 'PUT',
-          data: updatedMFI,
-          //assigning content-type as undefined,let the browser
-          //assign the correct boundary for us
-          headers: {
-                  'Content-Type': undefined},
-          //prevents serializing payload.  don't do it.
-          transformRequest: angular.identity
-      });
-      }
-
-      function _createMFI(data,logo){
-        var mfiData = setAttribute(data,logo);
-
-        return $http({
-          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFIUpdate),
-          method: 'POST',
-          data: mfiData,
-          //assigning content-type as undefined,let the browser handle it
-          headers: {
-            'Authorization': 'Bearer ' + AuthService.GetToken(),
-            'Content-Type': undefined},
-          //prevents serializing data.  don't do it.
-          transformRequest: angular.identity
-      });
-
-      }
-
-      function setAttribute(mfi,picFile){
-          var mfiData = new FormData();
-          mfiData.append("name", mfi.name);
-          mfiData.append("location", mfi.location);
-          mfiData.append("establishment_year", mfi.establishment_year);
-          mfiData.append("contact_person", _.isUndefined(mfi.contact_person)?'':mfi.contact_person);
-          mfiData.append("phone", _.isUndefined(mfi.phone)?'':mfi.phone);
-          mfiData.append("email", _.isUndefined(mfi.email)?'':mfi.email);
-          mfiData.append("website_link", _.isUndefined(mfi.website_link)?'':mfi.website_link);
-          if(!_.isUndefined(picFile)){
-              mfiData.append("logo", picFile);
-          }
-
-          return mfiData;
-      }
-  }
 
 })(window.angular);
 
