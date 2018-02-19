@@ -114,6 +114,7 @@
         }
 
         function initialize() {
+
             if(vm.isEdit){
                 callAPI();
             }else{
@@ -125,10 +126,14 @@
         }
 
         function callAPI() {
+            var myBlockUIOnStart = blockUI.instances.get('formBuilderBlockUI');
+            myBlockUIOnStart.start();
             FormService.GetForm(vm.formId).then(function (response) {
                 vm.formData = response.data;
                 vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+                myBlockUIOnStart.stop();
             },function (error) {
+                myBlockUIOnStart.stop();
                 console.log("error",error);
             });
         }

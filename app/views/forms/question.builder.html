@@ -13,12 +13,14 @@
         <md-dialog-content>
             <md-content class="md-padding">
                 <div class="row">
-                    <div ng-class="vm.question.selected_type?'col-lg-7':'col-lg-12'">
+                    <div ng-class="vm.question.selected_type.type !== 'grouped'?'col-lg-7':'col-lg-12'">
                         <div class="mw-question-type" layout="row" layout-align="start center">
                             <md-input-container flex-gt-md="50">
                                 <label label-for="question-type-{{vm.id}}" class="col-sm-2 control-label">Question Type
                                 </label>
-                                <ui-select ng-model="vm.question.selected_type" theme="select2" title="Select question type">
+                                <ui-select ng-model="vm.question.selected_type"
+                                           theme="select2" title="Select question type"
+                                        ng-change="vm.questionTypeChanged()">
                                     <ui-select-match placeholder="Select question type...">
                                         {{$select.selected.name }}
                                     </ui-select-match>
@@ -42,10 +44,11 @@
 
                         <div class="form-horizontal">
                             <md-input-container class="md-block">
-                                <label label-for="question-remark-{{vm.id}}" label-key="vm.question.remark">
+                                <label for="question-remark" >
                                     <em>Remark</em>
                                 </label>
-                                <input type="text" name="text" ng-attr-id="question-remark-{{vm.id}}" ng-model="vm.question.remark" required>
+                                <input type="text"  id="question-remark"
+                                       name="question-remark" ng-model="vm.question.remark">
                             </md-input-container>
                         </div>
 
@@ -58,15 +61,15 @@
                         </div>
 
                     </div>
-                    <div style="border-left: solid rgba(195, 195, 195, 0.61) 1px;min-height: 100px" ng-class="vm.question.selected_type?'col-lg-5':''"
-                        ng-if="vm.question.selected_type">
+                    <div ng-class="vm.question.selected_type.type !== 'grouped'?'col-lg-5':''" ng-if="vm.question.selected_type"
+                         class="vertical-splitter">
                         <div class="section-divider">
                             <span class="grey">{{vm.question.selected_type.name }} Settings</span>
                         </div>
                         <div class="mw-form-question-answers-builder" ng-switch="vm.question.selected_type.type">
                             <!--Fill in the blank-->
                             <div ng-switch-when="text">
-                                <md-input-container ng-if="vm.question.selected_type.type === 'text'">
+                                <md-input-container>
                                     <label label-for="fibValidation" label-class="col-sm-2 control-label" label-key="fibValidatio2n">Validation</label>
                                     <md-select ng-attr-id="fibValidation"
                                                ng-change="vm.questionTypeChanged()"
@@ -81,10 +84,10 @@
                             </div>
                             <!--Yes NO-->
                             <div ng-switch-when="yn">
-                                <md-radio-group layout="row">
-                                    <md-radio-button value=1 class="md-primary">Yes</md-radio-button>
-                                    <md-radio-button value=0> No</md-radio-button>
-                                </md-radio-group>
+                                <!--<md-radio-group layout="row">-->
+                                    <!--<md-radio-button value=1 class="md-primary">Yes</md-radio-button>-->
+                                    <!--<md-radio-button value=0> No</md-radio-button>-->
+                                <!--</md-radio-group>-->
                             </div>
                             <!--SINGLE SELECT-->
                             <div ng-switch-when="select">
@@ -140,8 +143,10 @@
                                     </ul>
                                 </div>
                             </div>
+
                             <!--SHOW THIS QUESTION-->
-                            <md-input-container class="md-block">
+                            <md-input-container ng-if="vm.question.selected_type.type !== 'grouped'"
+                                    class="md-block">
                                 <p>Show this Question:</p>
                                 <md-radio-group layout="row" ng-model="vm.question.show" ng-change="vm.showQuestionOn()">
                                     <md-radio-button value=1 class="md-primary"> Always</md-radio-button>
@@ -150,6 +155,63 @@
                             </md-input-container>
                         </div>
                     </div>
+                </div>
+
+                <div class="row"
+                     ng-if="vm.question.selected_type.type === 'grouped'">
+                    <form role="form" name="vm.SubQuestionBuilderForm"
+                          block-ui="SubQuestionBuilderBlockUI">
+                        <div class="section-divider">
+                            <span class="grey">Sub Questions Section</span>
+                        </div>
+                        <div class="col-lg-12" ng-if="vm.showSubQuestion">
+                            <div class="form-horizontal">
+                                <md-input-container class="md-block">
+                                    <label for="sub_question-text">Sub Question Text</label>
+                                    <textarea ng-model="vm.sub_question.question_text" class="form-control"
+                                              maxlength="500" id="sub_question-text"
+                                              required>
+                                </textarea>
+                                    <md-button class="md-raised md-button-small pull-right"
+                                               ng-click="vm.saveSubQuestion()">
+                                        <i class="fa fa-plus"></i> Save
+                                    </md-button>
+                                </md-input-container>
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-12">
+                            <md-button class="md-raised md-primary md-button-small pull-right"
+                                       ng-click="vm.addSubQuestion()">
+                                <i class="fa fa-plus"></i> Add Sub Question
+                            </md-button>
+                        </div>
+                        <div class="col-lg-12" ng-show="vm.question.sub_questions.length > 0">
+                            <div class="table-responsive">
+                                <table class="table table-condensed">
+                                    <thead>
+                                    <tr>
+                                        <th><span> No</span></th>
+                                        <th><span>Question</span></th>
+                                        <th><span>Remark</span></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="question in vm.question.sub_questions">
+                                        <td  >{{$index + 1}}</td>
+                                        <td >{{question.question_text}}</td>
+                                        <td >{{question.remark}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                    </form>
+
+
                 </div>
 
             </md-content>
@@ -162,7 +224,8 @@
                     Cancel
                 </md-button>
             </div>
-            <md-button ng-hide="true" ng-show="!vm.isEdit" class="md-raised md-button-small pull-right" ng-disabled="vm.QuestionBuilderForm.$invalid"
+            <md-button ng-hide="true" ng-show="vm.isEdit" class="md-raised md-button-small pull-right"
+                       ng-disabled="vm.QuestionBuilderForm.$invalid"
                 ng-click="vm.addAnother()">
                 <i class="fa fa-plus"></i> Add Another
             </md-button>

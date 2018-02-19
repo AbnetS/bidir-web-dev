@@ -64,12 +64,6 @@
     'use strict';
 
     angular
-        .module('app.colors', []);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.auth', [])
         .run(runBlock)
         .config(routeConfig);
@@ -79,6 +73,12 @@
     function routeConfig() {}
 
 
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
 })();
 (function(angular) {
   "use strict";
@@ -93,12 +93,6 @@
 
 })(window.angular);
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.lazyload', []);
-})();
 (function() {
     'use strict';
 
@@ -120,6 +114,18 @@
             'ngMessages'
         ]);
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.lazyload', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar', []);
+})();
 /**
  * Created by Yoni on 11/30/2017.
  */
@@ -135,12 +141,6 @@
 
     function routeConfig() {}
 
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar', []);
 })();
 /**
  * Created by Yoni on 11/30/2017.
@@ -231,56 +231,6 @@
         .module('app.welcomePage', []);
 
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
-
 (function(angular) {
     'use strict';
     angular.module('app.auth')
@@ -432,6 +382,56 @@
     }
 })(window.angular);
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
 
 (function(angular) {
   "use strict";
@@ -637,6 +637,123 @@ var QUESTION_TYPE = {
     'use strict';
 
     angular
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
+
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+      // Disables animation on items with class .ng-no-animation
+      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
+
+      // Improve performance disabling debugging features
+      // $compileProvider.debugInfoEnabled(false);
+
+    }
+
+})();
+/**=========================================================
+ * Module: constants.js
+ * Define constants to inject across the application
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .run(appRun);
+
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });*/
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
+    }
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
         .module('app.lazyload')
         .config(lazyloadConfig);
 
@@ -818,119 +935,46 @@ var QUESTION_TYPE = {
     'use strict';
 
     angular
-        .module('app.core')
-        .config(coreConfig);
-
-    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
-    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
-
-      var core = angular.module('app.core');
-      // registering components after bootstrap
-      core.controller = $controllerProvider.register;
-      core.directive  = $compileProvider.directive;
-      core.filter     = $filterProvider.register;
-      core.factory    = $provide.factory;
-      core.service    = $provide.service;
-      core.constant   = $provide.constant;
-      core.value      = $provide.value;
-
-      // Disables animation on items with class .ng-no-animation
-      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
-
-      // Improve performance disabling debugging features
-      // $compileProvider.debugInfoEnabled(false);
-
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
     }
-
-})();
-/**=========================================================
- * Module: constants.js
- * Define constants to inject across the application
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .constant('APP_MEDIAQUERY', {
-          'desktopLG':             1200,
-          'desktop':                992,
-          'tablet':                 768,
-          'mobile':                 480
-        })
-      ;
-
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.core')
-        .run(appRun);
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
 
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
-
-      // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });*/
-
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
-
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Hooks Example
+      // Loading bar transition
       // ----------------------------------- 
-
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
-
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
 
     }
 
 })();
-
-
 /**
  * Created by Yoni on 12/10/2017.
  */
@@ -1205,50 +1249,6 @@ var QUESTION_TYPE = {
 
 })(window.angular);
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
-
-})();
 /**
  * Created by Yoni on 12/2/2017.
  */
@@ -4540,14 +4540,14 @@ function runBlock() {
         .module('app.forms')
         .constant('MW_QUESTION_TYPES', [
             {name:'Fill In Blank',url:'fib',code:'FILL_IN_BLANK',type:'text'},
-            {name:'Yes/No',code:'YES_NO',url:'yn',type:'yn',options:['Yes','No']},
+            {name:'Yes/No Question',code:'YES_NO',url:'yn',type:'yn',options:['Yes','No']},
             {name:'Multiple Choice',url:'mc',code:'MULTIPLE_CHOICE',options:[],type:'checkbox'},
             {name:'Single Choice',url:'sc',code:'SINGLE_CHOICE',options:[],type:'select'},
-            {name:'Grouped',url:'GROUPED',code:'GROUPED',type:''}])
+            {name:'Grouped Question',url:'GROUPED',code:'GROUPED',type:'grouped'}])
         .constant('MW_FORM_TYPES', [
             {name:'ACAT',code:'ACAT'},
-            {name:'LOAN APPLICATION',code:'LOAN_APPLICATION'},
-            {name:'SCREENING',code:'SCREENING'},
+            {name:'Loan Application',code:'LOAN_APPLICATION'},
+            {name:'Screening',code:'SCREENING'},
             {name:'Group Application',code:'GROUP_APPLICATION'}]);
 })(window.angular);
 /**
@@ -5034,6 +5034,7 @@ function runBlock() {
         }
 
         function initialize() {
+
             if(vm.isEdit){
                 callAPI();
             }else{
@@ -5045,10 +5046,14 @@ function runBlock() {
         }
 
         function callAPI() {
+            var myBlockUIOnStart = blockUI.instances.get('formBuilderBlockUI');
+            myBlockUIOnStart.start();
             FormService.GetForm(vm.formId).then(function (response) {
                 vm.formData = response.data;
                 vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+                myBlockUIOnStart.stop();
             },function (error) {
+                myBlockUIOnStart.stop();
                 console.log("error",error);
             });
         }
@@ -5108,11 +5113,19 @@ function runBlock() {
         vm.isEdit = data.question !== null;
         vm.form = data.form;
 
+        //SC & MC related
+        vm.addRadio = _addRadio;
+
         vm.saveQuestion = _save;
         vm.cancel = _cancel;
         vm.addAnother = _addAnother;
-        vm.questionTypeChanged = _questionTypeChanged;
         vm.showQuestionOn = _showQuestionOn;
+        vm.questionTypeChanged = _questionTypeChanged;
+
+        //Sub Question related
+        vm.showSubQuestion = false;//used for grouped questions
+        vm.addSubQuestion = _addSubQuestion;
+        vm.saveSubQuestion = _saveSubQuestion;
 
         vm.fibvalidation = [{name:'NONE',code:'text'},{name:'ALPHANUMERIC',code:'text'},{name:'NUMERIC',code:'number'},{name:'ALPHABETIC',code:'text'}];
 
@@ -5120,10 +5133,6 @@ function runBlock() {
 
         function _showQuestionOn() {
             console.log("Question show",vm.question.show);
-        }
-
-        function _questionTypeChanged() {
-
         }
 
         function _save() {
@@ -5188,7 +5197,6 @@ function runBlock() {
                     options:[]
                 };
             }
-
         }
 
         function getQuestionTypeObj(typeName) {
@@ -5196,8 +5204,8 @@ function runBlock() {
                 return type.name === typeName || type.code === typeName;
             }));
         }
+
         function SetValidationObj() {
-            console.log("vm.question.selected_type",vm.question.type);
             if(!_.isUndefined(vm.question.selected_type) && vm.question.selected_type.code === QUESTION_TYPE.FILL_IN_BLANK){
                 vm.question.selected_validation = _.first(_.filter(vm.fibvalidation,function (val) {
                     return val.name === vm.question.validation_factor;
@@ -5205,8 +5213,7 @@ function runBlock() {
             }
         }
 
-
-        vm.addRadio = function(newValue) {
+        function _addRadio(newValue) {
             // If value is undefined, cancel.
             if (newValue === undefined || newValue === '') {
                 return;
@@ -5219,23 +5226,56 @@ function runBlock() {
             console.log("question",vm.question.options);
             // Clear input contents
             vm.newRadioValue = '';
-        };
+        }
+
+        function _addSubQuestion() {
+            vm.showSubQuestion = true;
+        }
+
+        function _saveSubQuestion() {
+            var myBlockUI = blockUI.instances.get('SubQuestionBuilderBlockUI');
+            myBlockUI.start();
+
+            var subQuestion = {
+                question_text:vm.sub_question.question_text,
+                remark:vm.question.remark,
+                required:vm.question.required,
+                show:vm.question.show,
+                form:vm.form._id,
+                validation_factor: 'NONE',
+                sub_question_type: 'fib'
+            };
+
+            FormService.CreateQuestion(subQuestion,subQuestion.sub_question_type).then(function (response) {
+                console.log("qn created",response);
+                myBlockUI.stop();
+                saveAsSubQuestion(response.data);
 
 
-        vm.editorEnabledForElement = '';
-
-        vm.openTextEditor = function(element) {
-            vm.text = vm.question.options[element];
-            vm.editorEnabledForElement = element;
-        };
-
-        vm.saveOption = function(element, newValue) {
-            vm.question.options[element] = newValue;
-            vm.editorEnabledForElement = '';
-
-        };
+                vm.showSubQuestion = false;
+            },function (error) {
+                myBlockUI.stop();
+                vm.showSubQuestion = false;
+                console.log("qn create error",error);
+            });
 
 
+        }
+
+        function saveAsSubQuestion(data) {
+            vm.question.sub_questions.push(data._id);
+            FormService.UpdateQuestion(vm.question).then(function (response) {
+                vm.question = response.data;
+            },function (error) {
+                console.log("qn update error",error);
+            });
+        }
+
+        function _questionTypeChanged() {
+            if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED && !vm.isEdit){
+                vm.showSubQuestion = true;
+            }
+        }
 
     }
 
