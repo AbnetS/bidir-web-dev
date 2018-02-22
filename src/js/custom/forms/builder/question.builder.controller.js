@@ -45,6 +45,7 @@
                 remark:vm.question.remark,
                 required:vm.question.required,
                 show:vm.question.show,
+                measurement_unit: !_.isUndefined(vm.question.measurement_unit)? vm.question.measurement_unit:null,
                 form:vm.form._id
             };
             if(vm.question.selected_type.code === QUESTION_TYPE.FILL_IN_BLANK){
@@ -146,6 +147,7 @@
                 required:vm.question.required,
                 show:vm.question.show,
                 form:vm.form._id,
+                measurement_unit: !_.isUndefined(vm.question.measurement_unit)? vm.question.measurement_unit:null,
                 validation_factor: 'NONE',
                 sub_question_type: 'fib'
             };
@@ -167,7 +169,7 @@
         }
 
         function saveAsSubQuestion(data) {
-            vm.question.sub_questions.push(data._id);
+            vm.question.sub_questions.push(data);
             FormService.UpdateQuestion(vm.question).then(function (response) {
                 vm.question = response.data;
             },function (error) {

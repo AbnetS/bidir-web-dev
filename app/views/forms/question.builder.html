@@ -68,18 +68,23 @@
                         </div>
                         <div class="mw-form-question-answers-builder" ng-switch="vm.question.selected_type.type">
                             <!--Fill in the blank-->
-                            <div ng-switch-when="text">
-                                <md-input-container>
-                                    <label label-for="fibValidation" label-class="col-sm-2 control-label" label-key="fibValidatio2n">Validation</label>
-                                    <md-select ng-attr-id="fibValidation"
+                            <div ng-switch-when="text"  >
+
+                                <md-input-container layout-gt-sm="row">
+                                    <label for="fibValidation" class="col-sm-2 control-label">Validation</label>
+                                    <md-select id="fibValidation" name="fibValidation"
                                                ng-change="vm.questionTypeChanged()"
-                                               ng-model="vm.question.selected_validation" ng-disabled="vm.readOnly"
-                                    required>
-                                        <md-option ng-value="validation" ng-repeat="validation in vm.fibvalidation">
+                                               ng-model="vm.question.selected_validation"
+                                               ng-disabled="vm.readOnly"
+                                                required>
+                                        <md-option ng-value="validation"
+                                                   ng-repeat="validation in vm.fibvalidation">
                                             {{ validation.name }}
                                         </md-option>
                                     </md-select>
-
+                                </md-input-container>
+                                <md-input-container layout-gt-sm="row">
+                                    <input type="text" ng-model="vm.question.measurement_unit" placeholder="Unit of Measurement e.g. ETB , years...">
                                 </md-input-container>
                             </div>
                             <!--Yes NO-->
@@ -157,6 +162,7 @@
                     </div>
                 </div>
 
+                <!--GROUPED QUESTION-->
                 <div class="row"
                      ng-if="vm.question.selected_type.type === 'grouped'">
                     <form role="form" name="vm.SubQuestionBuilderForm"
