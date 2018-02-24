@@ -143,21 +143,21 @@
 
             var subQuestion = {
                 question_text:vm.sub_question.question_text,
+                parent_question:vm.question._id,
                 remark:vm.question.remark,
                 required:vm.question.required,
                 show:vm.question.show,
                 form:vm.form._id,
-                measurement_unit: !_.isUndefined(vm.question.measurement_unit)? vm.question.measurement_unit:null,
-                validation_factor: 'NONE',
-                sub_question_type: 'fib'
+                measurement_unit: !_.isUndefined(vm.sub_question.measurement_unit)? vm.sub_question.measurement_unit:null,
+                validation_factor: _.isUndefined(vm.sub_question.selected_validation)?'NONE':vm.sub_question.selected_validation.name,
+                sub_question_type: 'fib',
+                number:setSubQuestionOrderNumber()
             };
 
             FormService.CreateQuestion(subQuestion,subQuestion.sub_question_type).then(function (response) {
                 console.log("qn created",response);
                 myBlockUI.stop();
-                saveAsSubQuestion(response.data);
-
-
+                vm.question.sub_questions.push(response.data);
                 vm.showSubQuestion = false;
             },function (error) {
                 myBlockUI.stop();
@@ -168,21 +168,20 @@
 
         }
 
-        function saveAsSubQuestion(data) {
-            vm.question.sub_questions.push(data);
-            FormService.UpdateQuestion(vm.question).then(function (response) {
-                vm.question = response.data;
-            },function (error) {
-                console.log("qn update error",error);
-            });
-        }
-
         function _questionTypeChanged() {
             if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED && !vm.isEdit){
                 vm.showSubQuestion = true;
             }
         }
 
+        function setSubQuestionOrderNumber() {
+            var maxNo = _.max(vm.question.sub_questions,function(sub){
+                return sub.number;
+            });
+
+            var number =  _.isEmpty(maxNo)? 0 :  parseInt(maxNo.number) + 1;
+            return _.isUndefined(number)? 0 : number;
+        }
     }
 
 

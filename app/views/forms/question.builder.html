@@ -177,29 +177,51 @@
                                     <textarea ng-model="vm.sub_question.question_text" class="form-control"
                                               maxlength="500" id="sub_question-text"
                                               required>
-                                </textarea>
-                                    <md-button class="md-raised md-button-small pull-right"
-                                               ng-click="vm.saveSubQuestion()">
-                                        <i class="fa fa-plus"></i> Save
-                                    </md-button>
+                                    </textarea>
                                 </md-input-container>
                             </div>
+
+                            <div layout-gt-sm="row">
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label for="sub_Validation" class="col-sm-2 control-label">Validation</label>
+                                    <md-select id="sub_Validation" name="sub_Validation"
+                                               ng-model="vm.sub_question.selected_validation"
+                                               required>
+                                        <md-option ng-value="validation"
+                                                   ng-repeat="validation in vm.fibvalidation">
+                                            {{ validation.name }}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <input type="text"
+                                           ng-model="vm.sub_question.measurement_unit"
+                                           placeholder="Unit of Measurement e.g. ETB , years...">
+                                </md-input-container>
+                            </div>
+
+                            <md-button class="md-raised md-button-small pull-right"
+                                       ng-click="vm.saveSubQuestion()">
+                                <i class="fa fa-plus"></i> Save
+                            </md-button>
                         </div>
 
-
-                        <div class="col-lg-12">
+                        <div class="col-lg-12" ng-if="!vm.showSubQuestion">
                             <md-button class="md-raised md-primary md-button-small pull-right"
                                        ng-click="vm.addSubQuestion()">
                                 <i class="fa fa-plus"></i> Add Sub Question
                             </md-button>
                         </div>
+
+
                         <div class="col-lg-12" ng-show="vm.question.sub_questions.length > 0">
                             <div class="table-responsive">
-                                <table class="table table-condensed">
+                                <table class="table table-bordered table-condensed">
                                     <thead>
                                     <tr>
                                         <th><span> No</span></th>
                                         <th><span>Question</span></th>
+                                        <th><span>Measurement Unit</span></th>
                                         <th><span>Remark</span></th>
                                     </tr>
                                     </thead>
@@ -207,6 +229,7 @@
                                     <tr ng-repeat="question in vm.question.sub_questions">
                                         <td  >{{$index + 1}}</td>
                                         <td >{{question.question_text}}</td>
+                                        <td >{{question.measurement_unit}}</td>
                                         <td >{{question.remark}}</td>
                                     </tr>
                                     </tbody>
