@@ -96,56 +96,44 @@
                             </div>
                             <!--SINGLE SELECT-->
                             <div ng-switch-when="select">
-                                <div class="question-answer-options" >
-                                    <ul class="radio">
-                                        <li ng-repeat="radioOption in vm.question.options">
-                                            <label class='dynamic-text'
-                                                   ng-click='vm.openTextEditor(radioOption);'>{{radioOption}}</label>
+                                <div class="list-group" ui-sortable="vm.sortableOptions"
+                                     ng-model="vm.question.options">
+                                        <div class="list-group-item"
+                                             ng-repeat="radioOption in vm.question.options">
+                                            <em class="fa fa-reorder fa-fw text-muted mr-lg"></em>{{radioOption}}
+                                            <a ng-click="vm.removeOption(radioOption)"><i class="fa fa-remove"></i></a>
+                                        </div>
 
-                                            <div ng-show='vm.editorEnabledForElement === radioOption'>
-                                                <input class='editableTextInput' type='text'
-                                                       ng-model='vm.text'
-                                                       show-focus='vm.editorEnabledForElement === (radioOption);'
-                                                       keypress-enter='vm.saveOption(radioOption, vm.text)'
-                                                       ng-blur='vm.saveOption(radioOption, vm.text)'
-                                                       show-focus select-on-click >
-                                            </div>
-                                            <a ng-click="vm.removeOption(radioOption)"> <i class="fa fa-remove"></i></a>
-                                        </li>
-
-                                        <li>
-                                            <input type="text" ng-model="vm.newRadioValue"
-                                                   keypress-enter='vm.addRadio(vm.newRadioValue)'>
-                                            <input type="button" ng-click='vm.addRadio(vm.newRadioValue)' value="ADD">
-                                        </li>
-                                    </ul>
+                                        <div class="input-group">
+                                            <input class="form-control"
+                                                   ng-model="vm.newRadioValue"
+                                                   keypress-enter='vm.addRadio(vm.newRadioValue)'
+                                                   type="text">
+                                            <span class="input-group-btn">
+                                                <button ng-click='vm.addRadio(vm.newRadioValue)'
+                                                        class="btn btn-default" type="button">Add</button></span>
+                                        </div>
                                 </div>
                             </div>
                             <!--MULTI SELECT-->
                             <div ng-switch-when="checkbox">
-                                <div class="question-answer-options" >
-                                    <ul class="radio">
-                                        <li ng-repeat="radioOption in vm.question.options">
-                                            <input type="checkbox" name="radioList" value="{{radioOption}}">
+                                <div class="list-group" ui-sortable="vm.sortableOptions"
+                                     ng-model="vm.question.options">
+                                    <div class="list-group-item"
+                                         ng-repeat="radioOption in vm.question.options">
+                                        <em class="fa fa-reorder fa-fw text-muted mr-lg"></em>{{radioOption}}
+                                        <a ng-click="vm.removeOption(radioOption)"><i class="fa fa-remove"></i></a>
+                                    </div>
 
-                                            <label class='dynamic-text'
-                                                   ng-click='vm.openTextEditor(radioOption);'>{{radioOption}}</label>
-
-                                            <div ng-show='vm.editorEnabledForElement === radioOption'>
-                                                <input class='editableTextInput' type='text'
-                                                       ng-model='vm.text'
-                                                       show-focus='vm.editorEnabledForElement === (radioOption);'
-                                                       keypress-enter='vm.saveOption(radioOption, vm.text)'
-                                                       ng-blur='vm.saveOption(radioOption, vm.text)'
-                                                       show-focus select-on-click >
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <input type="text" ng-model="vm.newRadioValue"
-                                                   keypress-enter='vm.addRadio(vm.newRadioValue)'>
-                                            <input type="button" ng-click='vm.addRadio(vm.newRadioValue)' value="ADD">
-                                        </li>
-                                    </ul>
+                                    <div class="input-group">
+                                        <input class="form-control"
+                                               ng-model="vm.newRadioValue"
+                                               keypress-enter='vm.addRadio(vm.newRadioValue)'
+                                               type="text">
+                                        <span class="input-group-btn">
+                                                <button ng-click='vm.addRadio(vm.newRadioValue)'
+                                                        class="btn btn-default" type="button">Add</button></span>
+                                    </div>
                                 </div>
                             </div>
 

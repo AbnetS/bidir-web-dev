@@ -13,6 +13,9 @@
         var vm = this;
         vm.questionTypes = FormService.QuestionTypes;
         vm.readOnly = false;
+        vm.sortableOptions = {
+            placeholder: 'box-placeholder m0'
+        };
 
         //SC & MC related
         vm.addRadio = _addRadio;
@@ -137,9 +140,9 @@
             vm.newRadioValue = '';
         }
         function _removeOption(option) {
-            var indx = vm.question.options.indexOf(option)
-            if(indx !== -1){
-                vm.question.options.splice(indx,1);
+            var index = vm.question.options.indexOf(option);
+            if(index !== -1){
+                vm.question.options.splice(index,1);
             }
         }
 

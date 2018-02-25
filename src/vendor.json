@@ -17,5 +17,7 @@
   "bower_components/angular-material-data-table/dist/md-data-table.min.js",
   "bower_components/angular-block-ui/dist/angular-block-ui.css",
   "bower_components/angular-block-ui/dist/angular-block-ui.js",
-  "bower_components/selectize/dist/css/selectize.default.css"
+  "bower_components/selectize/dist/css/selectize.default.css",
+  "bower_components/jquery-ui/jquery-ui.min.js",
+  "bower_components/angular-ui-sortable/sortable.min.js"
 ]
