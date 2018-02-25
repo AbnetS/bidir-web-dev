@@ -19,6 +19,7 @@
 
         //SC & MC related
         vm.addRadio = _addRadio;
+        vm.radioOptionClicked = _radioOptionClicked;
 
         vm.saveQuestion = _save;
         vm.cancel = _cancel;
@@ -227,6 +228,9 @@
         function GetNextQuestionOrderNumber() {
             var number =  _.isEmpty(vm.maxOrderNumber)? 0 :  parseInt(vm.maxOrderNumber) + 1;
             return _.isUndefined(number)? 0 : number;
+        }
+        function _radioOptionClicked(option) {
+            console.log("radio button clicked used for editing",option);
         }
     }
 

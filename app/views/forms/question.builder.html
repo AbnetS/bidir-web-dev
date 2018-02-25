@@ -121,6 +121,7 @@
                                 <div class="list-group" ui-sortable="vm.sortableOptions"
                                      ng-model="vm.question.options">
                                     <div class="list-group-item"
+                                         ng-click="vm.radioOptionClicked(radioOption)"
                                          ng-repeat="radioOption in vm.question.options">
                                         <em class="fa fa-reorder fa-fw text-muted mr-lg"></em>{{radioOption}}
                                         <a ng-click="vm.removeOption(radioOption)"><i class="fa fa-remove"></i></a>
