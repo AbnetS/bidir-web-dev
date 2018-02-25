@@ -17,6 +17,7 @@
             UpdateForm:_updateForm,
             CreateQuestion:_createQuestion,
             UpdateQuestion:_updateQuestion,
+            DeleteQuestion:_deleteQuestion,
             QuestionTypes: MW_QUESTION_TYPES,
             FormTypes: MW_FORM_TYPES
         };
@@ -38,7 +39,18 @@
         function _updateQuestion(question) {
             return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id), question);
         }
-
+        function _deleteQuestion(question) {
+            return $http({
+                method: 'DELETE',
+                url: CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id),
+                data: {
+                    form:question.form
+                },
+                headers: {
+                    'Content-type': 'application/json;charset=utf-8'
+                }
+            });
+        }
 
     }
 

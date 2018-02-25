@@ -64,12 +64,6 @@
     'use strict';
 
     angular
-        .module('app.colors', []);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.auth', [])
         .run(runBlock)
         .config(routeConfig);
@@ -79,6 +73,12 @@
     function routeConfig() {}
 
 
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
 })();
 (function(angular) {
   "use strict";
@@ -231,56 +231,6 @@
         .module('app.welcomePage', []);
 
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
-
 (function(angular) {
     'use strict';
     angular.module('app.auth')
@@ -432,6 +382,56 @@
     }
 })(window.angular);
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
 
 (function(angular) {
   "use strict";
@@ -4136,7 +4136,7 @@ var QUESTION_TYPE = {
             showSuccess: success,
             errorHandler: errorHandler,
             showConfirm: showConfirm,
-            showConfirmForDelete: showConfirmForDelete
+            showConfirmForDelete: _showConfirmForDelete
         };
         function error(title,message) {
             SweetAlert.swal(title,message, "error");
@@ -4161,7 +4161,7 @@ var QUESTION_TYPE = {
                 showLoaderOnConfirm: true
             });
         }
-        function showConfirmForDelete(message, title, confirmText, confirmationType, closeOnConfirm) {
+        function _showConfirmForDelete(message, title, confirmText, confirmationType, closeOnConfirm,responseHandler) {
             closeOnConfirm = typeof closeOnConfirm === "undefined" || typeof closeOnConfirm !== "boolean" ? true : closeOnConfirm;
             confirmationType = typeof confirmationType === "undefined" || typeof confirmationType !== "string" ? "warning" : confirmationType;
             return SweetAlert.swal({
@@ -4173,7 +4173,7 @@ var QUESTION_TYPE = {
                 confirmButtonText: confirmText,
                 closeOnConfirm: closeOnConfirm,
                 showLoaderOnConfirm: true
-            });
+            },responseHandler);
         }
         function success(title,message) {
             SweetAlert.swal(title,message, "success");
@@ -4189,6 +4189,7 @@ var QUESTION_TYPE = {
                 exMsg = response.data.ExceptionMessage;
             error(msg + ' ' + exMsg, "Error");
         }
+
         function init() {
             SweetAlert.setDefaults({confirmButtonColor: '#0096884'});
         }
@@ -4634,6 +4635,7 @@ function runBlock() {
             UpdateForm:_updateForm,
             CreateQuestion:_createQuestion,
             UpdateQuestion:_updateQuestion,
+            DeleteQuestion:_deleteQuestion,
             QuestionTypes: MW_QUESTION_TYPES,
             FormTypes: MW_FORM_TYPES
         };
@@ -4655,7 +4657,18 @@ function runBlock() {
         function _updateQuestion(question) {
             return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id), question);
         }
-
+        function _deleteQuestion(question) {
+            return $http({
+                method: 'DELETE',
+                url: CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id),
+                data: {
+                    form:question.form
+                },
+                headers: {
+                    'Content-type': 'application/json;charset=utf-8'
+                }
+            });
+        }
 
     }
 
@@ -5124,6 +5137,7 @@ function runBlock() {
         vm.addAnother = _addAnother;
         vm.showQuestionOn = _showQuestionOn;
         vm.questionTypeChanged = _questionTypeChanged;
+        vm.removeQuestion = _removeQuestion;
 
         //Sub Question related
         vm.showSubQuestion = false;//used for grouped questions
@@ -5196,11 +5210,12 @@ function runBlock() {
             vm.form = data.form;
             vm.maxOrderNumber = data.number;
 
+
             if(vm.isEdit){
                 vm.question = data.question;
+                vm.question.form = data.form._id;
                 vm.question.selected_type = getQuestionTypeObj(vm.question.type);
                 SetValidationObj();
-                console.log("Edit QN",vm.question);
             }else {
                 vm.question = {
                     show: 1,
@@ -5289,6 +5304,24 @@ function runBlock() {
             // if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED && !vm.isEdit){
             //     vm.showSubQuestion = true;
             // }
+        }
+
+        function _removeQuestion() {
+
+            AlertService.showConfirmForDelete("You are about to DELETE this Question?",
+                "Are you sure?", "Yes, Delete it!", "warning", true,function () {
+                    console.log("Question to be Deleted",vm.question);
+                    FormService.DeleteQuestion(vm.question).then(function(response){
+                        console.log("Question Deleted Response",response);
+                        AlertService.showSuccess("Question","Question Deleted successfully");
+                        $mdDialog.hide();
+                    },function(error){
+                        console.log("qn deleting error",error);
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to DELETE Question",message);
+                    })
+                });
+
         }
 
         function setSubQuestionOrderNumber() {

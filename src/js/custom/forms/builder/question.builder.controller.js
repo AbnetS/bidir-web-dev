@@ -25,6 +25,7 @@
         vm.addAnother = _addAnother;
         vm.showQuestionOn = _showQuestionOn;
         vm.questionTypeChanged = _questionTypeChanged;
+        vm.removeQuestion = _removeQuestion;
 
         //Sub Question related
         vm.showSubQuestion = false;//used for grouped questions
@@ -97,11 +98,12 @@
             vm.form = data.form;
             vm.maxOrderNumber = data.number;
 
+
             if(vm.isEdit){
                 vm.question = data.question;
+                vm.question.form = data.form._id;
                 vm.question.selected_type = getQuestionTypeObj(vm.question.type);
                 SetValidationObj();
-                console.log("Edit QN",vm.question);
             }else {
                 vm.question = {
                     show: 1,
@@ -190,6 +192,24 @@
             // if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED && !vm.isEdit){
             //     vm.showSubQuestion = true;
             // }
+        }
+
+        function _removeQuestion() {
+
+            AlertService.showConfirmForDelete("You are about to DELETE this Question?",
+                "Are you sure?", "Yes, Delete it!", "warning", true,function () {
+                    console.log("Question to be Deleted",vm.question);
+                    FormService.DeleteQuestion(vm.question).then(function(response){
+                        console.log("Question Deleted Response",response);
+                        AlertService.showSuccess("Question","Question Deleted successfully");
+                        $mdDialog.hide();
+                    },function(error){
+                        console.log("qn deleting error",error);
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to DELETE Question",message);
+                    })
+                });
+
         }
 
         function setSubQuestionOrderNumber() {

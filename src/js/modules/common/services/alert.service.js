@@ -15,7 +15,7 @@
             showSuccess: success,
             errorHandler: errorHandler,
             showConfirm: showConfirm,
-            showConfirmForDelete: showConfirmForDelete
+            showConfirmForDelete: _showConfirmForDelete
         };
         function error(title,message) {
             SweetAlert.swal(title,message, "error");
@@ -40,7 +40,7 @@
                 showLoaderOnConfirm: true
             });
         }
-        function showConfirmForDelete(message, title, confirmText, confirmationType, closeOnConfirm) {
+        function _showConfirmForDelete(message, title, confirmText, confirmationType, closeOnConfirm,responseHandler) {
             closeOnConfirm = typeof closeOnConfirm === "undefined" || typeof closeOnConfirm !== "boolean" ? true : closeOnConfirm;
             confirmationType = typeof confirmationType === "undefined" || typeof confirmationType !== "string" ? "warning" : confirmationType;
             return SweetAlert.swal({
@@ -52,7 +52,7 @@
                 confirmButtonText: confirmText,
                 closeOnConfirm: closeOnConfirm,
                 showLoaderOnConfirm: true
-            });
+            },responseHandler);
         }
         function success(title,message) {
             SweetAlert.swal(title,message, "success");
@@ -68,6 +68,7 @@
                 exMsg = response.data.ExceptionMessage;
             error(msg + ' ' + exMsg, "Error");
         }
+
         function init() {
             SweetAlert.setDefaults({confirmButtonColor: '#0096884'});
         }

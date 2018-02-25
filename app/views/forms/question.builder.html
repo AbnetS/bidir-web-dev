@@ -242,13 +242,19 @@
                 <md-button class="md-raised md-button-small md-ink-ripple" ng-click="vm.cancel()">
                     Cancel
                 </md-button>
+                <md-button ng-show="vm.isEdit"
+                           class="md-raised md-button-small md-ink-ripple"
+                           ng-click="vm.removeQuestion()">
+                    Remove
+                </md-button>
             </div>
             <md-button ng-hide="true" ng-show="vm.isEdit" class="md-raised md-button-small pull-right"
                        ng-disabled="vm.QuestionBuilderForm.$invalid"
                 ng-click="vm.addAnother()">
                 <i class="fa fa-plus"></i> Add Another
             </md-button>
-            <md-button class="md-raised md-primary md-button-small pull-right" ng-disabled="vm.QuestionBuilderForm.$invalid"
+            <md-button class="md-raised md-primary md-button-small pull-right"
+                       ng-disabled="vm.QuestionBuilderForm.$invalid"
                        ng-click="vm.saveQuestion()">
                 <i class="fa fa-save"></i> {{vm.isEdit?'Update':'Save'}}
             </md-button>
