@@ -89,7 +89,7 @@
                 controller: 'QuestionBuilderController',
                 controllerAs: 'vm'
             }).then(function (answer) {
-
+                callAPI();
             }, function () {
             });
         }
