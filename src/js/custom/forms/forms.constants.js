@@ -16,5 +16,6 @@
             {name:'ACAT',code:'ACAT'},
             {name:'Loan Application',code:'LOAN_APPLICATION'},
             {name:'Screening',code:'SCREENING'},
-            {name:'Group Application',code:'GROUP_APPLICATION'}]);
+            {name:'Group Application',code:'GROUP_APPLICATION'},
+            {name:'Test',code:'TEST'}]);
 })(window.angular);
