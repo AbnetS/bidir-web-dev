@@ -16,6 +16,7 @@
 
         vm.isEdit = data.question !== null;
         vm.form = data.form;
+        vm.maxOrderNumber = data.number;
 
         //SC & MC related
         vm.addRadio = _addRadio;
@@ -46,7 +47,8 @@
                 required:vm.question.required,
                 show:vm.question.show,
                 measurement_unit: !_.isUndefined(vm.question.measurement_unit)? vm.question.measurement_unit:null,
-                form:vm.form._id
+                form:vm.form._id,
+                number:GetNextQuestionOrderNumber()
             };
             if(vm.question.selected_type.code === QUESTION_TYPE.FILL_IN_BLANK){
                 preparedQn.validation_factor = vm.question.selected_validation.name;
@@ -180,6 +182,14 @@
             });
 
             var number =  _.isEmpty(maxNo)? 0 :  parseInt(maxNo.number) + 1;
+            return _.isUndefined(number)? 0 : number;
+        }
+
+        /**
+         * @return {number}
+         */
+        function GetNextQuestionOrderNumber() {
+            var number =  _.isEmpty(vm.maxOrderNumber)? 0 :  parseInt(vm.maxOrderNumber) + 1;
             return _.isUndefined(number)? 0 : number;
         }
     }

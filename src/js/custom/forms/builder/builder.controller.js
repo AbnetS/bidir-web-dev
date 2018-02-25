@@ -79,7 +79,7 @@
 
         function _editQuestion(question,ev) {
             $mdDialog.show({
-                locals: {data: {question:question,form: {_id: vm.formData._id}}},
+                locals: {data: {question:question,form: {_id: vm.formData._id},number:vm.maxOrderNumber}},
                 templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
                 parent: angular.element(document.body),
                 targetEvent: ev,
@@ -97,7 +97,7 @@
         function _addQuestion(ev) {
 
             $mdDialog.show({
-                locals: {data: {question:null,form: {_id: vm.formData._id}}},
+                locals: {data: {question:null,form: {_id: vm.formData._id},number:vm.maxOrderNumber}},
                 templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
                 parent: angular.element(document.body),
                 targetEvent: ev,
@@ -130,6 +130,9 @@
             myBlockUIOnStart.start();
             FormService.GetForm(vm.formId).then(function (response) {
                 vm.formData = response.data;
+                vm.maxOrderNumber = _.max(vm.formData.questions,function (qn) {
+                    return qn.number;
+                }).number;
                 vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
                 myBlockUIOnStart.stop();
             },function (error) {
