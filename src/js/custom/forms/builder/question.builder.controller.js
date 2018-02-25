@@ -14,10 +14,6 @@
         vm.questionTypes = FormService.QuestionTypes;
         vm.readOnly = false;
 
-        vm.isEdit = data.question !== null;
-        vm.form = data.form;
-        vm.maxOrderNumber = data.number;
-
         //SC & MC related
         vm.addRadio = _addRadio;
 
@@ -31,6 +27,7 @@
         vm.showSubQuestion = false;//used for grouped questions
         vm.addSubQuestion = _addSubQuestion;
         vm.saveSubQuestion = _saveSubQuestion;
+        vm.removeOption = _removeOption;
 
         vm.fibvalidation = [{name:'NONE',code:'text'},{name:'ALPHANUMERIC',code:'text'},{name:'NUMERIC',code:'number'},{name:'ALPHABETIC',code:'text'}];
 
@@ -92,6 +89,11 @@
         }
 
         function initialize() {
+
+            vm.isEdit = data.question !== null;
+            vm.form = data.form;
+            vm.maxOrderNumber = data.number;
+
             if(vm.isEdit){
                 vm.question = data.question;
                 vm.question.selected_type = getQuestionTypeObj(vm.question.type);
@@ -134,12 +136,19 @@
             // Clear input contents
             vm.newRadioValue = '';
         }
+        function _removeOption(option) {
+            var indx = vm.question.options.indexOf(option)
+            if(indx !== -1){
+                vm.question.options.splice(indx,1);
+            }
+        }
 
         function _addSubQuestion() {
             vm.showSubQuestion = true;
         }
 
         function _saveSubQuestion() {
+
             var myBlockUI = blockUI.instances.get('SubQuestionBuilderBlockUI');
             myBlockUI.start();
 
@@ -156,24 +165,28 @@
                 number:setSubQuestionOrderNumber()
             };
 
+
+
+
             FormService.CreateQuestion(subQuestion,subQuestion.sub_question_type).then(function (response) {
-                console.log("qn created",response);
+                console.log("sub question created",response);
                 myBlockUI.stop();
                 vm.question.sub_questions.push(response.data);
                 vm.showSubQuestion = false;
+                vm.sub_question = {};
             },function (error) {
                 myBlockUI.stop();
                 vm.showSubQuestion = false;
-                console.log("qn create error",error);
+                console.log("sub question error create",error);
             });
 
 
         }
 
         function _questionTypeChanged() {
-            if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED && !vm.isEdit){
-                vm.showSubQuestion = true;
-            }
+            // if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED && !vm.isEdit){
+            //     vm.showSubQuestion = true;
+            // }
         }
 
         function setSubQuestionOrderNumber() {

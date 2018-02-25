@@ -99,8 +99,6 @@
                                 <div class="question-answer-options" >
                                     <ul class="radio">
                                         <li ng-repeat="radioOption in vm.question.options">
-                                            <input type="radio" name="radioList" value="{{radioOption}}">
-
                                             <label class='dynamic-text'
                                                    ng-click='vm.openTextEditor(radioOption);'>{{radioOption}}</label>
 
@@ -112,7 +110,9 @@
                                                        ng-blur='vm.saveOption(radioOption, vm.text)'
                                                        show-focus select-on-click >
                                             </div>
+                                            <a ng-click="vm.removeOption(radioOption)"> <i class="fa fa-remove"></i></a>
                                         </li>
+
                                         <li>
                                             <input type="text" ng-model="vm.newRadioValue"
                                                    keypress-enter='vm.addRadio(vm.newRadioValue)'>
