@@ -5068,10 +5068,7 @@ function runBlock() {
                     return qn.number;
                 }).number;
                 vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
-                console.log("sections",vm.formData);
-                // if(vm.formData.has_sections){
-                //
-                // }
+
                 myBlockUIOnStart.stop();
             },function (error) {
                 myBlockUIOnStart.stop();
@@ -5177,7 +5174,7 @@ function runBlock() {
             }
             if(!vm.isEdit){
                 FormService.CreateQuestion(preparedQn,vm.question.selected_type.url).then(function (response) {
-                    console.log("qn created",response);
+                    console.log("Question created",response);
                     $mdDialog.hide();
                     AlertService.showSuccess("Question Created","Question Created successfully");
                 },function (error) {
@@ -5200,7 +5197,6 @@ function runBlock() {
                     AlertService.showError("Failed to Update Question",message);
 
                 });
-
             }
         }
         function _addAnother() {
@@ -5270,11 +5266,38 @@ function runBlock() {
             vm.showSubQuestion = true;
         }
 
+
+
         function _saveSubQuestion() {
 
+            if(vm.isEdit){
+                storeSubQuestion();
+            }else{
+
+                var preparedQn = {
+                    question_text:vm.question.question_text,
+                    remark:vm.question.remark,
+                    required:vm.question.required,
+                    show:vm.question.show,
+                    selected_type:'fib',
+                    form:vm.form._id,
+                    number:GetNextQuestionOrderNumber()
+                };
+
+                FormService.CreateQuestion(preparedQn,vm.question.selected_type).then(function (response) {
+                    console.log("qn created",response);
+                    vm.question = response.data;//parent question
+                    storeSubQuestion();
+                },function (error) {
+                    console.log("qn create error",error);
+
+                });
+            }
+        }
+
+        function storeSubQuestion() {
             var myBlockUI = blockUI.instances.get('SubQuestionBuilderBlockUI');
             myBlockUI.start();
-
             var subQuestion = {
                 question_text:vm.sub_question.question_text,
                 parent_question:vm.question._id,
@@ -5287,23 +5310,20 @@ function runBlock() {
                 sub_question_type: 'fib',
                 number:setSubQuestionOrderNumber()
             };
-
-
-
-
             FormService.CreateQuestion(subQuestion,subQuestion.sub_question_type).then(function (response) {
+                AlertService.showSuccess("Question Created",vm.isEdit?"Sub question Created successfully":"Parent Question with sub question Created successfully");
                 console.log("sub question created",response);
-                myBlockUI.stop();
                 vm.question.sub_questions.push(response.data);
                 vm.showSubQuestion = false;
                 vm.sub_question = {};
-            },function (error) {
                 myBlockUI.stop();
+            },function (error) {
                 vm.showSubQuestion = false;
+                myBlockUI.stop();
                 console.log("sub question error create",error);
+                var message = error.data.error.message;
+                AlertService.showError("Failed to Save Question",message);
             });
-
-
         }
 
         function _questionTypeChanged() {
@@ -5346,6 +5366,7 @@ function runBlock() {
             var number =  _.isEmpty(vm.maxOrderNumber)? 0 :  parseInt(vm.maxOrderNumber) + 1;
             return _.isUndefined(number)? 0 : number;
         }
+
         function _radioOptionClicked(option) {
             console.log("radio button clicked used for editing",option);
         }

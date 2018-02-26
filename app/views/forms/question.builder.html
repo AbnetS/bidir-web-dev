@@ -155,7 +155,7 @@
 
                 <!--GROUPED QUESTION-->
                 <div class="row"
-                     ng-if="vm.question.selected_type.type === 'grouped'">
+                     ng-if="vm.question.selected_type.type === 'grouped' && vm.isEdit">
                     <form role="form" name="vm.SubQuestionBuilderForm"
                           block-ui="SubQuestionBuilderBlockUI">
                         <div class="section-divider">
@@ -191,14 +191,14 @@
                                 </md-input-container>
                             </div>
 
-                            <md-button class="md-raised md-warn md-button-small pull-right"
+                            <md-button ng-if="vm.isEdit" class="md-raised md-warn md-button-small pull-right"
                                        ng-click="vm.saveSubQuestion()">
                                 <i class="fa fa-plus"></i> Save
                             </md-button>
                         </div>
 
                         <div class="col-lg-12" ng-if="!vm.showSubQuestion">
-                            <md-button class="md-raised md-primary md-button-small pull-right"
+                            <md-button ng-if="vm.isEdit" class="md-raised md-primary md-button-small pull-right"
                                        ng-click="vm.addSubQuestion()">
                                 <i class="fa fa-plus"></i> Add Sub Question
                             </md-button>

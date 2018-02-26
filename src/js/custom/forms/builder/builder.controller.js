@@ -134,10 +134,7 @@
                     return qn.number;
                 }).number;
                 vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
-                console.log("sections",vm.formData);
-                // if(vm.formData.has_sections){
-                //
-                // }
+
                 myBlockUIOnStart.stop();
             },function (error) {
                 myBlockUIOnStart.stop();
