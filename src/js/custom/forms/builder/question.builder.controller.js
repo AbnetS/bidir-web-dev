@@ -93,8 +93,8 @@
                     vm.showSubQuestion = true;
                     if(vm.question.type === QUESTION_TYPE.GROUPED){
                         saveSubQuestionList();
-                        $mdDialog.hide();
                     }
+                    $mdDialog.hide();
                     AlertService.showSuccess("Question Created","Question Created successfully");
                 },function (error) {
                     console.log("Question create error",error);
@@ -109,9 +109,8 @@
                 FormService.UpdateQuestion(preparedQn).then(function (response) {
                     if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED){
                         saveSubQuestionList();
-                    }else{
-                        $mdDialog.hide();
                     }
+                    $mdDialog.hide();
                     AlertService.showSuccess("Question Updated","Question Updated successfully");
                 },function (error) {
                     console.log("qn update error",error);
