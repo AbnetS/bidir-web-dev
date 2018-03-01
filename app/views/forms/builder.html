@@ -87,8 +87,98 @@
                 <div class="col-lg-12 col-sm-12">
                 </div>
             </div>
+            <!--SECTIONED-->
+            <div ng-show="vm.isEdit" class="row" ng-if="vm.formData.has_sections">
+                <!--NO Section Created Yet-->
+                <div ng-show="vm.formData.questions.length === 0" class="col-lg-12">
+                    <h4 class="centerPageText">
+                        PLEASE! <strong>Add new section</strong>
+                        <a ng-click="vm.addSection()"><i class="fa fa-plus"></i></a>
+                    </h4>
+                </div>
+                <!--SECTION-->
+                <div ng-show="vm.formData.sections.length > 0" class="col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <a class="pull-right" ng-click="vm.addSection()">
+                                Add  <em class="fa fa-plus"></em>
+                            </a>Sections
+                        </div>
+                        <div class="list-group">
+                            <a ng-repeat="section in vm.formData.sections" class="list-group-item"
+                               ng-class="{'bg-gray-lighter' : vm.selected_section._id === section._id}"
+                               ng-click="vm.selectSection(section)">
+                                <em class="pull-right fa fa-angle-right fa-lg fa-fw text-muted mt"></em>
+                                <h5 class="list-group-item-heading">{{section.title}}</h5>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-            <div ng-show="vm.isEdit" class="row">
+                <div ng-show="vm.formData.sections.length >= 0" class="col-lg-8">
+
+                    <!--WHEN THERE IS NO QUESTION UNDER SECTION-->
+                    <div ng-show="vm.selected_section.questions.length === 0">
+                        <h4 class="centerPageText">
+                            PLEASE! <strong>Add new Question</strong>
+                            <a ng-click="vm.addQuestion()"><i class="fa fa-plus"></i></a>
+                        </h4>
+                    </div>
+
+                    <!--WHEN NO SECTION IS SELECTED-->
+                    <div ng-show="!vm.selected_section">
+                        <h4 class="centerPageText">
+                            PLEASE!  <em class="text-green"> {{vm.formData.sections.length===0?'ADD NEW':'SELECT'}} SECTION</em>
+                            FROM THE LEFT SIDE MENU
+                            <a><i class="fa fa-arrow-left"></i></a>
+                        </h4>
+                    </div>
+
+                    <!--WHEN THERE IS QUESTION UNDER SECTION-->
+                    <div  ng-show="vm.selected_section.questions.length > 0"
+                          class="table-responsive">
+                        <button  class="btn-sm btn btn-success btn-outline pull-right" type="button"
+                                ng-click="vm.addQuestion()">
+                            <i class="fa fa-plus"></i> Add Question
+                        </button>
+                        <table class="table table-striped">
+                            <thead class="bg-gray-lighter">
+                            <tr>
+                                <th ><span> No</span></th>
+                                <th  ><span>Question</span></th>
+                                <th  ><span>Type</span></th>
+                                <th >Action</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr ng-repeat="question in vm.selected_section.questions">
+
+                                <td >{{$index + 1}}</td>
+                                <td >{{question.question_text}}
+                                    <div class="pull-right label" ng-if="question.type=== 'GROUPED'"
+                                    ng-class="question.type === 'GROUPED' && question.sub_questions.length>0 ?'label-success':'label-warning'">
+                                        {{question.sub_questions.length }}
+                                    </div>
+                                </td>
+                                <td >
+                                    <span ng-class="vm.typeStyle(question.type)">
+                                        {{question.type}}
+                                    </span>
+                                </td>
+                                <td >
+                                    <a ng-click="vm.editQuestion(question,$event)">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--NO SECTIONING (HAS NO SECTIONING)-->
+            <div ng-show="vm.isEdit" class="row" ng-if="!vm.formData.has_sections">
 
                 <div ng-show="vm.formData.questions.length === 0" class="col-lg-12">
                     <h4 class="centerPageText">
@@ -104,7 +194,6 @@
                             <i class="fa fa-plus"></i> Add Question
                         </button>
                         <br/>
-
                         <table md-table md-progress="promise" class="table-hover">
                             <thead md-head class="bg-gray-lighter">
                             <tr md-row>
@@ -122,7 +211,7 @@
                                 <td md-cell>{{$index + 1}}</td>
                                 <td md-cell>{{question.question_text}}
                                     <div class="pull-right label" ng-if="question.type=== 'GROUPED'"
-                                    ng-class="question.type=== 'GROUPED' && question.sub_questions.length>0 ? 'label-success':'label-warning'">
+                                         ng-class="question.type=== 'GROUPED' && question.sub_questions.length>0 ? 'label-success':'label-warning'">
                                         {{question.sub_questions.length }}
                                     </div>
                                 </td>

@@ -13,11 +13,16 @@
         vm.isEdit = $stateParams.id !== "0";
         vm.formId = $stateParams.id;
         vm.formTypes = FormService.FormTypes;
-
+        vm.sortableOptions = {
+            placeholder: 'box-placeholder m0'
+        };
         vm.addQuestion = _addQuestion;
         vm.editQuestion = _editQuestion;
         vm.saveForm = _saveForm;
         vm.typeStyle = _typeStyle;
+
+        //Section related
+        vm.selectSection = _selectSection;
 
         initialize();
 
@@ -174,6 +179,10 @@
             return style;
         }
 
+    //    Section Related
+        function _selectSection(selectedSection) {
+            vm.selected_section = selectedSection;
+        }
     }
 
 

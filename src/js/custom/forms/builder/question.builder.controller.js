@@ -38,8 +38,6 @@
         vm.editSubQuestion = _editSubQuestion;
         vm.removeOption = _removeOption;
 
-
-
         initialize();
 
         function initialize() {
