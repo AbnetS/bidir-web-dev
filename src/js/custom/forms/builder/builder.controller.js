@@ -99,10 +99,9 @@
             });
         }
 
-        function _addQuestion(ev) {
-
+        function _addQuestion(sectionData,ev) {
             $mdDialog.show({
-                locals: {data: {question:null,form: {_id: vm.formData._id},number:vm.maxOrderNumber}},
+                locals: {data: {question:null,form: {_id: vm.formData._id},section:sectionData,number:vm.maxOrderNumber}},
                 templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
                 parent: angular.element(document.body),
                 targetEvent: ev,

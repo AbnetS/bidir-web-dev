@@ -35,9 +35,9 @@
 
             <div class="row">
                 <div class="col-xs-10 col-sm-4 col-md-4 col-lg-4">
-                    <md-input-container class="md-block">
+                    <md-input-container  class="md-block">
                         <p>Section:</p>
-                        <md-radio-group layout="row" ng-model="vm.formData.has_sections" >
+                        <md-radio-group ng-disabled="vm.isEdit" layout="row" ng-model="vm.formData.has_sections" >
                             <md-radio-button value=0 class="md-primary"> No Section </md-radio-button>
                             <md-radio-button value=1 class="md-primary">Has Section</md-radio-button>
                         </md-radio-group>
@@ -83,21 +83,17 @@
 
             <div class="line" ng-show="vm.isEdit">
             </div>
+
             <div class="row" ng-show="vm.isEdit">
                 <div class="col-lg-12 col-sm-12">
                 </div>
             </div>
+
             <!--SECTIONED-->
             <div ng-show="vm.isEdit" class="row" ng-if="vm.formData.has_sections">
-                <!--NO Section Created Yet-->
-                <div ng-show="vm.formData.questions.length === 0" class="col-lg-12">
-                    <h4 class="centerPageText">
-                        PLEASE! <strong>Add new section</strong>
-                        <a ng-click="vm.addSection()"><i class="fa fa-plus"></i></a>
-                    </h4>
-                </div>
+
                 <!--SECTION-->
-                <div ng-show="vm.formData.sections.length > 0" class="col-lg-4">
+                <div ng-show="vm.formData.sections.length >= 0" class="col-lg-4">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <a class="pull-right" ng-click="vm.addSection()">
@@ -118,14 +114,14 @@
                 <div ng-show="vm.formData.sections.length >= 0" class="col-lg-8">
 
                     <!--WHEN THERE IS NO QUESTION UNDER SECTION-->
-                    <div ng-show="vm.selected_section.questions.length === 0">
+                    <div ng-show="vm.selected_section.questions === null ">
                         <h4 class="centerPageText">
                             PLEASE! <strong>Add new Question</strong>
-                            <a ng-click="vm.addQuestion()"><i class="fa fa-plus"></i></a>
+                            <a ng-click="vm.addQuestion({has_section:true,sectionId:vm.selected_section._id})"><i class="fa fa-plus"></i></a>
                         </h4>
                     </div>
 
-                    <!--WHEN NO SECTION IS SELECTED-->
+                    <!--WHEN NO SECTION IS SELECTED OR CREATED-->
                     <div ng-show="!vm.selected_section">
                         <h4 class="centerPageText">
                             PLEASE!  <em class="text-green"> {{vm.formData.sections.length===0?'ADD NEW':'SELECT'}} SECTION</em>
@@ -138,7 +134,7 @@
                     <div  ng-show="vm.selected_section.questions.length > 0"
                           class="table-responsive">
                         <button  class="btn-sm btn btn-success btn-outline pull-right" type="button"
-                                ng-click="vm.addQuestion()">
+                                ng-click="vm.addQuestion({has_section:true,sectionId:vm.selected_section._id})">
                             <i class="fa fa-plus"></i> Add Question
                         </button>
                         <table class="table table-striped">
@@ -183,14 +179,14 @@
                 <div ng-show="vm.formData.questions.length === 0" class="col-lg-12">
                     <h4 class="centerPageText">
                         PLEASE! <strong>Add new Question</strong>
-                        <a ng-click="vm.addQuestion()"><i class="fa fa-plus"></i></a>
+                        <a ng-click="vm.addQuestion({has_section:false,sectionId:null})"><i class="fa fa-plus"></i></a>
                     </h4>
                 </div>
 
                 <div ng-show="vm.formData.questions.length > 0" class="col-lg-12">
                     <md-table-container>
                         <button class="btn-sm btn btn-success btn-outline pull-right" type="button"
-                                ng-click="vm.addQuestion()">
+                                ng-click="vm.addQuestion({has_section:false,sectionId:null})">
                             <i class="fa fa-plus"></i> Add Question
                         </button>
                         <br/>

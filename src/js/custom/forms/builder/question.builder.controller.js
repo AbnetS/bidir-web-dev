@@ -51,6 +51,7 @@
                 return val.name === 'NONE'; //set sub question validation default to NONE
             }));
 
+
             if(vm.isEdit){
                 vm.question = data.question;
                 if(!_.isUndefined(vm.question.sub_questions)){
@@ -65,6 +66,11 @@
                     required:0,
                     options:[]
                 };
+
+                if(data.section.has_section){
+                    vm.question.section = data.section.sectionId;
+                }
+
             }
         }
         function _saveQuestion() {
@@ -83,6 +89,7 @@
                 preparedQn.options = vm.question.options;
             }
             if(!vm.isEdit){
+                preparedQn.section = vm.question.section;
                 preparedQn.number = GetNextQuestionOrderNumber();
                 FormService.CreateQuestion(preparedQn,vm.question.selected_type.url).then(function (response) {
                     console.log("Question created",response);
