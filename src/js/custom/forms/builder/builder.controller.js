@@ -145,12 +145,11 @@
                     return qn.number;
                 }).number;
                 vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
-                //SECTION
+                //REFRESH SELECTED SECTION
                 if(vm.formData.sections.length > 0 && !_.isUndefined(vm.selected_section)){
-                    var updatedSection = _.first(_.filter(vm.formData.sections,function (section) {
+                    vm.selected_section = _.first(_.filter(vm.formData.sections,function (section) {
                         return section._id === vm.selected_section._id;
                     }));
-                    vm.selected_section = updatedSection;
                 }
                 myBlockUIOnStart.stop();
             },function (error) {
@@ -208,6 +207,7 @@
 
             FormService.CreateSection(section).then(function (response) {
                 vm.selected_section = response.data;
+                vm.selected_section.form = vm.formId; //set to which form it belongs
                 vm.showSectionForm = false;
                 AlertService.showSuccess("SECTION","Section Created successfully");
                 callAPI();//REFRESH FORM DATA
@@ -218,6 +218,7 @@
             }else {
                 FormService.UpdateSection(section).then(function (response) {
                     vm.selected_section = response.data;
+                    vm.selected_section.form = vm.formId; //set to which form it belongs
                     vm.showSectionForm = false;
                     callAPI();//REFRESH FORM DATA
                     AlertService.showSuccess("SECTION","Section Updated successfully");
@@ -240,12 +241,13 @@
             AlertService.showConfirmForDelete("You are about to DELETE SECTION, All Questions under this section will be removed",
                 "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
                     if(isConfirm){
+                        vm.selected_section.form = vm.formId; //set to which form it belongs
                         FormService.RemoveSection(section).then(function(response){
                             vm.showSectionForm = false;
                             callAPI();
                             AlertService.showSuccess("SECTION","Section Deleted successfully");
                         },function(error){
-                            console.log("qn deleting error",error);
+                            console.log("Section deleting error",error);
                             var message = error.data.error.message;
                             AlertService.showError("Failed to DELETE Section",message);
                         });

@@ -80,19 +80,6 @@
     angular
         .module('app.colors', []);
 })();
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common", [])
-      .config(routeConfig)
-      .run(runBlock);
-
-  function runBlock() {}
-  function routeConfig() {}
-
-})(window.angular);
-
 (function() {
     'use strict';
 
@@ -120,12 +107,19 @@
     angular
         .module('app.lazyload', []);
 })();
-(function() {
-    'use strict';
+(function(angular) {
+  "use strict";
 
-    angular
-        .module('app.loadingbar', []);
-})();
+  angular
+    .module("app.common", [])
+      .config(routeConfig)
+      .run(runBlock);
+
+  function runBlock() {}
+  function routeConfig() {}
+
+})(window.angular);
+
 /**
  * Created by Yoni on 11/30/2017.
  */
@@ -167,9 +161,7 @@
     'use strict';
 
     angular
-        .module('app.material', [
-            'ngMaterial'
-          ]);
+        .module('app.loadingbar', []);
 })();
 (function() {
     'use strict';
@@ -185,6 +177,14 @@
 })();
 
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.material', [
+            'ngMaterial'
+          ]);
+})();
 (function() {
     'use strict';
 
@@ -433,208 +433,6 @@
 
 })();
 
-(function(angular) {
-  "use strict";
-
-  angular
-    .module('app.common')
-    .constant("_", window._)
-    .constant("APP_CONSTANTS", {
-      USER_ROLES: {
-        ALL: "*",
-        ADMIN: "admin",
-      },
-      StorageKey: {
-        TOKEN: "token",
-        SESSION: "SESSION",
-        PERMISSIONS:"PERMISSIONS",
-        ACCESS_BRANCHES:"ACCESS_BRANCHES"
-      },
-      AUTH_EVENTS: {
-        loginSuccess: "auth-login-success",
-        loginFailed: "auth-login-failed",
-        logoutSuccess: "auth-logout-success",
-        logoutUser: "auth-logout-user",
-        sessionTimeout: "auth-session-timeout",
-        notAuthenticated: "auth-not-authenticated",
-        notAuthorized: "auth-not-authorized"
-      }
-    });
-})(window.angular);
-
-/**
- * Created by Yoni on 12/30/2017.
- */
-//Directive
-
-(function(angular) {
-
-    'use strict';
-
-    angular.module('app.common')
-        .directive('userpermission', ["PermissionService", function(PermissionService) {
-        return {
-            restrict: 'A',
-            link: function(scope, element, attrs) {
-                scope.$watch(attrs.userpermission, function(value) {
-                    var permission = value;
-                    var hasPermission = false;
-                    if (_.isString(permission)) {
-                        hasPermission = PermissionService.hasThisPermission(permission);
-                    } else if (_.isArray(permission)) {
-                        hasPermission = PermissionService.hasThesePermissions(permission); //multiple permissions
-                    }
-
-                    toggleVisibility(hasPermission);
-                });
-
-                function toggleVisibility(hasPermission) {
-                    if (hasPermission) {
-                        element.show();
-                    } else {
-                        element.hide();
-                    }
-                }
-            }
-        };
-    }])
-        // Text Editor template directive
-        .directive('editor', function() {
-        return {
-            restrict: 'E',
-            template: "<div ng-show='vm.editorEnabledForElement === (radioOption);'>" +
-            "<input class='editableTextInput' type='text' ng-model='vm.text' ng-required='true' " +
-            "show-focus='vm.editorEnabledForElement === (radioOption);' " +
-            "keypress-enter='vm.saveOption(radioOption, vm.text)' " +
-            "ng-blur='vm.saveOption(radioOption, vm.text)'" +
-            " show-focus select-on-click >" +
-            "</div>"
-        };
-    })
-        .directive('keypressEnter', function() {
-            return function(scope, element, attrs) {
-                element.bind("keydown keypress", function(event) {
-                    if (event.which === 13) {
-                        scope.$apply(function() {
-                            scope.$eval(attrs.keypressEnter);
-                        });
-                        console.log("Pressed enter.");
-                        event.preventDefault();
-                    }
-                });
-            };
-        })
-    // Put focus on element when event is triggered.
-// https://coderwall.com/p/a41lwa/angularjs-auto-focus-into-input-field-when-ng-show-event-is-triggered
-    .directive('showFocus', ["$timeout", function($timeout) {
-        return function(scope, element, attrs) {
-            scope.$watch(attrs.showFocus,
-                function(newValue) {
-                    $timeout(function() {
-                        newValue && element.focus();
-                    });
-                }, true);
-        };
-    }])
-    // Select text on focus.
-// http://stackoverflow.com/questions/14995884/select-text-on-input-focus
-    .directive('selectOnClick', ['$window', function($window) {
-        return {
-            restrict: 'A',
-            link: function(scope, element, attrs) {
-                element.on('focus', function() {
-                    if (!$window.getSelection().toString()) {
-                        // Required for mobile Safari
-                        this.setSelectionRange(0, this.value.length)
-                    }
-                });
-            }
-        };
-    }]);
-
-
-})(window.angular);
-
-
-
-/**
- * Created by Yoni on 12/14/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.common').filter('ReplaceUnderscore', function () {
-    return function (input) {
-        return input.replace(/_/g, ' ');
-    };
-});
-
-})(window.angular);
-var API = {
-    Config: {
-        BaseUrl: 'http://api.dev.bidir.gebeya.io/' //REMOTE API
-    },
-    Service: {
-        NONE:'',
-        MFI: 'MFI',
-        Auth: 'auth',
-        Users: 'users',
-        SCREENING:'screenings',
-        FORM:'forms'
-    },
-    Methods: {
-        Auth: {
-            Login: 'login'
-        },
-        MFI: {
-            MFIUpdate:'',
-            MFI:'create',
-            GetAll:'all',
-            Branches: 'branches',
-            CreateBranch: 'branches/create'
-
-        },
-        Users: {
-            Account:'accounts',
-            UserUpdate:'',
-            User:'create',
-            GetAll: '',
-            Roles: 'roles',
-            Role: 'roles/create'
-        },
-        Roles:{
-            GetAll: 'roles',
-            Create: 'roles/create',
-            Permissions: 'permissions',
-            PermissionByGroup: 'permissions/groups'
-        },
-        Tasks: {
-            Task:'tasks',
-            GetAll: 'tasks/paginate?page=1&per_page=100'
-        },
-        Clients:{
-            All:'clients/paginate?source=web',
-            Client:'clients',
-            SearchClient:''
-        },
-        Form:{
-            All: '',
-            Create: 'create',
-            Question:'questions',
-            Create_Question:'questions/create',
-            Section:'sections',
-            Create_Section:'sections/create'
-        }
-    }
-};
-
-
-var QUESTION_TYPE = {
-    FILL_IN_BLANK: "FILL_IN_BLANK",
-    YES_NO: "YES_NO",
-    MULTIPLE_CHOICE: "MULTIPLE_CHOICE",
-    SINGLE_CHOICE: "SINGLE_CHOICE",
-    GROUPED: "GROUPED"
-};
 (function() {
     'use strict';
 
@@ -933,50 +731,208 @@ var QUESTION_TYPE = {
 
 })();
 
-(function() {
+(function(angular) {
+  "use strict";
+
+  angular
+    .module('app.common')
+    .constant("_", window._)
+    .constant("APP_CONSTANTS", {
+      USER_ROLES: {
+        ALL: "*",
+        ADMIN: "admin",
+      },
+      StorageKey: {
+        TOKEN: "token",
+        SESSION: "SESSION",
+        PERMISSIONS:"PERMISSIONS",
+        ACCESS_BRANCHES:"ACCESS_BRANCHES"
+      },
+      AUTH_EVENTS: {
+        loginSuccess: "auth-login-success",
+        loginFailed: "auth-login-failed",
+        logoutSuccess: "auth-logout-success",
+        logoutUser: "auth-logout-user",
+        sessionTimeout: "auth-session-timeout",
+        notAuthenticated: "auth-not-authenticated",
+        notAuthorized: "auth-not-authorized"
+      }
+    });
+})(window.angular);
+
+/**
+ * Created by Yoni on 12/30/2017.
+ */
+//Directive
+
+(function(angular) {
+
     'use strict';
 
-    angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
+    angular.module('app.common')
+        .directive('userpermission', ["PermissionService", function(PermissionService) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                scope.$watch(attrs.userpermission, function(value) {
+                    var permission = value;
+                    var hasPermission = false;
+                    if (_.isString(permission)) {
+                        hasPermission = PermissionService.hasThisPermission(permission);
+                    } else if (_.isArray(permission)) {
+                        hasPermission = PermissionService.hasThesePermissions(permission); //multiple permissions
+                    }
+
+                    toggleVisibility(hasPermission);
+                });
+
+                function toggleVisibility(hasPermission) {
+                    if (hasPermission) {
+                        element.show();
+                    } else {
+                        element.hide();
+                    }
+                }
+            }
+        };
+    }])
+        // Text Editor template directive
+        .directive('editor', function() {
+        return {
+            restrict: 'E',
+            template: "<div ng-show='vm.editorEnabledForElement === (radioOption);'>" +
+            "<input class='editableTextInput' type='text' ng-model='vm.text' ng-required='true' " +
+            "show-focus='vm.editorEnabledForElement === (radioOption);' " +
+            "keypress-enter='vm.saveOption(radioOption, vm.text)' " +
+            "ng-blur='vm.saveOption(radioOption, vm.text)'" +
+            " show-focus select-on-click >" +
+            "</div>"
+        };
+    })
+        .directive('keypressEnter', function() {
+            return function(scope, element, attrs) {
+                element.bind("keydown keypress", function(event) {
+                    if (event.which === 13) {
+                        scope.$apply(function() {
+                            scope.$eval(attrs.keypressEnter);
+                        });
+                        console.log("Pressed enter.");
+                        event.preventDefault();
+                    }
+                });
+            };
+        })
+    // Put focus on element when event is triggered.
+// https://coderwall.com/p/a41lwa/angularjs-auto-focus-into-input-field-when-ng-show-event-is-triggered
+    .directive('showFocus', ["$timeout", function($timeout) {
+        return function(scope, element, attrs) {
+            scope.$watch(attrs.showFocus,
+                function(newValue) {
+                    $timeout(function() {
+                        newValue && element.focus();
+                    });
+                }, true);
+        };
+    }])
+    // Select text on focus.
+// http://stackoverflow.com/questions/14995884/select-text-on-input-focus
+    .directive('selectOnClick', ['$window', function($window) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                element.on('focus', function() {
+                    if (!$window.getSelection().toString()) {
+                        // Required for mobile Safari
+                        this.setSelectionRange(0, this.value.length)
+                    }
+                });
+            }
+        };
+    }]);
+
+
+})(window.angular);
+
+
+
+/**
+ * Created by Yoni on 12/14/2017.
+ */
+(function(angular) {
     'use strict';
+    angular.module('app.common').filter('ReplaceUnderscore', function () {
+    return function (input) {
+        return input.replace(/_/g, ' ');
+    };
+});
 
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+})(window.angular);
+var API = {
+    Config: {
+        BaseUrl: 'http://api.dev.bidir.gebeya.io/' //REMOTE API
+    },
+    Service: {
+        NONE:'',
+        MFI: 'MFI',
+        Auth: 'auth',
+        Users: 'users',
+        SCREENING:'screenings',
+        FORM:'forms'
+    },
+    Methods: {
+        Auth: {
+            Login: 'login'
+        },
+        MFI: {
+            MFIUpdate:'',
+            MFI:'create',
+            GetAll:'all',
+            Branches: 'branches',
+            CreateBranch: 'branches/create'
 
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
+        },
+        Users: {
+            Account:'accounts',
+            UserUpdate:'',
+            User:'create',
+            GetAll: '',
+            Roles: 'roles',
+            Role: 'roles/create'
+        },
+        Roles:{
+            GetAll: 'roles',
+            Create: 'roles/create',
+            Permissions: 'permissions',
+            PermissionByGroup: 'permissions/groups'
+        },
+        Tasks: {
+            Task:'tasks',
+            GetAll: 'tasks/paginate?page=1&per_page=100'
+        },
+        Clients:{
+            All:'clients/paginate?source=web',
+            Client:'clients',
+            SearchClient:''
+        },
+        Form:{
+            All: '',
+            Create: 'create',
+            Question:'questions',
+            Create_Question:'questions/create',
+            Section:'sections',
+            Create_Section:'sections/create'
+        }
     }
+};
 
-})();
+
+var QUESTION_TYPE = {
+    FILL_IN_BLANK: "FILL_IN_BLANK",
+    YES_NO: "YES_NO",
+    MULTIPLE_CHOICE: "MULTIPLE_CHOICE",
+    SINGLE_CHOICE: "SINGLE_CHOICE",
+    GROUPED: "GROUPED"
+};
 /**
  * Created by Yoni on 12/10/2017.
  */
@@ -1847,6 +1803,252 @@ var QUESTION_TYPE = {
     }
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
+
+})();
+/**=========================================================
+ * Module: navbar-search.js
+ * Navbar search toggler * Auto dismiss on ESC key
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .directive('searchOpen', searchOpen)
+        .directive('searchDismiss', searchDismiss);
+
+    //
+    // directives definition
+    // 
+    
+    function searchOpen () {
+        var directive = {
+            controller: searchOpenController,
+            restrict: 'A'
+        };
+        return directive;
+
+    }
+
+    function searchDismiss () {
+        var directive = {
+            controller: searchDismissController,
+            restrict: 'A'
+        };
+        return directive;
+        
+    }
+
+    //
+    // Contrller definition
+    // 
+    
+    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchOpenController ($scope, $element, NavSearch) {
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.toggle);
+    }
+
+    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchDismissController ($scope, $element, NavSearch) {
+      
+      var inputSelector = '.navbar-form input[type="text"]';
+
+      $(inputSelector)
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('keyup', function(e) {
+          if (e.keyCode === 27) // ESC
+            NavSearch.dismiss();
+        });
+        
+      // click anywhere closes the search
+      $(document).on('click', NavSearch.dismiss);
+      // dismissable options
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.dismiss);
+    }
+
+})();
+
+
+/**=========================================================
+ * Module: nav-search.js
+ * Services to share navbar search functions
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .service('NavSearch', NavSearch);
+
+    function NavSearch() {
+        this.toggle = toggle;
+        this.dismiss = dismiss;
+
+        ////////////////
+
+        var navbarFormSelector = 'form.navbar-form';
+
+        function toggle() {
+          var navbarForm = $(navbarFormSelector);
+
+          navbarForm.toggleClass('open');
+
+          var isOpen = navbarForm.hasClass('open');
+
+          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
+        }
+
+        function dismiss() {
+          $(navbarFormSelector)
+            .removeClass('open') // Close control
+            .find('input[type="text"]').blur() // remove focus
+            // .val('') // Empty input
+            ;
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.preloader')
+        .directive('preloader', preloader);
+
+    preloader.$inject = ['$animate', '$timeout', '$q'];
+    function preloader ($animate, $timeout, $q) {
+
+        var directive = {
+            restrict: 'EAC',
+            template: 
+              '<div class="preloader-progress">' +
+                  '<div class="preloader-progress-bar" ' +
+                       'ng-style="{width: loadCounter + \'%\'}"></div>' +
+              '</div>'
+            ,
+            link: link
+        };
+        return directive;
+
+        ///////
+
+        function link(scope, el) {
+
+          scope.loadCounter = 0;
+
+          var counter  = 0,
+              timeout;
+
+          // disables scrollbar
+          angular.element('body').css('overflow', 'hidden');
+          // ensure class is present for styling
+          el.addClass('preloader');
+
+          appReady().then(endCounter);
+
+          timeout = $timeout(startCounter);
+
+          ///////
+
+          function startCounter() {
+
+            var remaining = 100 - counter;
+            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
+
+            scope.loadCounter = parseInt(counter, 10);
+
+            timeout = $timeout(startCounter, 20);
+          }
+
+          function endCounter() {
+
+            $timeout.cancel(timeout);
+
+            scope.loadCounter = 100;
+
+            $timeout(function(){
+              // animate preloader hiding
+              $animate.addClass(el, 'preloader-hidden');
+              // retore scrollbar
+              angular.element('body').css('overflow', '');
+            }, 300);
+          }
+
+          function appReady() {
+            var deferred = $q.defer();
+            var viewsLoaded = 0;
+            // if this doesn't sync with the real app ready
+            // a custom event must be used instead
+            var off = scope.$on('$viewContentLoaded', function () {
+              viewsLoaded ++;
+              // we know there are at least two views to be loaded 
+              // before the app is ready (1-index.html 2-app*.html)
+              if ( viewsLoaded === 2) {
+                // with resolve this fires only once
+                $timeout(function(){
+                  deferred.resolve();
+                }, 3000);
+
+                off();
+              }
+
+            });
+
+            return deferred.promise;
+          }
+
+        } //link
+    }
+
+})();
 
 (function() {
     'use strict';
@@ -2580,208 +2782,6 @@ var QUESTION_TYPE = {
         
         }
     }
-})();
-/**=========================================================
- * Module: navbar-search.js
- * Navbar search toggler * Auto dismiss on ESC key
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .directive('searchOpen', searchOpen)
-        .directive('searchDismiss', searchDismiss);
-
-    //
-    // directives definition
-    // 
-    
-    function searchOpen () {
-        var directive = {
-            controller: searchOpenController,
-            restrict: 'A'
-        };
-        return directive;
-
-    }
-
-    function searchDismiss () {
-        var directive = {
-            controller: searchDismissController,
-            restrict: 'A'
-        };
-        return directive;
-        
-    }
-
-    //
-    // Contrller definition
-    // 
-    
-    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchOpenController ($scope, $element, NavSearch) {
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.toggle);
-    }
-
-    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchDismissController ($scope, $element, NavSearch) {
-      
-      var inputSelector = '.navbar-form input[type="text"]';
-
-      $(inputSelector)
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('keyup', function(e) {
-          if (e.keyCode === 27) // ESC
-            NavSearch.dismiss();
-        });
-        
-      // click anywhere closes the search
-      $(document).on('click', NavSearch.dismiss);
-      // dismissable options
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.dismiss);
-    }
-
-})();
-
-
-/**=========================================================
- * Module: nav-search.js
- * Services to share navbar search functions
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .service('NavSearch', NavSearch);
-
-    function NavSearch() {
-        this.toggle = toggle;
-        this.dismiss = dismiss;
-
-        ////////////////
-
-        var navbarFormSelector = 'form.navbar-form';
-
-        function toggle() {
-          var navbarForm = $(navbarFormSelector);
-
-          navbarForm.toggleClass('open');
-
-          var isOpen = navbarForm.hasClass('open');
-
-          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
-        }
-
-        function dismiss() {
-          $(navbarFormSelector)
-            .removeClass('open') // Close control
-            .find('input[type="text"]').blur() // remove focus
-            // .val('') // Empty input
-            ;
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.preloader')
-        .directive('preloader', preloader);
-
-    preloader.$inject = ['$animate', '$timeout', '$q'];
-    function preloader ($animate, $timeout, $q) {
-
-        var directive = {
-            restrict: 'EAC',
-            template: 
-              '<div class="preloader-progress">' +
-                  '<div class="preloader-progress-bar" ' +
-                       'ng-style="{width: loadCounter + \'%\'}"></div>' +
-              '</div>'
-            ,
-            link: link
-        };
-        return directive;
-
-        ///////
-
-        function link(scope, el) {
-
-          scope.loadCounter = 0;
-
-          var counter  = 0,
-              timeout;
-
-          // disables scrollbar
-          angular.element('body').css('overflow', 'hidden');
-          // ensure class is present for styling
-          el.addClass('preloader');
-
-          appReady().then(endCounter);
-
-          timeout = $timeout(startCounter);
-
-          ///////
-
-          function startCounter() {
-
-            var remaining = 100 - counter;
-            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
-
-            scope.loadCounter = parseInt(counter, 10);
-
-            timeout = $timeout(startCounter, 20);
-          }
-
-          function endCounter() {
-
-            $timeout.cancel(timeout);
-
-            scope.loadCounter = 100;
-
-            $timeout(function(){
-              // animate preloader hiding
-              $animate.addClass(el, 'preloader-hidden');
-              // retore scrollbar
-              angular.element('body').css('overflow', '');
-            }, 300);
-          }
-
-          function appReady() {
-            var deferred = $q.defer();
-            var viewsLoaded = 0;
-            // if this doesn't sync with the real app ready
-            // a custom event must be used instead
-            var off = scope.$on('$viewContentLoaded', function () {
-              viewsLoaded ++;
-              // we know there are at least two views to be loaded 
-              // before the app is ready (1-index.html 2-app*.html)
-              if ( viewsLoaded === 2) {
-                // with resolve this fires only once
-                $timeout(function(){
-                  deferred.resolve();
-                }, 3000);
-
-                off();
-              }
-
-            });
-
-            return deferred.promise;
-          }
-
-        } //link
-    }
-
 })();
 /**=========================================================
  * Module: helpers.js
@@ -5096,12 +5096,11 @@ function runBlock() {
                     return qn.number;
                 }).number;
                 vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
-                //SECTION
+                //REFRESH SELECTED SECTION
                 if(vm.formData.sections.length > 0 && !_.isUndefined(vm.selected_section)){
-                    var updatedSection = _.first(_.filter(vm.formData.sections,function (section) {
+                    vm.selected_section = _.first(_.filter(vm.formData.sections,function (section) {
                         return section._id === vm.selected_section._id;
                     }));
-                    vm.selected_section = updatedSection;
                 }
                 myBlockUIOnStart.stop();
             },function (error) {
@@ -5159,6 +5158,7 @@ function runBlock() {
 
             FormService.CreateSection(section).then(function (response) {
                 vm.selected_section = response.data;
+                vm.selected_section.form = vm.formId; //set to which form it belongs
                 vm.showSectionForm = false;
                 AlertService.showSuccess("SECTION","Section Created successfully");
                 callAPI();//REFRESH FORM DATA
@@ -5169,6 +5169,7 @@ function runBlock() {
             }else {
                 FormService.UpdateSection(section).then(function (response) {
                     vm.selected_section = response.data;
+                    vm.selected_section.form = vm.formId; //set to which form it belongs
                     vm.showSectionForm = false;
                     callAPI();//REFRESH FORM DATA
                     AlertService.showSuccess("SECTION","Section Updated successfully");
@@ -5191,12 +5192,13 @@ function runBlock() {
             AlertService.showConfirmForDelete("You are about to DELETE SECTION, All Questions under this section will be removed",
                 "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
                     if(isConfirm){
+                        vm.selected_section.form = vm.formId; //set to which form it belongs
                         FormService.RemoveSection(section).then(function(response){
                             vm.showSectionForm = false;
                             callAPI();
                             AlertService.showSuccess("SECTION","Section Deleted successfully");
                         },function(error){
-                            console.log("qn deleting error",error);
+                            console.log("Section deleting error",error);
                             var message = error.data.error.message;
                             AlertService.showError("Failed to DELETE Section",message);
                         });
