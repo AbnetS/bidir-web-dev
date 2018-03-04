@@ -100,6 +100,7 @@
                                 <div class="list-group" ui-sortable="vm.sortableOptions"
                                      ng-model="vm.question.options">
                                         <div class="list-group-item"
+                                             ng-click="vm.editOption(radioOption)"
                                              ng-repeat="radioOption in vm.question.options">
                                             <em class="fa fa-reorder fa-fw text-muted mr-lg"></em>{{radioOption}}
                                             <a ng-click="vm.removeOption(radioOption)"><i class="fa fa-remove"></i></a>
@@ -113,7 +114,7 @@
                                                    type="text">
                                             <span class="input-group-btn">
                                                 <button ng-click='vm.addRadio(vm.newRadioValue)'
-                                                        class="btn btn-default" type="button">Add</button></span>
+                                                        class="btn btn-default" type="button">{{vm.isOptionEdit?'Update':'ADD'}} </button></span>
                                         </div>
                                 </div>
                             </div>

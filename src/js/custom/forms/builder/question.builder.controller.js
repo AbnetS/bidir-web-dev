@@ -20,7 +20,6 @@
 
         //SC & MC related
         vm.addRadio = _addRadio;
-        vm.radioOptionClicked = _radioOptionClicked;
 
         vm.saveQuestion = _saveQuestion;
         vm.cancel = _cancel;
@@ -30,13 +29,14 @@
 
         vm.questionTypeChanged = _questionTypeChanged;
 
-
         //Sub Question related
         vm.showSubQuestion = false;//used for grouped questions
         vm.toggleAddSubQuestion = _toggleAddSubQuestion;
         vm.addToSubQuestion = _addToSubQuestion;
         vm.editSubQuestion = _editSubQuestion;
+
         vm.removeOption = _removeOption;
+        vm.editOption = _editOption;
 
         initialize();
 
@@ -174,11 +174,21 @@
                 return;
             }
             // Push it to radioOptions
+            if(!_.isUndefined(vm.oldOption)){
+                var oldOptionIndex =  vm.question.options.indexOf(vm.oldOption);
+                if(oldOptionIndex !== -1 ){
+                    vm.question.options.splice(oldOptionIndex, 1);
+                }
+                vm.isOptionEdit = false;
+            }
+
+
             var index =  vm.question.options.indexOf(newValue);
             if(index === -1) {
                 vm.question.options.push(newValue);
             }
             console.log("question",vm.question.options);
+            // vm.isOptionEdit
             // Clear input contents
             vm.newRadioValue = '';
         }
@@ -188,8 +198,11 @@
                 vm.question.options.splice(index,1);
             }
         }
-        function _radioOptionClicked(option) {
-            console.log("radio button clicked used for editing",option);
+
+        function _editOption(option) {
+            vm.isOptionEdit = true;
+            vm.newRadioValue = option;
+            vm.oldOption = option;
         }
 
         //SUB QUESTIONS RELATED
