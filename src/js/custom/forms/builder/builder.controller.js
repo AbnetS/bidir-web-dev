@@ -16,8 +16,10 @@
         vm.sortableOptions = {
             placeholder: 'box-placeholder m0'
         };
+        //QUESTION RELATED
         vm.addQuestion = _addQuestion;
         vm.editQuestion = _editQuestion;
+
         vm.saveForm = _saveForm;
         vm.typeStyle = _typeStyle;
 
@@ -87,26 +89,10 @@
 
         }
 
-        function _editQuestion(question,ev) {
-            $mdDialog.show({
-                locals: {data: {question:question,form: {_id: vm.formData._id},number:vm.maxOrderNumber}},
-                templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'QuestionBuilderController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callAPI();
-            }, function () {
-            });
-        }
 
         function _addQuestion(sectionData,ev) {
             $mdDialog.show({
-                locals: {data: {question:null,form: {_id: vm.formData._id},section:sectionData,number:vm.maxOrderNumber}},
+                locals: {data: {question:null,form: {_id: vm.formData._id,questions:vm.formData.has_sections?vm.selected_section.questions:vm.formData.questions},section:sectionData,number:vm.maxOrderNumber}},
                 templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
                 parent: angular.element(document.body),
                 targetEvent: ev,
@@ -122,6 +108,22 @@
                 console.log("refresh on response");
             });
 
+        }
+        function _editQuestion(question,ev) {
+            $mdDialog.show({
+                locals: {data: {question:question,form: {_id: vm.formData._id,questions:vm.formData.has_sections?vm.selected_section.questions:vm.formData.questions},number:vm.maxOrderNumber}},
+                templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'QuestionBuilderController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callAPI();
+            }, function () {
+            });
         }
 
         function initialize() {

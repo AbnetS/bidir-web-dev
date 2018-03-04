@@ -50,6 +50,8 @@
             vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
                 return val.name === 'NONE'; //set sub question validation default to NONE
             }));
+            vm.questionList = data.form.questions;
+            console.log("questionlist",data);
 
 
             if(vm.isEdit){

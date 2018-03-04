@@ -145,11 +145,44 @@
                             <md-input-container ng-if="vm.question.selected_type.type !== 'grouped'"
                                     class="md-block">
                                 <p>Show this Question:</p>
-                                <md-radio-group layout="row" ng-model="vm.question.show" ng-change="vm.showQuestionOn()">
+                                <md-radio-group ng-disabled="vm.isEdit"
+                                                layout="row" ng-model="vm.question.show" ng-change="vm.showQuestionOn()">
                                     <md-radio-button value=1 class="md-primary"> Always</md-radio-button>
                                     <md-radio-button value=0 class="md-primary">When</md-radio-button>
                                 </md-radio-group>
                             </md-input-container>
+
+                            <div ng-show="vm.question.show == 0">
+                                <md-input-container class="md-block">
+                                    <label label-for="question-id"
+                                           class="col-sm-2 control-label">Question
+                                    </label>
+                                    <ui-select ng-model="vm.selected_question"
+                                               theme="select2" title="Select question">
+                                        <ui-select-match placeholder="Select question...">
+                                            {{$select.selected.question_text }}
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="qn in vm.questionList | filter: $select.search">
+                                            <span ng-bind-html="qn.question_text | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </md-input-container>
+                                <md-input-container class="md-block">
+                                    <label label-for="question-id"
+                                           class="col-sm-2 control-label">Choice is
+                                    </label>
+                                    <ui-select ng-model="vm.selected_question.selected_value"
+                                               theme="select2" title="Select option">
+                                        <ui-select-match placeholder="Select option...">
+                                            {{$select.selected }}
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="opt in vm.selected_question.options | filter: $select.search">
+                                            <span ng-bind-html="opt | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </md-input-container>
+                            </div>
+
                         </div>
                     </div>
                 </div>
