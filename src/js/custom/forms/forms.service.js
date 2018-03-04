@@ -18,6 +18,9 @@
             CreateQuestion:_createQuestion,
             UpdateQuestion:_updateQuestion,
             DeleteQuestion:_deleteQuestion,
+            CreateSection:_createSection,
+            UpdateSection:_updateSection,
+            RemoveSection:_removeSection,
             QuestionTypes: MW_QUESTION_TYPES,
             FormTypes: MW_FORM_TYPES
         };
@@ -33,6 +36,7 @@
         function _createForm(form){
             return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
         }
+        //------QUESTION-----------
         function _createQuestion(question,type){
             return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question) + '/' + type, question);
         }
@@ -52,6 +56,17 @@
             });
         }
 
+
+        //    ------SECTION--------
+        function _createSection(section){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Section), section);
+        }
+        function _updateSection(section) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id), section);
+        }
+        function _removeSection(section) {
+            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id),{form:section.form});
+        }
     }
 
 

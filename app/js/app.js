@@ -620,7 +620,9 @@ var API = {
             All: '',
             Create: 'create',
             Question:'questions',
-            Create_Question:'questions/create'
+            Create_Question:'questions/create',
+            Section:'sections',
+            Create_Section:'sections/create'
         }
     }
 };
@@ -4637,6 +4639,9 @@ function runBlock() {
             CreateQuestion:_createQuestion,
             UpdateQuestion:_updateQuestion,
             DeleteQuestion:_deleteQuestion,
+            CreateSection:_createSection,
+            UpdateSection:_updateSection,
+            RemoveSection:_removeSection,
             QuestionTypes: MW_QUESTION_TYPES,
             FormTypes: MW_FORM_TYPES
         };
@@ -4652,6 +4657,7 @@ function runBlock() {
         function _createForm(form){
             return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
         }
+        //------QUESTION-----------
         function _createQuestion(question,type){
             return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question) + '/' + type, question);
         }
@@ -4671,6 +4677,17 @@ function runBlock() {
             });
         }
 
+
+        //    ------SECTION--------
+        function _createSection(section){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Section), section);
+        }
+        function _updateSection(section) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id), section);
+        }
+        function _removeSection(section) {
+            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id),{form:section.form});
+        }
     }
 
 
@@ -4957,6 +4974,10 @@ function runBlock() {
 
         //Section related
         vm.selectSection = _selectSection;
+        vm.addSection = _addSection;
+        vm.saveSection = _saveSection;
+        vm.editSection = _editSection;
+        vm.removeSection = _removeSection;
 
         initialize();
 
@@ -5045,8 +5066,10 @@ function runBlock() {
                 controller: 'QuestionBuilderController',
                 controllerAs: 'vm'
             }).then(function (answer) {
+                console.log("call api to refresh");
                 callAPI();
-            }, function () {
+            }, function (response) {
+                console.log("refresh on response");
             });
 
         }
@@ -5072,7 +5095,13 @@ function runBlock() {
                     return qn.number;
                 }).number;
                 vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
-
+                //SECTION
+                if(vm.formData.sections.length > 0 && !_.isUndefined(vm.selected_section)){
+                    var updatedSection = _.first(_.filter(vm.formData.sections,function (section) {
+                        return section._id === vm.selected_section._id;
+                    }));
+                    vm.selected_section = updatedSection;
+                }
                 myBlockUIOnStart.stop();
             },function (error) {
                 myBlockUIOnStart.stop();
@@ -5112,9 +5141,62 @@ function runBlock() {
             return style;
         }
 
-    //    Section Related
+        //------SECTION RELATED---------
+
+        function _addSection() {
+            vm.selected_section = {};
+            vm.showSectionForm = true;
+        }
         function _selectSection(selectedSection) {
+            vm.showSectionForm = false;
             vm.selected_section = selectedSection;
+            vm.selected_section.form = vm.formId; //This is important for remove section
+        }
+        function _saveSection(section) {
+            section.form = vm.formId;
+            if( _.isUndefined(section._id)){
+
+            FormService.CreateSection(section).then(function (response) {
+                vm.selected_section = response.data;
+                vm.showSectionForm = false;
+                AlertService.showSuccess("SECTION","Section Created successfully");
+                callAPI();//REFRESH FORM DATA
+            },function (error) {
+                console.log("error when saving section",error);
+            });
+
+            }else {
+                FormService.UpdateSection(section).then(function (response) {
+                    vm.selected_section = response.data;
+                    vm.showSectionForm = false;
+                    callAPI();//REFRESH FORM DATA
+                    AlertService.showSuccess("SECTION","Section Updated successfully");
+                    console.log("saved section",response);
+                },function (error) {
+                    console.log("error when saving section",error);
+                });
+            }
+        }
+        function _editSection(section) {
+            vm.selected_section = section;
+            vm.selected_section.form = vm.formId;
+            vm.showSectionForm = true;
+        }
+
+        function _removeSection(section) {
+            AlertService.showConfirmForDelete("You are about to DELETE SECTION",
+                "Are you sure?", "Yes, Delete it!", "warning", true,function () {
+
+                    FormService.RemoveSection(section).then(function(response){
+                        vm.showSectionForm = false;
+                        callAPI();
+                        AlertService.showSuccess("SECTION","Section Deleted successfully");
+                    },function(error){
+                        console.log("qn deleting error",error);
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to DELETE Section",message);
+                    });
+                });
         }
     }
 

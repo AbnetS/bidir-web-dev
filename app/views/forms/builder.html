@@ -93,18 +93,34 @@
             <div ng-show="vm.isEdit" class="row" ng-if="vm.formData.has_sections">
 
                 <!--SECTION-->
-                <div ng-show="vm.formData.sections.length >= 0" class="col-lg-4">
+                <div ng-show="vm.formData.has_sections" class="col-lg-4">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <a class="pull-right" ng-click="vm.addSection()">
                                 Add  <em class="fa fa-plus"></em>
                             </a>Sections
                         </div>
-                        <div class="list-group">
+                        <div class="panel-body list-group"  style="min-height: 320px; max-height: 480px;">
+                            <div class="input-group" ng-show="vm.showSectionForm">
+                                <input class="form-control"
+                                       ng-model="vm.selected_section.title"
+                                       keypress-enter='vm.saveSection(vm.selected_section)'
+                                       placeholder="type section..."
+                                       type="text">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-success btn-sm"
+                                            ng-click="vm.saveSection(vm.selected_section)"
+                                            title="Submit" aria-label="Submit">
+                                        <span class="fa fa-check"></span>
+                                    </button>
+                                </span>
+                            </div>
                             <a ng-repeat="section in vm.formData.sections" class="list-group-item"
+                               uib-tooltip="{{section.title}}"
+                               uib-tooltip-trigger="focus"
+                               uib-tooltip-placement="top"
                                ng-class="{'bg-gray-lighter' : vm.selected_section._id === section._id}"
                                ng-click="vm.selectSection(section)">
-                                <em class="pull-right fa fa-angle-right fa-lg fa-fw text-muted mt"></em>
                                 <h5 class="list-group-item-heading">{{section.title}}</h5>
                             </a>
                         </div>
@@ -114,15 +130,22 @@
                 <div ng-show="vm.formData.sections.length >= 0" class="col-lg-8">
 
                     <!--WHEN THERE IS NO QUESTION UNDER SECTION-->
-                    <div ng-show="vm.selected_section.questions === null ">
+                    <div ng-show="vm.selected_section.questions === null || vm.selected_section.questions.length ===0">
+                        <div>
+                            <button type="button" class="btn-sm btn btn-warning btn-outline pull-left"
+                                    ng-click="vm.removeSection(vm.selected_section)"
+                                    title="remove section" aria-label="remove">
+                                <span class="fa fa-remove">Remove Section</span>
+                            </button>
+                        </div>
                         <h4 class="centerPageText">
-                            PLEASE! <strong>Add new Question</strong>
+                            PLEASE! <strong>Add new Question under </strong> <em>{{vm.selected_section.title}}</em>
                             <a ng-click="vm.addQuestion({has_section:true,sectionId:vm.selected_section._id})"><i class="fa fa-plus"></i></a>
                         </h4>
                     </div>
 
                     <!--WHEN NO SECTION IS SELECTED OR CREATED-->
-                    <div ng-show="!vm.selected_section">
+                    <div ng-show="!vm.selected_section || vm.selected_section === 'undefined'">
                         <h4 class="centerPageText">
                             PLEASE!  <em class="text-green"> {{vm.formData.sections.length===0?'ADD NEW':'SELECT'}} SECTION</em>
                             FROM THE LEFT SIDE MENU
@@ -131,48 +154,63 @@
                     </div>
 
                     <!--WHEN THERE IS QUESTION UNDER SECTION-->
-                    <div  ng-show="vm.selected_section.questions.length > 0"
-                          class="table-responsive">
-                        <button  class="btn-sm btn btn-success btn-outline pull-right" type="button"
-                                ng-click="vm.addQuestion({has_section:true,sectionId:vm.selected_section._id})">
-                            <i class="fa fa-plus"></i> Add Question
-                        </button>
-                        <table class="table table-striped">
-                            <thead class="bg-gray-lighter">
-                            <tr>
-                                <th ><span> No</span></th>
-                                <th  ><span>Question</span></th>
-                                <th  ><span>Type</span></th>
-                                <th >Action</th>
-                            </tr>
-                            </thead>
+                    <div  ng-show="vm.selected_section.questions.length > 0">
+                        <div>
+                            <button type="button" class="btn-sm btn btn-success btn-outline pull-left"
+                                    ng-click="vm.editSection(vm.selected_section)"
+                                    title="Edit section" aria-label="Edit">
+                                <i class="fa fa-edit"></i> Edit Section
+                            </button>
+                            <button type="button" class="btn-sm btn btn-warning btn-outline pull-left"
+                                    ng-click="vm.removeSection(vm.selected_section)"
+                                    title="remove section" aria-label="remove">
+                                <i class="fa fa-remove"></i> Remove Section
+                            </button>
+                            <button  class="btn-sm btn btn-success btn-outline pull-right" type="button"
+                                     ng-click="vm.addQuestion({has_section:true,sectionId:vm.selected_section._id})">
+                                <i class="fa fa-plus"></i> Add Question
+                            </button>
+                        </div>
+                        <br/><br/>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="bg-gray-lighter">
+                                <tr>
+                                    <th ><span> No</span></th>
+                                    <th  ><span>Question</span></th>
+                                    <th  ><span>Type</span></th>
+                                    <th >Action</th>
+                                </tr>
+                                </thead>
 
-                            <tbody>
-                            <tr ng-repeat="question in vm.selected_section.questions">
+                                <tbody>
+                                <tr ng-repeat="question in vm.selected_section.questions">
 
-                                <td >{{$index + 1}}</td>
-                                <td >{{question.question_text}}
-                                    <div class="pull-right label" ng-if="question.type=== 'GROUPED'"
-                                    ng-class="question.type === 'GROUPED' && question.sub_questions.length>0 ?'label-success':'label-warning'">
-                                        {{question.sub_questions.length }}
-                                    </div>
-                                </td>
-                                <td >
+                                    <td >{{$index + 1}}</td>
+                                    <td >{{question.question_text}}
+                                        <div class="pull-right label" ng-if="question.type=== 'GROUPED'"
+                                             ng-class="question.type === 'GROUPED' && question.sub_questions.length>0 ?'label-success':'label-warning'">
+                                            {{question.sub_questions.length }}
+                                        </div>
+                                    </td>
+                                    <td >
                                     <span ng-class="vm.typeStyle(question.type)">
                                         {{question.type}}
                                     </span>
-                                </td>
-                                <td >
-                                    <a ng-click="vm.editQuestion(question,$event)">
-                                        <i class="fa fa-edit"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                                    </td>
+                                    <td >
+                                        <a ng-click="vm.editQuestion(question,$event)">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <!--NO SECTIONING (HAS NO SECTIONING)-->
             <div ng-show="vm.isEdit" class="row" ng-if="!vm.formData.has_sections">
 

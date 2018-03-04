@@ -49,7 +49,9 @@ var API = {
             All: '',
             Create: 'create',
             Question:'questions',
-            Create_Question:'questions/create'
+            Create_Question:'questions/create',
+            Section:'sections',
+            Create_Section:'sections/create'
         }
     }
 };
