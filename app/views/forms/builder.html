@@ -199,6 +199,7 @@
                                              ng-class="question.type === 'GROUPED' && question.sub_questions.length>0 ?'label-success':'label-warning'">
                                             {{question.sub_questions.length }}
                                         </div>
+                                        <span ng-show="!question.show" class="label label-purple">D</span>
                                     </td>
                                     <td >
                                     <span ng-class="vm.typeStyle(question.type)">
