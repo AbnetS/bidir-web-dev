@@ -124,10 +124,8 @@
                                     </button>
                                 </span>
                             </div>
-                            <a ng-repeat="section in vm.formData.sections" class="list-group-item"
-                               uib-tooltip="{{section.title}}"
-                               uib-tooltip-trigger="focus"
-                               uib-tooltip-placement="top"
+                            <a ng-repeat="section in vm.formData.sections"
+                               class="list-group-item"
                                ng-class="{'bg-gray-lighter' : vm.selected_section._id === section._id}"
                                ng-click="vm.selectSection(section)">
                                 <h5 class="list-group-item-heading">{{section.title}}</h5>

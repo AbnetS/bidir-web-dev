@@ -50,8 +50,11 @@
             vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
                 return val.name === 'NONE'; //set sub question validation default to NONE
             }));
-            vm.questionList = data.form.questions;
-            console.log("questionlist",data);
+            vm.questionList = _.filter(data.form.questions,function (question) {
+               return question.options.length > 0;
+            });
+
+            console.log("questionlist",vm.questionList);
 
 
             if(vm.isEdit){
@@ -86,6 +89,9 @@
             };
             if(vm.question.selected_type.code === QUESTION_TYPE.FILL_IN_BLANK){
                 preparedQn.validation_factor = vm.question.selected_validation.name;
+            }
+            else if(vm.question.selected_type.code === QUESTION_TYPE.YES_NO){
+                preparedQn.options = vm.question.selected_type.options;
             }
             if(!_.isUndefined(vm.question.options) && vm.question.options.length > 0 ){
                 preparedQn.options = vm.question.options;
