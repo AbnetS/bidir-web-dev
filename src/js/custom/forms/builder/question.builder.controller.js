@@ -100,13 +100,15 @@
             }
             //SET PREREQUISITE IF SHOW IS FALSE
             if(vm.question.show === "0"){
-                preparedQn.prerequisites = [];
-                var prerequisite = {
-                    question:vm.selected_question._id,
-                    answer:vm.selected_question.selected_value
-                };
-                preparedQn.prerequisites.push(prerequisite);
-                console.log("preparedQn",preparedQn);
+                if(!_.isUndefined(vm.selected_question) &&
+                    !_.isUndefined(vm.selected_question.selected_value)){
+                    var prerequisite = {
+                        question:vm.selected_question._id,
+                        answer:vm.selected_question.selected_value
+                    };
+                    preparedQn.prerequisites = [];
+                    preparedQn.prerequisites.push(prerequisite);
+                }
             }
 
             if(!vm.isEdit){
