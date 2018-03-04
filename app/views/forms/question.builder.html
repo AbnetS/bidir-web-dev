@@ -90,10 +90,10 @@
                             </div>
                             <!--Yes NO-->
                             <div ng-switch-when="yn">
-                                <!--<md-radio-group layout="row">-->
-                                    <!--<md-radio-button value=1 class="md-primary">Yes</md-radio-button>-->
-                                    <!--<md-radio-button value=0> No</md-radio-button>-->
-                                <!--</md-radio-group>-->
+                                <md-radio-group layout="row" ng-disabled="true">
+                                    <md-radio-button value=1 class="md-primary">Yes</md-radio-button>
+                                    <md-radio-button value=0> No</md-radio-button>
+                                </md-radio-group>
                             </div>
                             <!--SINGLE SELECT-->
                             <div ng-switch-when="select">
@@ -154,9 +154,9 @@
 
                             <div ng-show="vm.question.show == 0">
                                 <md-input-container class="md-block">
-                                    <label label-for="question-id"
-                                           class="col-sm-2 control-label">Question
-                                    </label>
+                                    <label id="dependant_question" class="col-sm-2 control-label">
+                                        Question </label>
+
                                     <ui-select ng-model="vm.selected_question"
                                                theme="select2" title="Select question">
                                         <ui-select-match placeholder="Select question...">

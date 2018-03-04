@@ -54,9 +54,6 @@
                return question.options.length > 0;
             });
 
-            console.log("questionlist",vm.questionList);
-
-
             if(vm.isEdit){
                 vm.question = data.question;
                 if(!_.isUndefined(vm.question.sub_questions)){
@@ -72,12 +69,17 @@
                     options:[]
                 };
 
+                vm.question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
+                    return val.name === 'NONE'; //set question validation default to NONE
+                }));
+
                 if(data.section.has_section){
                     vm.question.section = data.section.sectionId;
                 }
 
             }
         }
+
         function _saveQuestion() {
             var preparedQn = {
                 question_text:vm.question.question_text,
@@ -96,6 +98,17 @@
             if(!_.isUndefined(vm.question.options) && vm.question.options.length > 0 ){
                 preparedQn.options = vm.question.options;
             }
+            //SET PREREQUISITE IF SHOW IS FALSE
+            if(vm.question.show === "0"){
+                preparedQn.prerequisites = [];
+                var prerequisite = {
+                    question:vm.selected_question._id,
+                    answer:vm.selected_question.selected_value
+                };
+                preparedQn.prerequisites.push(prerequisite);
+                console.log("preparedQn",preparedQn);
+            }
+
             if(!vm.isEdit){
                 preparedQn.section = vm.question.section;
                 preparedQn.number = GetNextQuestionOrderNumber();

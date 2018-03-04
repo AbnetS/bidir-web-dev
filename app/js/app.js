@@ -4665,16 +4665,7 @@ function runBlock() {
             return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id), question);
         }
         function _deleteQuestion(question) {
-            return $http({
-                method: 'DELETE',
-                url: CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id),
-                data: {
-                    form:question.form
-                },
-                headers: {
-                    'Content-type': 'application/json;charset=utf-8'
-                }
-            });
+          return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id + '?form=' + question.form));
         }
 
 
@@ -4686,7 +4677,7 @@ function runBlock() {
             return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id), section);
         }
         function _removeSection(section) {
-            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id),{form:section.form});
+            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id + '?form=' + section.form));
         }
     }
 
@@ -5268,9 +5259,6 @@ function runBlock() {
                return question.options.length > 0;
             });
 
-            console.log("questionlist",vm.questionList);
-
-
             if(vm.isEdit){
                 vm.question = data.question;
                 if(!_.isUndefined(vm.question.sub_questions)){
@@ -5286,12 +5274,17 @@ function runBlock() {
                     options:[]
                 };
 
+                vm.question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
+                    return val.name === 'NONE'; //set question validation default to NONE
+                }));
+
                 if(data.section.has_section){
                     vm.question.section = data.section.sectionId;
                 }
 
             }
         }
+
         function _saveQuestion() {
             var preparedQn = {
                 question_text:vm.question.question_text,
@@ -5310,6 +5303,17 @@ function runBlock() {
             if(!_.isUndefined(vm.question.options) && vm.question.options.length > 0 ){
                 preparedQn.options = vm.question.options;
             }
+            //SET PREREQUISITE IF SHOW IS FALSE
+            if(vm.question.show === "0"){
+                preparedQn.prerequisites = [];
+                var prerequisite = {
+                    question:vm.selected_question._id,
+                    answer:vm.selected_question.selected_value
+                };
+                preparedQn.prerequisites.push(prerequisite);
+                console.log("preparedQn",preparedQn);
+            }
+
             if(!vm.isEdit){
                 preparedQn.section = vm.question.section;
                 preparedQn.number = GetNextQuestionOrderNumber();

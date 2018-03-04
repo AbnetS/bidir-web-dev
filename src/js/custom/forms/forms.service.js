@@ -44,16 +44,7 @@
             return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id), question);
         }
         function _deleteQuestion(question) {
-            return $http({
-                method: 'DELETE',
-                url: CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id),
-                data: {
-                    form:question.form
-                },
-                headers: {
-                    'Content-type': 'application/json;charset=utf-8'
-                }
-            });
+          return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id + '?form=' + question.form));
         }
 
 
@@ -65,7 +56,7 @@
             return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id), section);
         }
         function _removeSection(section) {
-            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id),{form:section.form});
+            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id + '?form=' + section.form));
         }
     }
 
