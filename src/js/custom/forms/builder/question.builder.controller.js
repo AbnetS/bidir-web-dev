@@ -7,19 +7,12 @@
 
     angular.module("app.forms").controller("QuestionBuilderController", QuestionBuilderController);
 
-    QuestionBuilderController.$inject = ['FormService','$mdDialog','data','AlertService','blockUI'];
+    QuestionBuilderController.$inject = ['FormService','$mdDialog','data','AlertService','$scope'];
 
-    function QuestionBuilderController(FormService,$mdDialog,data,AlertService,blockUI) {
+    function QuestionBuilderController(FormService,$mdDialog,data,AlertService,$scope) {
         var vm = this;
         vm.questionTypes = FormService.QuestionTypes;
         vm.readOnly = false;
-        vm.sortableOptions = {
-            placeholder: 'box-placeholder m0'
-        };
-        vm.sub_question_list = [];
-
-        //SC & MC related
-        vm.addRadio = _addRadio;
 
         vm.saveQuestion = _saveQuestion;
         vm.cancel = _cancel;
@@ -35,8 +28,22 @@
         vm.addToSubQuestion = _addToSubQuestion;
         vm.editSubQuestion = _editSubQuestion;
 
+        //SC & MC related
+        vm.addRadio = _addRadio;
         vm.removeOption = _removeOption;
         vm.editOption = _editOption;
+
+        //QUESTION ORDERING RELATED
+        $scope.sortableOptions = {
+            placeholder: 'ui-state-highlight',
+            update: function(e, ui) {
+              console.log("update")
+            },
+            stop: function(e, ui) {
+                console.log("stop")
+            }
+        };
+        vm.sub_question_list = [];
 
         initialize();
 
@@ -198,7 +205,6 @@
                 vm.question.options.splice(index,1);
             }
         }
-
         function _editOption(option) {
             vm.isOptionEdit = true;
             vm.newRadioValue = option;

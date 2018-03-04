@@ -6,16 +6,14 @@
 
     angular.module("app.forms").controller("FormBuilderController", FormBuilderController);
 
-    FormBuilderController.$inject = ['FormService','$mdDialog','RouteHelpers','$stateParams','AlertService','blockUI'];
+    FormBuilderController.$inject = ['FormService','$mdDialog','RouteHelpers','$stateParams','AlertService','blockUI','$scope'];
 
-    function FormBuilderController(FormService,$mdDialog,RouteHelpers,$stateParams,AlertService,blockUI) {
+    function FormBuilderController(FormService,$mdDialog,RouteHelpers,$stateParams,AlertService,blockUI,$scope) {
         var vm = this;
         vm.isEdit = $stateParams.id !== "0";
         vm.formId = $stateParams.id;
         vm.formTypes = FormService.FormTypes;
-        vm.sortableOptions = {
-            placeholder: 'box-placeholder m0'
-        };
+
         //QUESTION RELATED
         vm.addQuestion = _addQuestion;
         vm.editQuestion = _editQuestion;
@@ -30,6 +28,27 @@
         vm.editSection = _editSection;
         vm.removeSection = _removeSection;
         vm.cancelSection = _cancelSection;
+
+        //QUESTION ORDERING RELATED
+        $scope.sortableOptions = {
+            placeholder: 'ui-state-highlight',
+            update: function(e, ui) {},
+            stop: function(e, ui) {
+                vm.selected_section.questions.map(function(question,index){
+                    question.number = index;
+                });
+
+            //CALL API AND UPDATE ORDER
+                FormService.UpdateSection(vm.selected_section).then(
+                    function (response) {
+                        console.log("saving ordered questions under section",response);
+                        vm.selected_section = response.data;
+                    },function (error) {
+                        console.log("error saving ordered questions under section",error);
+                    }
+                )
+            }
+        };
 
         initialize();
 

@@ -163,12 +163,12 @@
                     <!--WHEN THERE IS QUESTION UNDER SECTION-->
                     <div  ng-show="vm.selected_section.questions.length > 0">
                         <div>
-                            <button type="button" class="btn-sm btn btn-success btn-outline pull-left"
+                            <button type="button" class="btn-xs btn btn-success btn-outline pull-left"
                                     ng-click="vm.editSection(vm.selected_section)"
                                     title="Edit section" aria-label="Edit">
                                 <i class="fa fa-edit"></i> Edit Section
                             </button>
-                            <button type="button" class="btn-sm btn btn-warning btn-outline pull-left"
+                            <button type="button" class="btn-xs btn btn-warning btn-outline pull-left"
                                     ng-click="vm.removeSection(vm.selected_section)"
                                     title="remove section" aria-label="remove">
                                 <i class="fa fa-remove"></i> Remove Section
@@ -190,11 +190,11 @@
                                 </tr>
                                 </thead>
 
-                                <tbody>
-                                <tr ng-repeat="question in vm.selected_section.questions">
+                                <tbody ui-sortable="sortableOptions" ng-model="vm.selected_section.questions">
+                                <tr  ng-repeat="question in vm.selected_section.questions">
 
                                     <td >{{$index + 1}}</td>
-                                    <td >{{question.question_text}}
+                                    <td style="cursor: move;">{{question.question_text}}
                                         <div class="pull-right label" ng-if="question.type=== 'GROUPED'"
                                              ng-class="question.type === 'GROUPED' && question.sub_questions.length>0 ?'label-success':'label-warning'">
                                             {{question.sub_questions.length }}
