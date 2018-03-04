@@ -127,7 +127,9 @@
         }
         function _removeQuestion() {
             AlertService.showConfirmForDelete("You are about to DELETE this Question?",
-                "Are you sure?", "Yes, Delete it!", "warning", true,function () {
+                "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
+
+                if(isConfirm){
                     FormService.DeleteQuestion(vm.question).then(function(response){
                         AlertService.showSuccess("Question","Question Deleted successfully");
                         $mdDialog.hide();
@@ -136,6 +138,8 @@
                         var message = error.data.error.message;
                         AlertService.showError("Failed to DELETE Question",message);
                     })
+                }
+
                 });
 
         }

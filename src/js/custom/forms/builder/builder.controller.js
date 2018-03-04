@@ -27,6 +27,7 @@
         vm.saveSection = _saveSection;
         vm.editSection = _editSection;
         vm.removeSection = _removeSection;
+        vm.cancelSection = _cancelSection;
 
         initialize();
 
@@ -231,20 +232,25 @@
             vm.selected_section.form = vm.formId;
             vm.showSectionForm = true;
         }
+        function _cancelSection() {
+            vm.showSectionForm = false;
+        }
 
         function _removeSection(section) {
-            AlertService.showConfirmForDelete("You are about to DELETE SECTION",
-                "Are you sure?", "Yes, Delete it!", "warning", true,function () {
+            AlertService.showConfirmForDelete("You are about to DELETE SECTION, All Questions under this section will be removed",
+                "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
+                    if(isConfirm){
+                        FormService.RemoveSection(section).then(function(response){
+                            vm.showSectionForm = false;
+                            callAPI();
+                            AlertService.showSuccess("SECTION","Section Deleted successfully");
+                        },function(error){
+                            console.log("qn deleting error",error);
+                            var message = error.data.error.message;
+                            AlertService.showError("Failed to DELETE Section",message);
+                        });
+                    }
 
-                    FormService.RemoveSection(section).then(function(response){
-                        vm.showSectionForm = false;
-                        callAPI();
-                        AlertService.showSuccess("SECTION","Section Deleted successfully");
-                    },function(error){
-                        console.log("qn deleting error",error);
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to DELETE Section",message);
-                    });
                 });
         }
     }
