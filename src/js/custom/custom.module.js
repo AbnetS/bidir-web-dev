@@ -8,7 +8,8 @@
             // or just modules
             'app.mfi',
             'app.clients',
-            'app.forms'
+            'app.forms',
+            'app.acat'
 
         ]).run(customRun);
 

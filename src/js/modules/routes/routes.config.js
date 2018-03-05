@@ -102,6 +102,37 @@
                 controller: 'FormBuilderController',
                 controllerAs: 'vm'
             })
+            .state("app.acat", {
+                url: "/acat",
+                title: "acat",
+                templateUrl:helper.basepath('acat/builder/acat.builder.html'),
+                resolve:helper.resolveFor('md.data.table'),
+                controller: "ACATController",
+                controllerAs: 'vm'
+            })
+            .state("app.crop", {
+                url: "/crops",
+                title: "crops",
+                templateUrl:helper.basepath('acat/crop/crops.html'),
+                resolve:helper.resolveFor('md.data.table'),
+                controller: "CropsController",
+                controllerAs: 'vm'
+            })
+            .state("app.loanproduct", {
+                url: "/loanproducts",
+                title: "loan product",
+                templateUrl:helper.basepath('acat/loanproduct/loan.products.html'),
+                resolve:helper.resolveFor('md.data.table'),
+                controller: "LoanProductsController",
+                controllerAs: 'vm'
+            })
+            .state("app.acatbuilder", {
+                url: "/acat/builder/:id",
+                title: 'ACAT Builder',
+                templateUrl:helper.basepath('acat/builder/acat.builder.html'),
+                controller: 'ACATController',
+                controllerAs: 'vm'
+            })
 
 
           // CUSTOM RESOLVES
