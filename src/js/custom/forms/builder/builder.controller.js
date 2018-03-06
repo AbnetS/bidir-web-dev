@@ -32,21 +32,20 @@
         //QUESTION ORDERING RELATED
         $scope.sortableOptions = {
             placeholder: 'ui-state-highlight',
-            update: function(e, ui) {},
+            update: function(e, ui) {
+            },
             stop: function(e, ui) {
                 vm.selected_section.questions.map(function(question,index){
                     question.number = index;
+                    //CALL API AND UPDATE ORDER
+                    FormService.UpdateQuestion(question).then(
+                        function (response) {
+                            // console.log("saving ordered [" + question.question_text + "] ",response);
+                        },function (error) {
+                            console.log("error saving order question [" + question.question_text + "] ",error);
+                        }
+                    )
                 });
-
-            //CALL API AND UPDATE ORDER
-                FormService.UpdateSection(vm.selected_section).then(
-                    function (response) {
-                        console.log("saving ordered questions under section",response);
-                        vm.selected_section = response.data;
-                    },function (error) {
-                        console.log("error saving ordered questions under section",error);
-                    }
-                )
             }
         };
 
