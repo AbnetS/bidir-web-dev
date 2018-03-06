@@ -231,7 +231,7 @@
                 question_text:vm.sub_question.question_text,
                 parent_question:vm.question._id,
                 required:vm.question.required,
-                show:vm.question.show,
+                show:true,
                 measurement_unit: !_.isUndefined(vm.sub_question.measurement_unit)? vm.sub_question.measurement_unit:null,
                 validation_factor: vm.sub_question.selected_validation.name,
                 sub_question_type: 'fib',

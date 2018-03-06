@@ -218,20 +218,20 @@
             switch (type.trim()){
                 case 'Fill In Blank':
                 case 'FILL_IN_BLANK':
-                    style =  'label bg-green';
+                    style =  'label bg-green-dark';
                     break;
                 case 'Yes/No':
                 case 'YES_NO':
                     style =  'label bg-info';
                     break;
                 case 'GROUPED':
-                    style =  'label bg-purple';
+                    style =  'label bg-warning-dark';
                     break;
                 case 'SINGLE_CHOICE':
                     style =  'label bg-primary';
                     break;
                 case 'MULTIPLE_CHOICE':
-                    style =  'label bg-pink';
+                    style =  'label bg-pink-dark';
                     break;
                 default:
                     style =  'label bg-inverse';
