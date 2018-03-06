@@ -8070,3 +8070,7 @@ legend {
   background: #D3EB7E;
   /* Gecko Browsers */
 }
+.section-style {
+  min-height: 320px;
+  max-height: 480px;
+}

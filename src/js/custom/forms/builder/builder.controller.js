@@ -48,6 +48,15 @@
                 });
             }
         };
+        $scope.sectionSortableOptions = {
+            placeholder: 'ui-state-highlight',
+            stop: function(e, ui) {
+                vm.formData.sections.map(function(sec,index){
+                    sec.number = index;
+                    console.log("section order",sec);
+                });
+            }
+        };
 
         initialize();
 
