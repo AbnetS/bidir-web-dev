@@ -35,6 +35,7 @@
             update: function(e, ui) {
             },
             stop: function(e, ui) {
+                console.log("stop ordering questions under section");
                 vm.selected_section.questions.map(function(question,index){
                     question.number = index;
                     UpdateQuestionOrder(question);
@@ -44,6 +45,7 @@
         $scope.sectionSortableOptions = {
             placeholder: 'ui-state-highlight',
             stop: function(e, ui) {
+                console.log("stop ordering questions");
                 vm.formData.questions.map(function(question,index){
                     question.number = index;
                     UpdateQuestionOrder(question);
@@ -173,17 +175,29 @@
             myBlockUIOnStart.start();
             FormService.GetForm(vm.formId).then(function (response) {
                 vm.formData = response.data;
-                vm.maxOrderNumber = _.max(vm.formData.questions,function (qn) {
-                    return qn.number;
-                }).number;
-                vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
                 //REFRESH SELECTED SECTION
                 if(vm.formData.sections.length > 0 && !_.isUndefined(vm.selected_section)){
                     vm.selected_section = _.first(_.filter(vm.formData.sections,function (section) {
                         return section._id === vm.selected_section._id;
                     }));
                 }
+
+                if(vm.formData.has_sections){
+                    vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
+                        return qn.number;
+                    }).number;
+                    console.log("max number for question without section",vm.maxOrderNumber);
+                }else{
+                    vm.maxOrderNumber = _.max(vm.formData.questions,function (qn) {
+                        return qn.number;
+                    }).number;
+                    console.log("max number for question with section",vm.maxOrderNumber);
+                }
+
+                vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+
                 myBlockUIOnStart.stop();
+
             },function (error) {
                 myBlockUIOnStart.stop();
                 console.log("error",error);

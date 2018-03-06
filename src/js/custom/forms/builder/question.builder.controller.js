@@ -310,9 +310,10 @@
             var number =  _.isEmpty(vm.maxSubOrderNumber)? 0 :  parseInt(vm.maxSubOrderNumber) + 1;
             return _.isUndefined(number)? 0 : number;
         }
+
+
         function GetNextQuestionOrderNumber() {
-            var number =  _.isEmpty(vm.maxOrderNumber)? 0 :  parseInt(vm.maxOrderNumber) + 1;
-            return _.isUndefined(number)? 0 : number;
+            return vm.maxOrderNumber + 1;
         }
 
     }
