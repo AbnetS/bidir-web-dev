@@ -153,38 +153,38 @@
                                 </md-radio-group>
                             </md-input-container>
 
-                            <div ng-show="vm.question.show === '0'">
-                                <md-input-container class="md-block">
-                                    <label id="dependant_question" class="col-sm-2 control-label">
-                                        Question </label>
-
-                                    <ui-select ng-model="vm.selected_question"
-                                               theme="select2" title="Select question">
-                                        <ui-select-match placeholder="Select question...">
-                                            {{$select.selected.question_text }}
-                                        </ui-select-match>
-                                        <ui-select-choices repeat="qn in vm.questionList | filter: $select.search">
-                                            <span ng-bind-html="qn.question_text | highlight: $select.search"></span>
-                                        </ui-select-choices>
-                                    </ui-select>
-                                </md-input-container>
-                                <md-input-container class="md-block">
-                                    <label label-for="question-id"
-                                           class="col-sm-2 control-label">Choice is
-                                    </label>
-                                    <ui-select ng-model="vm.selected_question.selected_value"
-                                               theme="select2" title="Select option">
-                                        <ui-select-match placeholder="Select option...">
-                                            {{$select.selected }}
-                                        </ui-select-match>
-                                        <ui-select-choices repeat="opt in vm.selected_question.options | filter: $select.search">
-                                            <span ng-bind-html="opt | highlight: $select.search"></span>
-                                        </ui-select-choices>
-                                    </ui-select>
-                                </md-input-container>
-                            </div>
-
                         </div>
+                    </div>
+
+                    <div ng-show="vm.question.show === '0'">
+                        <md-input-container class="md-block">
+                            <label id="dependant_question" class="col-sm-2 control-label">
+                                Question </label>
+
+                            <ui-select ng-model="vm.selected_question"
+                                       theme="select2" title="Select question">
+                                <ui-select-match placeholder="Select question...">
+                                    {{$select.selected.question_text }}
+                                </ui-select-match>
+                                <ui-select-choices repeat="qn in vm.questionList | filter: $select.search">
+                                    <span ng-bind-html="qn.question_text | highlight: $select.search"></span>
+                                </ui-select-choices>
+                            </ui-select>
+                        </md-input-container>
+                        <md-input-container class="md-block">
+                            <label label-for="question-id"
+                                   class="col-sm-2 control-label">Choice is
+                            </label>
+                            <ui-select ng-model="vm.selected_question.selected_value"
+                                       theme="select2" title="Select option">
+                                <ui-select-match placeholder="Select option...">
+                                    {{$select.selected }}
+                                </ui-select-match>
+                                <ui-select-choices repeat="opt in vm.selected_question.options | filter: $select.search">
+                                    <span ng-bind-html="opt | highlight: $select.search"></span>
+                                </ui-select-choices>
+                            </ui-select>
+                        </md-input-container>
                     </div>
                 </div>
 

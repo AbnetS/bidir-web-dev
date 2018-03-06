@@ -183,15 +183,18 @@
                 }
 
                 if(vm.formData.has_sections){
-                    vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
-                        return qn.number;
-                    }).number;
-                    console.log("max number for question without section",vm.maxOrderNumber);
+                    if(!_.isUndefined(vm.selected_section)){
+                        vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
+                            return qn.number;
+                        }).number;
+                    }else{
+                        vm.maxOrderNumber = undefined;
+                    }
                 }else{
                     vm.maxOrderNumber = _.max(vm.formData.questions,function (qn) {
                         return qn.number;
                     }).number;
-                    console.log("max number for question with section",vm.maxOrderNumber);
+                    console.log("max number for question without section",vm.maxOrderNumber);
                 }
 
                 vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
@@ -246,7 +249,13 @@
             vm.showSectionForm = false;
             vm.selected_section = selectedSection;
             vm.selected_section.form = vm.formId; //This is important for remove section
+
+            vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
+                return qn.number;
+            }).number;
+            console.log("max number for question with section on select",vm.maxOrderNumber);
         }
+
         function _saveSection(section) {
             section.form = vm.formId;
             if( _.isUndefined(section._id)){

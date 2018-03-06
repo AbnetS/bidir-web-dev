@@ -303,6 +303,7 @@
 
         }
         function setSubQuestionOrderNumber() {
+            debugger
             var maxNo = _.max(vm.question.sub_questions,function(sub){
                 return sub.number;
             });
