@@ -12,7 +12,7 @@
 
         <form name="vm.formBuilderForm" role="form" block-ui="formBuilderBlockUI" novalidate>
             <div class="row">
-               <div class="col-md-8">
+               <div class="col-md-12">
                    <md-input-container class="md-block">
                        <label label-for="formName" >Title</label>
                        <input type="text" class="form-control" name="formName" id="formName"
@@ -29,12 +29,12 @@
                               ng-model="vm.formData.purpose">
                    </md-input-container>
                </div>
-                <div class="col-md-3">
-                    <div class="main-img-preview">
-                        <img src="/app/img/no-img.png"  class="thumbnail img-preview"
-                             title="Preview Logo">
-                    </div>
-                </div>
+                <!--<div class="col-md-3">-->
+                    <!--<div class="main-img-preview">-->
+                        <!--<img src="/app/img/no-img.png"  class="thumbnail img-preview"-->
+                             <!--title="Preview Logo">-->
+                    <!--</div>-->
+                <!--</div>-->
             </div>
 
             <div class="row">
@@ -161,7 +161,7 @@
                     </div>
 
                     <!--WHEN THERE IS QUESTION UNDER SECTION-->
-                    <div id="parent" ng-show="vm.selected_section.questions.length > 0">
+                    <div ng-show="vm.selected_section.questions.length > 0">
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
@@ -200,7 +200,7 @@
                                 <tr  ng-repeat="question in vm.selected_section.questions">
 
                                     <td >{{$index + 1}}</td>
-                                    <td style="cursor: move;">{{question.question_text}}
+                                    <td class="move-cursor">{{question.question_text}}
                                         <div class="pull-right label" ng-if="question.type=== 'GROUPED'"
                                              ng-class="question.type === 'GROUPED' && question.sub_questions.length>0 ?'label-success':'label-warning'">
                                             {{question.sub_questions.length }}
@@ -242,7 +242,7 @@
                             <i class="fa fa-plus"></i> Add Question
                         </button>
                         <br/>
-                        <table md-table md-progress="promise" class="table-hover">
+                        <table md-table class="table-hover">
                             <thead md-head class="bg-gray-lighter">
                             <tr md-row>
                                 <th md-column ><span> No</span></th>
@@ -253,11 +253,13 @@
                             </tr>
                             </thead>
 
-                            <tbody md-body>
+                            <tbody md-body
+                                   ui-sortable="sectionSortableOptions"
+                                   ng-model="vm.formData.questions">
                             <tr md-row ng-repeat="question in vm.formData.questions">
 
                                 <td md-cell>{{$index + 1}}</td>
-                                <td md-cell>{{question.question_text}}
+                                <td md-cell class="move-cursor">{{question.question_text}}
                                     <div class="pull-right label" ng-if="question.type=== 'GROUPED'"
                                          ng-class="question.type=== 'GROUPED' && question.sub_questions.length>0 ? 'label-success':'label-warning'">
                                         {{question.sub_questions.length }}

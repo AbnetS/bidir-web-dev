@@ -5083,26 +5083,29 @@ function runBlock() {
             stop: function(e, ui) {
                 vm.selected_section.questions.map(function(question,index){
                     question.number = index;
-                    //CALL API AND UPDATE ORDER
-                    FormService.UpdateQuestion(question).then(
-                        function (response) {
-                            // console.log("saving ordered [" + question.question_text + "] ",response);
-                        },function (error) {
-                            console.log("error saving order question [" + question.question_text + "] ",error);
-                        }
-                    )
+                    UpdateQuestionOrder(question);
                 });
             }
         };
         $scope.sectionSortableOptions = {
             placeholder: 'ui-state-highlight',
             stop: function(e, ui) {
-                vm.formData.sections.map(function(sec,index){
-                    sec.number = index;
-                    console.log("section order",sec);
+                vm.formData.questions.map(function(question,index){
+                    question.number = index;
+                    UpdateQuestionOrder(question);
                 });
             }
         };
+
+        function UpdateQuestionOrder(question) {
+            FormService.UpdateQuestion(question).then(
+                function (response) {
+                    // console.log("saving ordered [" + question.question_text + "] ",response);
+                },function (error) {
+                    console.log("error saving order question [" + question.question_text + "] ",error);
+                }
+            )
+        }
 
         initialize();
 

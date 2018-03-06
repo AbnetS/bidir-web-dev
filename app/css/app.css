@@ -8074,3 +8074,6 @@ legend {
   min-height: 320px;
   max-height: 480px;
 }
+.move-cursor {
+  cursor: move;
+}
