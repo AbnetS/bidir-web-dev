@@ -13,11 +13,12 @@
         <md-dialog-content>
             <md-content class="md-padding">
                 <div class="row">
-                    <div ng-class="vm.question.selected_type.type !== 'grouped'?'col-lg-7':'col-lg-12'">
+                    <!--LEFT SIDE QUESTION INFO-->
+                    <div class="col-lg-7">
+                        <!--QUESTION TYPE-->
                         <div class="mw-question-type" layout="row" layout-align="start center">
                             <md-input-container flex-gt-md="50">
-                                <label label-for="question-type-{{vm.id}}" class="col-sm-2 control-label">Question Type
-                                </label>
+                                <label class="col-sm-2 control-label">Question Type</label>
                                 <ui-select ng-model="vm.question.selected_type"
                                            theme="select2" title="Select question type"
                                         ng-change="vm.questionTypeChanged()">
@@ -30,7 +31,7 @@
                                 </ui-select>
                             </md-input-container>
                         </div>
-
+                        <!--QUESTION TEXT-->
                         <div class="form-horizontal">
                             <md-input-container class="md-block">
                                 <label for="question-text-{{vm.id}}">Question Text</label>
@@ -41,8 +42,7 @@
                                 </textarea>
                             </md-input-container>
                         </div>
-
-
+                        <!--REMARK-->
                         <div class="form-horizontal">
                             <md-input-container class="md-block">
                                 <label for="question-remark" >
@@ -52,7 +52,7 @@
                                        name="question-remark" ng-model="vm.question.remark">
                             </md-input-container>
                         </div>
-
+                        <!--REQUIRED-->
                         <div class="form-horizontal">
                             <md-input-container class="md-block" flex-gt-md="20">
                                 <md-checkbox class="md-primary" ng-model="vm.question.required" ng-disabled="vm.readOnly" flex>
@@ -60,10 +60,10 @@
                                 </md-checkbox>
                             </md-input-container>
                         </div>
-
                     </div>
-                    <div ng-class="vm.question.selected_type.type !== 'grouped'?'col-lg-5':''" ng-if="vm.question.selected_type"
-                         class="vertical-splitter">
+
+                    <div  ng-if="vm.question.selected_type"
+                         class="col-lg-5 vertical-splitter">
                         <div class="section-divider">
                             <span class="grey">{{vm.question.selected_type.name }} Settings</span>
                         </div>
@@ -143,8 +143,7 @@
                             </div>
 
                             <!--SHOW THIS QUESTION-->
-                            <md-input-container ng-if="vm.question.selected_type.type !== 'grouped'"
-                                    class="md-block">
+                            <md-input-container class="md-block">
                                 <p>Show this Question:</p>
                                 <md-radio-group ng-disabled="vm.isEdit"
                                                 layout="row" ng-model="vm.question.show" ng-change="vm.showQuestionOn()">
@@ -153,38 +152,38 @@
                                 </md-radio-group>
                             </md-input-container>
 
+                            <div ng-show="vm.question.show === '0'">
+                                <md-input-container class="md-block">
+                                    <label id="dependant_question" class="col-sm-2 control-label">
+                                        Question </label>
+
+                                    <ui-select ng-model="vm.selected_question"
+                                               theme="select2" title="Select question">
+                                        <ui-select-match placeholder="Select question...">
+                                            {{$select.selected.question_text }}
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="qn in vm.questionList | filter: $select.search">
+                                            <span ng-bind-html="qn.question_text | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </md-input-container>
+                                <md-input-container class="md-block">
+                                    <label label-for="question-id"
+                                           class="col-sm-2 control-label">Choice is
+                                    </label>
+                                    <ui-select ng-model="vm.selected_question.selected_value"
+                                               theme="select2" title="Select option">
+                                        <ui-select-match placeholder="Select option...">
+                                            {{$select.selected }}
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="opt in vm.selected_question.options | filter: $select.search">
+                                            <span ng-bind-html="opt | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </md-input-container>
+                            </div>
+
                         </div>
-                    </div>
-
-                    <div ng-show="vm.question.show === '0'">
-                        <md-input-container class="md-block">
-                            <label id="dependant_question" class="col-sm-2 control-label">
-                                Question </label>
-
-                            <ui-select ng-model="vm.selected_question"
-                                       theme="select2" title="Select question">
-                                <ui-select-match placeholder="Select question...">
-                                    {{$select.selected.question_text }}
-                                </ui-select-match>
-                                <ui-select-choices repeat="qn in vm.questionList | filter: $select.search">
-                                    <span ng-bind-html="qn.question_text | highlight: $select.search"></span>
-                                </ui-select-choices>
-                            </ui-select>
-                        </md-input-container>
-                        <md-input-container class="md-block">
-                            <label label-for="question-id"
-                                   class="col-sm-2 control-label">Choice is
-                            </label>
-                            <ui-select ng-model="vm.selected_question.selected_value"
-                                       theme="select2" title="Select option">
-                                <ui-select-match placeholder="Select option...">
-                                    {{$select.selected }}
-                                </ui-select-match>
-                                <ui-select-choices repeat="opt in vm.selected_question.options | filter: $select.search">
-                                    <span ng-bind-html="opt | highlight: $select.search"></span>
-                                </ui-select-choices>
-                            </ui-select>
-                        </md-input-container>
                     </div>
                 </div>
 
@@ -240,7 +239,6 @@
                                 <i class="fa fa-plus"></i> Add Sub Question
                             </md-button>
                         </div>
-
 
                         <div class="col-lg-12" ng-show="vm.sub_question_list.length > 0">
                             <div class="table-responsive">
