@@ -47,10 +47,18 @@
     "sref": "#",
     "icon": "fa fa-table",
     "submenu": [
-      {"text": "Form List",     "sref": "app.forms" ,   "permission": "FORM_BUILDER_VIEW"},
-      {"text": "ACAT Builder",     "sref": "app.acat" ,   "permission": "FORM_BUILDER_VIEW"},
-      {"text": "Manage Crop",     "sref": "app.crop" ,   "permission": "FORM_BUILDER_VIEW"},
-      {"text": "Loan Product",     "sref": "app.loanproduct" ,   "permission": "FORM_BUILDER_VIEW"}
+      {"text": "Form List",     "sref": "app.forms" ,   "permission": "FORM_BUILDER_VIEW"}
+    ]
+  },
+  {
+    "text": "ACAT",
+    "module": "ACAT_BUILDER",
+    "sref": "#",
+    "icon": "fa fa-cubes",
+    "submenu": [
+      {"text": "ACAT Builder",     "sref": "app.acat" ,   "permission": "ACAT_BUILDER_VIEW"},
+      {"text": "Manage Crop",     "sref": "app.crop" ,   "permission": "ACAT_BUILDER_VIEW"},
+      {"text": "Loan Product",     "sref": "app.loanproduct" ,   "permission": "ACAT_BUILDER_VIEW"}
     ]
   }
 ]

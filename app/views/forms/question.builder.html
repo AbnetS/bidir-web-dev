@@ -172,8 +172,11 @@
                                            class="col-sm-2 control-label">Choice is
                                     </label>
                                     <ui-select ng-model="vm.selected_question.selected_value"
-                                               theme="select2" title="Select option">
-                                        <ui-select-match placeholder="Select option...">
+                                               theme="selectize"
+                                               title="Select option"
+                                               search-enabled="true">
+                                        <ui-select-match placeholder="Select option..."
+                                                         allow-clear="true">
                                             {{$select.selected }}
                                         </ui-select-match>
                                         <ui-select-choices repeat="opt in vm.selected_question.options | filter: $select.search">
