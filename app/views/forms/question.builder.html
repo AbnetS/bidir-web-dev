@@ -151,7 +151,7 @@
                                 </md-radio-group>
                             </md-input-container>
 
-                            <div ng-show="vm.question.show === '0'">
+                            <div ng-show="vm.question.show === '0' || !vm.question.show">
                                 <md-input-container class="md-block">
                                     <label id="dependant_question" class="col-sm-2 control-label">
                                         Question </label>
