@@ -15,6 +15,7 @@
             CreateForm:_createForm,
             GetForm:_getForm,
             UpdateForm:_updateForm,
+            GetQuestion:_getQuestion,
             CreateQuestion:_createQuestion,
             UpdateQuestion:_updateQuestion,
             DeleteQuestion:_deleteQuestion,
@@ -37,6 +38,9 @@
             return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
         }
         //------QUESTION-----------
+        function _getQuestion(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,id));
+        }
         function _createQuestion(question,type){
             return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question) + '/' + type, question);
         }

@@ -145,8 +145,7 @@
                             <!--SHOW THIS QUESTION-->
                             <md-input-container class="md-block">
                                 <p>Show this Question:</p>
-                                <md-radio-group ng-disabled="vm.isEdit"
-                                                layout="row" ng-model="vm.question.show" ng-change="vm.showQuestionOn()">
+                                <md-radio-group  layout="row" ng-model="vm.question.show" ng-change="vm.showQuestionOn()">
                                     <md-radio-button value=1 class="md-primary"> Always</md-radio-button>
                                     <md-radio-button value=0 class="md-primary">When</md-radio-button>
                                 </md-radio-group>
