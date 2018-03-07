@@ -183,17 +183,18 @@
                 }
 
                 if(vm.formData.has_sections){
-                    if(!_.isUndefined(vm.selected_section)){
-                        vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
+                    GetMaximumOrderNumberForSection();
+
+                }else{
+
+                    if(vm.formData.questions.length > 0){
+                        vm.maxOrderNumber = _.max(vm.formData.questions,function (qn) {
                             return qn.number;
                         }).number;
                     }else{
-                        vm.maxOrderNumber = undefined;
+                        vm.maxOrderNumber = 0;
                     }
-                }else{
-                    vm.maxOrderNumber = _.max(vm.formData.questions,function (qn) {
-                        return qn.number;
-                    }).number;
+
                     console.log("max number for question without section",vm.maxOrderNumber);
                 }
 
@@ -207,6 +208,21 @@
             });
         }
 
+        function GetMaximumOrderNumberForSection() {
+            if(!_.isUndefined(vm.selected_section)){
+
+                if(vm.selected_section.questions.length > 0){
+                    vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
+                        return qn.number;
+                    }).number;
+                }else {
+                    vm.maxOrderNumber = 0;
+                }
+
+            }else{
+                vm.maxOrderNumber = 0;
+            }
+        }
         function getFormTypeObj(code) {
             return _.first(_.filter(vm.formTypes,function (type) {
                 return type.code === code;
@@ -249,10 +265,10 @@
             vm.showSectionForm = false;
             vm.selected_section = selectedSection;
             vm.selected_section.form = vm.formId; //This is important for remove section
-
-            vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
-                return qn.number;
-            }).number;
+            GetMaximumOrderNumberForSection();
+            // vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
+            //     return qn.number;
+            // }).number;
             console.log("max number for question with section on select",vm.maxOrderNumber);
         }
 

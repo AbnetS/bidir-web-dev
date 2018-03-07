@@ -139,10 +139,15 @@
                     <!--WHEN THERE IS NO QUESTION UNDER SECTION-->
                     <div ng-show="vm.selected_section.questions === null || vm.selected_section.questions.length ===0">
                         <div>
-                            <button type="button" class="btn-sm btn btn-warning btn-outline pull-left"
+                            <button type="button" class="btn-sm btn btn-success btn-outline pull-left"
+                                    ng-click="vm.editSection(vm.selected_section)"
+                                    title="Edit section" aria-label="Edit">
+                                <i class="fa fa-edit"></i> Edit Section
+                            </button>
+                            <button type="button" class="btn-sm btn btn-danger btn-outline pull-right"
                                     ng-click="vm.removeSection(vm.selected_section)"
                                     title="remove section" aria-label="remove">
-                                <span class="fa fa-remove">Remove Section</span>
+                                <i class="fa fa-remove"></i> Remove Section
                             </button>
                         </div>
                         <h4 class="centerPageText">
