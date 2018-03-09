@@ -29,7 +29,7 @@
         vm.editSubQuestion = _editSubQuestion;
         vm.removeSubQuestion = _removeSubQuestion;
         vm.cancelSubQuestion = _cancelSubQuestion;
-
+        vm.subQuestionValidationSelected = _subQuestionValidationSelected;
 
 
         //SC & MC related
@@ -56,11 +56,11 @@
                 });
             }
         };
-        vm.sub_question_list = [];
 
         initialize();
 
         function initialize() {
+            vm.sub_question_list = [];
             vm.fibvalidation = [{name:'NONE',code:'text'},{name:'ALPHANUMERIC',code:'text'},{name:'NUMERIC',code:'number'},{name:'ALPHABETIC',code:'text'}];
             vm.isEdit = data.question !== null;
             vm.form = data.form;
@@ -294,6 +294,7 @@
             vm.isSubEdit = true;
             vm.showSubQuestion = true;
             vm.sub_question = question;
+            console.log("vm.sub_question.validation_factor",vm.sub_question.validation_factor);
             SetValidationObj(true);
         }
 
@@ -336,6 +337,9 @@
                 });
 
         }
+        function _subQuestionValidationSelected() {
+          console.log("vm.sub_question.selected_validation",vm.sub_question.selected_validation)
+        }
 
 
 
@@ -353,6 +357,7 @@
             //     vm.showSubQuestion = true;
             // }
         }
+
 
 
         function getQuestionTypeObj(typeName) {

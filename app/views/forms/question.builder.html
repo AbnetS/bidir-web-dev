@@ -213,6 +213,7 @@
                                     <label for="sub_Validation" class="col-sm-2 control-label">Validation</label>
                                     <md-select id="sub_Validation" name="sub_Validation"
                                                ng-model="vm.sub_question.selected_validation"
+                                               ng-change="vm.subQuestionValidationSelected()"
                                                required>
                                         <md-option ng-value="validation"
                                                    ng-repeat="validation in vm.fibvalidation">
