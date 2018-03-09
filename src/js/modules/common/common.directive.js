@@ -62,16 +62,20 @@
         })
     // Put focus on element when event is triggered.
 // https://coderwall.com/p/a41lwa/angularjs-auto-focus-into-input-field-when-ng-show-event-is-triggered
-    .directive('showFocus', function($timeout) {
-        return function(scope, element, attrs) {
-            scope.$watch(attrs.showFocus,
-                function(newValue) {
-                    $timeout(function() {
-                        newValue && element.focus();
-                    });
-                }, true);
-        };
-    })
+
+        .directive('eventFocus', function(focus) {
+            return function(scope, elem, attr) {
+                elem.on(attr.eventFocus, function() {
+                    focus(attr.eventFocusId);
+                });
+
+                // // Removes bound events in the element itself
+                // // when the scope is destroyed
+                // scope.$on('$destroy', function() {
+                //     element.off(attr.eventFocus);
+                // });
+            };
+        })
     // Select text on focus.
 // http://stackoverflow.com/questions/14995884/select-text-on-input-focus
     .directive('selectOnClick', ['$window', function($window) {
