@@ -319,6 +319,7 @@
                             vm.showSectionForm = false;
                             callAPI();
                             AlertService.showSuccess("SECTION","Section Deleted successfully");
+                            vm.selected_section = undefined;
                         },function(error){
                             console.log("Section deleting error",error);
                             var message = error.data.error.message;
