@@ -27,6 +27,8 @@
         vm.toggleAddSubQuestion = _toggleAddSubQuestion;
         vm.addToSubQuestion = _addToSubQuestion;
         vm.editSubQuestion = _editSubQuestion;
+        vm.removeSubQuestion = _removeSubQuestion;
+        vm.cancelSubQuestion = _cancelSubQuestion;
 
 
 
@@ -247,9 +249,16 @@
             };
             //TODO check obj b4 adding
             vm.sub_question_list.push(subQuestion);
-            var vallidationCopy = vm.sub_question.selected_validation;
+            vm.vallidationCopy = vm.sub_question.selected_validation;
             vm.sub_question = {};
-            vm.sub_question.selected_validation = vallidationCopy;
+            vm.sub_question.selected_validation = vm.vallidationCopy;
+            vm.showSubQuestion = false;
+        }
+        function _cancelSubQuestion() {
+            vm.sub_question = {};
+            vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
+                return val.name === 'NONE'; //set sub question validation default to NONE
+            }));
             vm.showSubQuestion = false;
         }
         function saveSubQuestionList() {
@@ -279,6 +288,44 @@
             vm.showSubQuestion = true;
             vm.sub_question = question;
             SetValidationObj(true);
+        }
+        function spliceQuestionFromList(question) {
+            var subQuestionIndex =  vm.sub_question_list.indexOf(question);
+            if(subQuestionIndex !== -1 ){
+                vm.sub_question_list.splice(subQuestionIndex, 1);
+            }
+        }
+        function _removeSubQuestion(question, ev) {
+            AlertService.showConfirmForDelete("You are about to REMOVE this Question?",
+                "Are you sure?", "Yes, REMOVE it!", "warning", true,function (isConfirm) {
+
+                    if(isConfirm){
+                        if(_.isUndefined(question._id)){
+                            // vm.sub_question
+                            if(_.isUndefined(vm.question.sub_questions)){
+                                spliceQuestionFromList(question);
+                            }else{
+                                var subIndex =  vm.question.sub_questions.indexOf(question);
+                                if(subIndex !== -1 ){
+                                    vm.question.sub_questions.splice(subIndex, 1);
+                                }
+                            }
+
+                        }else{
+                            question.form = vm.form._id;
+                            FormService.DeleteQuestion(question).then(function(response){
+                                spliceQuestionFromList(question);
+                                AlertService.showSuccess("SUB QUESTION","Sub Question Deleted successfully");
+                            },function(error){
+                                console.log("qn deleting error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("Failed to DELETE Question",message);
+                            })
+                        }
+                    }
+
+                });
+
         }
 
         function _addAnother() {

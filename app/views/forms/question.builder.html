@@ -227,10 +227,16 @@
                                 </md-input-container>
                             </div>
 
+
                             <md-button ng-show="!vm.isSubEdit"
                                        class="md-raised md-warn md-button-small pull-right"
                                        ng-click="vm.addToSubQuestion()">
                                 <i class="fa fa-plus"></i> Add
+                            </md-button>
+                            <md-button ng-show="!vm.isSubEdit"
+                                       class="md-raised md-button-small pull-right"
+                                       ng-click="vm.cancelSubQuestion()">
+                                <i class="fa fa-times"></i> Cancel
                             </md-button>
                         </div>
 
@@ -269,7 +275,7 @@
                                                ng-click="vm.editSubQuestion(question,$event)">
                                                 <i class="fa fa-edit"></i> Edit
                                             </a>
-                                            <a class="btn btn-xs btn-danger" ng-click="vm.removeQuestion(question,$event)">
+                                            <a class="btn btn-xs btn-danger" ng-click="vm.removeSubQuestion(question,$event)">
                                                 <i class="fa fa-remove"></i> DEL
                                             </a>
                                         </td>
