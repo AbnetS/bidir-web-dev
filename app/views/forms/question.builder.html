@@ -237,6 +237,8 @@
                         <div class="col-lg-12" ng-show="!vm.showSubQuestion || vm.isSubEdit">
                             <md-button class="md-raised md-primary md-button-small pull-right"
                                        ng-disabled="vm.QuestionBuilderForm.question_question_text.$invalid"
+                                       event-focus='click'
+                                       event-focus-id='sub_question-text'
                                        ng-click="vm.toggleAddSubQuestion()">
                                 <i class="fa fa-plus"></i> Add Sub Question
                             </md-button>
@@ -261,8 +263,14 @@
                                         <td >{{question.measurement_unit}}</td>
                                         <td >{{question.validation_factor}}</td>
                                         <td >
-                                            <a ng-click="vm.editSubQuestion(question,$event)">
-                                                <i class="fa fa-edit"></i>
+                                            <a class="btn btn-xs btn-default"
+                                               event-focus='click'
+                                               event-focus-id='sub_question-text'
+                                               ng-click="vm.editSubQuestion(question,$event)">
+                                                <i class="fa fa-edit"></i> Edit
+                                            </a>
+                                            <a class="btn btn-xs btn-danger" ng-click="vm.removeQuestion(question,$event)">
+                                                <i class="fa fa-remove"></i> DEL
                                             </a>
                                         </td>
                                     </tr>
@@ -288,7 +296,7 @@
                 </md-button>
                 <md-button ng-show="vm.isEdit"
                            class="md-raised md-button-small md-ink-ripple"
-                           ng-click="vm.removeQuestion()">
+                           ng-click="vm.removeQuestion(vm.question,$event)">
                     Remove
                 </md-button>
             </div>

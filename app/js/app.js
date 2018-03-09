@@ -5455,6 +5455,8 @@ function runBlock() {
         vm.addToSubQuestion = _addToSubQuestion;
         vm.editSubQuestion = _editSubQuestion;
 
+
+
         //SC & MC related
         vm.addRadio = _addRadio;
         vm.removeOption = _removeOption;
@@ -5593,12 +5595,13 @@ function runBlock() {
                 });
             }
         }
-        function _removeQuestion() {
+        function _removeQuestion(question,$event) {
             AlertService.showConfirmForDelete("You are about to DELETE this Question?",
                 "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
+                    question.form = vm.form._id;
 
                 if(isConfirm){
-                    FormService.DeleteQuestion(vm.question).then(function(response){
+                    FormService.DeleteQuestion(question).then(function(response){
                         AlertService.showSuccess("Question","Question Deleted successfully");
                         $mdDialog.hide();
                     },function(error){
@@ -5656,12 +5659,7 @@ function runBlock() {
                 vm.isSubEdit = false
             }
         }
-        function _editSubQuestion(question,ev) {
-            vm.isSubEdit = true;
-            vm.showSubQuestion = true;
-            vm.sub_question = question;
-            SetValidationObj(true);
-        }
+
         function _addToSubQuestion() {
 
             var subQuestion = {
@@ -5681,7 +5679,6 @@ function runBlock() {
             vm.sub_question.selected_validation = vallidationCopy;
             vm.showSubQuestion = false;
         }
-
         function saveSubQuestionList() {
             _.forEach(vm.sub_question_list,function (subQn) {
                 if(!_.isUndefined(subQn._id)){
@@ -5702,6 +5699,13 @@ function runBlock() {
                     });
                 }
             });
+        }
+
+        function _editSubQuestion(question,ev) {
+            vm.isSubEdit = true;
+            vm.showSubQuestion = true;
+            vm.sub_question = question;
+            SetValidationObj(true);
         }
 
         function _addAnother() {
