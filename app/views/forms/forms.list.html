@@ -42,7 +42,7 @@
                             <td md-cell>{{form.layout}}</td>
                             <td md-cell>{{form.purpose}}</td>
                             <td md-cell>{{form.subtitle}}</td>
-                            <td md-cell>{{form.questions.length}}</td>
+                            <td md-cell>{{form.has_sections? form.sectionCount + ' Sections,  ' + form.questionCount + ' Qns':form.questionCount + ' Qns'}}</td>
                             <td md-cell>
                                 <a ng-click="vm.editForm(form,$event)">
                                     <i class="fa fa-edit"></i>
