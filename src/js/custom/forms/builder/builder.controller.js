@@ -35,7 +35,6 @@
             update: function(e, ui) {
             },
             stop: function(e, ui) {
-                console.log("stop ordering questions under section");
                 vm.selected_section.questions.map(function(question,index){
                     question.number = index;
                     UpdateQuestionOrder(question);

@@ -37,14 +37,23 @@
         vm.removeOption = _removeOption;
         vm.editOption = _editOption;
 
-        //QUESTION ORDERING RELATED
-        $scope.sortableOptions = {
+        //SUB QUESTION ORDERING RELATED
+        $scope.sortableSubQuestions = {
             placeholder: 'ui-state-highlight',
             update: function(e, ui) {
               console.log("update")
             },
             stop: function(e, ui) {
-                console.log("stop")
+                vm.sub_question_list.map(function(question,index){
+                    question.number = index;
+                    FormService.UpdateQuestion(question).then(
+                        function (response) {
+                            // console.log("saving ordered [" + question.question_text + "] ",response);
+                        },function (error) {
+                            console.log("error saving order question [" + question.question_text + "] ",error);
+                        }
+                    )
+                });
             }
         };
         vm.sub_question_list = [];
@@ -234,7 +243,6 @@
                 vm.isSubEdit = false
             }
         }
-
         function _addToSubQuestion() {
 
             var subQuestion = {
@@ -282,19 +290,20 @@
                 }
             });
         }
-
         function _editSubQuestion(question,ev) {
             vm.isSubEdit = true;
             vm.showSubQuestion = true;
             vm.sub_question = question;
             SetValidationObj(true);
         }
+
         function spliceQuestionFromList(question) {
             var subQuestionIndex =  vm.sub_question_list.indexOf(question);
             if(subQuestionIndex !== -1 ){
                 vm.sub_question_list.splice(subQuestionIndex, 1);
             }
         }
+
         function _removeSubQuestion(question, ev) {
             AlertService.showConfirmForDelete("You are about to REMOVE this Question?",
                 "Are you sure?", "Yes, REMOVE it!", "warning", true,function (isConfirm) {
@@ -327,6 +336,8 @@
                 });
 
         }
+
+
 
         function _addAnother() {
             console.log("question",vm.question);
