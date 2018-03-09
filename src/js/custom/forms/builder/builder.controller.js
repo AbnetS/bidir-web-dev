@@ -6,9 +6,9 @@
 
     angular.module("app.forms").controller("FormBuilderController", FormBuilderController);
 
-    FormBuilderController.$inject = ['FormService','$mdDialog','RouteHelpers','$stateParams','AlertService','blockUI','$scope'];
+    FormBuilderController.$inject = ['FormService','$mdDialog','RouteHelpers','$stateParams','AlertService','blockUI','$scope','$state'];
 
-    function FormBuilderController(FormService,$mdDialog,RouteHelpers,$stateParams,AlertService,blockUI,$scope) {
+    function FormBuilderController(FormService,$mdDialog,RouteHelpers,$stateParams,AlertService,blockUI,$scope,$state) {
         var vm = this;
         vm.isEdit = $stateParams.id !== "0";
         vm.formId = $stateParams.id;
@@ -84,7 +84,8 @@
                     myBlockUI.stop();
                     vm.formData = response.data;
                     vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
-                    AlertService.showSuccess("Form Updated","Form updated successfully");
+                    AlertService.showSuccess("FORM UPDATED","Form updated successfully");
+                    $state.go('app.builder',{id:vm.formData._id},{inherit:true});
                 },function (error) {
                     myBlockUI.stop();
                     var message = error.data.error.message;
@@ -109,7 +110,8 @@
                     myBlockUI.stop();
                     vm.formData = response.data;
                     vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
-                    AlertService.showSuccess("Form Saved","Form saved successfully");
+                    AlertService.showSuccess("FORM CREATED","Form created successfully");
+                    $state.go('app.builder',{id:vm.formData._id},{inherit:true});
                 },function (error) {
                     myBlockUI.stop();
                     var message = error.data.error.message;
