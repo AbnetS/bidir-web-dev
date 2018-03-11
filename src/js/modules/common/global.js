@@ -8,7 +8,8 @@ var API = {
         Auth: 'auth',
         Users: 'users',
         SCREENING:'screenings',
-        FORM:'forms'
+        FORM:'forms',
+        ACAT:'acat'
     },
     Methods: {
         Auth: {
@@ -52,6 +53,10 @@ var API = {
             Create_Question:'questions/create',
             Section:'sections',
             Create_Section:'sections/create'
+        },
+        ACAT:{
+            Crop:'crops',
+            CreateCrop:'crops/create'
         }
     }
 };
