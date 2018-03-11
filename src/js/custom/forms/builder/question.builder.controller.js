@@ -71,7 +71,7 @@
                 return val.name === 'NONE'; //set sub question validation default to NONE
             }));
             vm.questionList = _.filter(data.form.questions,function (question) {
-               return question.options.length > 0;
+               return question.options.length > 0;//question list used for WHEN is selected
             });
 
             if(vm.isEdit){
@@ -81,11 +81,9 @@
                 }
                 if(vm.question.prerequisites.length === 1){
                     var prereq = vm.question.prerequisites[0];
-
                     FormService.GetQuestion(prereq.question).then(function (response) {
                         vm.selected_question = response.data;
                         vm.selected_question.selected_value =  prereq.answer;
-
                     })
                 }
                 vm.question.form = data.form._id;
@@ -128,7 +126,7 @@
                 preparedQn.options = vm.question.options;
             }
             //SET PREREQUISITE IF SHOW IS FALSE
-            if(vm.question.show === "0"){
+            if(vm.question.show === "0" || !vm.question.show){
                 if(!_.isUndefined(vm.selected_question) &&
                     !_.isUndefined(vm.selected_question.selected_value)){
                     var prerequisite = {
