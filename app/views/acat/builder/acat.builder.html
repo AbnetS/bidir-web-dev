@@ -1,3 +1,38 @@
-<div>
-    <h1> Work in progress on ACAT Builder</h1>
+<h3>Manage ACATs
+    <small>Build ACAT forms.</small>
+</h3>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-xs-10 col-lg-12">
+                <p><a class="btn btn-success pull-right" ng-click="vm.addACAT(null,$event)">
+                    <i class="fa fa-plus"></i>
+                    Add</a>
+                </p>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-lg-12">
+                <md-tabs md-dynamic-height="" md-border-bottom="">
+                    <md-tab label="INPUT">
+                        <md-content class="md-padding">
+                            <h1 class="md-display-2">INPUT</h1>
+                        </md-content>
+                    </md-tab>
+                    <md-tab label="LABOUR COSTS">
+                        <md-content class="md-padding">
+                            <h1 class="md-display-2">LABOUR COSTS</h1>
+                        </md-content>
+                    </md-tab>
+                    <md-tab label="OTHER COSTS">
+                        <md-content class="md-padding">
+                            <h1 class="md-display-2">OTHER COSTS</h1>
+                        </md-content>
+                    </md-tab>
+                </md-tabs>
+            </div>
+        </div>
+    </div>
 </div>

@@ -6,10 +6,17 @@
 
     angular.module("app.acat").controller("ACATController", ACATController);
 
-    ACATController.$inject = ['$state'];
+    ACATController.$inject = ['ACATService'];
 
-    function ACATController($state) {
-        console.log("ACAT CONTROLLER");
+    function ACATController(ACATService) {
+            var vm = this;
+            callApi();
+
+        function callApi(){
+            ACATService.GetCrops().then(function (response) {
+                vm.crops = response.data.docs;
+            });
+        }
 
     }
 

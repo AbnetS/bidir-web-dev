@@ -13,11 +13,13 @@
         var vm = this;
         vm.addCrop = _addCrop;
         vm.editCrop = _addCrop;
+        callApi();
 
-
-        ACATService.GetCrops().then(function (response) {
-            vm.crops = response.data.docs;
-        });
+       function callApi(){
+           ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
 
 
         function _addCrop(crop,ev) {
@@ -32,7 +34,7 @@
                 controller: cropDialogController,
                 controllerAs: 'vm'
             }).then(function (answer) {
-                console.log("call api to refresh");
+                callApi();
             }, function (response) {
                 console.log("refresh on response");
             });

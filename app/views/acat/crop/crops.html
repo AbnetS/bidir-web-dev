@@ -9,7 +9,7 @@
             <div class="col-xs-10 col-lg-12">
                 <p><a class="btn btn-success pull-right" href="" ng-click="vm.addCrop(null,$event)">
                     <i class="fa fa-plus"></i>
-                    Add Crop</a>
+                    Add</a>
                 </p>
             </div>
         </div>
@@ -20,7 +20,8 @@
                     <table md-table  md-progress="promise">
                         <thead  md-head>
                         <tr md-row>
-                            <th md-column ><span>No.</span></th>
+                            <th></th>
+                            <th md-column ><span>No</span></th>
                             <th md-column ><span>Name</span></th>
                             <th md-column ><span>Category</span></th>
                             <th md-column ><span>Action</span></th>
@@ -28,6 +29,7 @@
                         </thead>
                         <tbody md-body>
                         <tr md-row ng-repeat="crop in vm.crops">
+                            <td></td>
                             <td md-cell>{{$index + 1}}</td>
                             <td md-cell>{{crop.name}}</td>
                             <td md-cell>{{crop.category}}</td>
