@@ -106,7 +106,7 @@
                 url: "/acat",
                 title: "acat",
                 templateUrl:helper.basepath('acat/builder/acat.builder.html'),
-                resolve:helper.resolveFor('md.data.table'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
                 controller: "ACATController",
                 controllerAs: 'vm'
             })
@@ -122,7 +122,7 @@
                 url: "/loanproducts",
                 title: "loan product",
                 templateUrl:helper.basepath('acat/loanproduct/loan.products.html'),
-                resolve:helper.resolveFor('md.data.table'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
                 controller: "LoanProductsController",
                 controllerAs: 'vm'
             })

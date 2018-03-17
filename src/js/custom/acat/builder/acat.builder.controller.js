@@ -9,13 +9,21 @@
     ACATController.$inject = ['ACATService'];
 
     function ACATController(ACATService) {
-            var vm = this;
-            callApi();
+        var vm = this;
+        vm.addToCostList = _addToCostList;
+        callApi();
+
+
 
         function callApi(){
-            ACATService.GetCrops().then(function (response) {
-                vm.crops = response.data.docs;
-            });
+        ACATService.GetCrops().then(function (response) {
+            vm.crops = response.data.docs;
+        });
+
+    }
+
+        function _addToCostList() {
+
         }
 
     }
