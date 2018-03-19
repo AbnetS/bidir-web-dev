@@ -16,7 +16,8 @@
             SaveCrop:_createCrop,
             UpdateCrop:_updateCrop,
             GetAllACATList: _getAllACAT,
-            GetACATById: _getACATById
+            GetACATById: _getACATById,
+            GetAllLoanProducts:_getAllLoanProducts
         };
 
         function _getCrops() {
@@ -33,6 +34,9 @@
         }
         function _getAllACAT() {
             return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
+        }
+        function _getAllLoanProducts() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.LoanProducts));
         }
     }
 

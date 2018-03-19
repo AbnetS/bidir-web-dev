@@ -6,11 +6,14 @@
 
     angular.module("app.acat").controller("ACATController", ACATController);
 
-    ACATController.$inject = ['ACATService'];
+    ACATController.$inject = ['ACATService','$stateParams'];
 
-    function ACATController(ACATService) {
+    function ACATController(ACATService,$stateParams) {
         var vm = this;
-        vm.acat = {};
+        vm.isEdit = $stateParams.id !== "0";
+        vm.ACATId = $stateParams.id;
+
+
         vm.addToSeedCostList = _addToSeedCostList;
         vm.editSeedCost = _editSeedCost;
         vm.addToFertilizerCostList = _addToFertilizerCostList;
@@ -20,6 +23,7 @@
         initialize();
         function initialize() {
             callApiForCrops();
+            vm.acat = {};
             vm.acat.fertilizer = {
                 list_type :'linear'
             };
@@ -31,22 +35,32 @@
                 fertilizerCostList:[],
                 chemicalsCostList:[]
             };
+            if(vm.isEdit){
+                callAPI();
+            }else{
 
-            ACATService.GetACATById("5a9e4940a2e254000137ab14").then(function (response) {
-                var subSections = response.data.sections[0].sub_sections;
-                vm.acat.input = subSections[0];
-                vm.acat.labour_costs = subSections[1];
-                vm.acat.other_costs = subSections[2];
+            }
+            function callAPI() {
 
-                vm.acat.input.seedCostList = vm.acat.input.sub_sections[0].cost_list.linear;
-                vm.acat.input.fertilizerCostList = vm.acat.input.sub_sections[1].cost_list.linear;
-                vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
+                ACATService.GetACATById(vm.ACATId).then(function (response) {
+                    var subSections = response.data.sections[0].sub_sections;
+                    vm.acat.input = subSections[0];
+                    vm.acat.labour_costs = subSections[1];
+                    vm.acat.other_costs = subSections[2];
 
-                console.log("response",subSections);
+                    vm.acat.input.seedCostList = vm.acat.input.sub_sections[0].cost_list.linear;
+                    vm.acat.input.fertilizerCostList = vm.acat.input.sub_sections[1].cost_list.linear;
+                    vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
 
-            },function (error) {
-                console.log("error",error);
-            });
+                    console.log("response",subSections);
+
+                },function (error) {
+                    console.log("error",error);
+                });
+            }
+
+
+
         }
 
 

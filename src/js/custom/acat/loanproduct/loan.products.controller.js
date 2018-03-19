@@ -7,12 +7,19 @@
 
     angular.module("app.acat").controller("LoanProductsController", LoanProductsController);
 
-    LoanProductsController.$inject = ['$mdDialog','RouteHelpers','CommonService','AlertService','blockUI'];
+    LoanProductsController.$inject = ['$mdDialog','RouteHelpers','CommonService','AlertService','ACATService'];
 
-    function LoanProductsController($mdDialog,RouteHelpers,CommonService,AlertService,blockUI) {
+    function LoanProductsController($mdDialog,RouteHelpers,CommonService,AlertService,ACATService) {
         var vm = this;
         vm.addLoanProduct = _addLoanProduct;
         vm.editLoanProduct = _editLoanProduct;
+        initialize();
+        function initialize() {
+            ACATService.GetAllLoanProducts().then(function (response) {
+                        vm.loanProducts = response.data.docs;
+                        console.log("loan p",response);
+            });
+        }
 
 
         function _addLoanProduct(loan_product,ev) {

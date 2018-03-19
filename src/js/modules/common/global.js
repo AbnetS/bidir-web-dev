@@ -57,7 +57,8 @@ var API = {
         ACAT:{
             ACAT:'',
             Crop:'crops',
-            CreateCrop:'crops/create'
+            CreateCrop:'crops/create',
+            LoanProducts:'loan-products'
         }
     }
 };
