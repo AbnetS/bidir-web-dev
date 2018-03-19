@@ -14,7 +14,8 @@
         return {
             GetCrops:_getCrops,
             SaveCrop:_createCrop,
-            UpdateCrop:_updateCrop
+            UpdateCrop:_updateCrop,
+            GetACATById: _getACATById
         };
 
         function _getCrops() {
@@ -25,6 +26,9 @@
         }
         function _updateCrop(crop){
             return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Crop,crop._id), crop);
+        }
+        function _getACATById(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,id));
         }
     }
 

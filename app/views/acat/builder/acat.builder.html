@@ -30,6 +30,8 @@
                 <md-tabs md-dynamic-height="" md-border-bottom="">
                     <md-tab label="INPUT">
                         <md-content class="md-padding">
+
+                            <!--SEED SECTION-->
                             <div class="row">
                                 <div class="col-md-4 bg-success text-center text-uppercase">
                                     <h5 class="">Seed</h5>
@@ -41,13 +43,13 @@
                                     <h5>Seed Source (Union,Factory/Institution, Trader )</h5>
                                 </div>
 
-                                <!-- START row-->
+                                <!-- START SEED ROW-->
                                 <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Item</label>
                                             <input class="form-control"
-                                                   ng-model="vm.acat.seed.item"
+                                                   ng-model="vm.acat.input.seed.item"
                                                    type="text"
                                                    name="seed_item" placeholder="Item" />
                                         </div>
@@ -56,22 +58,23 @@
                                         <div class="form-group">
                                             <label>Unit</label>
                                             <input class="form-control"
-                                                   ng-model="vm.acat.seed.unit"
+                                                   ng-model="vm.acat.input.seed.unit"
                                                    type="text"
                                                    name="seed_unit" placeholder="unit" />
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <br/>
-                                        <button class="btn btn-success btn-outline" ng-click="vm.addToCostList()">
+                                        <button class="btn btn-success btn-outline" ng-click="vm.addToSeedCostList(vm.acat.input.seed)">
                                             <i class="fa fa-plus"></i>
                                             Add List</button>
                                     </div>
-                                    <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <!-- ITEMS LIST-->
+                                    <div ng-show="vm.acat.input.seedCostList.length>0" class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
                                                 <thead>
-                                                <tr>
+                                                <tr class="bg-inverse-light">
                                                     <th>#</th>
                                                     <th>Item</th>
                                                     <th>Unit</th>
@@ -79,12 +82,12 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>Item</td>
-                                                    <td>Unit</td>
+                                                <tr ng-repeat="cost in vm.acat.input.seedCostList">
+                                                    <td>{{$index + 1}}</td>
+                                                    <td>{{cost.item}}</td>
+                                                    <td>{{cost.unit}}</td>
                                                     <td>
-                                                        <a ng-click="vm.editItem(form,$event)">
+                                                        <a ng-click="vm.editSeedCost(cost,$event)">
                                                             <i class="fa fa-edit"></i>
                                                         </a>
                                                     </td>
@@ -93,50 +96,92 @@
                                             </table>
                                         </div>
                                     </div>
-
                                     <div class="col-lg-12"><p></p></div>
                                 </div>
-                                <!-- END row-->
+                                <!-- END SEED ROW-->
                             </div>
+
+                            <!--FERTILIZERS SECTION-->
                             <div class="row">
                                 <div class="col-md-4 bg-success text-center text-uppercase">
                                     <h5 class="">Fertilizer</h5>
                                 </div>
-                                <!--COST LIST-->
+                                <!--Fertilizer LIST TYPE-->
                                 <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
                                     <md-input-container class="md-block">
-                                        <md-radio-group id="acatFormListType" layout="row" ng-model="vm.acat.list_type" >
-                                            <md-radio-button value="linear_list">
+                                        <md-radio-group id="fertilizerListType"
+                                                        name="fertilizerListType"
+                                                        layout="row"
+                                                        ng-model="vm.acat.fertilizer.list_type" >
+                                            <md-radio-button value="linear">
                                                 Linear List </md-radio-button>
-                                            <md-radio-button value="group_list" >
+                                            <md-radio-button value="grouped" >
                                                 Group List</md-radio-button>
                                         </md-radio-group>
                                     </md-input-container>
                                 </div>
-                                <!-- START row-->
+                                <!-- START FERTILIZER ROW-->
                                 <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Item</label>
-                                            <input class="form-control" type="text" name="item" placeholder="Item" />
+                                            <input class="form-control"
+                                                   type="text"
+                                                   name="item"
+                                                   ng-model="vm.acat.fertilizer.item"
+                                                   placeholder="Item" />
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Unit</label>
-                                            <input class="form-control" type="text" name="unit" placeholder="unit" />
+                                            <input class="form-control" type="text"
+                                                   name="unit"
+                                                   ng-model="vm.acat.fertilizer.unit"
+                                                   placeholder="unit" />
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <br/>
-                                        <button class="btn btn-success btn-outline" ng-click="vm.addToCostList()">
+                                        <button class="btn btn-success btn-outline"
+                                                ng-click="vm.addToFertilizerCostList(vm.acat.fertilizer)">
                                             <i class="fa fa-plus"></i>
                                             Add List</button>
                                     </div>
                                 </div>
-                                <!-- END row-->
+                                <!-- END FERTILIZER ROW-->
+
+                                <!-- ITEMS TABLE-->
+                                <div ng-show="vm.acat.input.fertilizerCostList.length>0" class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                            <tr class="bg-inverse-light">
+                                                <th>#</th>
+                                                <th>Item</th>
+                                                <th>Unit</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr ng-repeat="cost in vm.acat.input.fertilizerCostList">
+                                                <td>{{$index + 1}}</td>
+                                                <td>{{cost.item}}</td>
+                                                <td>{{cost.unit}}</td>
+                                                <td>
+                                                    <a ng-click="vm.editItem(cost,$event)">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12"><p></p></div>
                             </div>
 
+                            <!--CHEMICALS SECTION-->
                             <div class="row">
                                 <div class="col-md-4 bg-success text-center text-uppercase">
                                     <h5 class="">Chemicals</h5>
@@ -144,48 +189,92 @@
                                 <!--COST LIST-->
                                 <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
                                     <md-input-container class="md-block">
-                                        <md-radio-group id="acatFormListType" layout="row" ng-model="vm.acat.list_type" >
-                                            <md-radio-button value="linear_list">
+                                        <md-radio-group name="ChemicalsListType"
+                                                        id="ChemicalsListType"
+                                                        layout="row" ng-model="vm.acat.chemicals.list_type" >
+                                            <md-radio-button value="linear">
                                                 Linear List </md-radio-button>
-                                            <md-radio-button value="group_list" >
+                                            <md-radio-button value="grouped" >
                                                 Group List</md-radio-button>
                                         </md-radio-group>
                                     </md-input-container>
                                 </div>
-
+                                <!--IF LIST IS GROUPED-->
                                 <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Group</label>
-                                            <input class="form-control" type="text" name="item" placeholder="Group Name" />
+                                            <input class="form-control" type="text"
+                                                   ng-model="vm.acat.chemicals.group_title"
+                                                   name="item" placeholder="Group Name" />
                                         </div>
                                     </div>
                                 </div>
-                                <!-- START row-->
+
+                                <!-- START CHEMICALS ROW-->
                                 <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Item</label>
-                                            <input class="form-control" type="text" name="item" placeholder="Item" />
+                                            <input class="form-control" type="text"
+                                                   ng-model="vm.acat.chemicals.item"
+                                                   name="item" placeholder="Item" />
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Unit</label>
-                                            <input class="form-control" type="text" name="unit" placeholder="unit" />
+                                            <input class="form-control" type="text"
+                                                   ng-model="vm.acat.chemicals.unit"
+                                                   name="unit" placeholder="unit" />
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <br/>
-                                        <button class="btn btn-success btn-outline" ng-click="vm.addToCostList()">
+                                        <button class="btn btn-success btn-outline"
+                                                ng-click="vm.addToChemicalsCostList(vm.acat.chemicals)">
                                             <i class="fa fa-plus"></i>
                                             Add List</button>
                                     </div>
                                 </div>
-                                <!-- END row-->
+                                <!-- END CHEMICALS ROW-->
+
+                                <!-- ITEMS TABLE-->
+                                <div ng-show="vm.acat.input.chemicalsCostList.length>0" class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered"
+                                               ng-repeat="groupItem in vm.acat.input.chemicalsCostList">
+                                            <thead>
+                                            <tr class="text-center text-uppercase text-inverse">
+                                                <th colspan="4">{{groupItem.title}}</th>
+                                            </tr>
+                                            <tr class="bg-inverse-light">
+                                                <th>#</th>
+                                                <th>Item</th>
+                                                <th>Unit</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr ng-repeat="cost in groupItem.items">
+                                                <td>{{$index + 1}}</td>
+                                                <td>{{cost.item}}</td>
+                                                <td>{{cost.unit}}</td>
+                                                <td>
+                                                    <a ng-click="vm.editItem(cost,$event)">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12"><p></p></div>
                             </div>
                         </md-content>
                     </md-tab>
+
                     <md-tab label="LABOUR COSTS">
                         <md-content class="md-padding">
                             <h1 class="md-display-2">LABOUR COSTS</h1>
