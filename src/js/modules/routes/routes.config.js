@@ -105,9 +105,17 @@
             .state("app.acat", {
                 url: "/acat",
                 title: "acat",
+                templateUrl:helper.basepath('acat/builder/acat.list.html'),
+                resolve:helper.resolveFor('md.data.table'),
+                controller: "ACATListController",
+                controllerAs: 'vm'
+            })
+            .state("app.acatbuilder", {
+                url: "/acat/builder/:id",
+                title: 'ACAT Builder',
                 templateUrl:helper.basepath('acat/builder/acat.builder.html'),
+                controller: 'ACATController',
                 resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "ACATController",
                 controllerAs: 'vm'
             })
             .state("app.crop", {
@@ -124,13 +132,6 @@
                 templateUrl:helper.basepath('acat/loanproduct/loan.products.html'),
                 resolve:helper.resolveFor('md.data.table','ui.select'),
                 controller: "LoanProductsController",
-                controllerAs: 'vm'
-            })
-            .state("app.acatbuilder", {
-                url: "/acat/builder/:id",
-                title: 'ACAT Builder',
-                templateUrl:helper.basepath('acat/builder/acat.builder.html'),
-                controller: 'ACATController',
                 controllerAs: 'vm'
             })
 

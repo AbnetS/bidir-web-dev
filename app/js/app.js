@@ -64,6 +64,12 @@
     'use strict';
 
     angular
+        .module('app.colors', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.auth', [])
         .run(runBlock)
         .config(routeConfig);
@@ -73,25 +79,6 @@
     function routeConfig() {}
 
 
-})();
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common", [])
-      .config(routeConfig)
-      .run(runBlock);
-
-  function runBlock() {}
-  function routeConfig() {}
-
-})(window.angular);
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
 })();
 (function() {
     'use strict';
@@ -114,17 +101,46 @@
             'ngMessages'
         ]);
 })();
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common", [])
+      .config(routeConfig)
+      .run(runBlock);
+
+  function runBlock() {}
+  function routeConfig() {}
+
+})(window.angular);
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.lazyload', []);
+})();
 (function() {
     'use strict';
 
     angular
         .module('app.loadingbar', []);
 })();
+/**
+ * Created by Yoni on 11/30/2017.
+ */
 (function() {
     'use strict';
 
     angular
-        .module('app.lazyload', []);
+        .module('app.manage_roles', [])
+        .run(runBlock)
+        .config(routeConfig);
+
+    function runBlock() {  }
+
+    function routeConfig() {}
+
 })();
 /**
  * Created by Yoni on 11/30/2017.
@@ -153,13 +169,13 @@
     'use strict';
 
     angular
-        .module('app.maps', []);
+        .module('app.navsearch', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.navsearch', []);
+        .module('app.maps', []);
 })();
 (function() {
     'use strict';
@@ -205,22 +221,6 @@
 })();
 
 /**
- * Created by Yoni on 11/30/2017.
- */
-(function() {
-    'use strict';
-
-    angular
-        .module('app.manage_roles', [])
-        .run(runBlock)
-        .config(routeConfig);
-
-    function runBlock() {  }
-
-    function routeConfig() {}
-
-})();
-/**
  * Created by Yoni on 12/3/2017.
  */
 
@@ -231,6 +231,56 @@
         .module('app.welcomePage', []);
 
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
+
 (function(angular) {
     'use strict';
     angular.module('app.auth')
@@ -381,6 +431,123 @@
         };
     }
 })(window.angular);
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
+
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+      // Disables animation on items with class .ng-no-animation
+      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
+
+      // Improve performance disabling debugging features
+      // $compileProvider.debugInfoEnabled(false);
+
+    }
+
+})();
+/**=========================================================
+ * Module: constants.js
+ * Define constants to inject across the application
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .run(appRun);
+
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });*/
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
+    }
+
+})();
 
 
 (function(angular) {
@@ -599,217 +766,6 @@ var QUESTION_TYPE = {
     'use strict';
 
     angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .config(coreConfig);
-
-    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
-    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
-
-      var core = angular.module('app.core');
-      // registering components after bootstrap
-      core.controller = $controllerProvider.register;
-      core.directive  = $compileProvider.directive;
-      core.filter     = $filterProvider.register;
-      core.factory    = $provide.factory;
-      core.service    = $provide.service;
-      core.constant   = $provide.constant;
-      core.value      = $provide.value;
-
-      // Disables animation on items with class .ng-no-animation
-      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
-
-      // Improve performance disabling debugging features
-      // $compileProvider.debugInfoEnabled(false);
-
-    }
-
-})();
-/**=========================================================
- * Module: constants.js
- * Define constants to inject across the application
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .constant('APP_MEDIAQUERY', {
-          'desktopLG':             1200,
-          'desktop':                992,
-          'tablet':                 768,
-          'mobile':                 480
-        })
-      ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .run(appRun);
-
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
-
-      // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });*/
-
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
-
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Hooks Example
-      // ----------------------------------- 
-
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
-
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
-
-    }
-
-})();
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.lazyload')
         .config(lazyloadConfig);
 
@@ -986,6 +942,324 @@ var QUESTION_TYPE = {
         ;
 
 })();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
+
+})();
+/**
+ * Created by Yoni on 12/10/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('CreateRoleController', CreateRoleController);
+
+    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService','blockUI','$mdPanel'];
+    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService,blockUI,$mdPanel) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.saveRole = _saveRole;
+        vm.changeModuleStyle = _modulesStyle;
+        vm.showFilterDialog = _showFilterDialog;
+        vm.showFilter = false;
+        vm.isEdit = items !== null;
+        vm.role = items !== null?items:null;
+
+
+
+        initialize();
+
+        function setPermissions() {
+            _.each(vm.role.permissions, function(oldPermission){
+                _.each(vm.permissions, function(permission) {
+                    if(permission.name === oldPermission.name && !permission.checked){
+                        permission.checked = permission.name === oldPermission.name;
+                    }
+                });
+            });
+        }
+
+        function preparePermissions() {
+            vm.role.permissions = _.filter(vm.permissions,function(permission){
+                return permission.checked? permission._id : null;
+            });
+        }
+
+        function initialize(){
+           if(vm.isEdit){
+               var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
+               myLoadingBlockUI.start("Loading Role and Permissions");
+           }
+            var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
+            if(permissionFromStore !== null){
+                vm.permissions = permissionFromStore;
+                if(vm.isEdit){
+                    setPermissions();
+                    myLoadingBlockUI.stop();
+                }
+
+            }else {
+                ManageRoleService.GetPermissions().then(function(response){
+                    vm.permissions = response.data.docs;
+                    ManageRoleService.StorePermissions(vm.permissions);
+                    console.log("permissions from api",vm.permissions);
+                    if(vm.isEdit){
+                        setPermissions();
+                        myLoadingBlockUI.stop();
+                    }
+                },function(error){
+                    if(vm.isEdit){
+                        myLoadingBlockUI.stop();
+                    }
+                    console.log("error permissions",error);
+                });
+
+            }
+
+        }
+
+        function _saveRole() {
+            var myBlockUI = blockUI.instances.get('RoleBlockUI');
+            myBlockUI.start();
+            preparePermissions();
+            if(vm.isEdit){
+                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
+                        myBlockUI.stop();
+                        $mdDialog.hide();
+                        AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
+                    },
+                    function (error) {
+                        myBlockUI.stop();
+                    var message = error.data.error.message;
+                        AlertService.showError("Failed to update Role",message);
+                        console.log("could not be saved", error);
+                    });
+            }else {
+
+                ManageRoleService.SaveRole( vm.role).then(function (data) {
+                        myBlockUI.stop();
+                        AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
+                        $mdDialog.hide();
+                    },
+                    function (error) {
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to Save Role",message);
+                        console.log("could not be saved", error);
+                    });
+            }
+        }
+
+        function _showFilterDialog(show) {
+
+        }
+
+
+
+        function _modulesStyle(module){
+            var style = '';
+            switch (module){
+                case 'SCREENING':
+                    style =  'label label-primary';
+                    break;
+                case 'SCREENING_MODULE':
+                    style =  'label label-primary';
+                    break;
+                case 'FORM_BUILDER':
+                    style =  'label label-danger';
+                    break;
+                case 'USER_MANAGEMENT':
+                    style =  'label label-green';
+                    break;
+                case 'CLIENT_MANAGEMENT':
+                    style =  'label label-warning';
+                    break;
+                case 'LOAN_MODULE':
+                    style =  'label label-purple';
+                    break;
+                default:
+                    style =  'label label-default';
+            }
+            return style;
+        }
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('ManageRoleController', ManageRoleController);
+
+    ManageRoleController.$inject = ['ManageRoleService', '$mdDialog', 'RouteHelpers'];
+
+    function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
+    {
+        var vm = this;
+        vm.addRole = _addRole;
+        vm.editRole = _editRole;
+
+        fetchRoles();
+
+       function fetchRoles() {
+           ManageRoleService.GetRoles().then(function(response){
+               vm.roles = response.data.docs;
+               // console.log("vm.roles on RM",vm.roles);
+           },function(error){
+               console.log("error role",error);
+           });
+       }
+
+        function _addRole(ev){
+
+            $mdDialog.show({
+                locals: {
+                    items: null
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
+        }
+
+        function _editRole(role,ev) {
+            $mdDialog.show({
+                locals: {
+                    items: role
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
+        }
+
+
+
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 12/11/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.manage_roles')
+
+        .service('ManageRoleService', ManageRoleService);
+    ManageRoleService.$inject = ['$http', 'CommonService','AuthService','StorageService','APP_CONSTANTS'];
+
+    function ManageRoleService($http, CommonService,AuthService,StorageService,APP_CONSTANTS) {
+        return {
+            GetRoles: _getRoles,
+            GetPermissions: _getPermissions,
+            GetPermissionsbyGroup:_getPermissionsbyGroup,
+            SaveRole: _saveRole,
+            UpdateRole:_updateRole,
+            StorePermissions:_storePermissions,
+            GetPermissionsFromStore:_getPermissionsFromStorage
+        };
+
+        function _getRoles(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
+        }
+
+        function _getPermissions(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions));
+        }
+        function _getPermissionsbyGroup(){
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup));
+        }
+
+        function _saveRole(role) {
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role);
+        }
+
+        function _updateRole(role) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role);
+        }
+
+        function _storePermissions(permissions) {
+            return StorageService.Set(APP_CONSTANTS.StorageKey.PERMISSIONS, permissions);
+        }
+        function _getPermissionsFromStorage() {
+            return !_.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS)) ? StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS) : null;
+        }
+
+    }
+
+})(window.angular);
 
 /**
  * Created by Yoni on 12/2/2017.
@@ -2153,6 +2427,115 @@ var QUESTION_TYPE = {
     }
 })();
 /**=========================================================
+ * Module: navbar-search.js
+ * Navbar search toggler * Auto dismiss on ESC key
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .directive('searchOpen', searchOpen)
+        .directive('searchDismiss', searchDismiss);
+
+    //
+    // directives definition
+    // 
+    
+    function searchOpen () {
+        var directive = {
+            controller: searchOpenController,
+            restrict: 'A'
+        };
+        return directive;
+
+    }
+
+    function searchDismiss () {
+        var directive = {
+            controller: searchDismissController,
+            restrict: 'A'
+        };
+        return directive;
+        
+    }
+
+    //
+    // Contrller definition
+    // 
+    
+    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchOpenController ($scope, $element, NavSearch) {
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.toggle);
+    }
+
+    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchDismissController ($scope, $element, NavSearch) {
+      
+      var inputSelector = '.navbar-form input[type="text"]';
+
+      $(inputSelector)
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('keyup', function(e) {
+          if (e.keyCode === 27) // ESC
+            NavSearch.dismiss();
+        });
+        
+      // click anywhere closes the search
+      $(document).on('click', NavSearch.dismiss);
+      // dismissable options
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.dismiss);
+    }
+
+})();
+
+
+/**=========================================================
+ * Module: nav-search.js
+ * Services to share navbar search functions
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .service('NavSearch', NavSearch);
+
+    function NavSearch() {
+        this.toggle = toggle;
+        this.dismiss = dismiss;
+
+        ////////////////
+
+        var navbarFormSelector = 'form.navbar-form';
+
+        function toggle() {
+          var navbarForm = $(navbarFormSelector);
+
+          navbarForm.toggleClass('open');
+
+          var isOpen = navbarForm.hasClass('open');
+
+          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
+        }
+
+        function dismiss() {
+          $(navbarFormSelector)
+            .removeClass('open') // Close control
+            .find('input[type="text"]').blur() // remove focus
+            // .val('') // Empty input
+            ;
+        }
+    }
+})();
+
+/**=========================================================
  * Module: modals.js
  * Provides a simple way to implement bootstrap modals from templates
  =========================================================*/
@@ -2313,115 +2696,6 @@ var QUESTION_TYPE = {
             });
           }
 
-        }
-    }
-})();
-
-/**=========================================================
- * Module: navbar-search.js
- * Navbar search toggler * Auto dismiss on ESC key
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .directive('searchOpen', searchOpen)
-        .directive('searchDismiss', searchDismiss);
-
-    //
-    // directives definition
-    // 
-    
-    function searchOpen () {
-        var directive = {
-            controller: searchOpenController,
-            restrict: 'A'
-        };
-        return directive;
-
-    }
-
-    function searchDismiss () {
-        var directive = {
-            controller: searchDismissController,
-            restrict: 'A'
-        };
-        return directive;
-        
-    }
-
-    //
-    // Contrller definition
-    // 
-    
-    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchOpenController ($scope, $element, NavSearch) {
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.toggle);
-    }
-
-    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchDismissController ($scope, $element, NavSearch) {
-      
-      var inputSelector = '.navbar-form input[type="text"]';
-
-      $(inputSelector)
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('keyup', function(e) {
-          if (e.keyCode === 27) // ESC
-            NavSearch.dismiss();
-        });
-        
-      // click anywhere closes the search
-      $(document).on('click', NavSearch.dismiss);
-      // dismissable options
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.dismiss);
-    }
-
-})();
-
-
-/**=========================================================
- * Module: nav-search.js
- * Services to share navbar search functions
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .service('NavSearch', NavSearch);
-
-    function NavSearch() {
-        this.toggle = toggle;
-        this.dismiss = dismiss;
-
-        ////////////////
-
-        var navbarFormSelector = 'form.navbar-form';
-
-        function toggle() {
-          var navbarForm = $(navbarFormSelector);
-
-          navbarForm.toggleClass('open');
-
-          var isOpen = navbarForm.hasClass('open');
-
-          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
-        }
-
-        function dismiss() {
-          $(navbarFormSelector)
-            .removeClass('open') // Close control
-            .find('input[type="text"]').blur() // remove focus
-            // .val('') // Empty input
-            ;
         }
     }
 })();
@@ -2710,9 +2984,17 @@ var QUESTION_TYPE = {
             .state("app.acat", {
                 url: "/acat",
                 title: "acat",
+                templateUrl:helper.basepath('acat/builder/acat.list.html'),
+                resolve:helper.resolveFor('md.data.table'),
+                controller: "ACATListController",
+                controllerAs: 'vm'
+            })
+            .state("app.acatbuilder", {
+                url: "/acat/builder/:id",
+                title: 'ACAT Builder',
                 templateUrl:helper.basepath('acat/builder/acat.builder.html'),
+                controller: 'ACATController',
                 resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "ACATController",
                 controllerAs: 'vm'
             })
             .state("app.crop", {
@@ -2729,13 +3011,6 @@ var QUESTION_TYPE = {
                 templateUrl:helper.basepath('acat/loanproduct/loan.products.html'),
                 resolve:helper.resolveFor('md.data.table','ui.select'),
                 controller: "LoanProductsController",
-                controllerAs: 'vm'
-            })
-            .state("app.acatbuilder", {
-                url: "/acat/builder/:id",
-                title: 'ACAT Builder',
-                templateUrl:helper.basepath('acat/builder/acat.builder.html'),
-                controller: 'ACATController',
                 controllerAs: 'vm'
             })
 
@@ -3756,280 +4031,6 @@ var QUESTION_TYPE = {
 })();
 
 /**
- * Created by Yoni on 12/10/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_roles')
-        .controller('CreateRoleController', CreateRoleController);
-
-    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService','blockUI','$mdPanel'];
-    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService,blockUI,$mdPanel) {
-        var vm = this;
-        vm.cancel = _cancel;
-        vm.saveRole = _saveRole;
-        vm.changeModuleStyle = _modulesStyle;
-        vm.showFilterDialog = _showFilterDialog;
-        vm.showFilter = false;
-        vm.isEdit = items !== null;
-        vm.role = items !== null?items:null;
-
-
-
-        initialize();
-
-        function setPermissions() {
-            _.each(vm.role.permissions, function(oldPermission){
-                _.each(vm.permissions, function(permission) {
-                    if(permission.name === oldPermission.name && !permission.checked){
-                        permission.checked = permission.name === oldPermission.name;
-                    }
-                });
-            });
-        }
-
-        function preparePermissions() {
-            vm.role.permissions = _.filter(vm.permissions,function(permission){
-                return permission.checked? permission._id : null;
-            });
-        }
-
-        function initialize(){
-           if(vm.isEdit){
-               var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
-               myLoadingBlockUI.start("Loading Role and Permissions");
-           }
-            var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
-            if(permissionFromStore !== null){
-                vm.permissions = permissionFromStore;
-                if(vm.isEdit){
-                    setPermissions();
-                    myLoadingBlockUI.stop();
-                }
-
-            }else {
-                ManageRoleService.GetPermissions().then(function(response){
-                    vm.permissions = response.data.docs;
-                    ManageRoleService.StorePermissions(vm.permissions);
-                    console.log("permissions from api",vm.permissions);
-                    if(vm.isEdit){
-                        setPermissions();
-                        myLoadingBlockUI.stop();
-                    }
-                },function(error){
-                    if(vm.isEdit){
-                        myLoadingBlockUI.stop();
-                    }
-                    console.log("error permissions",error);
-                });
-
-            }
-
-        }
-
-        function _saveRole() {
-            var myBlockUI = blockUI.instances.get('RoleBlockUI');
-            myBlockUI.start();
-            preparePermissions();
-            if(vm.isEdit){
-                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
-                        myBlockUI.stop();
-                        $mdDialog.hide();
-                        AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
-                    },
-                    function (error) {
-                        myBlockUI.stop();
-                    var message = error.data.error.message;
-                        AlertService.showError("Failed to update Role",message);
-                        console.log("could not be saved", error);
-                    });
-            }else {
-
-                ManageRoleService.SaveRole( vm.role).then(function (data) {
-                        myBlockUI.stop();
-                        AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
-                        $mdDialog.hide();
-                    },
-                    function (error) {
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to Save Role",message);
-                        console.log("could not be saved", error);
-                    });
-            }
-        }
-
-        function _showFilterDialog(show) {
-
-        }
-
-
-
-        function _modulesStyle(module){
-            var style = '';
-            switch (module){
-                case 'SCREENING':
-                    style =  'label label-primary';
-                    break;
-                case 'SCREENING_MODULE':
-                    style =  'label label-primary';
-                    break;
-                case 'FORM_BUILDER':
-                    style =  'label label-danger';
-                    break;
-                case 'USER_MANAGEMENT':
-                    style =  'label label-green';
-                    break;
-                case 'CLIENT_MANAGEMENT':
-                    style =  'label label-warning';
-                    break;
-                case 'LOAN_MODULE':
-                    style =  'label label-purple';
-                    break;
-                default:
-                    style =  'label label-default';
-            }
-            return style;
-        }
-
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 11/30/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_roles')
-        .controller('ManageRoleController', ManageRoleController);
-
-    ManageRoleController.$inject = ['ManageRoleService', '$mdDialog', 'RouteHelpers'];
-
-    function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
-    {
-        var vm = this;
-        vm.addRole = _addRole;
-        vm.editRole = _editRole;
-
-        fetchRoles();
-
-       function fetchRoles() {
-           ManageRoleService.GetRoles().then(function(response){
-               vm.roles = response.data.docs;
-               // console.log("vm.roles on RM",vm.roles);
-           },function(error){
-               console.log("error role",error);
-           });
-       }
-
-        function _addRole(ev){
-
-            $mdDialog.show({
-                locals: {
-                    items: null
-                },
-                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateRoleController',
-                controllerAs: 'vm'
-            })
-                .then(function (answer) {
-                    fetchRoles();
-                }, function () {
-                });
-        }
-
-        function _editRole(role,ev) {
-            $mdDialog.show({
-                locals: {
-                    items: role
-                },
-                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateRoleController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                    fetchRoles();
-                }, function () {
-                });
-        }
-
-
-
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 12/11/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.manage_roles')
-
-        .service('ManageRoleService', ManageRoleService);
-    ManageRoleService.$inject = ['$http', 'CommonService','AuthService','StorageService','APP_CONSTANTS'];
-
-    function ManageRoleService($http, CommonService,AuthService,StorageService,APP_CONSTANTS) {
-        return {
-            GetRoles: _getRoles,
-            GetPermissions: _getPermissions,
-            GetPermissionsbyGroup:_getPermissionsbyGroup,
-            SaveRole: _saveRole,
-            UpdateRole:_updateRole,
-            StorePermissions:_storePermissions,
-            GetPermissionsFromStore:_getPermissionsFromStorage
-        };
-
-        function _getRoles(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
-        }
-
-        function _getPermissions(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions));
-        }
-        function _getPermissionsbyGroup(){
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup));
-        }
-
-        function _saveRole(role) {
-            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role);
-        }
-
-        function _updateRole(role) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role);
-        }
-
-        function _storePermissions(permissions) {
-            return StorageService.Set(APP_CONSTANTS.StorageKey.PERMISSIONS, permissions);
-        }
-        function _getPermissionsFromStorage() {
-            return !_.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS)) ? StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS) : null;
-        }
-
-    }
-
-})(window.angular);
-
-/**
  * Created by Yoni on 12/3/2017.
  */
 (function(angular) {
@@ -4634,6 +4635,7 @@ function runBlock() {
             GetCrops:_getCrops,
             SaveCrop:_createCrop,
             UpdateCrop:_updateCrop,
+            GetAllACATList: _getAllACAT,
             GetACATById: _getACATById
         };
 
@@ -4648,6 +4650,9 @@ function runBlock() {
         }
         function _getACATById(id) {
             return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,id));
+        }
+        function _getAllACAT() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
         }
     }
 
@@ -5079,6 +5084,105 @@ function runBlock() {
 /**
  * Created by Yoni on 3/5/2018.
  */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        callApi();
+
+       function callApi(){
+           ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error");
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
 (function(angular) {
     "use strict";
 
@@ -5179,98 +5283,35 @@ function runBlock() {
 
 })(window.angular);
 /**
- * Created by Yoni on 3/5/2018.
+ * Created by Yoni on 3/19/2018.
  */
-
 (function(angular) {
     "use strict";
 
-    angular.module("app.acat").controller("CropsController", CropsController);
+    angular.module("app.acat").controller("ACATListController", ACATListController);
 
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
+    ACATListController.$inject = ['ACATService','$state'];
 
-    function CropsController(ACATService,$mdDialog,RouteHelpers) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+    function ACATListController(ACATService,$state) {
         var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        callApi();
-
-       function callApi(){
-           ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
+        vm.editACAT = _editACAT;
 
 
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
+        function _editACAT(acat) {
+            $state.go('app.acatbuilder',{id:acat._id});
         }
 
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
+        initialize();
 
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
+        function initialize() {
+            ACATService.GetAllACATList().then(function (response) {
+                vm.acat_list = response.data.docs;
+                console.log("vm.acat_list",response);
+            })
 
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error");
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
         }
+
+
 
     }
 
