@@ -84,7 +84,6 @@
                    return costItem.item === cost.item && costItem.unit === cost.unit;
                 });
                 if(!item_exist){
-                    //TODO: CALL API AND ADD COST LIST
                     addCostListAPI(cost);
                     vm.acat.input.seedCostList.push(cost);
                     vm.acat.input.seed = {};
@@ -92,40 +91,41 @@
             }
 
         }
-        function addCostListAPI(cost) {
-          var prepareCost =   {
-              type:"linear",
-              parent_cost_list: vm.acat.input.sub_sections[0].cost_list._id,//seed cost list
-              item:cost.item,
-              unit:cost.unit
-            };
 
-          ACATService.AddCostList(prepareCost).
-                    then(function (response) {
-              console.log("response",response);
-          },function (error) {
-              console.log("error",error);
-          });
-        }
+
 
         function _editSeedCost(cost) {
             vm.acat.input.seed = cost;
         }
 
         function _addToFertilizerCostList(cost) {
-            console.log(cost);
             var items = vm.acat.input.fertilizerCostList;
             if(!_.isUndefined(cost) && !_.isUndefined(cost.item) && !_.isUndefined(cost.unit)){
                 var item_exist = _.some(items,function (costItem) {
                     return costItem.item === cost.item && costItem.unit === cost.unit;
                 });
                 if(!item_exist){
-                    //TODO: CALL API AND ADD COST LIST
+                    var prepareCost =   {
+                        type: vm.acat.fertilizer.list_type,
+                        parent_cost_list: vm.acat.input.sub_sections[1].cost_list._id,//Fertilizer cost list
+                        item:cost.item,
+                        unit:cost.unit
+                    };
+                    addCostListAPI(prepareCost);
                     vm.acat.input.fertilizerCostList.push(cost);
                     vm.acat.input.fertilizer = {};
                 }
             }
         }
+        function addCostListAPI(cost) {
+            ACATService.AddCostList(cost).
+            then(function (response) {
+                console.log("response",response);
+            },function (error) {
+                console.log("error",error);
+            });
+        }
+
         function _addToChemicalsCostList() {
 
         }

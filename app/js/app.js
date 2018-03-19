@@ -6099,7 +6099,6 @@ function runBlock() {
                    return costItem.item === cost.item && costItem.unit === cost.unit;
                 });
                 if(!item_exist){
-                    //TODO: CALL API AND ADD COST LIST
                     addCostListAPI(cost);
                     vm.acat.input.seedCostList.push(cost);
                     vm.acat.input.seed = {};
@@ -6107,40 +6106,41 @@ function runBlock() {
             }
 
         }
-        function addCostListAPI(cost) {
-          var prepareCost =   {
-              type:"linear",
-              parent_cost_list: vm.acat.input.sub_sections[0].cost_list._id,//seed cost list
-              item:cost.item,
-              unit:cost.unit
-            };
 
-          ACATService.AddCostList(prepareCost).
-                    then(function (response) {
-              console.log("response",response);
-          },function (error) {
-              console.log("error",error);
-          });
-        }
+
 
         function _editSeedCost(cost) {
             vm.acat.input.seed = cost;
         }
 
         function _addToFertilizerCostList(cost) {
-            console.log(cost);
             var items = vm.acat.input.fertilizerCostList;
             if(!_.isUndefined(cost) && !_.isUndefined(cost.item) && !_.isUndefined(cost.unit)){
                 var item_exist = _.some(items,function (costItem) {
                     return costItem.item === cost.item && costItem.unit === cost.unit;
                 });
                 if(!item_exist){
-                    //TODO: CALL API AND ADD COST LIST
+                    var prepareCost =   {
+                        type: vm.acat.fertilizer.list_type,
+                        parent_cost_list: vm.acat.input.sub_sections[1].cost_list._id,//Fertilizer cost list
+                        item:cost.item,
+                        unit:cost.unit
+                    };
+                    addCostListAPI(prepareCost);
                     vm.acat.input.fertilizerCostList.push(cost);
                     vm.acat.input.fertilizer = {};
                 }
             }
         }
+        function addCostListAPI(cost) {
+            ACATService.AddCostList(cost).
+            then(function (response) {
+                console.log("response",response);
+            },function (error) {
+                console.log("error",error);
+            });
+        }
+
         function _addToChemicalsCostList() {
 
         }
@@ -6186,6 +6186,95 @@ function runBlock() {
 
 
 })(window.angular);
+(function(angular) {
+  "use strict";
+
+    angular.module("app.mfi").controller("BranchController", BranchController);
+
+    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
+
+  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
+    var vm = this;
+
+    vm.addBranch = addBranch;
+    vm.editBranch = _editBranch;
+    vm.changeStatus = _changeStatus;
+
+     getBranches();
+
+    function getBranches() {
+      MainService.GetBranches().then(
+        function(response) {
+          vm.branches = response.data.docs;
+        },
+        function(error) {
+          console.log("error", error);
+        }
+      );
+
+    }
+
+    function addBranch(ev) {
+        $mdDialog.show({
+            locals: {items: null},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+
+    }
+
+    function _editBranch(selectedBranch,ev) {
+        $mdDialog.show({
+            locals: {items: selectedBranch},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+    }
+
+    function _changeStatus(ChangeStatus) {
+      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
+      MainService.UpdateBranch(ChangeStatus).then(
+        function(response) {
+
+          AlertService.showSuccess(
+              "Updated branch status",
+              "Updated Status successfully."
+          );
+          // console.log("updated successfully", response);
+
+        },
+        function(error) {
+          // console.log("could not be updated", error);
+          AlertService.showError(
+            "Status not changed. Please try again.",
+            "ERROR"
+          );
+        }
+      );
+
+    }
+
+  }
+})(window.angular);
+
 (function(angular) {
   "use strict";
 
@@ -6286,95 +6375,6 @@ function runBlock() {
         opened: false
       };
     }
-  }
-})(window.angular);
-
-(function(angular) {
-  "use strict";
-
-    angular.module("app.mfi").controller("BranchController", BranchController);
-
-    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
-
-  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
-    var vm = this;
-
-    vm.addBranch = addBranch;
-    vm.editBranch = _editBranch;
-    vm.changeStatus = _changeStatus;
-
-     getBranches();
-
-    function getBranches() {
-      MainService.GetBranches().then(
-        function(response) {
-          vm.branches = response.data.docs;
-        },
-        function(error) {
-          console.log("error", error);
-        }
-      );
-
-    }
-
-    function addBranch(ev) {
-        $mdDialog.show({
-            locals: {items: null},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-
-    }
-
-    function _editBranch(selectedBranch,ev) {
-        $mdDialog.show({
-            locals: {items: selectedBranch},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-    }
-
-    function _changeStatus(ChangeStatus) {
-      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
-      MainService.UpdateBranch(ChangeStatus).then(
-        function(response) {
-
-          AlertService.showSuccess(
-              "Updated branch status",
-              "Updated Status successfully."
-          );
-          // console.log("updated successfully", response);
-
-        },
-        function(error) {
-          // console.log("could not be updated", error);
-          AlertService.showError(
-            "Status not changed. Please try again.",
-            "ERROR"
-          );
-        }
-      );
-
-    }
-
   }
 })(window.angular);
 
