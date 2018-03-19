@@ -58,7 +58,8 @@ var API = {
             ACAT:'',
             Crop:'crops',
             CreateCrop:'crops/create',
-            LoanProducts:'loan-products'
+            LoanProducts:'loan-products',
+            CostList: 'costLists/add'
         }
     }
 };

@@ -633,7 +633,8 @@ var API = {
             ACAT:'',
             Crop:'crops',
             CreateCrop:'crops/create',
-            LoanProducts:'loan-products'
+            LoanProducts:'loan-products',
+            CostList: 'costLists/add'
         }
     }
 };
@@ -4638,7 +4639,8 @@ function runBlock() {
             UpdateCrop:_updateCrop,
             GetAllACATList: _getAllACAT,
             GetACATById: _getACATById,
-            GetAllLoanProducts:_getAllLoanProducts
+            GetAllLoanProducts:_getAllLoanProducts,
+            AddCostList:_addCostList
         };
 
         function _getCrops() {
@@ -4658,6 +4660,9 @@ function runBlock() {
         }
         function _getAllLoanProducts() {
             return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.LoanProducts));
+        }
+        function _addCostList(cost) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
         }
     }
 
@@ -5179,158 +5184,6 @@ function runBlock() {
                 $mdDialog.cancel();
             }
         }
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("ACATController", ACATController);
-
-    ACATController.$inject = ['ACATService','$stateParams'];
-
-    function ACATController(ACATService,$stateParams) {
-        var vm = this;
-        vm.isEdit = $stateParams.id !== "0";
-        vm.ACATId = $stateParams.id;
-
-
-        vm.addToSeedCostList = _addToSeedCostList;
-        vm.editSeedCost = _editSeedCost;
-        vm.addToFertilizerCostList = _addToFertilizerCostList;
-        vm.addToChemicalsCostList = _addToChemicalsCostList;
-
-
-        initialize();
-        function initialize() {
-            callApiForCrops();
-            vm.acat = {};
-            vm.acat.fertilizer = {
-                list_type :'linear'
-            };
-            vm.acat.chemicals = {
-                list_type : 'grouped'
-            };
-            vm.acat.input = {
-                seedCostList:[],
-                fertilizerCostList:[],
-                chemicalsCostList:[]
-            };
-            if(vm.isEdit){
-                callAPI();
-            }else{
-
-            }
-            function callAPI() {
-
-                ACATService.GetACATById(vm.ACATId).then(function (response) {
-                    var subSections = response.data.sections[0].sub_sections;
-                    vm.acat.input = subSections[0];
-                    vm.acat.labour_costs = subSections[1];
-                    vm.acat.other_costs = subSections[2];
-
-                    vm.acat.input.seedCostList = vm.acat.input.sub_sections[0].cost_list.linear;
-                    vm.acat.input.fertilizerCostList = vm.acat.input.sub_sections[1].cost_list.linear;
-                    vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
-
-                    console.log("response",subSections);
-
-                },function (error) {
-                    console.log("error",error);
-                });
-            }
-
-
-
-        }
-
-
-
-        function callApiForCrops(){
-        ACATService.GetCrops().then(function (response) {
-            vm.crops = response.data.docs;
-        });
-
-    }
-
-        function _addToSeedCostList(cost) {
-            console.log(cost);
-            var items = vm.acat.input.seedCostList;
-            if(!_.isUndefined(cost) && !_.isUndefined(cost.item) && !_.isUndefined(cost.unit)){
-                var item_exist = _.some(items,function (costItem) {
-                   return costItem.item === cost.item && costItem.unit === cost.unit;
-                });
-                if(!item_exist){
-                    //TODO: CALL API AND ADD COST LIST
-                    vm.acat.input.seedCostList.push(cost);
-                    vm.acat.input.seed = {};
-                }
-            }
-
-        }
-        function _editSeedCost(cost) {
-            vm.acat.input.seed = cost;
-        }
-
-        function _addToFertilizerCostList(cost) {
-            console.log(cost);
-            var items = vm.acat.input.fertilizerCostList;
-            if(!_.isUndefined(cost) && !_.isUndefined(cost.item) && !_.isUndefined(cost.unit)){
-                var item_exist = _.some(items,function (costItem) {
-                    return costItem.item === cost.item && costItem.unit === cost.unit;
-                });
-                if(!item_exist){
-                    //TODO: CALL API AND ADD COST LIST
-                    vm.acat.input.fertilizerCostList.push(cost);
-                    vm.acat.input.fertilizer = {};
-                }
-            }
-        }
-        function _addToChemicalsCostList() {
-
-        }
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/19/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("ACATListController", ACATListController);
-
-    ACATListController.$inject = ['ACATService','$state'];
-
-    function ACATListController(ACATService,$state) {
-        var vm = this;
-        vm.editACAT = _editACAT;
-
-
-        function _editACAT(acat) {
-            $state.go('app.acatbuilder',{id:acat._id});
-        }
-
-        initialize();
-
-        function initialize() {
-            ACATService.GetAllACATList().then(function (response) {
-                vm.acat_list = response.data.docs;
-                console.log("vm.acat_list",response);
-            })
-
-        }
-
-
 
     }
 
@@ -6160,95 +6013,179 @@ function runBlock() {
 
 
 })(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
 (function(angular) {
-  "use strict";
+    "use strict";
 
-    angular.module("app.mfi").controller("BranchController", BranchController);
+    angular.module("app.acat").controller("ACATController", ACATController);
 
-    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
+    ACATController.$inject = ['ACATService','$stateParams'];
 
-  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
-    var vm = this;
+    function ACATController(ACATService,$stateParams) {
+        var vm = this;
+        vm.isEdit = $stateParams.id !== "0";
+        vm.ACATId = $stateParams.id;
 
-    vm.addBranch = addBranch;
-    vm.editBranch = _editBranch;
-    vm.changeStatus = _changeStatus;
 
-     getBranches();
+        vm.addToSeedCostList = _addToSeedCostList;
+        vm.editSeedCost = _editSeedCost;
+        vm.addToFertilizerCostList = _addToFertilizerCostList;
+        vm.addToChemicalsCostList = _addToChemicalsCostList;
 
-    function getBranches() {
-      MainService.GetBranches().then(
-        function(response) {
-          vm.branches = response.data.docs;
-        },
-        function(error) {
-          console.log("error", error);
+
+        initialize();
+
+        function initialize() {
+            callApiForCrops();
+
+            vm.acat = {
+                fertilizer:{
+                    list_type :'linear'
+                },
+                chemicals:{
+                    list_type : 'grouped'
+                },
+                input:{
+                    seedCostList:[],
+                    fertilizerCostList:[],
+                    chemicalsCostList:[]
+                }
+            };
+
+
+            if(vm.isEdit){
+                callAPI();
+            }else{
+
+            }
+            function callAPI() {
+
+                ACATService.GetACATById(vm.ACATId).then(function (response) {
+                    var subSections = response.data.sections[0].sub_sections;
+                    vm.acat.input = subSections[0];
+                    vm.acat.labour_costs = subSections[1];
+                    vm.acat.other_costs = subSections[2];
+
+                    vm.acat.input.seedCostList = vm.acat.input.sub_sections[0].cost_list.linear;
+                    vm.acat.input.fertilizerCostList = vm.acat.input.sub_sections[1].cost_list.linear;
+                    vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
+
+                    console.log("response",subSections);
+
+                },function (error) {
+                    console.log("error",error);
+                });
+            }
+
+
+
         }
-      );
 
-    }
 
-    function addBranch(ev) {
-        $mdDialog.show({
-            locals: {items: null},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
+
+        function callApiForCrops(){
+        ACATService.GetCrops().then(function (response) {
+            vm.crops = response.data.docs;
         });
 
     }
 
-    function _editBranch(selectedBranch,ev) {
-        $mdDialog.show({
-            locals: {items: selectedBranch},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-    }
+        function _addToSeedCostList(cost) {
+            var items = vm.acat.input.seedCostList;
+            if(!_.isUndefined(cost) && !_.isUndefined(cost.item) && !_.isUndefined(cost.unit)){
+                var item_exist = _.some(items,function (costItem) {
+                   return costItem.item === cost.item && costItem.unit === cost.unit;
+                });
+                if(!item_exist){
+                    //TODO: CALL API AND ADD COST LIST
+                    addCostListAPI(cost);
+                    vm.acat.input.seedCostList.push(cost);
+                    vm.acat.input.seed = {};
+                }
+            }
 
-    function _changeStatus(ChangeStatus) {
-      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
-      MainService.UpdateBranch(ChangeStatus).then(
-        function(response) {
-
-          AlertService.showSuccess(
-              "Updated branch status",
-              "Updated Status successfully."
-          );
-          // console.log("updated successfully", response);
-
-        },
-        function(error) {
-          // console.log("could not be updated", error);
-          AlertService.showError(
-            "Status not changed. Please try again.",
-            "ERROR"
-          );
         }
-      );
+        function addCostListAPI(cost) {
+          var prepareCost =   {
+              type:"linear",
+              parent_cost_list: vm.acat.input.sub_sections[0].cost_list._id,//seed cost list
+              item:cost.item,
+              unit:cost.unit
+            };
+
+          ACATService.AddCostList(prepareCost).
+                    then(function (response) {
+              console.log("response",response);
+          },function (error) {
+              console.log("error",error);
+          });
+        }
+
+        function _editSeedCost(cost) {
+            vm.acat.input.seed = cost;
+        }
+
+        function _addToFertilizerCostList(cost) {
+            console.log(cost);
+            var items = vm.acat.input.fertilizerCostList;
+            if(!_.isUndefined(cost) && !_.isUndefined(cost.item) && !_.isUndefined(cost.unit)){
+                var item_exist = _.some(items,function (costItem) {
+                    return costItem.item === cost.item && costItem.unit === cost.unit;
+                });
+                if(!item_exist){
+                    //TODO: CALL API AND ADD COST LIST
+                    vm.acat.input.fertilizerCostList.push(cost);
+                    vm.acat.input.fertilizer = {};
+                }
+            }
+        }
+        function _addToChemicalsCostList() {
+
+        }
 
     }
 
-  }
+
+
 })(window.angular);
+/**
+ * Created by Yoni on 3/19/2018.
+ */
+(function(angular) {
+    "use strict";
 
+    angular.module("app.acat").controller("ACATListController", ACATListController);
+
+    ACATListController.$inject = ['ACATService','$state'];
+
+    function ACATListController(ACATService,$state) {
+        var vm = this;
+        vm.editACAT = _editACAT;
+
+
+        function _editACAT(acat) {
+            $state.go('app.acatbuilder',{id:acat._id});
+        }
+
+        initialize();
+
+        function initialize() {
+            ACATService.GetAllACATList().then(function (response) {
+                vm.acat_list = response.data.docs;
+                console.log("vm.acat_list",response);
+            })
+
+        }
+
+
+
+    }
+
+
+
+})(window.angular);
 (function(angular) {
   "use strict";
 
@@ -6349,6 +6286,95 @@ function runBlock() {
         opened: false
       };
     }
+  }
+})(window.angular);
+
+(function(angular) {
+  "use strict";
+
+    angular.module("app.mfi").controller("BranchController", BranchController);
+
+    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
+
+  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
+    var vm = this;
+
+    vm.addBranch = addBranch;
+    vm.editBranch = _editBranch;
+    vm.changeStatus = _changeStatus;
+
+     getBranches();
+
+    function getBranches() {
+      MainService.GetBranches().then(
+        function(response) {
+          vm.branches = response.data.docs;
+        },
+        function(error) {
+          console.log("error", error);
+        }
+      );
+
+    }
+
+    function addBranch(ev) {
+        $mdDialog.show({
+            locals: {items: null},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+
+    }
+
+    function _editBranch(selectedBranch,ev) {
+        $mdDialog.show({
+            locals: {items: selectedBranch},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+    }
+
+    function _changeStatus(ChangeStatus) {
+      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
+      MainService.UpdateBranch(ChangeStatus).then(
+        function(response) {
+
+          AlertService.showSuccess(
+              "Updated branch status",
+              "Updated Status successfully."
+          );
+          // console.log("updated successfully", response);
+
+        },
+        function(error) {
+          // console.log("could not be updated", error);
+          AlertService.showError(
+            "Status not changed. Please try again.",
+            "ERROR"
+          );
+        }
+      );
+
+    }
+
   }
 })(window.angular);
 

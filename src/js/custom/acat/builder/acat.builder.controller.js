@@ -21,20 +21,25 @@
 
 
         initialize();
+
         function initialize() {
             callApiForCrops();
-            vm.acat = {};
-            vm.acat.fertilizer = {
-                list_type :'linear'
+
+            vm.acat = {
+                fertilizer:{
+                    list_type :'linear'
+                },
+                chemicals:{
+                    list_type : 'grouped'
+                },
+                input:{
+                    seedCostList:[],
+                    fertilizerCostList:[],
+                    chemicalsCostList:[]
+                }
             };
-            vm.acat.chemicals = {
-                list_type : 'grouped'
-            };
-            vm.acat.input = {
-                seedCostList:[],
-                fertilizerCostList:[],
-                chemicalsCostList:[]
-            };
+
+
             if(vm.isEdit){
                 callAPI();
             }else{
@@ -73,7 +78,6 @@
     }
 
         function _addToSeedCostList(cost) {
-            console.log(cost);
             var items = vm.acat.input.seedCostList;
             if(!_.isUndefined(cost) && !_.isUndefined(cost.item) && !_.isUndefined(cost.unit)){
                 var item_exist = _.some(items,function (costItem) {
@@ -81,12 +85,29 @@
                 });
                 if(!item_exist){
                     //TODO: CALL API AND ADD COST LIST
+                    addCostListAPI(cost);
                     vm.acat.input.seedCostList.push(cost);
                     vm.acat.input.seed = {};
                 }
             }
 
         }
+        function addCostListAPI(cost) {
+          var prepareCost =   {
+              type:"linear",
+              parent_cost_list: vm.acat.input.sub_sections[0].cost_list._id,//seed cost list
+              item:cost.item,
+              unit:cost.unit
+            };
+
+          ACATService.AddCostList(prepareCost).
+                    then(function (response) {
+              console.log("response",response);
+          },function (error) {
+              console.log("error",error);
+          });
+        }
+
         function _editSeedCost(cost) {
             vm.acat.input.seed = cost;
         }
