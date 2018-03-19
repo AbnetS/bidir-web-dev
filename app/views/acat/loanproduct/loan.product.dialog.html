@@ -1,4 +1,4 @@
-<md-dialog style="min-width: 800px">
+<md-dialog style="min-width: 400px">
     <md-toolbar class="small">
         <div class="md-toolbar-tools small">
             <h2>{{vm.isEdit? 'Edit ':'Add '}} Loan Product</h2>
@@ -18,37 +18,152 @@
                         <input id="name" name="name" ng-model="vm.loan_product.name" type="text"
                                class="form-control required ng-pristine ng-valid ng-not-empty ng-touched"
                                aria-invalid="false">
-                        <small ng-show="!vm.loan_product_form.IsnameValid" class="help-block ng-hide"
-                               aria-hidden="true">Name is required.
-                        </small>
+                        <!--<small ng-show="!vm.loan_product_form.IsnameValid" class="help-block ng-hide"-->
+                               <!--aria-hidden="true">Name is required.-->
+                        <!--</small>-->
                     </div>
                     <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6" ng-class="{false:'has-error'}[vm.loan_product_form.IsMaximum_loan_amountValid]">
                         <label>Max Loan Size *</label>
                         <input id="maxLoanSizeInput" name="maxLoanSizeInput" ng-model="vm.loan_product.maximum_loan_amount"
                                type="text" class="form-control required ng-pristine ng-valid ng-not-empty ng-touched"
                                aria-invalid="false">
-                        <small ng-show="!vm.loan_product_form.IsMaximum_loan_amountValid" class="help-block ng-hide"
-                               aria-hidden="true">Max Loan Size is required.
-                        </small>
+                        <!--<small ng-show="!vm.loan_product_form.IsMaximum_loan_amountValid" class="help-block ng-hide"-->
+                               <!--aria-hidden="true">Max Loan Size is required.-->
+                        <!--</small>-->
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6"
-                         ng-class="{false:'has-error'}[vm.loan_product_form.IsnameValid]">
-                        <label>Deductibles</label>
-                        <input id="name" name="name" ng-model="vm.loan_product.name" type="text"
-                               class="form-control required ng-pristine ng-valid ng-not-empty ng-touched"
-                               aria-invalid="false">
-                      
+                    <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <md-input-container class="md-block">
+                                <md-radio-group id="deductibleType"
+                                                name="deductibleType"
+                                                layout="row"
+                                                ng-model="vm.loan_product.deductible.type" >
+                                    <md-radio-button class="md-primary" value="fixed">
+                                        Fixed </md-radio-button>
+                                    <md-radio-button value="percentage" >
+                                        Portion Of Loan</md-radio-button>
+                                </md-radio-group>
+                            </md-input-container>
+                        </div>
+                        <label class="col-xs-12 col-sm-12 col-md-12 col-lg-12">Deductibles</label>
+                        <div class="col-md-5">
+                                <input class="form-control"
+                                       ng-model="vm.loan_product.deductible.item"
+                                       type="text"
+                                       name="txt_deductible_item" placeholder="Deductible" />
+                        </div>
+                        <div class="col-md-5">
+                                <input class="form-control"
+                                       ng-model="vm.loan_product.deductible.value"
+                                       type="text"
+                                       name="txt_deductible_value" placeholder="Percentage" />
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-success btn-outline"
+                                    ng-click="vm.addToDeductibleList(vm.loan_product.deductible)">
+                                <i class="fa fa-plus"></i>
+                                Add </button>
+                        </div>
                     </div>
-                    <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6"
-                         ng-class="{false:'has-error'}[vm.loan_product_form.IsMaximum_loan_amountValid]">
-                        <label>Cost Of Loans </label>
-                        <input id="maxLoanSizeInput" name="maxLoanSizeInput" ng-model="vm.loan_product.maximum_loan_amount"
-                               type="text" class="form-control required ng-pristine ng-valid ng-not-empty ng-touched"
-                               aria-invalid="false">
 
+                    <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <md-input-container class="md-block">
+                                <md-radio-group id="costOfLoanType"
+                                                name="costOfLoanType"
+                                                layout="row"
+                                                ng-model="vm.loan_product.cost_of_loan.type" >
+                                    <md-radio-button class="md-primary" value="fixed">
+                                        Fixed </md-radio-button>
+                                    <md-radio-button value="percentage" >
+                                        Portion Of Loan</md-radio-button>
+                                </md-radio-group>
+                            </md-input-container>
+                        </div>
+                        <label class="col-xs-12 col-sm-12 col-md-12 col-lg-12">Cost Of Loan</label>
+
+                        <div class="col-md-5">
+                                <input class="form-control"
+                                       ng-model="vm.loan_product.cost_of_loan.item"
+                                       type="text"
+                                       name="txt_costOfLoan_item" placeholder="Cost of loan" />
+                        </div>
+                        <div class="col-md-5">
+                                <input class="form-control"
+                                       ng-model="vm.loan_product.cost_of_loan.value"
+                                       type="text"
+                                       name="txt_costOfLoan_unit" placeholder="Amount" />
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-success btn-outline"
+                                    ng-click="vm.addToCostOfLoan(vm.loan_product.cost_of_loan)">
+                                <i class="fa fa-plus"></i> Add </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+
+                    <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                        <label>&nbsp;</label>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr class="bg-inverse-light">
+                                    <th>#</th>
+                                    <th>Deductible</th>
+                                    <th>Type</th>
+                                    <th>Amount/Percentage</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="cost in vm.loan_product.deductibles">
+                                    <td>{{$index + 1}}</td>
+                                    <td>{{cost.item}}</td>
+                                    <td>{{cost.type}}</td>
+                                    <td>{{cost.value}}</td>
+                                    <td>
+                                        <a ng-click="vm.editDeductibleItem(cost,$event)">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6">
+                        <label>&nbsp;</label>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr class="bg-inverse-light">
+                                    <th>#</th>
+                                    <th>Cost of Loan</th>
+                                    <th>Type</th>
+                                    <th>Amount/Percentage</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="cost in vm.loan_product.cost_of_loans">
+                                    <td>{{$index + 1}}</td>
+                                    <td>{{cost.item}}</td>
+                                    <td>{{cost.type}}</td>
+                                    <td>{{cost.value}}</td>
+                                    <td>
+                                        <a ng-click="vm.editCostOfLoanItem(cost,$event)">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
