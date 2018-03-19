@@ -1,0 +1,69 @@
+<md-dialog style="min-width: 800px">
+    <md-toolbar class="small">
+        <div class="md-toolbar-tools small">
+            <h2>{{vm.isEdit? 'Edit ':'Add '}} Loan Product</h2>
+            <span flex></span>
+            <md-button aria-label="button" class="md-icon-button" ng-click="vm.cancel()">
+                <i class="icon-close"></i>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content style="max-height:800px;">
+        <md-content class="md-padding">
+            <form class="mb-xl" name="loanProductForm"  block-ui="LoanProductBlockUI">
+                <div class="form-group">
+                    <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6" ng-class="{false:'has-error'}[vm.loan_product_form.IsnameValid]">
+                        <label>Loan Product *</label>
+                        <input id="name" name="name" ng-model="vm.loan_product.name" type="text"
+                               class="form-control required ng-pristine ng-valid ng-not-empty ng-touched"
+                               aria-invalid="false">
+                        <small ng-show="!vm.loan_product_form.IsnameValid" class="help-block ng-hide"
+                               aria-hidden="true">Name is required.
+                        </small>
+                    </div>
+                    <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6" ng-class="{false:'has-error'}[vm.loan_product_form.IsMaximum_loan_amountValid]">
+                        <label>Max Loan Size *</label>
+                        <input id="maxLoanSizeInput" name="maxLoanSizeInput" ng-model="vm.loan_product.maximum_loan_amount"
+                               type="text" class="form-control required ng-pristine ng-valid ng-not-empty ng-touched"
+                               aria-invalid="false">
+                        <small ng-show="!vm.loan_product_form.IsMaximum_loan_amountValid" class="help-block ng-hide"
+                               aria-hidden="true">Max Loan Size is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6"
+                         ng-class="{false:'has-error'}[vm.loan_product_form.IsnameValid]">
+                        <label>Deductibles</label>
+                        <input id="name" name="name" ng-model="vm.loan_product.name" type="text"
+                               class="form-control required ng-pristine ng-valid ng-not-empty ng-touched"
+                               aria-invalid="false">
+                      
+                    </div>
+                    <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6"
+                         ng-class="{false:'has-error'}[vm.loan_product_form.IsMaximum_loan_amountValid]">
+                        <label>Cost Of Loans </label>
+                        <input id="maxLoanSizeInput" name="maxLoanSizeInput" ng-model="vm.loan_product.maximum_loan_amount"
+                               type="text" class="form-control required ng-pristine ng-valid ng-not-empty ng-touched"
+                               aria-invalid="false">
+
+                    </div>
+                </div>
+
+            </form>
+        </md-content>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+        <div layout="row" layout-align="start" flex>
+            <md-button class="md-raised md-button-small md-ink-ripple" ng-click="vm.cancel()">
+                Cancel
+            </md-button>
+        </div>
+        <md-button class="md-raised md-primary md-button-small md-ink-ripple pull-right" ng-click="vm.saveCrop()">
+            <i class="fa fa-save"></i> {{vm.isEdit? 'Update':'Save'}}
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>
