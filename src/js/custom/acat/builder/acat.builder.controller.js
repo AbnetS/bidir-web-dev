@@ -15,6 +15,7 @@
 
 
         vm.addToCostList = _addToCostList;
+        vm.addGroupedCostList = _addGroupedCostList;
         vm.editCostItem = _editCostItem;
         vm.cancelCostItem = _cancelCostItem;
 
@@ -59,6 +60,8 @@
                 vm.acat.input.seedCostList = vm.acat.input.sub_sections[0].cost_list.linear;
                 vm.acat.input.fertilizerCostList = vm.acat.input.sub_sections[1].cost_list.linear;
                 vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
+                console.log("vm.acat.input.chemicalsCostList",vm.acat.input.chemicalsCostList);
+
                 myBlockUIOnStart.stop();
 
             },function (error) {
@@ -142,6 +145,50 @@
 
         }
 
+        function _addGroupedCostList(groupInfo, type) {
+
+            if(!_.isUndefined(groupInfo)){
+                    if(groupInfo.existing_group){
+                        var costItem = {
+                            parent_grouped_list:groupInfo.selected_group._id, //"5ab12ecea682310001a24401"
+                            item: groupInfo.item,
+                            unit: groupInfo.unit
+                        };
+                        AddCostItemToGroup(costItem);
+                    }else{
+                        var groupCost = {
+                            type: 'grouped',
+                            parent_cost_list:vm.acat.input.sub_sections[2].cost_list._id,
+                            title:groupInfo.title
+                        };
+                        console.log("group to be created",groupCost);
+                        ACATService.AddCostList(groupCost).then(function (response) {
+                            console.log("group created",response.data);
+                            var groupItem = response.data; //Group Information captured
+                            //    TODO:create item unit here
+                            var costItem = {
+                                parent_grouped_list:groupItem._id, //"5ab12ecea682310001a24401"
+                                item: groupInfo.item,
+                                unit: groupInfo.unit
+                            };
+                            AddCostItemToGroup(costItem);
+
+                        },function (error) {
+                            console.log("error on group creation",error);
+                        });
+                    }
+
+            }
+        }
+        function AddCostItemToGroup(costItem) {
+            console.log("costItem",costItem);
+            ACATService.AddCostList(costItem).then(function (response) {
+                console.log("COST LIST ADDED ON GROUP",response);
+            },function (error) {
+                console.log("error while adding cost item on group",error);
+            });
+        }
+
         function DoesItemExistInCostList(item, items) {
             return _.some(items,function (costItem) {
                 return costItem.item === item.item && costItem.unit === item.unit;
@@ -192,7 +239,7 @@
         function addCostListAPI(cost,type) {
 
             ACATService.AddCostList(cost).then(function (response) {
-                console.log("COST LIST ADDED",response);
+                console.log("COST LIST ADDED FOR " + type,response);
                 var newCost = response.data;
                 switch (type){
                     case 'SEED':

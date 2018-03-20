@@ -208,20 +208,75 @@
                                         </md-radio-group>
                                     </md-input-container>
                                 </div>
+
+
                                 <!--IF LIST IS GROUPED-->
-                                <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Group</label>
-                                            <input class="form-control" type="text"
-                                                   ng-model="vm.acat.chemicals.group_title"
-                                                   name="item" placeholder="Group Name" />
+                                <div ng-show="vm.acat.chemicals.list_type==='grouped'">
+                                    <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
+                                        <div class="col-md-4">
+                                            <md-input-container class="md-block">
+                                                <md-switch class="md-warm" name="chemicalsGroupSwitch"
+                                                           ng-model="vm.acat.chemicals.existing_group"
+                                                           required>
+                                                    Add to Existing Group
+                                                </md-switch>
+                                            </md-input-container>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div ng-show="!vm.acat.chemicals.existing_group" class="form-group">
+                                                <label>Group</label>
+                                                <input class="form-control" type="text"
+                                                       ng-model="vm.acat.chemicals.title"
+                                                       name="item" placeholder="Group Name" />
+                                            </div>
+                                            <div ng-show="vm.acat.chemicals.existing_group">
+                                                <label>Group</label>
+                                                <div class="form-group">
+                                                    <ui-select ng-model="vm.acat.chemicals.selected_group"
+                                                               theme="select2"
+                                                               title="Choose Chemical Group">
+                                                        <ui-select-match placeholder="Select Group from the list...">
+                                                            {{$select.selected.title}}
+                                                        </ui-select-match>
+                                                        <ui-select-choices repeat="groupItem in vm.acat.input.chemicalsCostList | filter: $select.search">
+                                                            <span ng-bind-html="groupItem.title | highlight: $select.search"></span>
+                                                        </ui-select-choices>
+                                                    </ui-select>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Item</label>
+                                                <input class="form-control" type="text"
+                                                       ng-model="vm.acat.chemicals.item"
+                                                       name="item" placeholder="Item" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Unit</label>
+                                                <input class="form-control" type="text"
+                                                       ng-model="vm.acat.chemicals.unit"
+                                                       name="unit" placeholder="unit" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <br/>
+                                            <button class="btn btn-success btn-outline"
+                                                    ng-click="vm.addGroupedCostList(vm.acat.chemicals,'CHEMICALS')">
+                                                <i class="fa fa-plus"></i>
+                                                Add
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
-
                                 <!-- START CHEMICALS ROW-->
-                                <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
+                                <div ng-show="vm.acat.chemicals.list_type==='linear'"
+                                     class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Item</label>
