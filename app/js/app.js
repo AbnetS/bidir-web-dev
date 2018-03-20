@@ -80,6 +80,19 @@
     angular
         .module('app.colors', []);
 })();
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common", [])
+      .config(routeConfig)
+      .run(runBlock);
+
+  function runBlock() {}
+  function routeConfig() {}
+
+})(window.angular);
+
 (function() {
     'use strict';
 
@@ -101,19 +114,6 @@
             'ngMessages'
         ]);
 })();
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common", [])
-      .config(routeConfig)
-      .run(runBlock);
-
-  function runBlock() {}
-  function routeConfig() {}
-
-})(window.angular);
-
 (function() {
     'use strict';
 
@@ -433,123 +433,6 @@
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .config(coreConfig);
-
-    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
-    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
-
-      var core = angular.module('app.core');
-      // registering components after bootstrap
-      core.controller = $controllerProvider.register;
-      core.directive  = $compileProvider.directive;
-      core.filter     = $filterProvider.register;
-      core.factory    = $provide.factory;
-      core.service    = $provide.service;
-      core.constant   = $provide.constant;
-      core.value      = $provide.value;
-
-      // Disables animation on items with class .ng-no-animation
-      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
-
-      // Improve performance disabling debugging features
-      // $compileProvider.debugInfoEnabled(false);
-
-    }
-
-})();
-/**=========================================================
- * Module: constants.js
- * Define constants to inject across the application
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .constant('APP_MEDIAQUERY', {
-          'desktopLG':             1200,
-          'desktop':                992,
-          'tablet':                 768,
-          'mobile':                 480
-        })
-      ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .run(appRun);
-
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
-
-      // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });*/
-
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
-
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Hooks Example
-      // ----------------------------------- 
-
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
-
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
-
-    }
-
-})();
-
-
 (function(angular) {
   "use strict";
 
@@ -765,6 +648,123 @@ var QUESTION_TYPE = {
     SINGLE_CHOICE: "SINGLE_CHOICE",
     GROUPED: "GROUPED"
 };
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
+
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+      // Disables animation on items with class .ng-no-animation
+      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
+
+      // Improve performance disabling debugging features
+      // $compileProvider.debugInfoEnabled(false);
+
+    }
+
+})();
+/**=========================================================
+ * Module: constants.js
+ * Define constants to inject across the application
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .run(appRun);
+
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });*/
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
+    }
+
+})();
+
+
 (function() {
     'use strict';
 
@@ -5112,9 +5112,10 @@ function runBlock() {
         vm.ACATId = $stateParams.id;
 
 
-        vm.addToSeedCostList = _addToSeedCostList;
-        vm.editSeedCost = _editSeedCost;
-        vm.cancelSeedCostList = _cancelSeedCostList;
+        vm.addToCostList = _addToCostList;
+        vm.editCostItem = _editCostItem;
+        vm.cancelCostItem = _cancelCostItem;
+
         vm.addToFertilizerCostList = _addToFertilizerCostList;
         vm.addToChemicalsCostList = _addToChemicalsCostList;
 
@@ -5175,37 +5176,108 @@ function runBlock() {
 
     }
 
-        function _addToSeedCostList(cost) {
-            var items = vm.acat.input.seedCostList;
+
+        function _addToCostList(cost,type) {
 
                 if(!_.isUndefined(cost) && !_.isUndefined(cost.item) && !_.isUndefined(cost.unit)){
-                    if(vm.isEditSeedCost){
-                        updateCostListAPI(cost);
-                    }else{
-                        var item_exist = _.some(items,function (costItem) {
-                            return costItem.item === cost.item && costItem.unit === cost.unit;
-                        });
 
-                        if(!item_exist){
-                            addCostListAPI(cost);
-                        }
+                    switch (type){
+                        case 'SEED':
+                            var items = vm.acat.input.seedCostList;
+                            if(vm.isEditSeedCost){
+                                updateCostListAPI(cost,type);
+                            }else{
+                                var item_exist = DoesItemExistInCostList(cost,items);
+                                if(!item_exist){
+                                    addCostListAPI(cost,type);
+                                }
+                            }
+                            vm.acat.input.seed = {};//reset cost item
+                            break;
+                        case 'FERTILIZER':
+                            var items = vm.acat.input.fertilizerCostList;
+                            if(vm.isEditSeedCost){
+                                updateCostListAPI(cost,type);
+                            }else{
+                                var item_exist = DoesItemExistInCostList(cost,items);
+                                if(!item_exist){
+                                    var prepareCost =   {
+                                        type: vm.acat.fertilizer.list_type,
+                                        parent_cost_list: vm.acat.input.sub_sections[1].cost_list._id,//Fertilizer cost list
+                                        item:cost.item,
+                                        unit:cost.unit
+                                    };
+                                    addCostListAPI(prepareCost,type);
+                                }
+                            }
+                            vm.acat.input.fertilizer = {};//reset cost item
+                            break;
+                        case 'CHEMICALS':
+                            var items = vm.acat.input.chemicalsCostList;
+                            if(vm.isEditSeedCost){
+                                updateCostListAPI(cost,type);
+                            }else{
+                                var item_exist = DoesItemExistInCostList(cost,items);
+                                if(!item_exist){
+
+                                    addCostListAPI(cost,type);
+                                }
+                            }
+                            vm.acat.input.seed = {};//reset cost item
+                            break;
+                        default:
+                            break;
                     }
-                    vm.acat.input.seed = {};//reset cost item
+
                 }
 
+        }
+
+        function DoesItemExistInCostList(item, items) {
+            return _.some(items,function (costItem) {
+                return costItem.item === item.item && costItem.unit === item.unit;
+            });
+        }
+
+
+        function _cancelCostItem(type) {
+            switch (type){
+                case 'SEED':
+                    vm.isEditSeedCost = false;
+                    vm.acat.input.seed = {};
+                    break;
+                case 'FERTILIZER':
+                    vm.isEditFertilizerCost =  false;
+                    vm.acat.fertilizer = {};
+                    break;
+                case 'CHEMICALS':
+                    vm.isEditChemicalsCost = false;
+                    vm.acat.chemicals = {};
+                    break;
+                default:
+                    break;
+            }
 
         }
 
-        function _cancelSeedCostList() {
-            vm.isEditSeedCost = false;
-            vm.acat.input.seed = {};
-        }
+        function _editCostItem(cost,type) {
+            switch (type){
+                case 'SEED':
+                    vm.isEditSeedCost =  true;
+                    vm.acat.input.seed = cost;
+                    break;
+                case 'FERTILIZER':
+                    vm.isEditFertilizerCost =  true;
+                    vm.acat.fertilizer = cost;
+                    break;
+                case 'CHEMICALS':
+                    vm.isEditChemicalsCost = true;
+                    vm.acat.chemicals = cost;
+                    break;
+                default:
+                    break;
+            }
 
-
-
-        function _editSeedCost(cost) {
-            vm.isEditSeedCost =  true;
-            vm.acat.input.seed = cost;
         }
 
         function _addToFertilizerCostList(cost) {
@@ -5215,6 +5287,7 @@ function runBlock() {
                     return costItem.item === cost.item && costItem.unit === cost.unit;
                 });
                 if(!item_exist){
+
                     var prepareCost =   {
                         type: vm.acat.fertilizer.list_type,
                         parent_cost_list: vm.acat.input.sub_sections[1].cost_list._id,//Fertilizer cost list
@@ -5222,39 +5295,79 @@ function runBlock() {
                         unit:cost.unit
                     };
                     addCostListAPI(prepareCost);
+
                     vm.acat.input.fertilizerCostList.push(cost);
                     vm.acat.input.fertilizer = {};
                 }
             }
         }
 
-        function addCostListAPI(cost) {
+
+        function addCostListAPI(cost,type) {
+
             ACATService.AddCostList(cost).then(function (response) {
-                console.log("response",response);
+                console.log("COST LIST ADDED",response);
                 var newCost = response.data;
-                vm.acat.input.seedCostList.push(newCost);
+                switch (type){
+                    case 'SEED':
+                        vm.acat.input.seedCostList.push(newCost);
+                        break;
+                    case 'FERTILIZER':
+                        vm.acat.input.fertilizerCostList.push(newCost);
+                        break;
+                    case 'CHEMICALS':
+                        vm.acat.input.chemicalsCostList.push(newCost);
+                        break;
+                    default:
+                            break;
+                }
+
             },function (error) {
-                console.log("error",error);
+                console.log("error while adding cost item for " + type,error);
             });
         }
 
-        function updateCostListAPI(cost) {
+        function updateCostListAPI(cost,type) {
+
             var prepareCost = {
                 _id: cost._id,
                 item:cost.item,
                 unit:cost.unit
             };
-            vm.acat.input.seedCostList = _.filter(vm.acat.input.seedCostList,function (seedCost) {
-                    return seedCost._id !== cost._id;
-            });
 
             ACATService.UpdateCostList(prepareCost).then(function (response) {
-                console.log("response",response);
                 var newCost = response.data;
-                vm.acat.input.seedCostList.push(newCost);
-                vm.isEditSeedCost = false;
+                switch (type){
+                    case 'SEED':
+                        vm.acat.input.seedCostList = _.filter(vm.acat.input.seedCostList,
+                            function (itemCost) {
+                                return itemCost._id !== cost._id;
+                            });
+                        vm.acat.input.seedCostList.push(newCost);
+                        vm.isEditSeedCost = false;
+                        break;
+                    case 'FERTILIZER':
+                        vm.acat.input.fertilizerCostList = _.filter(vm.acat.input.fertilizerCostList,
+                            function (itemCost) {
+                                return itemCost._id !== cost._id;
+                            });
+                        vm.acat.input.fertilizerCostList.push(newCost);
+                        vm.isEditFertilizerCost = false;
+                        break;
+                    case 'CHEMICALS':
+                        vm.acat.input.chemicalsCostList = _.filter(vm.acat.input.chemicalsCostList,
+                            function (itemCost) {
+                                return itemCost._id !== cost._id;
+                            });
+                        vm.acat.input.chemicalsCostList.push(newCost);
+                        vm.isEditChemicalsCost = false;
+                        break;
+                    default:
+                        break;
+                }
+
             },function (error) {
-                console.log("error",error);
+                console.log("error updating cost list",error);
             });
         }
 

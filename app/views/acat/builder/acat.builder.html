@@ -66,15 +66,16 @@
                                     <div class="col-md-4">
                                         <br/>
                                         <button ng-show="vm.isEditSeedCost" class="btn btn-inverse btn-outline"
-                                                ng-click="vm.cancelSeedCostList()">
+                                                ng-click="vm.cancelCostItem('SEED')">
                                             <i class="fa fa-times"></i>
-                                            Cancel</button>
-                                        <button class="btn btn-success btn-outline" ng-click="vm.addToSeedCostList(vm.acat.input.seed)">
-                                            <i class="fa fa-plus"></i>
-                                            {{vm.isEditSeedCost?'Update Item':'Add Item'}}</button>
+                                            </button>
+                                        <button class="btn btn-success btn-outline" ng-click="vm.addToCostList(vm.acat.input.seed,'SEED')">
+                                            <i ng-class="vm.isEditSeedCost?'fa fa-refresh':'fa fa-plus'" class="fa fa-plus"></i>
+                                            {{vm.isEditSeedCost?'Update':'Add'}}</button>
                                     </div>
                                     <!-- ITEMS LIST-->
-                                    <div ng-show="vm.acat.input.seedCostList.length>0" class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <div ng-show="vm.acat.input.seedCostList.length>0"
+                                         class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
                                                 <thead>
@@ -91,7 +92,7 @@
                                                     <td>{{cost.item}}</td>
                                                     <td>{{cost.unit}}</td>
                                                     <td>
-                                                        <a ng-click="vm.editSeedCost(cost,$event)">
+                                                        <a ng-click="vm.editCostItem(cost,'SEED')">
                                                             <i class="fa fa-edit"></i>
                                                         </a>
                                                     </td>
@@ -147,16 +148,20 @@
                                     </div>
                                     <div class="col-md-4">
                                         <br/>
-                                        <button class="btn btn-success btn-outline"
-                                                ng-click="vm.addToFertilizerCostList(vm.acat.fertilizer)">
-                                            <i class="fa fa-plus"></i>
-                                            Add List</button>
+                                        <button ng-show="vm.isEditFertilizerCost" class="btn btn-inverse btn-outline"
+                                                ng-click="vm.cancelCostItem('FERTILIZER')">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                        <button class="btn btn-success btn-outline" ng-click="vm.addToCostList(vm.acat.fertilizer,'FERTILIZER')">
+                                            <i ng-class="vm.isEditFertilizerCost?'fa fa-refresh':'fa fa-plus'" class="fa fa-plus"></i>
+                                            {{vm.isEditFertilizerCost?'Update':'Add'}}</button>
                                     </div>
                                 </div>
                                 <!-- END FERTILIZER ROW-->
 
                                 <!-- ITEMS TABLE-->
-                                <div ng-show="vm.acat.input.fertilizerCostList.length>0" class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                <div ng-show="vm.acat.input.fertilizerCostList.length>0"
+                                     class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                     <div class="table-responsive">
                                         <table class="table table-bordered">
                                             <thead>
@@ -173,7 +178,7 @@
                                                 <td>{{cost.item}}</td>
                                                 <td>{{cost.unit}}</td>
                                                 <td>
-                                                    <a ng-click="vm.editItem(cost,$event)">
+                                                    <a ng-click="vm.editCostItem(cost,'FERTILIZER')">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
                                                 </td>
