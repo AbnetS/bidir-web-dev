@@ -59,6 +59,7 @@ var API = {
             Crop:'crops',
             CreateCrop:'crops/create',
             LoanProducts:'loan-products',
+            CostListUpdate: 'costLists',
             CostList: 'costLists/add'
         }
     }

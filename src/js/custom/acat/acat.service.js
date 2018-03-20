@@ -18,7 +18,8 @@
             GetAllACATList: _getAllACAT,
             GetACATById: _getACATById,
             GetAllLoanProducts:_getAllLoanProducts,
-            AddCostList:_addCostList
+            AddCostList:_addCostList,
+            UpdateCostList:_updateCostList
         };
 
         function _getCrops() {
@@ -41,6 +42,9 @@
         }
         function _addCostList(cost) {
             return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
+        }
+        function _updateCostList(cost){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
         }
     }
 
