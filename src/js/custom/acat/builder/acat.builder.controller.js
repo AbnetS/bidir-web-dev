@@ -161,7 +161,8 @@
                             parent_cost_list:vm.acat.input.sub_sections[2].cost_list._id,
                             title:groupInfo.title
                         };
-                        console.log("group to be created",groupCost);
+
+                        //ADD THE NEW GROUP TO COST LIST PARENT
                         ACATService.AddCostList(groupCost).then(function (response) {
                             console.log("group created",response.data);
                             var groupItem = response.data; //Group Information captured

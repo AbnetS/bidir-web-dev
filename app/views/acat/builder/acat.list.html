@@ -15,7 +15,7 @@
         </div>
         <br/>
         <div class="row">
-            <div class="col-lg-12">
+            <div ng-show="vm.acat_list.length>0" class="col-lg-12">
                 <md-table-container>
                     <table md-table  md-progress="promise">
                         <thead  md-head>
@@ -46,6 +46,12 @@
                         </tbody>
                     </table>
                 </md-table-container>
+            </div>
+            <div ng-show="vm.acat_list.length === 0" class="col-lg-12">
+                <h4 class="centerPageText">
+                    PLEASE! <strong>Add ACAT FORMS</strong>
+                    <a ui-sref="app.acatbuilder({id:0})"><i class="fa fa-plus"></i></a>
+                </h4>
             </div>
         </div>
     </div>
