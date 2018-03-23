@@ -12,7 +12,8 @@
                     <span class="control-label required" aria-required="true"> * </span>
                     <ui-select ng-model="vm.acat.selected_crop"
                                theme="select2"
-                               title="Choose crop">
+                               title="Choose crop"
+                               ng-change="vm.cropSelectChanged()">
                         <ui-select-match placeholder="Select crop from the list...">
                             {{$select.selected.name}} - {{$select.selected.category}}
                         </ui-select-match>
@@ -27,7 +28,7 @@
             </div>
             <div class="col-lg-12"></div>
             <div class="col-lg-12" block-ui="ACATBuilderBlockUI">
-                <md-tabs md-dynamic-height="" md-border-bottom="" >
+                <md-tabs md-dynamic-height="" md-border-bottom="">
                     <md-tab label="INPUT">
                         <md-content class="md-padding">
 

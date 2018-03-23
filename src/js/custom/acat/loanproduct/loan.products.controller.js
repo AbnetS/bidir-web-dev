@@ -14,6 +14,9 @@
         vm.addLoanProduct = _addLoanProduct;
         vm.editLoanProduct = _editLoanProduct;
         initialize();
+
+
+
         function initialize() {
             ACATService.GetAllLoanProducts().then(function (response) {
                         vm.loanProducts = response.data.docs;
@@ -40,7 +43,21 @@
             });
         }
         function _editLoanProduct(item,ev) {
+            $mdDialog.show({
+                locals: {data:{loan_product:loan_product}},
+                templateUrl: RouteHelpers.basepath('acat/loanproduct/loan.product.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: LoanProductDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
 
+            }, function (response) {
+                console.log("refresh on response");
+            });
         }
 
 

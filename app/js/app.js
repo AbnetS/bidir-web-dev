@@ -635,7 +635,8 @@ var API = {
             CreateCrop:'crops/create',
             LoanProducts:'loan-products',
             CostListUpdate: 'costLists',
-            CostList: 'costLists/add'
+            CostList: 'costLists/add',
+            Initialize:'initialize'
         }
     }
 };
@@ -4640,6 +4641,7 @@ function runBlock() {
             UpdateCrop:_updateCrop,
             GetAllACATList: _getAllACAT,
             GetACATById: _getACATById,
+            InitializeACAT:_initializeACAT,
             GetAllLoanProducts:_getAllLoanProducts,
             AddCostList:_addCostList,
             UpdateCostList:_updateCostList
@@ -4668,6 +4670,9 @@ function runBlock() {
         }
         function _updateCostList(cost){
             return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
+        }
+        function _initializeACAT(acat) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.Initialize),acat);
         }
     }
 
@@ -5104,9 +5109,9 @@ function runBlock() {
 
     angular.module("app.acat").controller("ACATController", ACATController);
 
-    ACATController.$inject = ['ACATService','$stateParams','blockUI'];
+    ACATController.$inject = ['ACATService','$stateParams','blockUI','$state'];
 
-    function ACATController(ACATService,$stateParams,blockUI) {
+    function ACATController(ACATService,$stateParams,blockUI,$state) {
         var vm = this;
         vm.isEdit = $stateParams.id !== "0";
         vm.ACATId = $stateParams.id;
@@ -5116,11 +5121,33 @@ function runBlock() {
         vm.addGroupedCostList = _addGroupedCostList;
         vm.editCostItem = _editCostItem;
         vm.cancelCostItem = _cancelCostItem;
+        vm.cropSelectChanged = _cropSelectChanged;
+
+        function _cropSelectChanged() {
+            if(vm.isEdit){
+            //    UPDATE ACAT CROP
+            }else {
+                // Initialize ACAT with this crop
+                // vm.acat.selected_crop
+             var acatCrop =   {
+                    title: vm.acat.selected_crop.name +  '-CAT',
+                    crop: vm.acat.selected_crop._id
+                };
+             ACATService.InitializeACAT(acatCrop).then(function (response) {
+                 console.log("ACAT ",response);
+                 var acatData = response.data;
+                 $state.go('app.acatbuilder',{id:acatData._id},{inherit:true});
+             },function (error) {
+                 console.log("error on initializeing acat",error);
+             })
+            }
+        }
 
 
         initialize();
 
         function initialize() {
+
             callApiForCrops();
 
             vm.acat = {
@@ -5145,20 +5172,23 @@ function runBlock() {
             }
 
         }
+        function setSubSectionCostFromResponse(subSections) {
+            vm.acat.input = subSections[0];
+            vm.acat.labour_costs = subSections[1];
+            vm.acat.other_costs = subSections[2];
 
+            vm.acat.input.seedCostList = vm.acat.input.sub_sections[0].cost_list.linear;
+            vm.acat.input.fertilizerCostList = vm.acat.input.sub_sections[1].cost_list.linear;
+            vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
+        }
         function callAPI() {
             var myBlockUIOnStart = blockUI.instances.get('ACATBuilderBlockUI');
             myBlockUIOnStart.start();
             ACATService.GetACATById(vm.ACATId).then(function (response) {
+                console.log("GetACATById",response.data);
+                SetSelectedCrop(response.data.crop);
                 var subSections = response.data.sections[0].sub_sections;
-                vm.acat.input = subSections[0];
-                vm.acat.labour_costs = subSections[1];
-                vm.acat.other_costs = subSections[2];
-
-                vm.acat.input.seedCostList = vm.acat.input.sub_sections[0].cost_list.linear;
-                vm.acat.input.fertilizerCostList = vm.acat.input.sub_sections[1].cost_list.linear;
-                vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
-                console.log("vm.acat.input.chemicalsCostList",vm.acat.input.chemicalsCostList);
+                setSubSectionCostFromResponse(subSections);
 
                 myBlockUIOnStart.stop();
 
@@ -5166,6 +5196,11 @@ function runBlock() {
                 myBlockUIOnStart.stop();
                 console.log("error",error);
             });
+        }
+        function SetSelectedCrop(id) {
+            vm.acat.selected_crop = _.filter(vm.crops,function (crop) {
+                return crop._id === id;
+            })
         }
 
         function callApiForCrops(){
@@ -5266,7 +5301,7 @@ function runBlock() {
                             var groupItem = response.data; //Group Information captured
                             //    TODO:create item unit here
                             var costItem = {
-                                parent_grouped_list:groupItem._id, //"5ab12ecea682310001a24401"
+                                parent_grouped_list:groupItem._id,
                                 item: groupInfo.item,
                                 unit: groupInfo.unit
                             };
@@ -5560,6 +5595,9 @@ function runBlock() {
         vm.addLoanProduct = _addLoanProduct;
         vm.editLoanProduct = _editLoanProduct;
         initialize();
+
+
+
         function initialize() {
             ACATService.GetAllLoanProducts().then(function (response) {
                         vm.loanProducts = response.data.docs;
@@ -5586,7 +5624,21 @@ function runBlock() {
             });
         }
         function _editLoanProduct(item,ev) {
+            $mdDialog.show({
+                locals: {data:{loan_product:loan_product}},
+                templateUrl: RouteHelpers.basepath('acat/loanproduct/loan.product.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: LoanProductDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
 
+            }, function (response) {
+                console.log("refresh on response");
+            });
         }
 
 
