@@ -22,7 +22,7 @@
                     <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6" ng-class="{false:'has-error'}[vm.loan_product_form.IsMaximum_loan_amountValid]">
                         <label>Max Loan Size *</label>
                         <input id="maxLoanSizeInput" name="maxLoanSizeInput" ng-model="vm.loan_product.maximum_loan_amount"
-                               type="text" class="form-control required ng-pristine ng-valid ng-not-empty ng-touched"
+                               type="number" class="form-control required ng-pristine ng-valid ng-not-empty ng-touched"
                                aria-invalid="false">
                     </div>
                 </div>
@@ -35,9 +35,9 @@
                                                 name="deductibleType"
                                                 layout="row"
                                                 ng-model="vm.loan_product.deductible.type" >
-                                    <md-radio-button class="md-primary" value="fixed">
+                                    <md-radio-button class="md-primary" value="fixed_amount">
                                         Fixed </md-radio-button>
-                                    <md-radio-button value="percentage" >
+                                    <md-radio-button value="percent" >
                                         Portion Of Loan</md-radio-button>
                                 </md-radio-group>
                             </md-input-container>
@@ -49,12 +49,19 @@
                                        type="text"
                                        name="txt_deductible_item" placeholder="Deductible" />
                         </div>
-                        <div class="col-md-5">
+                        <div ng-show="vm.loan_product.deductible.type==='fixed_amount'" class="col-md-5">
                                 <input class="form-control"
-                                       ng-model="vm.loan_product.deductible.value"
-                                       type="text"
-                                       name="txt_deductible_value" placeholder="Percentage" />
+                                       ng-model="vm.loan_product.deductible.fixed_amount"
+                                       type="number"
+                                       name="txt_deductible_value" placeholder="Amount" />
                         </div>
+                        <div ng-show="vm.loan_product.deductible.type==='percent'" class="col-md-5">
+                            <input class="form-control"
+                                   ng-model="vm.loan_product.deductible.percent"
+                                   type="number"
+                                   name="txt_deductible_value" placeholder="Percent" />
+                        </div>
+
                         <div class="col-md-2">
                             <button class="btn btn-success btn-outline"
                                     ng-click="vm.addToDeductibleList(vm.loan_product.deductible)">
@@ -69,10 +76,10 @@
                                 <md-radio-group id="costOfLoanType"
                                                 name="costOfLoanType"
                                                 layout="row"
-                                                ng-model="vm.loan_product.cost_of_loan.type" >
-                                    <md-radio-button class="md-primary" value="fixed">
+                                                ng-model="vm.loan_product.costOfLoan.type" >
+                                    <md-radio-button class="md-primary" value="fixed_amount">
                                         Fixed </md-radio-button>
-                                    <md-radio-button value="percentage" >
+                                    <md-radio-button value="percent" >
                                         Portion Of Loan</md-radio-button>
                                 </md-radio-group>
                             </md-input-container>
@@ -81,19 +88,25 @@
 
                         <div class="col-md-5">
                                 <input class="form-control"
-                                       ng-model="vm.loan_product.cost_of_loan.item"
+                                       ng-model="vm.loan_product.costOfLoan.item"
                                        type="text"
                                        name="txt_costOfLoan_item" placeholder="Cost of loan" />
                         </div>
-                        <div class="col-md-5">
+                        <div ng-show="vm.loan_product.costOfLoan.type==='fixed_amount'" class="col-md-5">
                                 <input class="form-control"
-                                       ng-model="vm.loan_product.cost_of_loan.value"
-                                       type="text"
+                                       ng-model="vm.loan_product.costOfLoan.fixed_amount"
+                                       type="number"
                                        name="txt_costOfLoan_unit" placeholder="Amount" />
+                        </div>
+                        <div ng-show="vm.loan_product.costOfLoan.type==='percent'" class="col-md-5">
+                            <input class="form-control"
+                                   ng-model="vm.loan_product.costOfLoan.percent"
+                                   type="number"
+                                   name="txt_costOfLoan_unit" placeholder="Percent" />
                         </div>
                         <div class="col-md-2">
                             <button class="btn btn-success btn-outline"
-                                    ng-click="vm.addToCostOfLoan(vm.loan_product.cost_of_loan)">
+                                    ng-click="vm.addToCostOfLoanList(vm.loan_product.costOfLoan)">
                                 <i class="fa fa-plus"></i> Add </button>
                         </div>
                     </div>
@@ -119,7 +132,7 @@
                                     <td>{{$index + 1}}</td>
                                     <td>{{cost.item}}</td>
                                     <td>{{cost.type}}</td>
-                                    <td>{{cost.value}}</td>
+                                    <td>{{cost.fixed_amount > 0 ? cost.fixed_amount : cost.percent}}</td>
                                     <td>
                                         <a ng-click="vm.editDeductibleItem(cost,$event)">
                                             <i class="fa fa-edit"></i>
@@ -144,11 +157,11 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="cost in vm.loan_product.cost_of_loans">
+                                <tr ng-repeat="cost in vm.loan_product.cost_of_loan">
                                     <td>{{$index + 1}}</td>
                                     <td>{{cost.item}}</td>
                                     <td>{{cost.type}}</td>
-                                    <td>{{cost.value}}</td>
+                                    <td>{{cost.fixed_amount > 0 ? cost.fixed_amount : cost.percent}}</td>
                                     <td>
                                         <a ng-click="vm.editCostOfLoanItem(cost,$event)">
                                             <i class="fa fa-edit"></i>
@@ -171,7 +184,7 @@
                 Cancel
             </md-button>
         </div>
-        <md-button class="md-raised md-primary md-button-small md-ink-ripple pull-right" ng-click="vm.saveCrop()">
+        <md-button class="md-raised md-primary md-button-small md-ink-ripple pull-right" ng-click="vm.saveLoanProduct()">
             <i class="fa fa-save"></i> {{vm.isEdit? 'Update':'Save'}}
         </md-button>
     </md-dialog-actions>

@@ -74,12 +74,6 @@
 
 
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
-})();
 (function(angular) {
   "use strict";
 
@@ -93,6 +87,12 @@
 
 })(window.angular);
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
+})();
 (function() {
     'use strict';
 
@@ -383,56 +383,6 @@
 })(window.angular);
 
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
-
 (function(angular) {
   "use strict";
 
@@ -633,7 +583,8 @@ var API = {
             ACAT:'',
             Crop:'crops',
             CreateCrop:'crops/create',
-            LoanProducts:'loan-products',
+            LoanProducts:'loanProducts',
+            CreateLoanProducts:'loanProducts/create',
             CostListUpdate: 'costLists',
             CostList: 'costLists/add',
             Initialize:'initialize'
@@ -649,6 +600,56 @@ var QUESTION_TYPE = {
     SINGLE_CHOICE: "SINGLE_CHOICE",
     GROUPED: "GROUPED"
 };
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
+
 (function() {
     'use strict';
 
@@ -4643,6 +4644,7 @@ function runBlock() {
             GetACATById: _getACATById,
             InitializeACAT:_initializeACAT,
             GetAllLoanProducts:_getAllLoanProducts,
+            CreateLoanProduct:_createLoanProduct,
             AddCostList:_addCostList,
             UpdateCostList:_updateCostList
         };
@@ -4673,6 +4675,9 @@ function runBlock() {
         }
         function _initializeACAT(acat) {
             return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.Initialize),acat);
+        }
+        function _createLoanProduct(loanProduct) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateLoanProducts),loanProduct);
         }
     }
 
@@ -5104,6 +5109,105 @@ function runBlock() {
 /**
  * Created by Yoni on 3/5/2018.
  */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        callApi();
+
+       function callApi(){
+           ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error");
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
 (function(angular) {
     "use strict";
 
@@ -5131,6 +5235,7 @@ function runBlock() {
                 // vm.acat.selected_crop
              var acatCrop =   {
                     title: vm.acat.selected_crop.name +  '-CAT',
+                    subtitle: vm.acat.selected_crop.name +  '-CAT subtitle',
                     crop: vm.acat.selected_crop._id
                 };
              ACATService.InitializeACAT(acatCrop).then(function (response) {
@@ -5486,105 +5591,6 @@ function runBlock() {
 (function(angular) {
     "use strict";
 
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        callApi();
-
-       function callApi(){
-           ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error");
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
-
-(function(angular) {
-    "use strict";
-
     angular.module("app.acat").controller("LoanProductsController", LoanProductsController);
 
     LoanProductsController.$inject = ['$mdDialog','RouteHelpers','CommonService','AlertService','ACATService'];
@@ -5623,7 +5629,7 @@ function runBlock() {
                 console.log("refresh on response");
             });
         }
-        function _editLoanProduct(item,ev) {
+        function _editLoanProduct(loan_product,ev) {
             $mdDialog.show({
                 locals: {data:{loan_product:loan_product}},
                 templateUrl: RouteHelpers.basepath('acat/loanproduct/loan.product.dialog.html'),
@@ -5646,19 +5652,33 @@ function runBlock() {
             var vm = this;
             vm.cancel = _cancel;
             vm.addToDeductibleList = _addToDeductibleList;
-            vm.addToCostOfLoan = _addToCostOfLoan;
+            vm.addToCostOfLoanList = _addToCostOfLoanList;
             vm.editDeductibleItem = _editDeductibleItem;
             vm.editCostOfLoanItem = _editCostOfLoanItem;
+
+            vm.saveLoanProduct = _saveLoanProduct;
 
 
             vm.isEdit = data.loan_product !== null;
 
             if(vm.isEdit){
                 vm.loan_product = data.loan_product;
+                vm.loan_product.deductible = {
+                    type : 'fixed_amount'
+                };
+                vm.loan_product.costOfLoan = {
+                    type : 'fixed_amount'
+                };
             }else{
-                vm.loan_product = {
-                    deductibles:[],
-                    cost_of_loans:[]
+                vm.loan_product  = {
+                    deductibles :[],
+                    cost_of_loan :[],
+                    deductible:{
+                        type : 'fixed_amount'
+                    },
+                    costOfLoan:{
+                        type : 'fixed_amount'
+                    }
                 };
             }
 
@@ -5669,17 +5689,31 @@ function runBlock() {
             function _addToDeductibleList(item) {
                 console.log("deductible",item);
                 vm.loan_product.deductibles.push(item);
+                vm.loan_product.deductible = {
+                    type : 'fixed_amount'
+                };
             }
             function _editDeductibleItem(item) {
                 console.log("edit deductible",item);
             }
-            function _addToCostOfLoan(item) {
+            function _addToCostOfLoanList(item) {
                 console.log("Cost of loan",item);
-                vm.loan_product.cost_of_loans.push(item);
-
+                vm.loan_product.cost_of_loan.push(item);
+                vm.loan_product.costOfLoan = {
+                    type : 'fixed_amount'
+                };
             }
             function _editCostOfLoanItem(item) {
                 console.log("EDIT Cost of loan",item);
+            }
+
+            function _saveLoanProduct() {
+                // console.log("create loan product",vm.loan_product);
+                ACATService.CreateLoanProduct(vm.loan_product).then(function (response) {
+                    console.log("created loan product",response.data);
+                },function (error) {
+                    console.log("error",error);
+                });
             }
 
         }

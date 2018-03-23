@@ -58,7 +58,8 @@ var API = {
             ACAT:'',
             Crop:'crops',
             CreateCrop:'crops/create',
-            LoanProducts:'loan-products',
+            LoanProducts:'loanProducts',
+            CreateLoanProducts:'loanProducts/create',
             CostListUpdate: 'costLists',
             CostList: 'costLists/add',
             Initialize:'initialize'

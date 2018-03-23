@@ -28,6 +28,7 @@
                 // vm.acat.selected_crop
              var acatCrop =   {
                     title: vm.acat.selected_crop.name +  '-CAT',
+                    subtitle: vm.acat.selected_crop.name +  '-CAT subtitle',
                     crop: vm.acat.selected_crop._id
                 };
              ACATService.InitializeACAT(acatCrop).then(function (response) {

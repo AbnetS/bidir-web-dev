@@ -19,6 +19,7 @@
             GetACATById: _getACATById,
             InitializeACAT:_initializeACAT,
             GetAllLoanProducts:_getAllLoanProducts,
+            CreateLoanProduct:_createLoanProduct,
             AddCostList:_addCostList,
             UpdateCostList:_updateCostList
         };
@@ -49,6 +50,9 @@
         }
         function _initializeACAT(acat) {
             return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.Initialize),acat);
+        }
+        function _createLoanProduct(loanProduct) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateLoanProducts),loanProduct);
         }
     }
 
