@@ -53,20 +53,25 @@
                                 <input class="form-control"
                                        ng-model="vm.loan_product.deductible.fixed_amount"
                                        type="number"
-                                       name="txt_deductible_value" placeholder="Amount" />
+                                       name="txt_deductible_fixed_amount" placeholder="Amount" />
                         </div>
                         <div ng-show="vm.loan_product.deductible.type==='percent'" class="col-md-5">
                             <input class="form-control"
                                    ng-model="vm.loan_product.deductible.percent"
                                    type="number"
-                                   name="txt_deductible_value" placeholder="Percent" />
+                                   min="0" max="100"
+                                   name="txt_deductible_percent" placeholder="Percent" />
                         </div>
 
                         <div class="col-md-2">
+                            <button ng-show="vm.isEditDeductible" class="btn btn-inverse btn-outline"
+                                    ng-click="vm.cancelEdit('deductible')">
+                                <i class="fa fa-times"></i>
+                            </button>
                             <button class="btn btn-success btn-outline"
                                     ng-click="vm.addToDeductibleList(vm.loan_product.deductible)">
-                                <i class="fa fa-plus"></i>
-                                Add </button>
+                                <i ng-class="vm.isEditDeductible? 'fa fa-refresh':'fa fa-plus'"></i>
+                             </button>
                         </div>
                     </div>
 
@@ -96,18 +101,25 @@
                                 <input class="form-control"
                                        ng-model="vm.loan_product.costOfLoan.fixed_amount"
                                        type="number"
-                                       name="txt_costOfLoan_unit" placeholder="Amount" />
+                                       min="0"
+                                       name="txt_costOfLoan_fixed_amount" placeholder="Amount" />
                         </div>
                         <div ng-show="vm.loan_product.costOfLoan.type==='percent'" class="col-md-5">
                             <input class="form-control"
                                    ng-model="vm.loan_product.costOfLoan.percent"
                                    type="number"
-                                   name="txt_costOfLoan_unit" placeholder="Percent" />
+                                   min="0" max="100"
+                                   name="txt_costOfLoan_percent" placeholder="Percent" />
                         </div>
                         <div class="col-md-2">
+                            <button ng-show="vm.isEditCostOfLoan" class="btn btn-inverse btn-outline"
+                                    ng-click="vm.cancelEdit('costOfLoan')">
+                                <i class="fa fa-times"></i>
+                            </button>
                             <button class="btn btn-success btn-outline"
                                     ng-click="vm.addToCostOfLoanList(vm.loan_product.costOfLoan)">
-                                <i class="fa fa-plus"></i> Add </button>
+                                <i ng-class="vm.isEditCostOfLoan? 'fa fa-refresh':'fa fa-plus'"></i>
+                                {{vm.isEditCostOfLoan? 'Update':'Add'}} </button>
                         </div>
                     </div>
                 </div>

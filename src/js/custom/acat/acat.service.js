@@ -20,6 +20,7 @@
             InitializeACAT:_initializeACAT,
             GetAllLoanProducts:_getAllLoanProducts,
             CreateLoanProduct:_createLoanProduct,
+            UpdateLoanProduct:_updateLoanProduct,
             AddCostList:_addCostList,
             UpdateCostList:_updateCostList
         };
@@ -53,6 +54,9 @@
         }
         function _createLoanProduct(loanProduct) {
             return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateLoanProducts),loanProduct);
+        }
+        function _updateLoanProduct(loanProduct) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProducts,loanProduct._id),loanProduct);
         }
     }
 

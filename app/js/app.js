@@ -74,6 +74,12 @@
 
 
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
+})();
 (function(angular) {
   "use strict";
 
@@ -87,12 +93,6 @@
 
 })(window.angular);
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
-})();
 (function() {
     'use strict';
 
@@ -189,15 +189,15 @@
     'use strict';
 
     angular
-        .module('app.routes', [
-            'app.lazyload'
-        ]);
+        .module('app.settings', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.settings', []);
+        .module('app.routes', [
+            'app.lazyload'
+        ]);
 })();
 (function() {
     'use strict';
@@ -382,6 +382,56 @@
     }
 })(window.angular);
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
 
 (function(angular) {
   "use strict";
@@ -600,56 +650,6 @@ var QUESTION_TYPE = {
     SINGLE_CHOICE: "SINGLE_CHOICE",
     GROUPED: "GROUPED"
 };
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
-
 (function() {
     'use strict';
 
@@ -2798,6 +2798,82 @@ var QUESTION_TYPE = {
     }
 
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.settings')
+        .run(settingsRun);
+
+    settingsRun.$inject = ['$rootScope', 'AuthService'];
+
+    function settingsRun($rootScope, AuthService){
+
+
+      // User Settings
+      // -----------------------------------
+      $rootScope.user = {
+        name:     'Yonas',
+        job:      'System Admin',
+        picture:  'app/img/user/02.jpg'
+      };
+
+      // Hides/show user avatar on sidebar from any element
+      $rootScope.toggleUserBlock = function(){
+        $rootScope.$broadcast('toggleUserBlock');
+      };
+      $rootScope.logoutUser = function (){
+            AuthService.Logout();
+      };
+
+      // Global Settings
+      // -----------------------------------
+      $rootScope.app = {
+        name: 'Bidir Web',
+        description: 'Bidir Web Application',
+        year: ((new Date()).getFullYear()),
+        layout: {
+          isFixed: true,
+          isCollapsed: false,
+          isBoxed: false,
+          isRTL: false,
+          horizontal: false,
+          isFloat: false,
+          asideHover: false,
+          theme: 'app/css/theme-d.css',
+          asideScrollbar: false,
+          isCollapsedText: false
+        },
+        useFullLayout: false,
+        hiddenFooter: false,
+        offsidebarOpen: false,
+        asideToggled: false,
+        viewAnimation: 'ng-fadeInUp'
+      };
+
+      // Setup the layout mode
+      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
+
+      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
+      // if( angular.isDefined($localStorage.layout) )
+      //   $rootScope.app.layout = $localStorage.layout;
+      // else
+      //   $localStorage.layout = $rootScope.app.layout;
+      //
+      // $rootScope.$watch('app.layout', function () {
+      //   $localStorage.layout = $rootScope.app.layout;
+      // }, true);
+
+      // Close submenu when sidebar change from collapsed to normal
+      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
+        if( newValue === false )
+          $rootScope.$broadcast('closeSidebarMenu');
+      });
+
+    }
+
+})();
+
 /**=========================================================
  * Module: helpers.js
  * Provides helper functions for routes definition
@@ -3061,82 +3137,6 @@ var QUESTION_TYPE = {
 
 })();
 
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.settings')
-        .run(settingsRun);
-
-    settingsRun.$inject = ['$rootScope', 'AuthService'];
-
-    function settingsRun($rootScope, AuthService){
-
-
-      // User Settings
-      // -----------------------------------
-      $rootScope.user = {
-        name:     'Yonas',
-        job:      'System Admin',
-        picture:  'app/img/user/02.jpg'
-      };
-
-      // Hides/show user avatar on sidebar from any element
-      $rootScope.toggleUserBlock = function(){
-        $rootScope.$broadcast('toggleUserBlock');
-      };
-      $rootScope.logoutUser = function (){
-            AuthService.Logout();
-      };
-
-      // Global Settings
-      // -----------------------------------
-      $rootScope.app = {
-        name: 'Bidir Web',
-        description: 'Bidir Web Application',
-        year: ((new Date()).getFullYear()),
-        layout: {
-          isFixed: true,
-          isCollapsed: false,
-          isBoxed: false,
-          isRTL: false,
-          horizontal: false,
-          isFloat: false,
-          asideHover: false,
-          theme: 'app/css/theme-d.css',
-          asideScrollbar: false,
-          isCollapsedText: false
-        },
-        useFullLayout: false,
-        hiddenFooter: false,
-        offsidebarOpen: false,
-        asideToggled: false,
-        viewAnimation: 'ng-fadeInUp'
-      };
-
-      // Setup the layout mode
-      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
-
-      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
-      // if( angular.isDefined($localStorage.layout) )
-      //   $rootScope.app.layout = $localStorage.layout;
-      // else
-      //   $localStorage.layout = $rootScope.app.layout;
-      //
-      // $rootScope.$watch('app.layout', function () {
-      //   $localStorage.layout = $rootScope.app.layout;
-      // }, true);
-
-      // Close submenu when sidebar change from collapsed to normal
-      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
-        if( newValue === false )
-          $rootScope.$broadcast('closeSidebarMenu');
-      });
-
-    }
-
-})();
 
 /**=========================================================
  * Module: sidebar-menu.js
@@ -4645,6 +4645,7 @@ function runBlock() {
             InitializeACAT:_initializeACAT,
             GetAllLoanProducts:_getAllLoanProducts,
             CreateLoanProduct:_createLoanProduct,
+            UpdateLoanProduct:_updateLoanProduct,
             AddCostList:_addCostList,
             UpdateCostList:_updateCostList
         };
@@ -4678,6 +4679,9 @@ function runBlock() {
         }
         function _createLoanProduct(loanProduct) {
             return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateLoanProducts),loanProduct);
+        }
+        function _updateLoanProduct(loanProduct) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProducts,loanProduct._id),loanProduct);
         }
     }
 
@@ -5109,105 +5113,6 @@ function runBlock() {
 /**
  * Created by Yoni on 3/5/2018.
  */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        callApi();
-
-       function callApi(){
-           ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error");
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
 (function(angular) {
     "use strict";
 
@@ -5591,20 +5496,119 @@ function runBlock() {
 (function(angular) {
     "use strict";
 
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        callApi();
+
+       function callApi(){
+           ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error");
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
     angular.module("app.acat").controller("LoanProductsController", LoanProductsController);
 
-    LoanProductsController.$inject = ['$mdDialog','RouteHelpers','CommonService','AlertService','ACATService'];
+    LoanProductsController.$inject = ['$mdDialog','RouteHelpers','blockUI','AlertService','ACATService'];
 
-    function LoanProductsController($mdDialog,RouteHelpers,CommonService,AlertService,ACATService) {
+    function LoanProductsController($mdDialog,RouteHelpers,blockUI,AlertService,ACATService) {
         LoanProductDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
         var vm = this;
         vm.addLoanProduct = _addLoanProduct;
         vm.editLoanProduct = _editLoanProduct;
-        initialize();
+        callAPI();
 
 
 
-        function initialize() {
+        function callAPI() {
             ACATService.GetAllLoanProducts().then(function (response) {
                         vm.loanProducts = response.data.docs;
                         console.log("loan p",response);
@@ -5624,7 +5628,7 @@ function runBlock() {
                 controller: LoanProductDialogController,
                 controllerAs: 'vm'
             }).then(function (answer) {
-
+                callAPI();
             }, function (response) {
                 console.log("refresh on response");
             });
@@ -5641,7 +5645,7 @@ function runBlock() {
                 controller: LoanProductDialogController,
                 controllerAs: 'vm'
             }).then(function (answer) {
-
+                callAPI();
             }, function (response) {
                 console.log("refresh on response");
             });
@@ -5655,31 +5659,50 @@ function runBlock() {
             vm.addToCostOfLoanList = _addToCostOfLoanList;
             vm.editDeductibleItem = _editDeductibleItem;
             vm.editCostOfLoanItem = _editCostOfLoanItem;
+            vm.cancelEdit = _cancelEdit;
 
             vm.saveLoanProduct = _saveLoanProduct;
 
+            initialize();
 
-            vm.isEdit = data.loan_product !== null;
+            function initialize() {
+                vm.isEdit = data.loan_product !== null;
+                vm.isEditCostOfLoan = false;
+                vm.isEditDeductible = false;
 
-            if(vm.isEdit){
-                vm.loan_product = data.loan_product;
-                vm.loan_product.deductible = {
-                    type : 'fixed_amount'
-                };
-                vm.loan_product.costOfLoan = {
-                    type : 'fixed_amount'
-                };
-            }else{
-                vm.loan_product  = {
-                    deductibles :[],
-                    cost_of_loan :[],
-                    deductible:{
+                if(vm.isEdit){
+                    vm.loan_product = data.loan_product;
+                    LoadDeductibleAndCostOfLoanTypes(vm.loan_product);
+
+                    vm.loan_product.deductible = {
                         type : 'fixed_amount'
-                    },
-                    costOfLoan:{
+                    };
+                    vm.loan_product.costOfLoan = {
                         type : 'fixed_amount'
-                    }
-                };
+                    };
+                }else{
+                    vm.loan_product  = {
+                        deductibles :[],
+                        cost_of_loan :[],
+                        deductible:{
+                            type : 'fixed_amount'
+                        },
+                        costOfLoan:{
+                            type : 'fixed_amount'
+                        }
+                    };
+                }
+            }
+
+
+            function LoadDeductibleAndCostOfLoanTypes(loanProd) {
+                _.each(loanProd.cost_of_loan,function (cLoan) {
+                     cLoan.type = _.isNumber(cLoan.fixed_amount) && cLoan.fixed_amount  > 0 ? 'fixed_amount':'percent';
+                });
+
+                _.each(loanProd.deductibles,function (deduct) {
+                    deduct.type = _.isNumber(deduct.fixed_amount) && deduct.fixed_amount > 0 ? 'fixed_amount':'percent';
+                });
             }
 
             function _cancel() {
@@ -5694,26 +5717,66 @@ function runBlock() {
                 };
             }
             function _editDeductibleItem(item) {
-                console.log("edit deductible",item);
+                var type = vm.loan_product.deductible.type;
+                vm.loan_product.deductible = item;
+                vm.loan_product.deductible.type = type;
+                vm.isEditDeductible = true;
             }
             function _addToCostOfLoanList(item) {
-                console.log("Cost of loan",item);
                 vm.loan_product.cost_of_loan.push(item);
                 vm.loan_product.costOfLoan = {
                     type : 'fixed_amount'
                 };
             }
             function _editCostOfLoanItem(item) {
-                console.log("EDIT Cost of loan",item);
+                var type = vm.loan_product.costOfLoan.type;
+                vm.loan_product.cost_of_loan = item;
+                vm.loan_product.costOfLoan.type = type;
+                vm.isEditCostOfLoan = true;
+            }
+
+            function _cancelEdit(type) {
+                if(type === 'deductible'){
+                    vm.loan_product.deductible = {
+                        type : 'fixed_amount'
+                    };
+                    vm.isEditDeductible = false;
+                }else {
+                    vm.loan_product.costOfLoan = {
+                        type : 'fixed_amount'
+                    };
+                    vm.isEditCostOfLoan = false;
+                }
             }
 
             function _saveLoanProduct() {
-                // console.log("create loan product",vm.loan_product);
-                ACATService.CreateLoanProduct(vm.loan_product).then(function (response) {
-                    console.log("created loan product",response.data);
-                },function (error) {
-                    console.log("error",error);
-                });
+                var myBlockUI = blockUI.instances.get('LoanProductBlockUI');
+                myBlockUI.start();
+
+                if(!vm.isEdit){
+                    ACATService.CreateLoanProduct(vm.loan_product).then(function (response) {
+                        console.log("created loan product",response.data);
+                        AlertService.showSuccess("LOAN PRODUCT","Loan Product Created successfully");
+                        $mdDialog.hide();
+                        myBlockUI.stop();
+                    },function (error) {
+                        myBlockUI.stop();
+                        AlertService.showError("LOAN PRODUCT","Failed to create Loan Product");
+                        console.log("error",error);
+                    });
+                }else{
+                    ACATService.UpdateLoanProduct(vm.loan_product).then(function (response) {
+                        console.log("Updated loan product",response.data);
+                        AlertService.showSuccess("LOAN PRODUCT","Loan Product Updated successfully");
+                        myBlockUI.stop();
+                        $mdDialog.hide();
+                    },function (error) {
+                        AlertService.showError("LOAN PRODUCT","Failed to update Loan Product");
+                        myBlockUI.stop();
+                        console.log("error",error);
+                    });
+                }
+
             }
 
         }
