@@ -158,6 +158,10 @@
                                         <a ng-click="vm.editDeductibleItem(cost,$event)">
                                             <i class="fa fa-edit"></i>
                                         </a>
+                                        <a ng-show="vm.showCancelForEdit(cost,'deductible')"
+                                           ng-click="vm.cancelEdit('deductible')">
+                                            <i class="fa fa-times"></i>
+                                        </a>
                                     </td>
                                 </tr>
                                 </tbody>

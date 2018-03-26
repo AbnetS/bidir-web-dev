@@ -69,6 +69,7 @@
             vm.editDeductibleItem = _editDeductibleItem;
             vm.editCostOfLoanItem = _editCostOfLoanItem;
             vm.cancelEdit = _cancelEdit;
+            vm.showCancelForEdit = _showCancelForEdit;
 
             vm.saveLoanProduct = _saveLoanProduct;
 
@@ -110,7 +111,7 @@
                 });
 
                 _.each(loanProd.deductibles,function (deduct) {
-                    deduct.type  = !_.isUndefined(deduct.fixed_amount) && _.isNumber(deduct.fixed_amount) && deduct.fixed_amount > 0 ? 'fixed_amount':'percent';
+                    deduct.type  = !_.isUndefined(deduct.fixed_amount) && _.isNumber(deduct.fixed_amount) ? 'fixed_amount':'percent';
                 });
             }
 
@@ -152,6 +153,14 @@
                 vm.isEditCostOfLoan = true;
             }
 
+
+            function _showCancelForEdit(cost,type) {
+                if(type === 'deductible'){
+                     return vm.isEditDeductible && vm.loan_product.deductible.$index === cost.$index;
+                }else {
+                   return false;
+                }
+            }
             function _cancelEdit(type) {
                 if(type === 'deductible'){
                     vm.loan_product.deductible = {
