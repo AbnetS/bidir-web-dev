@@ -55,7 +55,7 @@
                                 <input class="form-control"
                                        ng-model="vm.loan_product.deductible.item"
                                        type="text"
-                                       name="txt_deductible_item" placeholder="Deductible" />
+                                       name="txt_deductible_item" placeholder="Deductible" required />
                         </div>
                         <div ng-show="vm.loan_product.deductible.type==='fixed_amount'" class="col-md-5">
                                 <input class="form-control"
@@ -72,14 +72,15 @@
                         </div>
 
                         <div class="col-md-2">
-                            <button ng-show="vm.isEditDeductible" class="btn btn-inverse btn-outline"
-                                    ng-click="vm.cancelEdit('deductible')">
-                                <i class="fa fa-times"></i>
-                            </button>
-                            <button class="btn btn-success btn-outline"
+                            <!--<a ng-show="vm.isEditDeductible" class="btn btn-inverse btn-outline"-->
+                                    <!--ng-click="vm.cancelEdit('deductible')">-->
+                                <!--<i class="fa fa-times"></i>-->
+                            <!--</a>-->
+                            <a class="btn btn-success btn-outline"
+                                    ng-disabled="loanProductForm.txt_deductible_item.$invalid"
                                     ng-click="vm.addToDeductibleList(vm.loan_product.deductible)">
                                 <i ng-class="vm.isEditDeductible? 'fa fa-refresh':'fa fa-plus'"></i>
-                             </button>
+                             </a>
                         </div>
                     </div>
 
@@ -103,7 +104,7 @@
                                 <input class="form-control"
                                        ng-model="vm.loan_product.costOfLoan.item"
                                        type="text"
-                                       name="txt_costOfLoan_item" placeholder="Cost of loan" />
+                                       name="txt_costOfLoan_item" placeholder="Cost of loan" required/>
                         </div>
                         <div ng-show="vm.loan_product.costOfLoan.type==='fixed_amount'" class="col-md-5">
                                 <input class="form-control"
@@ -120,20 +121,20 @@
                                    name="txt_costOfLoan_percent" placeholder="Percent" />
                         </div>
                         <div class="col-md-2">
-                            <button ng-show="vm.isEditCostOfLoan" class="btn btn-inverse btn-outline"
-                                    ng-click="vm.cancelEdit('costOfLoan')">
-                                <i class="fa fa-times"></i>
-                            </button>
-                            <button class="btn btn-success btn-outline"
+                            <!--<button ng-show="vm.isEditCostOfLoan" class="btn btn-inverse btn-outline"-->
+                                    <!--ng-click="vm.cancelEdit('costOfLoan')">-->
+                                <!--<i class="fa fa-times"></i>-->
+                            <!--</button>-->
+                            <a class="btn btn-success btn-outline"
+                                    ng-disabled="loanProductForm.txt_costOfLoan_item.$invalid"
                                     ng-click="vm.addToCostOfLoanList(vm.loan_product.costOfLoan)">
                                 <i ng-class="vm.isEditCostOfLoan? 'fa fa-refresh':'fa fa-plus'"></i>
-                                {{vm.isEditCostOfLoan? 'Update':'Add'}} </button>
+                            </a>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-
                     <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label>&nbsp;</label>
                         <div class="table-responsive">

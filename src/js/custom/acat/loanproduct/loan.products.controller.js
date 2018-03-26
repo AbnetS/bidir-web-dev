@@ -106,11 +106,11 @@
 
             function LoadDeductibleAndCostOfLoanTypes(loanProd) {
                 _.each(loanProd.cost_of_loan,function (cLoan) {
-                     cLoan.type = _.isNumber(cLoan.fixed_amount) && cLoan.fixed_amount  > 0 ? 'fixed_amount':'percent';
+                     cLoan.type = !_.isUndefined(cLoan.fixed_amount) && _.isNumber(cLoan.fixed_amount) ? 'fixed_amount':'percent';
                 });
 
                 _.each(loanProd.deductibles,function (deduct) {
-                    deduct.type = _.isNumber(deduct.fixed_amount) && deduct.fixed_amount > 0 ? 'fixed_amount':'percent';
+                    deduct.type  = !_.isUndefined(deduct.fixed_amount) && _.isNumber(deduct.fixed_amount) && deduct.fixed_amount > 0 ? 'fixed_amount':'percent';
                 });
             }
 
@@ -120,10 +120,14 @@
 
             function _addToDeductibleList(item) {
                 console.log("deductible",item);
-                vm.loan_product.deductibles.push(item);
-                vm.loan_product.deductible = {
-                    type : 'fixed_amount'
-                };
+                if(!_.isUndefined(item.item) && item.item !== '' && (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )){
+                    vm.loan_product.deductibles.push(item);
+                    console.log("deductible item added",item);
+                    vm.loan_product.deductible = {
+                        type : 'fixed_amount'
+                    };
+                }
+
             }
             function _editDeductibleItem(item) {
                 var type = vm.loan_product.deductible.type;
@@ -132,10 +136,14 @@
                 vm.isEditDeductible = true;
             }
             function _addToCostOfLoanList(item) {
-                vm.loan_product.cost_of_loan.push(item);
-                vm.loan_product.costOfLoan = {
-                    type : 'fixed_amount'
-                };
+
+                if(!_.isUndefined(item.item) && item.item !== '' && (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )){
+                    vm.loan_product.cost_of_loan.push(item);
+                    vm.loan_product.costOfLoan = {
+                        type : 'fixed_amount'
+                    };
+                }
+
             }
             function _editCostOfLoanItem(item) {
                 var type = vm.loan_product.costOfLoan.type;
