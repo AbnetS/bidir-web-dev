@@ -155,7 +155,7 @@
                                     <td>{{cost.type}}</td>
                                     <td>{{cost.fixed_amount > 0 ? cost.fixed_amount : cost.percent}}</td>
                                     <td>
-                                        <a ng-click="vm.editDeductibleItem(cost,$event)">
+                                        <a ng-click="vm.editDeductibleItem(cost)">
                                             <i class="fa fa-edit"></i>
                                         </a>
                                         <a ng-show="vm.showCancelForEdit(cost,'deductible')"
@@ -188,8 +188,12 @@
                                     <td>{{cost.type}}</td>
                                     <td>{{cost.fixed_amount > 0 ? cost.fixed_amount : cost.percent}}</td>
                                     <td>
-                                        <a ng-click="vm.editCostOfLoanItem(cost,$event)">
+                                        <a ng-click="vm.editCostOfLoanItem(cost)">
                                             <i class="fa fa-edit"></i>
+                                        </a>
+                                        <a ng-show="vm.showCancelForEdit(cost,'costOfLoan')"
+                                           ng-click="vm.cancelEdit('costOfLoan')">
+                                            <i class="fa fa-times"></i>
                                         </a>
                                     </td>
                                 </tr>

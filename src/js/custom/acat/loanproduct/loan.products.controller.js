@@ -120,13 +120,14 @@
             }
 
             function _addToDeductibleList(item) {
-                console.log("deductible",item);
                 if(!_.isUndefined(item.item) && item.item !== '' && (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )){
-                    vm.loan_product.deductibles.push(item);
-                    console.log("deductible item added",item);
-                    vm.loan_product.deductible = {
-                        type : 'fixed_amount'
-                    };
+                    if(!vm.isEditDeductible){
+                        vm.loan_product.deductibles.push(item);
+                        vm.loan_product.deductible = {  type : 'fixed_amount'};
+                    }else{
+                        vm.cancelEdit('deductible');
+                    }
+
                 }
 
             }
@@ -138,17 +139,21 @@
             }
             function _addToCostOfLoanList(item) {
 
-                if(!_.isUndefined(item.item) && item.item !== '' && (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )){
-                    vm.loan_product.cost_of_loan.push(item);
-                    vm.loan_product.costOfLoan = {
-                        type : 'fixed_amount'
-                    };
+                if(!_.isUndefined(item.item) && item.item !== '' &&
+                    (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )){
+                    if(!vm.isEditCostOfLoan){
+                        vm.loan_product.cost_of_loan.push(item);
+                        vm.loan_product.costOfLoan = { type : 'fixed_amount'};//reset
+                    }else{
+                        vm.cancelEdit('costOfLoan');
+                    }
+
                 }
 
             }
             function _editCostOfLoanItem(item) {
                 var type = vm.loan_product.costOfLoan.type;
-                vm.loan_product.cost_of_loan = item;
+                vm.loan_product.costOfLoan = item;
                 vm.loan_product.costOfLoan.type = type;
                 vm.isEditCostOfLoan = true;
             }
@@ -156,9 +161,9 @@
 
             function _showCancelForEdit(cost,type) {
                 if(type === 'deductible'){
-                     return vm.isEditDeductible && vm.loan_product.deductible.$index === cost.$index;
-                }else {
-                   return false;
+                     return vm.isEditDeductible && vm.loan_product.deductible._id === cost._id;
+                }else if(type === 'costOfLoan'){
+                    return vm.isEditCostOfLoan && vm.loan_product.costOfLoan._id === cost._id;
                 }
             }
             function _cancelEdit(type) {
@@ -167,11 +172,13 @@
                         type : 'fixed_amount'
                     };
                     vm.isEditDeductible = false;
-                }else {
+                    vm.showCancelForEdit(vm.loan_product.deductible,type);
+                }else if (type === 'costOfLoan') {
                     vm.loan_product.costOfLoan = {
                         type : 'fixed_amount'
                     };
                     vm.isEditCostOfLoan = false;
+                    vm.showCancelForEdit(vm.loan_product.costOfLoan,type);
                 }
             }
 
