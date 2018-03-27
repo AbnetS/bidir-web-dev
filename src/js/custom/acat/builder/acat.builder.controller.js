@@ -28,10 +28,10 @@
                 // vm.acat.selected_crop
              var acatCrop =   {
                     title: vm.acat.selected_crop.name +  '-CAT',
-                    subtitle: vm.acat.selected_crop.name +  '-CAT subtitle',
+                    description: vm.acat.selected_crop.name +  '-CAT desc',
                     crop: vm.acat.selected_crop._id
                 };
-             ACATService.InitializeACAT(acatCrop).then(function (response) {
+             ACATService.CreateACAT(acatCrop).then(function (response) {
                  console.log("ACAT ",response);
                  var acatData = response.data;
                  $state.go('app.acatbuilder',{id:acatData._id},{inherit:true});

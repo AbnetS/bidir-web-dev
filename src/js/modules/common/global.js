@@ -62,7 +62,7 @@ var API = {
             CreateLoanProducts:'loanProducts/create',
             CostListUpdate: 'costLists',
             CostList: 'costLists/add',
-            Initialize:'initialize'
+            CreateACAT:'create'
         }
     }
 };
