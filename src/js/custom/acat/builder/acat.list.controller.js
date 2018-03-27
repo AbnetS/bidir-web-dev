@@ -10,8 +10,12 @@
 
     function ACATListController(ACATService,$state) {
         var vm = this;
+        vm.addACAT = _addACAT;
         vm.editACAT = _editACAT;
 
+        function _addACAT() {
+            $state.go('app.acatbuilder',{id:0});
+        }
 
         function _editACAT(acat) {
             $state.go('app.acatbuilder',{id:acat._id});

@@ -7,7 +7,7 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-xs-10 col-lg-12">
-                <p><a class="btn btn-success pull-right" ui-sref="app.acatbuilder({id:0})">
+                <p><a class="btn btn-success pull-right" ng-click="vm.addACAT()">
                     <i class="fa fa-plus"></i>
                     Add</a>
                 </p>
@@ -34,8 +34,8 @@
                             <td></td>
                             <td md-cell>{{$index + 1}}</td>
                             <td md-cell>{{acat.title}}</td>
-                            <td md-cell>{{acat.crop}}</td>
-                            <td md-cell>{{acat.crop_category}}</td>
+                            <td md-cell>{{acat.crop.name}}</td>
+                            <td md-cell>{{acat.crop.category}}</td>
                             <td md-cell>{{acat.description}}</td>
                             <td md-cell>
                                 <a ng-click="vm.editACAT(acat,$event)">
