@@ -55,14 +55,14 @@ var API = {
             Create_Section:'sections/create'
         },
         ACAT:{
-            ACAT:'',
+            ACAT:'forms',
             Crop:'crops',
             CreateCrop:'crops/create',
             LoanProducts:'loanProducts',
             CreateLoanProducts:'loanProducts/create',
             CostListUpdate: 'costLists',
             CostList: 'costLists/add',
-            CreateACAT:'create'
+            CreateACAT:'forms/initialize'
         }
     }
 };

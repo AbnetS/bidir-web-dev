@@ -84,7 +84,7 @@
             myBlockUIOnStart.start();
             ACATService.GetACATById(vm.ACATId).then(function (response) {
                 console.log("GetACATById",response.data);
-                SetSelectedCrop(response.data.crop);
+                SetSelectedCrop(response.data.crop._id);
                 var subSections = response.data.sections[0].sub_sections;
                 setSubSectionCostFromResponse(subSections);
 
