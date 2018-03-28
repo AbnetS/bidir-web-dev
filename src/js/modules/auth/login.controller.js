@@ -20,7 +20,6 @@
             usernameMax: 20,
             passwordMin: 6
         };
-        vm.user = {};
 
         vm.login = function() {
             var myBlockUI = blockUI.instances.get('loginFormBlockUI');
@@ -33,11 +32,7 @@
                     $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
                     AuthService.SetCredentials(result);
                     myBlockUI.stop();
-                    console.log('logged in user',vm.user);
-
                     $state.go("app.welcome");
-                    //TODO: if no mfi redirect to mfi registration page
-                    // CheckMFIAndRedirect();
                 },
                 function(error) {
                     myBlockUI.stop();
@@ -47,38 +42,6 @@
                 }
             );
 
-            function CheckMFIAndRedirect(){
-                MainService.GetMFI().then(
-                    function(response) {
-                        debugger
-                        if (response.data.length > 0) {
-                            $state.go("index.branch");
-                            toastr.success(
-                                "Welcome Back " +
-                                vm.user.admin.first_name ,
-                                "Success"
-                            );
-                        }else{
-                            $state.go("home.mfi");
-                            toastr.success(
-                                "Welcome " +
-                                vm.user.admin.first_name +
-                                " " +
-                                vm.user.admin.last_name +
-                                " to Bidir Web App",
-                                "Success"
-                            );
-                        }
-                    },
-                    function(error) {
-                        console.log("error", error);
-                        toastr.error(
-                            "Error occured while trying to connect! Please try again.",
-                            "ERROR!"
-                        );
-                    }
-                );
-            }
 
         };
     }
