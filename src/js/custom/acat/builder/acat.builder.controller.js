@@ -41,7 +41,6 @@
             }
         }
 
-
         initialize();
 
         function initialize() {
@@ -83,8 +82,8 @@
             var myBlockUIOnStart = blockUI.instances.get('ACATBuilderBlockUI');
             myBlockUIOnStart.start();
             ACATService.GetACATById(vm.ACATId).then(function (response) {
-                console.log("GetACATById",response.data);
-                SetSelectedCrop(response.data.crop._id);
+                // console.log("GetACATById",response.data);
+                vm.acat.selected_crop = response.data.crop;
                 var subSections = response.data.sections[0].sub_sections;
                 setSubSectionCostFromResponse(subSections);
 
@@ -94,11 +93,6 @@
                 myBlockUIOnStart.stop();
                 console.log("error",error);
             });
-        }
-        function SetSelectedCrop(id) {
-            vm.acat.selected_crop = _.filter(vm.crops,function (crop) {
-                return crop._id === id;
-            })
         }
 
         function callApiForCrops(){
