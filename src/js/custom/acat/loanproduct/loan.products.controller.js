@@ -107,11 +107,11 @@
 
             function LoadDeductibleAndCostOfLoanTypes(loanProd) {
                 _.each(loanProd.cost_of_loan,function (cLoan) {
-                     cLoan.type = !_.isUndefined(cLoan.fixed_amount) && _.isNumber(cLoan.fixed_amount) ? 'fixed_amount':'percent';
+                     cLoan.type = cLoan.fixed_amount >= 0 ? 'fixed_amount': cLoan.percent >= 0 ? 'percent': 'NA';
                 });
 
                 _.each(loanProd.deductibles,function (deduct) {
-                    deduct.type  = !_.isUndefined(deduct.fixed_amount) && _.isNumber(deduct.fixed_amount) ? 'fixed_amount':'percent';
+                    deduct.type  = deduct.fixed_amount >= 0 ? 'fixed_amount': deduct.percent >= 0 ? 'percent': 'NA';
                 });
             }
 
@@ -132,9 +132,7 @@
 
             }
             function _editDeductibleItem(item) {
-                var type = vm.loan_product.deductible.type;
                 vm.loan_product.deductible = item;
-                vm.loan_product.deductible.type = type;
                 vm.isEditDeductible = true;
             }
             function _addToCostOfLoanList(item) {
@@ -152,9 +150,7 @@
 
             }
             function _editCostOfLoanItem(item) {
-                var type = vm.loan_product.costOfLoan.type;
                 vm.loan_product.costOfLoan = item;
-                vm.loan_product.costOfLoan.type = type;
                 vm.isEditCostOfLoan = true;
             }
 

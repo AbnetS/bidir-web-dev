@@ -69,6 +69,7 @@
             }
 
         }
+
         function setSubSectionCostFromResponse(subSections) {
             vm.acat.input = subSections[0];
             vm.acat.labour_costs = subSections[1];
@@ -82,7 +83,7 @@
             var myBlockUIOnStart = blockUI.instances.get('ACATBuilderBlockUI');
             myBlockUIOnStart.start();
             ACATService.GetACATById(vm.ACATId).then(function (response) {
-                // console.log("GetACATById",response.data);
+                console.log("GetACATById",response.data);
                 vm.acat.selected_crop = response.data.crop;
                 var subSections = response.data.sections[0].sub_sections;
                 setSubSectionCostFromResponse(subSections);
@@ -179,7 +180,7 @@
                             item: groupInfo.item,
                             unit: groupInfo.unit
                         };
-                        AddCostItemToGroup(costItem);
+                        AddCostItemToGroup(costItem,type);
                     }else{
                         var groupCost = {
                             type: 'grouped',
@@ -197,7 +198,7 @@
                                 item: groupInfo.item,
                                 unit: groupInfo.unit
                             };
-                            AddCostItemToGroup(costItem);
+                            AddCostItemToGroup(costItem,type);
 
                         },function (error) {
                             console.log("error on group creation",error);
@@ -206,10 +207,29 @@
 
             }
         }
-        function AddCostItemToGroup(costItem) {
-            console.log("costItem",costItem);
+        function resetCostItem(type) {
+            switch (type){
+                case ACAT_GROUP_CONSTANT.SEED:
+                    vm.isEditSeedCost =  true;
+                    vm.acat.input.seed = undefined;
+                    break;
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    vm.acat.fertilizer.item = undefined;
+                    vm.acat.fertilizer.unit = undefined;
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    vm.acat.chemicals.item = undefined;
+                    vm.acat.chemicals.unit = undefined;
+                    break;
+                default:
+                    break;
+            }
+        }
+        function AddCostItemToGroup(costItem,type) {
             ACATService.AddCostList(costItem).then(function (response) {
-                console.log("COST LIST ADDED ON GROUP",response);
+                console.log("adding cost item on group",response);
+                resetCostItem(type);
+                callAPI();
             },function (error) {
                 console.log("error while adding cost item on group",error);
             });
