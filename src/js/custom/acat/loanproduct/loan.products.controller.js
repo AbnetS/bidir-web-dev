@@ -106,12 +106,13 @@
 
 
             function LoadDeductibleAndCostOfLoanTypes(loanProd) {
+
                 _.each(loanProd.cost_of_loan,function (cLoan) {
-                     cLoan.type = cLoan.fixed_amount >= 0 ? 'fixed_amount': cLoan.percent >= 0 ? 'percent': 'NA';
+                     cLoan.type = cLoan.fixed_amount > 0 ? 'fixed_amount': cLoan.percent > 0 ? 'percent': 'fixed_amount';
                 });
 
                 _.each(loanProd.deductibles,function (deduct) {
-                    deduct.type  = deduct.fixed_amount >= 0 ? 'fixed_amount': deduct.percent >= 0 ? 'percent': 'NA';
+                    deduct.type  = deduct.fixed_amount > 0 ? 'fixed_amount': deduct.percent > 0 ? 'percent': 'fixed_amount';
                 });
             }
 
