@@ -17,6 +17,7 @@
         vm.addToCostList = _addToCostList;
         vm.addGroupedCostList = _addGroupedCostList;
         vm.editCostItem = _editCostItem;
+        vm.removeCostItem = _removeCostItem;
         vm.cancelCostItem = _cancelCostItem;
         vm.cropSelectChanged = _cropSelectChanged;
 
@@ -262,23 +263,27 @@
 
         }
 
-        function _editCostItem(cost,type) {
+        function _editCostItem(cost,type,group) {
+            console.log("CHEMICALS cost",group);
             switch (type){
-                case 'SEED':
+                case ACAT_GROUP_CONSTANT.SEED:
                     vm.isEditSeedCost =  true;
                     vm.acat.input.seed = cost;
                     break;
-                case 'FERTILIZER':
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
                     vm.isEditFertilizerCost =  true;
                     vm.acat.fertilizer = cost;
                     break;
-                case 'CHEMICALS':
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
                     vm.isEditChemicalsCost = true;
                     vm.acat.chemicals = cost;
                     break;
                 default:
                     break;
             }
+
+        }
+        function _removeCostItem(cost,type) {
 
         }
 

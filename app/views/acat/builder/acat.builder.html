@@ -93,8 +93,13 @@
                                                     <td>{{cost.item}}</td>
                                                     <td>{{cost.unit}}</td>
                                                     <td>
-                                                        <a ng-click="vm.editCostItem(cost,'SEED')">
+                                                        <a class="btn btn-xs btn-outline btn-default"
+                                                           ng-click="vm.editCostItem(cost,'SEED')">
                                                             <i class="fa fa-edit"></i>
+                                                        </a>
+                                                        <a  class="btn btn-xs btn-outline btn-danger"
+                                                            ng-click="vm.removeCostItem(cost,'SEED')">
+                                                            <i class="fa fa-times"></i>
                                                         </a>
                                                     </td>
                                                 </tr>
@@ -179,8 +184,13 @@
                                                 <td>{{cost.item}}</td>
                                                 <td>{{cost.unit}}</td>
                                                 <td>
-                                                    <a ng-click="vm.editCostItem(cost,'FERTILIZER')">
+                                                    <a class="btn btn-xs btn-outline btn-default"
+                                                       ng-click="vm.editCostItem(cost,'FERTILIZER')">
                                                         <i class="fa fa-edit"></i>
+                                                    </a>
+                                                    <a  class="btn btn-xs btn-outline btn-danger"
+                                                        ng-click="vm.removeCostItem(cost,'FERTILIZER')">
+                                                        <i class="fa fa-times"></i>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -305,7 +315,8 @@
                                 <!-- END CHEMICALS ROW-->
 
                                 <!-- ITEMS TABLE-->
-                                <div ng-show="vm.acat.input.chemicalsCostList.length>0" class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                <div ng-show="vm.acat.input.chemicalsCostList.length>0"
+                                     class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                     <div class="table-responsive">
                                         <table class="table table-bordered"
                                                ng-repeat="groupItem in vm.acat.input.chemicalsCostList">
@@ -326,8 +337,13 @@
                                                 <td>{{cost.item}}</td>
                                                 <td>{{cost.unit}}</td>
                                                 <td>
-                                                    <a ng-click="vm.editItem(cost,$event)">
+                                                    <a class="btn btn-xs btn-outline btn-default"
+                                                            ng-click="vm.editCostItem(cost,'CHEMICALS',groupItem)">
                                                         <i class="fa fa-edit"></i>
+                                                    </a>
+                                                    <a  class="btn btn-xs btn-outline btn-danger"
+                                                        ng-click="vm.removeCostItem(cost,'CHEMICALS',groupItem)">
+                                                        <i class="fa fa-times"></i>
                                                     </a>
                                                 </td>
                                             </tr>
