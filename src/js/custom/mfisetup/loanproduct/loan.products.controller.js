@@ -69,8 +69,18 @@
             vm.editCostOfLoanItem = _editCostOfLoanItem;
             vm.cancelEdit = _cancelEdit;
             vm.showCancelForEdit = _showCancelForEdit;
-
             vm.saveLoanProduct = _saveLoanProduct;
+            vm.removeLoanProductCostItem = _removeLoanProductCostItem;
+
+            function _removeLoanProductCostItem(cost) {
+                    AlertService.showConfirmForDelete("You are about to DELETE "+cost.item,
+                        "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
+                            if(isConfirm){
+
+                            }
+
+                        });
+                }
 
             initialize();
 

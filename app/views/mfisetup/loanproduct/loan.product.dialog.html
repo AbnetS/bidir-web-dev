@@ -155,11 +155,17 @@
                                     <td>{{cost.type | ReplaceUnderscore }}</td>
                                     <td>{{cost.fixed_amount > 0 ? cost.fixed_amount : cost.percent}}</td>
                                     <td>
-                                        <a ng-click="vm.editDeductibleItem(cost)">
+                                        <a class="btn btn-xs btn-outline btn-default"
+                                           ng-click="vm.editDeductibleItem(cost)">
                                             <i class="fa fa-edit"></i>
                                         </a>
-                                        <a ng-show="vm.showCancelForEdit(cost,'deductible')"
+                                        <a class="btn btn-xs btn-outline btn-warning"
+                                           ng-show="vm.showCancelForEdit(cost,'deductible')"
                                            ng-click="vm.cancelEdit('deductible')">
+                                            <i class="fa fa-times"></i>
+                                        </a>
+                                        <a  class="btn btn-xs btn-outline btn-danger"
+                                            ng-click="vm.removeLoanProductCostItem(cost)">
                                             <i class="fa fa-times"></i>
                                         </a>
                                     </td>
@@ -188,11 +194,17 @@
                                     <td>{{cost.type | ReplaceUnderscore}}</td>
                                     <td>{{cost.fixed_amount > 0 ? cost.fixed_amount : cost.percent}}</td>
                                     <td>
-                                        <a ng-click="vm.editCostOfLoanItem(cost)">
+                                        <a class="btn btn-xs btn-outline btn-default"
+                                           ng-click="vm.editCostOfLoanItem(cost)">
                                             <i class="fa fa-edit"></i>
                                         </a>
-                                        <a ng-show="vm.showCancelForEdit(cost,'costOfLoan')"
+                                        <a class="btn btn-xs btn-outline btn-warning"
+                                                ng-show="vm.showCancelForEdit(cost,'costOfLoan')"
                                            ng-click="vm.cancelEdit('costOfLoan')">
+                                            <i class="fa fa-times"></i>
+                                        </a>
+                                        <a  class="btn btn-xs btn-outline btn-danger"
+                                            ng-click="vm.removeLoanProductCostItem(cost)">
                                             <i class="fa fa-times"></i>
                                         </a>
                                     </td>

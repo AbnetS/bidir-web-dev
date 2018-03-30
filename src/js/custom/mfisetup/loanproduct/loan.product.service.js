@@ -23,6 +23,7 @@
             return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.LoanProducts));
         }
         function _removeLoanProduct(loanProduct) {
+
         }
         function _createLoanProduct(loanProduct) {
             return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateLoanProducts),loanProduct);
