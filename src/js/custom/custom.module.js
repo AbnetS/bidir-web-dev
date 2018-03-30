@@ -9,7 +9,8 @@
             'app.mfi',
             'app.clients',
             'app.forms',
-            'app.acat'
+            'app.acat',
+            'app.screening'
 
         ]).run(customRun);
 

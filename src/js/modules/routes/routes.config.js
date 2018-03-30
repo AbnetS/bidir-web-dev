@@ -134,6 +134,14 @@
                 controller: "LoanProductsController",
                 controllerAs: 'vm'
             })
+            .state("app.screenings", {
+                url: "/screenings",
+                title: "Screening",
+                templateUrl:helper.basepath('screening/client.screening.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "ScreeningController",
+                controllerAs: 'vm'
+            })
 
 
           // CUSTOM RESOLVES
