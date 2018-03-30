@@ -7,9 +7,9 @@
 
     angular.module("app.acat").controller("LoanProductsController", LoanProductsController);
 
-    LoanProductsController.$inject = ['$mdDialog','RouteHelpers','blockUI','AlertService','ACATService'];
+    LoanProductsController.$inject = ['$mdDialog','RouteHelpers','blockUI','AlertService','LoanProductService'];
 
-    function LoanProductsController($mdDialog,RouteHelpers,blockUI,AlertService,ACATService) {
+    function LoanProductsController($mdDialog,RouteHelpers,blockUI,AlertService,LoanProductService) {
         var vm = this;
         vm.addLoanProduct = _addLoanProduct;
         vm.editLoanProduct = _editLoanProduct;
@@ -18,9 +18,8 @@
 
 
         function callAPI() {
-            ACATService.GetAllLoanProducts().then(function (response) {
-                        vm.loanProducts = response.data.docs;
-                        console.log("loan p",response);
+            LoanProductService.GetAllLoanProducts().then(function (response) {
+                vm.loanProducts = response.data.docs;
             });
         }
 
@@ -28,7 +27,7 @@
         function _addLoanProduct(loan_product,ev) {
             $mdDialog.show({
                 locals: {data:{loan_product:loan_product}},
-                templateUrl: RouteHelpers.basepath('acat/loanproduct/loan.product.dialog.html'),
+                templateUrl: RouteHelpers.basepath('mfisetup/loanproduct/loan.product.dialog.html'),
                 parent: angular.element(document.body),
                 targetEvent: ev,
                 clickOutsideToClose: false,
@@ -45,7 +44,7 @@
         function _editLoanProduct(loan_product,ev) {
             $mdDialog.show({
                 locals: {data:{loan_product:loan_product}},
-                templateUrl: RouteHelpers.basepath('acat/loanproduct/loan.product.dialog.html'),
+                templateUrl: RouteHelpers.basepath('mfisetup/loanproduct/loan.product.dialog.html'),
                 parent: angular.element(document.body),
                 targetEvent: ev,
                 clickOutsideToClose: false,
@@ -61,7 +60,7 @@
         }
 
 
-        function LoanProductDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+        function LoanProductDialogController($mdDialog,data,AlertService,blockUI) {
             var vm = this;
             vm.cancel = _cancel;
             vm.addToDeductibleList = _addToDeductibleList;
@@ -184,7 +183,7 @@
                 myBlockUI.start();
 
                 if(!vm.isEdit){
-                    ACATService.CreateLoanProduct(vm.loan_product).then(function (response) {
+                    LoanProductService.CreateLoanProduct(vm.loan_product).then(function (response) {
                         console.log("created loan product",response.data);
                         AlertService.showSuccess("LOAN PRODUCT","Loan Product Created successfully");
                         $mdDialog.hide();
@@ -195,7 +194,7 @@
                         console.log("error",error);
                     });
                 }else{
-                    ACATService.UpdateLoanProduct(vm.loan_product).then(function (response) {
+                    LoanProductService.UpdateLoanProduct(vm.loan_product).then(function (response) {
                         console.log("Updated loan product",response.data);
                         AlertService.showSuccess("LOAN PRODUCT","Loan Product Updated successfully");
                         myBlockUI.stop();

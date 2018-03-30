@@ -129,7 +129,7 @@
             .state("app.loanproduct", {
                 url: "/loanproducts",
                 title: "loan product",
-                templateUrl:helper.basepath('acat/loanproduct/loan.products.html'),
+                templateUrl:helper.basepath('mfisetup/loanproduct/loan.products.html'),
                 resolve:helper.resolveFor('md.data.table','ui.select'),
                 controller: "LoanProductsController",
                 controllerAs: 'vm'

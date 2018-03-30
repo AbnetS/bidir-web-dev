@@ -175,16 +175,16 @@
     'use strict';
 
     angular
-        .module('app.preloader', []);
+        .module('app.navsearch', []);
 })();
-
-
 (function() {
     'use strict';
 
     angular
-        .module('app.navsearch', []);
+        .module('app.preloader', []);
 })();
+
+
 (function() {
     'use strict';
 
@@ -2564,99 +2564,6 @@ var ACAT_GROUP_CONSTANT = {
         }
     }
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.preloader')
-        .directive('preloader', preloader);
-
-    preloader.$inject = ['$animate', '$timeout', '$q'];
-    function preloader ($animate, $timeout, $q) {
-
-        var directive = {
-            restrict: 'EAC',
-            template: 
-              '<div class="preloader-progress">' +
-                  '<div class="preloader-progress-bar" ' +
-                       'ng-style="{width: loadCounter + \'%\'}"></div>' +
-              '</div>'
-            ,
-            link: link
-        };
-        return directive;
-
-        ///////
-
-        function link(scope, el) {
-
-          scope.loadCounter = 0;
-
-          var counter  = 0,
-              timeout;
-
-          // disables scrollbar
-          angular.element('body').css('overflow', 'hidden');
-          // ensure class is present for styling
-          el.addClass('preloader');
-
-          appReady().then(endCounter);
-
-          timeout = $timeout(startCounter);
-
-          ///////
-
-          function startCounter() {
-
-            var remaining = 100 - counter;
-            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
-
-            scope.loadCounter = parseInt(counter, 10);
-
-            timeout = $timeout(startCounter, 20);
-          }
-
-          function endCounter() {
-
-            $timeout.cancel(timeout);
-
-            scope.loadCounter = 100;
-
-            $timeout(function(){
-              // animate preloader hiding
-              $animate.addClass(el, 'preloader-hidden');
-              // retore scrollbar
-              angular.element('body').css('overflow', '');
-            }, 300);
-          }
-
-          function appReady() {
-            var deferred = $q.defer();
-            var viewsLoaded = 0;
-            // if this doesn't sync with the real app ready
-            // a custom event must be used instead
-            var off = scope.$on('$viewContentLoaded', function () {
-              viewsLoaded ++;
-              // we know there are at least two views to be loaded 
-              // before the app is ready (1-index.html 2-app*.html)
-              if ( viewsLoaded === 2) {
-                // with resolve this fires only once
-                $timeout(function(){
-                  deferred.resolve();
-                }, 3000);
-
-                off();
-              }
-
-            });
-
-            return deferred.promise;
-          }
-
-        } //link
-    }
-
-})();
 /**=========================================================
  * Module: navbar-search.js
  * Navbar search toggler * Auto dismiss on ESC key
@@ -2766,6 +2673,99 @@ var ACAT_GROUP_CONSTANT = {
     }
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.preloader')
+        .directive('preloader', preloader);
+
+    preloader.$inject = ['$animate', '$timeout', '$q'];
+    function preloader ($animate, $timeout, $q) {
+
+        var directive = {
+            restrict: 'EAC',
+            template: 
+              '<div class="preloader-progress">' +
+                  '<div class="preloader-progress-bar" ' +
+                       'ng-style="{width: loadCounter + \'%\'}"></div>' +
+              '</div>'
+            ,
+            link: link
+        };
+        return directive;
+
+        ///////
+
+        function link(scope, el) {
+
+          scope.loadCounter = 0;
+
+          var counter  = 0,
+              timeout;
+
+          // disables scrollbar
+          angular.element('body').css('overflow', 'hidden');
+          // ensure class is present for styling
+          el.addClass('preloader');
+
+          appReady().then(endCounter);
+
+          timeout = $timeout(startCounter);
+
+          ///////
+
+          function startCounter() {
+
+            var remaining = 100 - counter;
+            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
+
+            scope.loadCounter = parseInt(counter, 10);
+
+            timeout = $timeout(startCounter, 20);
+          }
+
+          function endCounter() {
+
+            $timeout.cancel(timeout);
+
+            scope.loadCounter = 100;
+
+            $timeout(function(){
+              // animate preloader hiding
+              $animate.addClass(el, 'preloader-hidden');
+              // retore scrollbar
+              angular.element('body').css('overflow', '');
+            }, 300);
+          }
+
+          function appReady() {
+            var deferred = $q.defer();
+            var viewsLoaded = 0;
+            // if this doesn't sync with the real app ready
+            // a custom event must be used instead
+            var off = scope.$on('$viewContentLoaded', function () {
+              viewsLoaded ++;
+              // we know there are at least two views to be loaded 
+              // before the app is ready (1-index.html 2-app*.html)
+              if ( viewsLoaded === 2) {
+                // with resolve this fires only once
+                $timeout(function(){
+                  deferred.resolve();
+                }, 3000);
+
+                off();
+              }
+
+            });
+
+            return deferred.promise;
+          }
+
+        } //link
+    }
+
+})();
 /**=========================================================
  * Module: helpers.js
  * Provides helper functions for routes definition
@@ -2981,7 +2981,7 @@ var ACAT_GROUP_CONSTANT = {
             .state("app.loanproduct", {
                 url: "/loanproducts",
                 title: "loan product",
-                templateUrl:helper.basepath('acat/loanproduct/loan.products.html'),
+                templateUrl:helper.basepath('mfisetup/loanproduct/loan.products.html'),
                 resolve:helper.resolveFor('md.data.table','ui.select'),
                 controller: "LoanProductsController",
                 controllerAs: 'vm'
@@ -4629,9 +4629,6 @@ function runBlock() {
             GetAllACATList: _getAllACAT,
             GetACATById: _getACATById,
             CreateACAT:_createACAT,
-            GetAllLoanProducts:_getAllLoanProducts,
-            CreateLoanProduct:_createLoanProduct,
-            UpdateLoanProduct:_updateLoanProduct,
             AddCostList:_addCostList,
             UpdateCostList:_updateCostList
         };
@@ -4651,9 +4648,6 @@ function runBlock() {
         function _getAllACAT() {
             return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
         }
-        function _getAllLoanProducts() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.LoanProducts));
-        }
         function _addCostList(cost) {
             return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
         }
@@ -4662,12 +4656,6 @@ function runBlock() {
         }
         function _createACAT(acat) {
             return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
-        }
-        function _createLoanProduct(loanProduct) {
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateLoanProducts),loanProduct);
-        }
-        function _updateLoanProduct(loanProduct) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProducts,loanProduct._id),loanProduct);
         }
     }
 
@@ -5661,224 +5649,6 @@ function runBlock() {
 
 })(window.angular);
 /**
- * Created by Yoni on 3/5/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("LoanProductsController", LoanProductsController);
-
-    LoanProductsController.$inject = ['$mdDialog','RouteHelpers','blockUI','AlertService','ACATService'];
-
-    function LoanProductsController($mdDialog,RouteHelpers,blockUI,AlertService,ACATService) {
-        LoanProductDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addLoanProduct = _addLoanProduct;
-        vm.editLoanProduct = _editLoanProduct;
-        callAPI();
-
-
-
-        function callAPI() {
-            ACATService.GetAllLoanProducts().then(function (response) {
-                        vm.loanProducts = response.data.docs;
-                        console.log("loan p",response);
-            });
-        }
-
-
-        function _addLoanProduct(loan_product,ev) {
-            $mdDialog.show({
-                locals: {data:{loan_product:loan_product}},
-                templateUrl: RouteHelpers.basepath('acat/loanproduct/loan.product.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: LoanProductDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callAPI();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-        function _editLoanProduct(loan_product,ev) {
-            $mdDialog.show({
-                locals: {data:{loan_product:loan_product}},
-                templateUrl: RouteHelpers.basepath('acat/loanproduct/loan.product.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: LoanProductDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callAPI();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-
-        function LoanProductDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.addToDeductibleList = _addToDeductibleList;
-            vm.addToCostOfLoanList = _addToCostOfLoanList;
-            vm.editDeductibleItem = _editDeductibleItem;
-            vm.editCostOfLoanItem = _editCostOfLoanItem;
-            vm.cancelEdit = _cancelEdit;
-            vm.showCancelForEdit = _showCancelForEdit;
-
-            vm.saveLoanProduct = _saveLoanProduct;
-
-            initialize();
-
-            function initialize() {
-                vm.isEdit = data.loan_product !== null;
-                vm.isEditCostOfLoan = false;
-                vm.isEditDeductible = false;
-
-                if(vm.isEdit){
-                    vm.loan_product = data.loan_product;
-                    LoadDeductibleAndCostOfLoanTypes(vm.loan_product);
-
-                    vm.loan_product.deductible = {
-                        type : 'fixed_amount'
-                    };
-                    vm.loan_product.costOfLoan = {
-                        type : 'fixed_amount'
-                    };
-                }else{
-                    vm.loan_product  = {
-                        deductibles :[],
-                        cost_of_loan :[],
-                        deductible:{
-                            type : 'fixed_amount'
-                        },
-                        costOfLoan:{
-                            type : 'fixed_amount'
-                        }
-                    };
-                }
-            }
-
-
-            function LoadDeductibleAndCostOfLoanTypes(loanProd) {
-
-                _.each(loanProd.cost_of_loan,function (cLoan) {
-                     cLoan.type = cLoan.fixed_amount > 0 ? 'fixed_amount': cLoan.percent > 0 ? 'percent': 'fixed_amount';
-                });
-
-                _.each(loanProd.deductibles,function (deduct) {
-                    deduct.type  = deduct.fixed_amount > 0 ? 'fixed_amount': deduct.percent > 0 ? 'percent': 'fixed_amount';
-                });
-            }
-
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-
-            function _addToDeductibleList(item) {
-                if(!_.isUndefined(item.item) && item.item !== '' && (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )){
-                    if(!vm.isEditDeductible){
-                        vm.loan_product.deductibles.push(item);
-                        vm.loan_product.deductible = {  type : 'fixed_amount'};
-                    }else{
-                        vm.cancelEdit('deductible');
-                    }
-
-                }
-
-            }
-            function _editDeductibleItem(item) {
-                vm.loan_product.deductible = item;
-                vm.isEditDeductible = true;
-            }
-            function _addToCostOfLoanList(item) {
-
-                if(!_.isUndefined(item.item) && item.item !== '' &&
-                    (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )){
-                    if(!vm.isEditCostOfLoan){
-                        vm.loan_product.cost_of_loan.push(item);
-                        vm.loan_product.costOfLoan = { type : 'fixed_amount'};//reset
-                    }else{
-                        vm.cancelEdit('costOfLoan');
-                    }
-
-                }
-
-            }
-            function _editCostOfLoanItem(item) {
-                vm.loan_product.costOfLoan = item;
-                vm.isEditCostOfLoan = true;
-            }
-
-
-            function _showCancelForEdit(cost,type) {
-                if(type === 'deductible'){
-                     return vm.isEditDeductible && vm.loan_product.deductible._id === cost._id;
-                }else if(type === 'costOfLoan'){
-                    return vm.isEditCostOfLoan && vm.loan_product.costOfLoan._id === cost._id;
-                }
-            }
-            function _cancelEdit(type) {
-                if(type === 'deductible'){
-                    vm.loan_product.deductible = {
-                        type : 'fixed_amount'
-                    };
-                    vm.isEditDeductible = false;
-                    vm.showCancelForEdit(vm.loan_product.deductible,type);
-                }else if (type === 'costOfLoan') {
-                    vm.loan_product.costOfLoan = {
-                        type : 'fixed_amount'
-                    };
-                    vm.isEditCostOfLoan = false;
-                    vm.showCancelForEdit(vm.loan_product.costOfLoan,type);
-                }
-            }
-
-            function _saveLoanProduct() {
-                var myBlockUI = blockUI.instances.get('LoanProductBlockUI');
-                myBlockUI.start();
-
-                if(!vm.isEdit){
-                    ACATService.CreateLoanProduct(vm.loan_product).then(function (response) {
-                        console.log("created loan product",response.data);
-                        AlertService.showSuccess("LOAN PRODUCT","Loan Product Created successfully");
-                        $mdDialog.hide();
-                        myBlockUI.stop();
-                    },function (error) {
-                        myBlockUI.stop();
-                        AlertService.showError("LOAN PRODUCT","Failed to create Loan Product");
-                        console.log("error",error);
-                    });
-                }else{
-                    ACATService.UpdateLoanProduct(vm.loan_product).then(function (response) {
-                        console.log("Updated loan product",response.data);
-                        AlertService.showSuccess("LOAN PRODUCT","Loan Product Updated successfully");
-                        myBlockUI.stop();
-                        $mdDialog.hide();
-                    },function (error) {
-                        AlertService.showError("LOAN PRODUCT","Failed to update Loan Product");
-                        myBlockUI.stop();
-                        console.log("error",error);
-                    });
-                }
-
-            }
-
-        }
-    }
-
-
-
-})(window.angular);
-/**
  * Created by Yoni on 1/29/2018.
  */
 (function(angular) {
@@ -6697,6 +6467,259 @@ function runBlock() {
   }
 })(window.angular);
 
+/**
+ * Created by Yoni on 3/30/2018.
+ */
+
+
+(function(angular) {
+    'use strict';
+    angular.module('app.mfi')
+
+        .service('LoanProductService', LoanProductService);
+
+    LoanProductService.$inject = ['$http','CommonService'];
+
+    function LoanProductService($http, CommonService) {
+        return {
+            GetAllLoanProducts:_getAllLoanProducts,
+            CreateLoanProduct:_createLoanProduct,
+            UpdateLoanProduct:_updateLoanProduct,
+            RemoveLoanProduct:_removeLoanProduct
+        };
+
+        function _getAllLoanProducts() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.LoanProducts));
+        }
+        function _removeLoanProduct(loanProduct) {
+        }
+        function _createLoanProduct(loanProduct) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateLoanProducts),loanProduct);
+        }
+        function _updateLoanProduct(loanProduct) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProducts,loanProduct._id),loanProduct);
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("LoanProductsController", LoanProductsController);
+
+    LoanProductsController.$inject = ['$mdDialog','RouteHelpers','blockUI','AlertService','LoanProductService'];
+
+    function LoanProductsController($mdDialog,RouteHelpers,blockUI,AlertService,LoanProductService) {
+        LoanProductDialogController.$inject = ["$mdDialog", "data", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addLoanProduct = _addLoanProduct;
+        vm.editLoanProduct = _editLoanProduct;
+        callAPI();
+
+
+
+        function callAPI() {
+            LoanProductService.GetAllLoanProducts().then(function (response) {
+                vm.loanProducts = response.data.docs;
+            });
+        }
+
+
+        function _addLoanProduct(loan_product,ev) {
+            $mdDialog.show({
+                locals: {data:{loan_product:loan_product}},
+                templateUrl: RouteHelpers.basepath('mfisetup/loanproduct/loan.product.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: LoanProductDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callAPI();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+        function _editLoanProduct(loan_product,ev) {
+            $mdDialog.show({
+                locals: {data:{loan_product:loan_product}},
+                templateUrl: RouteHelpers.basepath('mfisetup/loanproduct/loan.product.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: LoanProductDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callAPI();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+
+        function LoanProductDialogController($mdDialog,data,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.addToDeductibleList = _addToDeductibleList;
+            vm.addToCostOfLoanList = _addToCostOfLoanList;
+            vm.editDeductibleItem = _editDeductibleItem;
+            vm.editCostOfLoanItem = _editCostOfLoanItem;
+            vm.cancelEdit = _cancelEdit;
+            vm.showCancelForEdit = _showCancelForEdit;
+
+            vm.saveLoanProduct = _saveLoanProduct;
+
+            initialize();
+
+            function initialize() {
+                vm.isEdit = data.loan_product !== null;
+                vm.isEditCostOfLoan = false;
+                vm.isEditDeductible = false;
+
+                if(vm.isEdit){
+                    vm.loan_product = data.loan_product;
+                    LoadDeductibleAndCostOfLoanTypes(vm.loan_product);
+
+                    vm.loan_product.deductible = {
+                        type : 'fixed_amount'
+                    };
+                    vm.loan_product.costOfLoan = {
+                        type : 'fixed_amount'
+                    };
+                }else{
+                    vm.loan_product  = {
+                        deductibles :[],
+                        cost_of_loan :[],
+                        deductible:{
+                            type : 'fixed_amount'
+                        },
+                        costOfLoan:{
+                            type : 'fixed_amount'
+                        }
+                    };
+                }
+            }
+
+
+            function LoadDeductibleAndCostOfLoanTypes(loanProd) {
+
+                _.each(loanProd.cost_of_loan,function (cLoan) {
+                     cLoan.type = cLoan.fixed_amount > 0 ? 'fixed_amount': cLoan.percent > 0 ? 'percent': 'fixed_amount';
+                });
+
+                _.each(loanProd.deductibles,function (deduct) {
+                    deduct.type  = deduct.fixed_amount > 0 ? 'fixed_amount': deduct.percent > 0 ? 'percent': 'fixed_amount';
+                });
+            }
+
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+
+            function _addToDeductibleList(item) {
+                if(!_.isUndefined(item.item) && item.item !== '' && (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )){
+                    if(!vm.isEditDeductible){
+                        vm.loan_product.deductibles.push(item);
+                        vm.loan_product.deductible = {  type : 'fixed_amount'};
+                    }else{
+                        vm.cancelEdit('deductible');
+                    }
+
+                }
+
+            }
+            function _editDeductibleItem(item) {
+                vm.loan_product.deductible = item;
+                vm.isEditDeductible = true;
+            }
+            function _addToCostOfLoanList(item) {
+
+                if(!_.isUndefined(item.item) && item.item !== '' &&
+                    (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )){
+                    if(!vm.isEditCostOfLoan){
+                        vm.loan_product.cost_of_loan.push(item);
+                        vm.loan_product.costOfLoan = { type : 'fixed_amount'};//reset
+                    }else{
+                        vm.cancelEdit('costOfLoan');
+                    }
+
+                }
+
+            }
+            function _editCostOfLoanItem(item) {
+                vm.loan_product.costOfLoan = item;
+                vm.isEditCostOfLoan = true;
+            }
+
+
+            function _showCancelForEdit(cost,type) {
+                if(type === 'deductible'){
+                     return vm.isEditDeductible && vm.loan_product.deductible._id === cost._id;
+                }else if(type === 'costOfLoan'){
+                    return vm.isEditCostOfLoan && vm.loan_product.costOfLoan._id === cost._id;
+                }
+            }
+            function _cancelEdit(type) {
+                if(type === 'deductible'){
+                    vm.loan_product.deductible = {
+                        type : 'fixed_amount'
+                    };
+                    vm.isEditDeductible = false;
+                    vm.showCancelForEdit(vm.loan_product.deductible,type);
+                }else if (type === 'costOfLoan') {
+                    vm.loan_product.costOfLoan = {
+                        type : 'fixed_amount'
+                    };
+                    vm.isEditCostOfLoan = false;
+                    vm.showCancelForEdit(vm.loan_product.costOfLoan,type);
+                }
+            }
+
+            function _saveLoanProduct() {
+                var myBlockUI = blockUI.instances.get('LoanProductBlockUI');
+                myBlockUI.start();
+
+                if(!vm.isEdit){
+                    LoanProductService.CreateLoanProduct(vm.loan_product).then(function (response) {
+                        console.log("created loan product",response.data);
+                        AlertService.showSuccess("LOAN PRODUCT","Loan Product Created successfully");
+                        $mdDialog.hide();
+                        myBlockUI.stop();
+                    },function (error) {
+                        myBlockUI.stop();
+                        AlertService.showError("LOAN PRODUCT","Failed to create Loan Product");
+                        console.log("error",error);
+                    });
+                }else{
+                    LoanProductService.UpdateLoanProduct(vm.loan_product).then(function (response) {
+                        console.log("Updated loan product",response.data);
+                        AlertService.showSuccess("LOAN PRODUCT","Loan Product Updated successfully");
+                        myBlockUI.stop();
+                        $mdDialog.hide();
+                    },function (error) {
+                        AlertService.showError("LOAN PRODUCT","Failed to update Loan Product");
+                        myBlockUI.stop();
+                        console.log("error",error);
+                    });
+                }
+
+            }
+
+        }
+    }
+
+
+
+})(window.angular);
 (function(angular) {
   "use strict";
 

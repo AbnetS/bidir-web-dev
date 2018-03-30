@@ -18,9 +18,6 @@
             GetAllACATList: _getAllACAT,
             GetACATById: _getACATById,
             CreateACAT:_createACAT,
-            GetAllLoanProducts:_getAllLoanProducts,
-            CreateLoanProduct:_createLoanProduct,
-            UpdateLoanProduct:_updateLoanProduct,
             AddCostList:_addCostList,
             UpdateCostList:_updateCostList
         };
@@ -40,9 +37,6 @@
         function _getAllACAT() {
             return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
         }
-        function _getAllLoanProducts() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.LoanProducts));
-        }
         function _addCostList(cost) {
             return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
         }
@@ -51,12 +45,6 @@
         }
         function _createACAT(acat) {
             return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
-        }
-        function _createLoanProduct(loanProduct) {
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateLoanProducts),loanProduct);
-        }
-        function _updateLoanProduct(loanProduct) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProducts,loanProduct._id),loanProduct);
         }
     }
 
