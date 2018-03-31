@@ -72,15 +72,7 @@
             vm.saveLoanProduct = _saveLoanProduct;
             vm.removeLoanProductCostItem = _removeLoanProductCostItem;
 
-            function _removeLoanProductCostItem(cost) {
-                    AlertService.showConfirmForDelete("You are about to DELETE "+cost.item,
-                        "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
-                            if(isConfirm){
 
-                            }
-
-                        });
-                }
 
             initialize();
 
@@ -164,6 +156,27 @@
                 vm.isEditCostOfLoan = true;
             }
 
+            function _removeLoanProductCostItem(cost,isDeductible) {
+                AlertService.showConfirmForDelete("You are about to DELETE " + cost.item,
+                    "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
+                        if(isConfirm){
+                            var itemIndex =  -1;
+                            if(isDeductible){
+                                itemIndex =  vm.loan_product.deductibles.indexOf(cost);
+                                if(itemIndex !== -1 ){
+                                    vm.loan_product.deductibles.splice(itemIndex, 1);
+                                    console.log("removed item from deductibles");
+                                }
+                            }else{
+                                itemIndex =  vm.loan_product.cost_of_loan.indexOf(cost);
+                                if(itemIndex !== -1 ){
+                                    vm.loan_product.cost_of_loan.splice(itemIndex, 1);
+                                    console.log("removed item from cost_of_loan");
+                                }
+                            }
+                        }
+                    });
+            }
 
             function _showCancelForEdit(cost,type) {
                 if(type === 'deductible'){
