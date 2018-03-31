@@ -6,9 +6,9 @@
 
     angular.module("app.acat").controller("ACATController", ACATController);
 
-    ACATController.$inject = ['ACATService','$stateParams','blockUI','$state'];
+    ACATController.$inject = ['ACATService','$stateParams','blockUI','$state','AlertService'];
 
-    function ACATController(ACATService,$stateParams,blockUI,$state) {
+    function ACATController(ACATService,$stateParams,blockUI,$state,AlertService) {
         var vm = this;
         vm.isEdit = $stateParams.id !== "0";
         vm.ACATId = $stateParams.id;
@@ -20,27 +20,9 @@
         vm.removeCostItem = _removeCostItem;
         vm.cancelCostItem = _cancelCostItem;
         vm.cropSelectChanged = _cropSelectChanged;
+        vm.onCostListTypeChange = _onCostListTypeChange;
 
-        function _cropSelectChanged() {
-            if(vm.isEdit){
-            //    UPDATE ACAT CROP
-            }else {
-                // Initialize ACAT with this crop
-                // vm.acat.selected_crop
-             var acatCrop =   {
-                    title: vm.acat.selected_crop.name +  '-CAT',
-                    description: vm.acat.selected_crop.name +  '-CAT desc',
-                    crop: vm.acat.selected_crop._id
-                };
-             ACATService.CreateACAT(acatCrop).then(function (response) {
-                 console.log("ACAT ",response);
-                 var acatData = response.data;
-                 $state.go('app.acatbuilder',{id:acatData._id},{inherit:true});
-             },function (error) {
-                 console.log("error on initializeing acat",error);
-             })
-            }
-        }
+
 
         initialize();
 
@@ -284,7 +266,7 @@
 
         }
         function _removeCostItem(cost,type) {
-
+            console.log("Remove Cost Item",cost);
         }
 
         function addCostListAPI(cost,type) {
@@ -353,6 +335,37 @@
             },function (error) {
                 console.log("error updating cost list",error);
             });
+        }
+
+        //UPDATE CROP FOR CROP OR CREATE NEW ACAT FOR A CROP
+        function _cropSelectChanged() {
+            if(vm.isEdit){
+                //    UPDATE ACAT CROP
+            }else {
+                // Initialize ACAT with this crop
+                // vm.acat.selected_crop
+                var acatCrop =   {
+                    title: vm.acat.selected_crop.name +  '-CAT',
+                    description: vm.acat.selected_crop.name +  '-CAT desc',
+                    crop: vm.acat.selected_crop._id
+                };
+                ACATService.CreateACAT(acatCrop).then(function (response) {
+                    console.log("ACAT ",response);
+                    var acatData = response.data;
+                    $state.go('app.acatbuilder',{id:acatData._id},{inherit:true});
+                },function (error) {
+                    console.log("error on initializeing acat",error);
+                })
+            }
+        }
+        function _onCostListTypeChange(type) {
+
+            AlertService.showConfirmForDelete("You are about to change Cost List type, Which will clear the previous type data",
+                "Are you sure?", "YES, CHANGE IT!", "warning", true,function (isConfirm) {
+                    if(isConfirm){
+
+                    }
+                });
         }
 
     }
