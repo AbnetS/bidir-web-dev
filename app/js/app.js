@@ -161,6 +161,14 @@
     'use strict';
 
     angular
+        .module('app.material', [
+            'ngMaterial'
+          ]);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.maps', []);
 })();
 (function() {
@@ -181,9 +189,9 @@
     'use strict';
 
     angular
-        .module('app.material', [
-            'ngMaterial'
-          ]);
+        .module('app.routes', [
+            'app.lazyload'
+        ]);
 })();
 (function() {
     'use strict';
@@ -202,14 +210,6 @@
 
     angular
         .module('app.translate', []);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.routes', [
-            'app.lazyload'
-        ]);
 })();
 (function() {
     'use strict';
@@ -1665,373 +1665,6 @@ var ACAT_GROUP_CONSTANT = {
 
 })(window.angular);
 
-/**=========================================================
- * Module: modals.js
- * Provides a simple way to implement bootstrap modals from templates
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.maps')
-        .controller('ModalGmapController', ModalGmapController);
-
-    ModalGmapController.$inject = ['$uibModal'];
-    function ModalGmapController($uibModal) {
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-
-          vm.open = function (size) {
-
-            //var modalInstance =
-            $uibModal.open({
-              templateUrl: '/myModalContent.html',
-              controller: ModalInstanceCtrl,
-              size: size
-            });
-          };
-
-          // Please note that $uibModalInstance represents a modal window (instance) dependency.
-          // It is not the same as the $uibModal service used above.
-
-          ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout'];
-          function ModalInstanceCtrl($scope, $uibModalInstance, $timeout) {
-
-            $uibModalInstance.opened.then(function () {
-              var position = new google.maps.LatLng(33.790807, -117.835734);
-
-              $scope.mapOptionsModal = {
-                zoom: 14,
-                center: position,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-              };
-
-              // we use timeout to wait maps to be ready before add a markers
-              $timeout(function(){
-                // 1. Add a marker at the position it was initialized
-                new google.maps.Marker({
-                  map: $scope.myMapModal,
-                  position: position
-                });
-                // 2. Trigger a resize so the map is redrawed
-                google.maps.event.trigger($scope.myMapModal, 'resize');
-                // 3. Move to the center if it is misaligned
-                $scope.myMapModal.panTo(position);
-              });
-
-            });
-
-            $scope.ok = function () {
-              $uibModalInstance.close('closed');
-            };
-
-            $scope.cancel = function () {
-              $uibModalInstance.dismiss('cancel');
-            };
-
-          }
-
-        }
-    }
-
-})();
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.maps')
-        .controller('GMapController', GMapController);
-
-    GMapController.$inject = ['$timeout'];
-    function GMapController($timeout) {
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-          var position = [
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.787453, -117.835858)
-            ];
-          
-          vm.addMarker = addMarker;
-          // we use timeout to wait maps to be ready before add a markers
-          $timeout(function(){
-            addMarker(vm.myMap1, position[0]);
-            addMarker(vm.myMap2, position[1]);
-            addMarker(vm.myMap3, position[2]);
-            addMarker(vm.myMap5, position[3]);
-          });
-
-          vm.mapOptions1 = {
-            zoom: 14,
-            center: position[0],
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            scrollwheel: false
-          };
-
-          vm.mapOptions2 = {
-            zoom: 19,
-            center: position[1],
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
-
-          vm.mapOptions3 = {
-            zoom: 14,
-            center: position[2],
-            mapTypeId: google.maps.MapTypeId.SATELLITE
-          };
-
-          vm.mapOptions4 = {
-            zoom: 14,
-            center: position[3],
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
-
-          // for multiple markers
-          $timeout(function(){
-            addMarker(vm.myMap4, position[3]);
-            addMarker(vm.myMap4, position[4]);
-          });
-
-          // custom map style
-          var MapStyles = [{'featureType':'water','stylers':[{'visibility':'on'},{'color':'#bdd1f9'}]},{'featureType':'all','elementType':'labels.text.fill','stylers':[{'color':'#334165'}]},{featureType:'landscape',stylers:[{color:'#e9ebf1'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#c5c6c6'}]},{featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'road.local',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'transit',elementType:'geometry',stylers:[{color:'#d8dbe0'}]},{featureType:'poi',elementType:'geometry',stylers:[{color:'#cfd5e0'}]},{featureType:'administrative',stylers:[{visibility:'on'},{lightness:33}]},{featureType:'poi.park',elementType:'labels',stylers:[{visibility:'on'},{lightness:20}]},{featureType:'road',stylers:[{color:'#d8dbe0',lightness:20}]}];
-          vm.mapOptions5 = {
-            zoom: 14,
-            center: position[3],
-            styles: MapStyles,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            scrollwheel: false
-          };
-
-          ///////////////
-          
-          function addMarker(map, position) {
-            return new google.maps.Marker({
-              map: map,
-              position: position
-            });
-          }
-
-        }
-    }
-})();
-
-/**=========================================================
- * Module: navbar-search.js
- * Navbar search toggler * Auto dismiss on ESC key
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .directive('searchOpen', searchOpen)
-        .directive('searchDismiss', searchDismiss);
-
-    //
-    // directives definition
-    // 
-    
-    function searchOpen () {
-        var directive = {
-            controller: searchOpenController,
-            restrict: 'A'
-        };
-        return directive;
-
-    }
-
-    function searchDismiss () {
-        var directive = {
-            controller: searchDismissController,
-            restrict: 'A'
-        };
-        return directive;
-        
-    }
-
-    //
-    // Contrller definition
-    // 
-    
-    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchOpenController ($scope, $element, NavSearch) {
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.toggle);
-    }
-
-    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchDismissController ($scope, $element, NavSearch) {
-      
-      var inputSelector = '.navbar-form input[type="text"]';
-
-      $(inputSelector)
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('keyup', function(e) {
-          if (e.keyCode === 27) // ESC
-            NavSearch.dismiss();
-        });
-        
-      // click anywhere closes the search
-      $(document).on('click', NavSearch.dismiss);
-      // dismissable options
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.dismiss);
-    }
-
-})();
-
-
-/**=========================================================
- * Module: nav-search.js
- * Services to share navbar search functions
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .service('NavSearch', NavSearch);
-
-    function NavSearch() {
-        this.toggle = toggle;
-        this.dismiss = dismiss;
-
-        ////////////////
-
-        var navbarFormSelector = 'form.navbar-form';
-
-        function toggle() {
-          var navbarForm = $(navbarFormSelector);
-
-          navbarForm.toggleClass('open');
-
-          var isOpen = navbarForm.hasClass('open');
-
-          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
-        }
-
-        function dismiss() {
-          $(navbarFormSelector)
-            .removeClass('open') // Close control
-            .find('input[type="text"]').blur() // remove focus
-            // .val('') // Empty input
-            ;
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.preloader')
-        .directive('preloader', preloader);
-
-    preloader.$inject = ['$animate', '$timeout', '$q'];
-    function preloader ($animate, $timeout, $q) {
-
-        var directive = {
-            restrict: 'EAC',
-            template: 
-              '<div class="preloader-progress">' +
-                  '<div class="preloader-progress-bar" ' +
-                       'ng-style="{width: loadCounter + \'%\'}"></div>' +
-              '</div>'
-            ,
-            link: link
-        };
-        return directive;
-
-        ///////
-
-        function link(scope, el) {
-
-          scope.loadCounter = 0;
-
-          var counter  = 0,
-              timeout;
-
-          // disables scrollbar
-          angular.element('body').css('overflow', 'hidden');
-          // ensure class is present for styling
-          el.addClass('preloader');
-
-          appReady().then(endCounter);
-
-          timeout = $timeout(startCounter);
-
-          ///////
-
-          function startCounter() {
-
-            var remaining = 100 - counter;
-            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
-
-            scope.loadCounter = parseInt(counter, 10);
-
-            timeout = $timeout(startCounter, 20);
-          }
-
-          function endCounter() {
-
-            $timeout.cancel(timeout);
-
-            scope.loadCounter = 100;
-
-            $timeout(function(){
-              // animate preloader hiding
-              $animate.addClass(el, 'preloader-hidden');
-              // retore scrollbar
-              angular.element('body').css('overflow', '');
-            }, 300);
-          }
-
-          function appReady() {
-            var deferred = $q.defer();
-            var viewsLoaded = 0;
-            // if this doesn't sync with the real app ready
-            // a custom event must be used instead
-            var off = scope.$on('$viewContentLoaded', function () {
-              viewsLoaded ++;
-              // we know there are at least two views to be loaded 
-              // before the app is ready (1-index.html 2-app*.html)
-              if ( viewsLoaded === 2) {
-                // with resolve this fires only once
-                $timeout(function(){
-                  deferred.resolve();
-                }, 3000);
-
-                off();
-              }
-
-            });
-
-            return deferred.promise;
-          }
-
-        } //link
-    }
-
-})();
 
 (function() {
     'use strict';
@@ -2766,6 +2399,645 @@ var ACAT_GROUP_CONSTANT = {
         }
     }
 })();
+/**=========================================================
+ * Module: modals.js
+ * Provides a simple way to implement bootstrap modals from templates
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps')
+        .controller('ModalGmapController', ModalGmapController);
+
+    ModalGmapController.$inject = ['$uibModal'];
+    function ModalGmapController($uibModal) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+
+          vm.open = function (size) {
+
+            //var modalInstance =
+            $uibModal.open({
+              templateUrl: '/myModalContent.html',
+              controller: ModalInstanceCtrl,
+              size: size
+            });
+          };
+
+          // Please note that $uibModalInstance represents a modal window (instance) dependency.
+          // It is not the same as the $uibModal service used above.
+
+          ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout'];
+          function ModalInstanceCtrl($scope, $uibModalInstance, $timeout) {
+
+            $uibModalInstance.opened.then(function () {
+              var position = new google.maps.LatLng(33.790807, -117.835734);
+
+              $scope.mapOptionsModal = {
+                zoom: 14,
+                center: position,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+              };
+
+              // we use timeout to wait maps to be ready before add a markers
+              $timeout(function(){
+                // 1. Add a marker at the position it was initialized
+                new google.maps.Marker({
+                  map: $scope.myMapModal,
+                  position: position
+                });
+                // 2. Trigger a resize so the map is redrawed
+                google.maps.event.trigger($scope.myMapModal, 'resize');
+                // 3. Move to the center if it is misaligned
+                $scope.myMapModal.panTo(position);
+              });
+
+            });
+
+            $scope.ok = function () {
+              $uibModalInstance.close('closed');
+            };
+
+            $scope.cancel = function () {
+              $uibModalInstance.dismiss('cancel');
+            };
+
+          }
+
+        }
+    }
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps')
+        .controller('GMapController', GMapController);
+
+    GMapController.$inject = ['$timeout'];
+    function GMapController($timeout) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+          var position = [
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.787453, -117.835858)
+            ];
+          
+          vm.addMarker = addMarker;
+          // we use timeout to wait maps to be ready before add a markers
+          $timeout(function(){
+            addMarker(vm.myMap1, position[0]);
+            addMarker(vm.myMap2, position[1]);
+            addMarker(vm.myMap3, position[2]);
+            addMarker(vm.myMap5, position[3]);
+          });
+
+          vm.mapOptions1 = {
+            zoom: 14,
+            center: position[0],
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+          };
+
+          vm.mapOptions2 = {
+            zoom: 19,
+            center: position[1],
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+
+          vm.mapOptions3 = {
+            zoom: 14,
+            center: position[2],
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+          };
+
+          vm.mapOptions4 = {
+            zoom: 14,
+            center: position[3],
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+
+          // for multiple markers
+          $timeout(function(){
+            addMarker(vm.myMap4, position[3]);
+            addMarker(vm.myMap4, position[4]);
+          });
+
+          // custom map style
+          var MapStyles = [{'featureType':'water','stylers':[{'visibility':'on'},{'color':'#bdd1f9'}]},{'featureType':'all','elementType':'labels.text.fill','stylers':[{'color':'#334165'}]},{featureType:'landscape',stylers:[{color:'#e9ebf1'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#c5c6c6'}]},{featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'road.local',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'transit',elementType:'geometry',stylers:[{color:'#d8dbe0'}]},{featureType:'poi',elementType:'geometry',stylers:[{color:'#cfd5e0'}]},{featureType:'administrative',stylers:[{visibility:'on'},{lightness:33}]},{featureType:'poi.park',elementType:'labels',stylers:[{visibility:'on'},{lightness:20}]},{featureType:'road',stylers:[{color:'#d8dbe0',lightness:20}]}];
+          vm.mapOptions5 = {
+            zoom: 14,
+            center: position[3],
+            styles: MapStyles,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+          };
+
+          ///////////////
+          
+          function addMarker(map, position) {
+            return new google.maps.Marker({
+              map: map,
+              position: position
+            });
+          }
+
+        }
+    }
+})();
+
+/**=========================================================
+ * Module: navbar-search.js
+ * Navbar search toggler * Auto dismiss on ESC key
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .directive('searchOpen', searchOpen)
+        .directive('searchDismiss', searchDismiss);
+
+    //
+    // directives definition
+    // 
+    
+    function searchOpen () {
+        var directive = {
+            controller: searchOpenController,
+            restrict: 'A'
+        };
+        return directive;
+
+    }
+
+    function searchDismiss () {
+        var directive = {
+            controller: searchDismissController,
+            restrict: 'A'
+        };
+        return directive;
+        
+    }
+
+    //
+    // Contrller definition
+    // 
+    
+    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchOpenController ($scope, $element, NavSearch) {
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.toggle);
+    }
+
+    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchDismissController ($scope, $element, NavSearch) {
+      
+      var inputSelector = '.navbar-form input[type="text"]';
+
+      $(inputSelector)
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('keyup', function(e) {
+          if (e.keyCode === 27) // ESC
+            NavSearch.dismiss();
+        });
+        
+      // click anywhere closes the search
+      $(document).on('click', NavSearch.dismiss);
+      // dismissable options
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.dismiss);
+    }
+
+})();
+
+
+/**=========================================================
+ * Module: nav-search.js
+ * Services to share navbar search functions
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .service('NavSearch', NavSearch);
+
+    function NavSearch() {
+        this.toggle = toggle;
+        this.dismiss = dismiss;
+
+        ////////////////
+
+        var navbarFormSelector = 'form.navbar-form';
+
+        function toggle() {
+          var navbarForm = $(navbarFormSelector);
+
+          navbarForm.toggleClass('open');
+
+          var isOpen = navbarForm.hasClass('open');
+
+          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
+        }
+
+        function dismiss() {
+          $(navbarFormSelector)
+            .removeClass('open') // Close control
+            .find('input[type="text"]').blur() // remove focus
+            // .val('') // Empty input
+            ;
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.preloader')
+        .directive('preloader', preloader);
+
+    preloader.$inject = ['$animate', '$timeout', '$q'];
+    function preloader ($animate, $timeout, $q) {
+
+        var directive = {
+            restrict: 'EAC',
+            template: 
+              '<div class="preloader-progress">' +
+                  '<div class="preloader-progress-bar" ' +
+                       'ng-style="{width: loadCounter + \'%\'}"></div>' +
+              '</div>'
+            ,
+            link: link
+        };
+        return directive;
+
+        ///////
+
+        function link(scope, el) {
+
+          scope.loadCounter = 0;
+
+          var counter  = 0,
+              timeout;
+
+          // disables scrollbar
+          angular.element('body').css('overflow', 'hidden');
+          // ensure class is present for styling
+          el.addClass('preloader');
+
+          appReady().then(endCounter);
+
+          timeout = $timeout(startCounter);
+
+          ///////
+
+          function startCounter() {
+
+            var remaining = 100 - counter;
+            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
+
+            scope.loadCounter = parseInt(counter, 10);
+
+            timeout = $timeout(startCounter, 20);
+          }
+
+          function endCounter() {
+
+            $timeout.cancel(timeout);
+
+            scope.loadCounter = 100;
+
+            $timeout(function(){
+              // animate preloader hiding
+              $animate.addClass(el, 'preloader-hidden');
+              // retore scrollbar
+              angular.element('body').css('overflow', '');
+            }, 300);
+          }
+
+          function appReady() {
+            var deferred = $q.defer();
+            var viewsLoaded = 0;
+            // if this doesn't sync with the real app ready
+            // a custom event must be used instead
+            var off = scope.$on('$viewContentLoaded', function () {
+              viewsLoaded ++;
+              // we know there are at least two views to be loaded 
+              // before the app is ready (1-index.html 2-app*.html)
+              if ( viewsLoaded === 2) {
+                // with resolve this fires only once
+                $timeout(function(){
+                  deferred.resolve();
+                }, 3000);
+
+                off();
+              }
+
+            });
+
+            return deferred.promise;
+          }
+
+        } //link
+    }
+
+})();
+/**=========================================================
+ * Module: helpers.js
+ * Provides helper functions for routes definition
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.routes')
+        .provider('RouteHelpers', RouteHelpersProvider)
+        ;
+
+    RouteHelpersProvider.$inject = ['APP_REQUIRES'];
+    function RouteHelpersProvider(APP_REQUIRES) {
+
+      /* jshint validthis:true */
+      return {
+        // provider access level
+        basepath: basepath,
+        resolveFor: resolveFor,
+        // controller access level
+        $get: function() {
+          return {
+            basepath: basepath,
+            resolveFor: resolveFor
+          };
+        }
+      };
+
+      // Set here the base of the relative path
+      // for all app views
+      function basepath(uri) {
+        return 'app/views/' + uri;
+      }
+
+      // Generates a resolve object by passing script names
+      // previously configured in constant.APP_REQUIRES
+      function resolveFor() {
+        var _args = arguments;
+        return {
+          deps: ['$ocLazyLoad','$q', function ($ocLL, $q) {
+            // Creates a promise chain for each argument
+            var promise = $q.when(1); // empty promise
+            for(var i=0, len=_args.length; i < len; i ++){
+              promise = andThen(_args[i]);
+            }
+            return promise;
+
+            // creates promise to chain dynamically
+            function andThen(_arg) {
+              // also support a function that returns a promise
+              if(typeof _arg === 'function')
+                  return promise.then(_arg);
+              else
+                  return promise.then(function() {
+                    // if is a module, pass the name. If not, pass the array
+                    var whatToLoad = getRequired(_arg);
+                    // simple error check
+                    if(!whatToLoad) return $.error('Route resolve: Bad resource name [' + _arg + ']');
+                    // finally, return a promise
+                    return $ocLL.load( whatToLoad );
+                  });
+            }
+            // check and returns required data
+            // analyze module items with the form [name: '', files: []]
+            // and also simple array of script files (for not angular js)
+            function getRequired(name) {
+              if (APP_REQUIRES.modules)
+                  for(var m in APP_REQUIRES.modules)
+                      if(APP_REQUIRES.modules[m].name && APP_REQUIRES.modules[m].name === name)
+                          return APP_REQUIRES.modules[m];
+              return APP_REQUIRES.scripts && APP_REQUIRES.scripts[name];
+            }
+
+          }]};
+      } // resolveFor
+
+    }
+
+
+})();
+
+
+/**=========================================================
+ * Module: config.js
+ * App routes and resources configuration
+ =========================================================*/
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.routes')
+        .config(routesConfig);
+
+    routesConfig.$inject = ['$stateProvider', '$locationProvider', '$urlRouterProvider', 'RouteHelpersProvider'];
+    function routesConfig($stateProvider, $locationProvider, $urlRouterProvider, helper){
+        
+        // Set the following to true to enable the HTML5 Mode
+        // You may have to set <base> tag in index and a routing configuration in your server
+        $locationProvider.html5Mode(false);
+
+        // defaults to login
+        $urlRouterProvider.otherwise('/page/login');
+
+        // 
+        // Application Routes
+        // -----------------------------------   
+        $stateProvider
+          .state('app', {
+              url: '/app',
+              abstract: true,
+              templateUrl: helper.basepath('app.html'),
+              resolve: helper.resolveFor('fastclick','modernizr','sparklines', 'icons','animo','underscore',
+                        'sparklines','slimscroll','oitozero.ngSweetAlert','toaster','blockUI')
+          })
+          .state('app.welcome', {
+              url: '/welcome',
+              title: 'Welcome',
+              templateUrl: helper.basepath('welcome.html'),
+              controller: 'WelcomeController',
+              controllerAs: 'vm'
+          })
+           .state('app.manage_user', {
+                url: '/manage_user',
+                title: 'manage users',
+                templateUrl: helper.basepath('manageusers/manage.users.html'),
+               resolve: angular.extend(helper.resolveFor('datatables','ngDialog','ui.select'),{}),
+               controller: 'ManageUsersController',
+               controllerAs: 'vm'
+            })
+            .state('app.manage_role', {
+                url: '/manage_role',
+                title: 'manage roles',
+                templateUrl: helper.basepath('manageroles/manage.roles.html'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select'),
+                controller: 'ManageRoleController',
+                controllerAs: 'vm'
+            })
+            .state('app.mfi_setting', {
+                url: '/mfi_setup',
+                title: 'MFI Setting',
+                templateUrl:helper.basepath('mfisetup/mfi.html'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment','inputmask','ngFileUpload'),
+                controller: 'MFIController',
+                controllerAs: 'vm'
+            })
+
+            .state("app.manage_branch", {
+                url: "/branches",
+                title: "branches",
+                templateUrl:helper.basepath('mfisetup/branches/branches.html'),
+                controller: "BranchController",
+                controllerAs: 'vm'
+            })
+            .state("app.manage_clients", {
+                url: "/clients",
+                title: "clients",
+                templateUrl:helper.basepath('manage_clients/manage.clients.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "ClientsController",
+                controllerAs: 'vm'
+            })
+            .state("app.client_detail", {
+                url: "/clients/:id",
+                title: "clients detail",
+                templateUrl:helper.basepath('manage_clients/client.detail.html'),
+                controller: "ClientDetailController",
+                controllerAs: 'vm'
+            })
+            .state("app.forms", {
+                url: "/forms",
+                title: "forms",
+                templateUrl:helper.basepath('forms/forms.list.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "FormsController",
+                controllerAs: 'vm'
+            })
+            .state("app.builder", {
+                url: "/forms/builder/:id",
+                title: 'Form Builder',
+                templateUrl:helper.basepath('forms/builder.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select','ui.sortable'),
+                controller: 'FormBuilderController',
+                controllerAs: 'vm'
+            })
+            .state("app.acat", {
+                url: "/acat",
+                title: "acat",
+                templateUrl:helper.basepath('acat/builder/acat.list.html'),
+                resolve:helper.resolveFor('md.data.table'),
+                controller: "ACATListController",
+                controllerAs: 'vm'
+            })
+            .state("app.acatbuilder", {
+                url: "/acat/builder/:id",
+                title: 'ACAT Builder',
+                templateUrl:helper.basepath('acat/builder/acat.builder.html'),
+                controller: 'ACATController',
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controllerAs: 'vm'
+            })
+            .state("app.crop", {
+                url: "/crops",
+                title: "crops",
+                templateUrl:helper.basepath('acat/crop/crops.html'),
+                resolve:helper.resolveFor('md.data.table'),
+                controller: "CropsController",
+                controllerAs: 'vm'
+            })
+            .state("app.loanproduct", {
+                url: "/loanproducts",
+                title: "loan product",
+                templateUrl:helper.basepath('mfisetup/loanproduct/loan.products.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "LoanProductsController",
+                controllerAs: 'vm'
+            })
+            .state("app.screenings", {
+                url: "/screenings",
+                title: "Screening",
+                templateUrl:helper.basepath('screening/client.screening.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "ScreeningController",
+                controllerAs: 'vm'
+            })
+
+
+          // CUSTOM RESOLVES
+          //   Add your own resolves properties
+          //   following this object extend
+          //   method
+          // -----------------------------------
+            .state('page', {
+                url: '/page',
+                templateUrl: 'app/pages/page.html',
+                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert','toaster','blockUI'),
+                controller: ['$rootScope', function($rootScope) {
+                    $rootScope.app.layout.isBoxed = false;
+                }]
+            })
+            .state('page.login', {
+                url: '/login',
+                title: 'Login',
+                templateUrl: 'app/pages/login.html',
+                controller: 'LoginFormController',
+                controllerAs: 'login'
+            })
+            .state('page.404', {
+                url: '/404',
+                title: 'Not Found',
+                templateUrl: 'app/pages/404.html'
+            })
+            .state('page.500', {
+                url: '/500',
+                title: 'Server error',
+                templateUrl: 'app/pages/500.html'
+            })
+            .state('page.maintenance', {
+                url: '/maintenance',
+                title: 'Maintenance',
+                templateUrl: 'app/pages/maintenance.html'
+            })
+          ;
+
+    } // routesConfig
+
+})();
+
+
 (function() {
     'use strict';
 
@@ -3309,278 +3581,6 @@ var ACAT_GROUP_CONSTANT = {
 
     }
 })();
-/**=========================================================
- * Module: helpers.js
- * Provides helper functions for routes definition
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.routes')
-        .provider('RouteHelpers', RouteHelpersProvider)
-        ;
-
-    RouteHelpersProvider.$inject = ['APP_REQUIRES'];
-    function RouteHelpersProvider(APP_REQUIRES) {
-
-      /* jshint validthis:true */
-      return {
-        // provider access level
-        basepath: basepath,
-        resolveFor: resolveFor,
-        // controller access level
-        $get: function() {
-          return {
-            basepath: basepath,
-            resolveFor: resolveFor
-          };
-        }
-      };
-
-      // Set here the base of the relative path
-      // for all app views
-      function basepath(uri) {
-        return 'app/views/' + uri;
-      }
-
-      // Generates a resolve object by passing script names
-      // previously configured in constant.APP_REQUIRES
-      function resolveFor() {
-        var _args = arguments;
-        return {
-          deps: ['$ocLazyLoad','$q', function ($ocLL, $q) {
-            // Creates a promise chain for each argument
-            var promise = $q.when(1); // empty promise
-            for(var i=0, len=_args.length; i < len; i ++){
-              promise = andThen(_args[i]);
-            }
-            return promise;
-
-            // creates promise to chain dynamically
-            function andThen(_arg) {
-              // also support a function that returns a promise
-              if(typeof _arg === 'function')
-                  return promise.then(_arg);
-              else
-                  return promise.then(function() {
-                    // if is a module, pass the name. If not, pass the array
-                    var whatToLoad = getRequired(_arg);
-                    // simple error check
-                    if(!whatToLoad) return $.error('Route resolve: Bad resource name [' + _arg + ']');
-                    // finally, return a promise
-                    return $ocLL.load( whatToLoad );
-                  });
-            }
-            // check and returns required data
-            // analyze module items with the form [name: '', files: []]
-            // and also simple array of script files (for not angular js)
-            function getRequired(name) {
-              if (APP_REQUIRES.modules)
-                  for(var m in APP_REQUIRES.modules)
-                      if(APP_REQUIRES.modules[m].name && APP_REQUIRES.modules[m].name === name)
-                          return APP_REQUIRES.modules[m];
-              return APP_REQUIRES.scripts && APP_REQUIRES.scripts[name];
-            }
-
-          }]};
-      } // resolveFor
-
-    }
-
-
-})();
-
-
-/**=========================================================
- * Module: config.js
- * App routes and resources configuration
- =========================================================*/
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.routes')
-        .config(routesConfig);
-
-    routesConfig.$inject = ['$stateProvider', '$locationProvider', '$urlRouterProvider', 'RouteHelpersProvider'];
-    function routesConfig($stateProvider, $locationProvider, $urlRouterProvider, helper){
-        
-        // Set the following to true to enable the HTML5 Mode
-        // You may have to set <base> tag in index and a routing configuration in your server
-        $locationProvider.html5Mode(false);
-
-        // defaults to login
-        $urlRouterProvider.otherwise('/page/login');
-
-        // 
-        // Application Routes
-        // -----------------------------------   
-        $stateProvider
-          .state('app', {
-              url: '/app',
-              abstract: true,
-              templateUrl: helper.basepath('app.html'),
-              resolve: helper.resolveFor('fastclick','modernizr','sparklines', 'icons','animo','underscore',
-                        'sparklines','slimscroll','oitozero.ngSweetAlert','toaster','blockUI')
-          })
-          .state('app.welcome', {
-              url: '/welcome',
-              title: 'Welcome',
-              templateUrl: helper.basepath('welcome.html'),
-              controller: 'WelcomeController',
-              controllerAs: 'vm'
-          })
-           .state('app.manage_user', {
-                url: '/manage_user',
-                title: 'manage users',
-                templateUrl: helper.basepath('manageusers/manage.users.html'),
-               resolve: angular.extend(helper.resolveFor('datatables','ngDialog','ui.select'),{}),
-               controller: 'ManageUsersController',
-               controllerAs: 'vm'
-            })
-            .state('app.manage_role', {
-                url: '/manage_role',
-                title: 'manage roles',
-                templateUrl: helper.basepath('manageroles/manage.roles.html'),
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select'),
-                controller: 'ManageRoleController',
-                controllerAs: 'vm'
-            })
-            .state('app.mfi_setting', {
-                url: '/mfi_setup',
-                title: 'MFI Setting',
-                templateUrl:helper.basepath('mfisetup/mfi.html'),
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment','inputmask','ngFileUpload'),
-                controller: 'MFIController',
-                controllerAs: 'vm'
-            })
-
-            .state("app.manage_branch", {
-                url: "/branches",
-                title: "branches",
-                templateUrl:helper.basepath('mfisetup/branches/branches.html'),
-                controller: "BranchController",
-                controllerAs: 'vm'
-            })
-            .state("app.manage_clients", {
-                url: "/clients",
-                title: "clients",
-                templateUrl:helper.basepath('manage_clients/manage.clients.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "ClientsController",
-                controllerAs: 'vm'
-            })
-            .state("app.client_detail", {
-                url: "/clients/:id",
-                title: "clients detail",
-                templateUrl:helper.basepath('manage_clients/client.detail.html'),
-                controller: "ClientDetailController",
-                controllerAs: 'vm'
-            })
-            .state("app.forms", {
-                url: "/forms",
-                title: "forms",
-                templateUrl:helper.basepath('forms/forms.list.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "FormsController",
-                controllerAs: 'vm'
-            })
-            .state("app.builder", {
-                url: "/forms/builder/:id",
-                title: 'Form Builder',
-                templateUrl:helper.basepath('forms/builder.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select','ui.sortable'),
-                controller: 'FormBuilderController',
-                controllerAs: 'vm'
-            })
-            .state("app.acat", {
-                url: "/acat",
-                title: "acat",
-                templateUrl:helper.basepath('acat/builder/acat.list.html'),
-                resolve:helper.resolveFor('md.data.table'),
-                controller: "ACATListController",
-                controllerAs: 'vm'
-            })
-            .state("app.acatbuilder", {
-                url: "/acat/builder/:id",
-                title: 'ACAT Builder',
-                templateUrl:helper.basepath('acat/builder/acat.builder.html'),
-                controller: 'ACATController',
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controllerAs: 'vm'
-            })
-            .state("app.crop", {
-                url: "/crops",
-                title: "crops",
-                templateUrl:helper.basepath('acat/crop/crops.html'),
-                resolve:helper.resolveFor('md.data.table'),
-                controller: "CropsController",
-                controllerAs: 'vm'
-            })
-            .state("app.loanproduct", {
-                url: "/loanproducts",
-                title: "loan product",
-                templateUrl:helper.basepath('mfisetup/loanproduct/loan.products.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "LoanProductsController",
-                controllerAs: 'vm'
-            })
-            .state("app.screenings", {
-                url: "/screenings",
-                title: "Screening",
-                templateUrl:helper.basepath('screening/client.screening.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "ScreeningController",
-                controllerAs: 'vm'
-            })
-
-
-          // CUSTOM RESOLVES
-          //   Add your own resolves properties
-          //   following this object extend
-          //   method
-          // -----------------------------------
-            .state('page', {
-                url: '/page',
-                templateUrl: 'app/pages/page.html',
-                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert','toaster','blockUI'),
-                controller: ['$rootScope', function($rootScope) {
-                    $rootScope.app.layout.isBoxed = false;
-                }]
-            })
-            .state('page.login', {
-                url: '/login',
-                title: 'Login',
-                templateUrl: 'app/pages/login.html',
-                controller: 'LoginFormController',
-                controllerAs: 'login'
-            })
-            .state('page.404', {
-                url: '/404',
-                title: 'Not Found',
-                templateUrl: 'app/pages/404.html'
-            })
-            .state('page.500', {
-                url: '/500',
-                title: 'Server error',
-                templateUrl: 'app/pages/500.html'
-            })
-            .state('page.maintenance', {
-                url: '/maintenance',
-                title: 'Maintenance',
-                templateUrl: 'app/pages/maintenance.html'
-            })
-          ;
-
-    } // routesConfig
-
-})();
-
-
 /**=========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
@@ -4630,7 +4630,8 @@ function runBlock() {
             GetACATById: _getACATById,
             CreateACAT:_createACAT,
             AddCostList:_addCostList,
-            UpdateCostList:_updateCostList
+            UpdateCostList:_updateCostList,
+            RemoveCostList:_removeCostList
         };
 
         function _getCrops() {
@@ -4650,6 +4651,9 @@ function runBlock() {
         }
         function _addCostList(cost) {
             return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
+        }
+        function _removeCostList(cost,type){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id,type), cost);
         }
         function _updateCostList(cost){
             return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
@@ -6481,6 +6485,194 @@ function runBlock() {
 })(window.angular);
 
 /**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function (angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("LoanProductDialogController", LoanProductDialogController);
+
+    LoanProductDialogController.$inject = ['$mdDialog', 'data', 'AlertService', 'blockUI', 'LoanProductService'];
+
+    function LoanProductDialogController($mdDialog, data, AlertService, blockUI,LoanProductService) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.addToDeductibleList = _addToDeductibleList;
+        vm.addToCostOfLoanList = _addToCostOfLoanList;
+        vm.editDeductibleItem = _editDeductibleItem;
+        vm.editCostOfLoanItem = _editCostOfLoanItem;
+        vm.cancelEdit = _cancelEdit;
+        vm.showCancelForEdit = _showCancelForEdit;
+        vm.saveLoanProduct = _saveLoanProduct;
+        vm.removeLoanProductCostItem = _removeLoanProductCostItem;
+
+
+        initialize();
+
+        function initialize() {
+            vm.isEdit = data.loan_product !== null;
+            vm.isEditCostOfLoan = false;
+            vm.isEditDeductible = false;
+
+            if (vm.isEdit) {
+                vm.loan_product = data.loan_product;
+                LoadDeductibleAndCostOfLoanTypes(vm.loan_product);
+
+                vm.loan_product.deductible = {
+                    type: 'fixed_amount'
+                };
+                vm.loan_product.costOfLoan = {
+                    type: 'fixed_amount'
+                };
+            } else {
+                vm.loan_product = {
+                    deductibles: [],
+                    cost_of_loan: [],
+                    deductible: {
+                        type: 'fixed_amount'
+                    },
+                    costOfLoan: {
+                        type: 'fixed_amount'
+                    }
+                };
+            }
+        }
+
+
+        function LoadDeductibleAndCostOfLoanTypes(loanProd) {
+
+            _.each(loanProd.cost_of_loan, function (cLoan) {
+                cLoan.type = cLoan.fixed_amount > 0 ? 'fixed_amount' : cLoan.percent > 0 ? 'percent' : 'fixed_amount';
+            });
+
+            _.each(loanProd.deductibles, function (deduct) {
+                deduct.type = deduct.fixed_amount > 0 ? 'fixed_amount' : deduct.percent > 0 ? 'percent' : 'fixed_amount';
+            });
+        }
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+
+        function _addToDeductibleList(item) {
+            if (!_.isUndefined(item.item) && item.item !== '' && (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )) {
+                if (!vm.isEditDeductible) {
+                    vm.loan_product.deductibles.push(item);
+                    vm.loan_product.deductible = {type: 'fixed_amount'};
+                } else {
+                    vm.cancelEdit('deductible');
+                }
+
+            }
+
+        }
+
+        function _editDeductibleItem(item) {
+            vm.loan_product.deductible = item;
+            vm.isEditDeductible = true;
+        }
+
+        function _addToCostOfLoanList(item) {
+
+            if (!_.isUndefined(item.item) && item.item !== '' &&
+                (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )) {
+                if (!vm.isEditCostOfLoan) {
+                    vm.loan_product.cost_of_loan.push(item);
+                    vm.loan_product.costOfLoan = {type: 'fixed_amount'};//reset
+                } else {
+                    vm.cancelEdit('costOfLoan');
+                }
+
+            }
+
+        }
+
+        function _editCostOfLoanItem(item) {
+            vm.loan_product.costOfLoan = item;
+            vm.isEditCostOfLoan = true;
+        }
+
+        function _removeLoanProductCostItem(cost, isDeductible) {
+            AlertService.showConfirmForDelete("You are about to DELETE " + cost.item,
+                "Are you sure?", "Yes, Delete it!", "warning", true, function (isConfirm) {
+                    if (isConfirm) {
+                        var itemIndex = -1;
+                        if (isDeductible) {
+                            itemIndex = vm.loan_product.deductibles.indexOf(cost);
+                            if (itemIndex !== -1) {
+                                vm.loan_product.deductibles.splice(itemIndex, 1);
+                                console.log("removed item from deductibles");
+                            }
+                        } else {
+                            itemIndex = vm.loan_product.cost_of_loan.indexOf(cost);
+                            if (itemIndex !== -1) {
+                                vm.loan_product.cost_of_loan.splice(itemIndex, 1);
+                                console.log("removed item from cost_of_loan");
+                            }
+                        }
+                    }
+                });
+        }
+
+        function _showCancelForEdit(cost, type) {
+            if (type === 'deductible') {
+                return vm.isEditDeductible && vm.loan_product.deductible._id === cost._id;
+            } else if (type === 'costOfLoan') {
+                return vm.isEditCostOfLoan && vm.loan_product.costOfLoan._id === cost._id;
+            }
+        }
+
+        function _cancelEdit(type) {
+            if (type === 'deductible') {
+                vm.loan_product.deductible = {
+                    type: 'fixed_amount'
+                };
+                vm.isEditDeductible = false;
+                vm.showCancelForEdit(vm.loan_product.deductible, type);
+            } else if (type === 'costOfLoan') {
+                vm.loan_product.costOfLoan = {
+                    type: 'fixed_amount'
+                };
+                vm.isEditCostOfLoan = false;
+                vm.showCancelForEdit(vm.loan_product.costOfLoan, type);
+            }
+        }
+
+        function _saveLoanProduct() {
+            var myBlockUI = blockUI.instances.get('LoanProductBlockUI');
+            myBlockUI.start();
+
+            if (!vm.isEdit) {
+                LoanProductService.CreateLoanProduct(vm.loan_product).then(function (response) {
+                    console.log("created loan product", response.data);
+                    AlertService.showSuccess("LOAN PRODUCT", "Loan Product Created successfully");
+                    $mdDialog.hide();
+                    myBlockUI.stop();
+                }, function (error) {
+                    myBlockUI.stop();
+                    AlertService.showError("LOAN PRODUCT", "Failed to create Loan Product");
+                    console.log("error", error);
+                });
+            } else {
+                LoanProductService.UpdateLoanProduct(vm.loan_product).then(function (response) {
+                    console.log("Updated loan product", response.data);
+                    AlertService.showSuccess("LOAN PRODUCT", "Loan Product Updated successfully");
+                    myBlockUI.stop();
+                    $mdDialog.hide();
+                }, function (error) {
+                    AlertService.showError("LOAN PRODUCT", "Failed to update Loan Product");
+                    myBlockUI.stop();
+                    console.log("error", error);
+                });
+            }
+
+        }
+    }
+
+
+})(window.angular);
+/**
  * Created by Yoni on 3/30/2018.
  */
 
@@ -6526,16 +6718,13 @@ function runBlock() {
 
     angular.module("app.acat").controller("LoanProductsController", LoanProductsController);
 
-    LoanProductsController.$inject = ['$mdDialog','RouteHelpers','blockUI','AlertService','LoanProductService'];
+    LoanProductsController.$inject = ['$mdDialog','RouteHelpers','LoanProductService'];
 
-    function LoanProductsController($mdDialog,RouteHelpers,blockUI,AlertService,LoanProductService) {
-        LoanProductDialogController.$inject = ["$mdDialog", "data", "AlertService", "blockUI"];
+    function LoanProductsController($mdDialog,RouteHelpers,LoanProductService) {
         var vm = this;
         vm.addLoanProduct = _addLoanProduct;
         vm.editLoanProduct = _editLoanProduct;
         callAPI();
-
-
 
         function callAPI() {
             LoanProductService.GetAllLoanProducts().then(function (response) {
@@ -6553,7 +6742,7 @@ function runBlock() {
                 clickOutsideToClose: false,
                 hasBackdrop: false,
                 escapeToClose: true,
-                controller: LoanProductDialogController,
+                controller: 'LoanProductDialogController',
                 controllerAs: 'vm'
             }).then(function (answer) {
                 callAPI();
@@ -6570,7 +6759,7 @@ function runBlock() {
                 clickOutsideToClose: false,
                 hasBackdrop: false,
                 escapeToClose: true,
-                controller: LoanProductDialogController,
+                controller: 'LoanProductDialogController',
                 controllerAs: 'vm'
             }).then(function (answer) {
                 callAPI();
@@ -6580,178 +6769,6 @@ function runBlock() {
         }
 
 
-        function LoanProductDialogController($mdDialog,data,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.addToDeductibleList = _addToDeductibleList;
-            vm.addToCostOfLoanList = _addToCostOfLoanList;
-            vm.editDeductibleItem = _editDeductibleItem;
-            vm.editCostOfLoanItem = _editCostOfLoanItem;
-            vm.cancelEdit = _cancelEdit;
-            vm.showCancelForEdit = _showCancelForEdit;
-            vm.saveLoanProduct = _saveLoanProduct;
-            vm.removeLoanProductCostItem = _removeLoanProductCostItem;
-
-
-
-            initialize();
-
-            function initialize() {
-                vm.isEdit = data.loan_product !== null;
-                vm.isEditCostOfLoan = false;
-                vm.isEditDeductible = false;
-
-                if(vm.isEdit){
-                    vm.loan_product = data.loan_product;
-                    LoadDeductibleAndCostOfLoanTypes(vm.loan_product);
-
-                    vm.loan_product.deductible = {
-                        type : 'fixed_amount'
-                    };
-                    vm.loan_product.costOfLoan = {
-                        type : 'fixed_amount'
-                    };
-                }else{
-                    vm.loan_product  = {
-                        deductibles :[],
-                        cost_of_loan :[],
-                        deductible:{
-                            type : 'fixed_amount'
-                        },
-                        costOfLoan:{
-                            type : 'fixed_amount'
-                        }
-                    };
-                }
-            }
-
-
-            function LoadDeductibleAndCostOfLoanTypes(loanProd) {
-
-                _.each(loanProd.cost_of_loan,function (cLoan) {
-                     cLoan.type = cLoan.fixed_amount > 0 ? 'fixed_amount': cLoan.percent > 0 ? 'percent': 'fixed_amount';
-                });
-
-                _.each(loanProd.deductibles,function (deduct) {
-                    deduct.type  = deduct.fixed_amount > 0 ? 'fixed_amount': deduct.percent > 0 ? 'percent': 'fixed_amount';
-                });
-            }
-
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-
-            function _addToDeductibleList(item) {
-                if(!_.isUndefined(item.item) && item.item !== '' && (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )){
-                    if(!vm.isEditDeductible){
-                        vm.loan_product.deductibles.push(item);
-                        vm.loan_product.deductible = {  type : 'fixed_amount'};
-                    }else{
-                        vm.cancelEdit('deductible');
-                    }
-
-                }
-
-            }
-            function _editDeductibleItem(item) {
-                vm.loan_product.deductible = item;
-                vm.isEditDeductible = true;
-            }
-            function _addToCostOfLoanList(item) {
-
-                if(!_.isUndefined(item.item) && item.item !== '' &&
-                    (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )){
-                    if(!vm.isEditCostOfLoan){
-                        vm.loan_product.cost_of_loan.push(item);
-                        vm.loan_product.costOfLoan = { type : 'fixed_amount'};//reset
-                    }else{
-                        vm.cancelEdit('costOfLoan');
-                    }
-
-                }
-
-            }
-            function _editCostOfLoanItem(item) {
-                vm.loan_product.costOfLoan = item;
-                vm.isEditCostOfLoan = true;
-            }
-
-            function _removeLoanProductCostItem(cost,isDeductible) {
-                AlertService.showConfirmForDelete("You are about to DELETE " + cost.item,
-                    "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
-                        if(isConfirm){
-                            var itemIndex =  -1;
-                            if(isDeductible){
-                                itemIndex =  vm.loan_product.deductibles.indexOf(cost);
-                                if(itemIndex !== -1 ){
-                                    vm.loan_product.deductibles.splice(itemIndex, 1);
-                                    console.log("removed item from deductibles");
-                                }
-                            }else{
-                                itemIndex =  vm.loan_product.cost_of_loan.indexOf(cost);
-                                if(itemIndex !== -1 ){
-                                    vm.loan_product.cost_of_loan.splice(itemIndex, 1);
-                                    console.log("removed item from cost_of_loan");
-                                }
-                            }
-                        }
-                    });
-            }
-
-            function _showCancelForEdit(cost,type) {
-                if(type === 'deductible'){
-                     return vm.isEditDeductible && vm.loan_product.deductible._id === cost._id;
-                }else if(type === 'costOfLoan'){
-                    return vm.isEditCostOfLoan && vm.loan_product.costOfLoan._id === cost._id;
-                }
-            }
-            function _cancelEdit(type) {
-                if(type === 'deductible'){
-                    vm.loan_product.deductible = {
-                        type : 'fixed_amount'
-                    };
-                    vm.isEditDeductible = false;
-                    vm.showCancelForEdit(vm.loan_product.deductible,type);
-                }else if (type === 'costOfLoan') {
-                    vm.loan_product.costOfLoan = {
-                        type : 'fixed_amount'
-                    };
-                    vm.isEditCostOfLoan = false;
-                    vm.showCancelForEdit(vm.loan_product.costOfLoan,type);
-                }
-            }
-
-            function _saveLoanProduct() {
-                var myBlockUI = blockUI.instances.get('LoanProductBlockUI');
-                myBlockUI.start();
-
-                if(!vm.isEdit){
-                    LoanProductService.CreateLoanProduct(vm.loan_product).then(function (response) {
-                        console.log("created loan product",response.data);
-                        AlertService.showSuccess("LOAN PRODUCT","Loan Product Created successfully");
-                        $mdDialog.hide();
-                        myBlockUI.stop();
-                    },function (error) {
-                        myBlockUI.stop();
-                        AlertService.showError("LOAN PRODUCT","Failed to create Loan Product");
-                        console.log("error",error);
-                    });
-                }else{
-                    LoanProductService.UpdateLoanProduct(vm.loan_product).then(function (response) {
-                        console.log("Updated loan product",response.data);
-                        AlertService.showSuccess("LOAN PRODUCT","Loan Product Updated successfully");
-                        myBlockUI.stop();
-                        $mdDialog.hide();
-                    },function (error) {
-                        AlertService.showError("LOAN PRODUCT","Failed to update Loan Product");
-                        myBlockUI.stop();
-                        console.log("error",error);
-                    });
-                }
-
-            }
-
-        }
     }
 
 

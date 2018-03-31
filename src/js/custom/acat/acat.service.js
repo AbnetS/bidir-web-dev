@@ -19,7 +19,8 @@
             GetACATById: _getACATById,
             CreateACAT:_createACAT,
             AddCostList:_addCostList,
-            UpdateCostList:_updateCostList
+            UpdateCostList:_updateCostList,
+            RemoveCostList:_removeCostList
         };
 
         function _getCrops() {
@@ -39,6 +40,9 @@
         }
         function _addCostList(cost) {
             return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
+        }
+        function _removeCostList(cost,type){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id,type), cost);
         }
         function _updateCostList(cost){
             return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
