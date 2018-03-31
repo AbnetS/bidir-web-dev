@@ -10,7 +10,7 @@
     </md-toolbar>
 
     <md-dialog-content style="max-height:800px;">
-        <md-content class="md-padding">
+        <md-content class="md-padding" >
             <form class="mb-xl" name="loanProductForm"  block-ui="LoanProductBlockUI">
                 <div class="form-group">
                     <div class="col-xs-10 col-sm-4 col-md-4 col-lg-4">
@@ -28,9 +28,10 @@
                                aria-invalid="false">
                     </div>
                     <div class="col-xs-10 col-sm-4 col-md-4 col-lg-4">
-                        <label>Currency</label>
+                        <label>Currency * </label>
                         <input id="currencyInput" name="currencyInput" ng-model="vm.loan_product.currency"
-                               type="text" class="form-control" placeholder="eg. ETB ,Dollar , Euro"
+                               type="text" class="form-control required ng-pristine ng-valid ng-not-empty ng-touched"
+                               placeholder="eg. ETB ,Dollar , Euro"
                                aria-invalid="false">
                     </div>
                 </div>
@@ -42,7 +43,8 @@
                                 <md-radio-group id="deductibleType"
                                                 name="deductibleType"
                                                 layout="row"
-                                                ng-model="vm.loan_product.deductible.type" >
+                                                ng-model="vm.loan_product.deductible.type"
+                                                ng-change="vm.onLPTypeChange(true)">
                                     <md-radio-button class="md-primary" value="fixed_amount">
                                         Fixed </md-radio-button>
                                     <md-radio-button value="percent" >
@@ -90,7 +92,8 @@
                                 <md-radio-group id="costOfLoanType"
                                                 name="costOfLoanType"
                                                 layout="row"
-                                                ng-model="vm.loan_product.costOfLoan.type" >
+                                                ng-model="vm.loan_product.costOfLoan.type"
+                                                ng-change="vm.onLPTypeChange(false)">
                                     <md-radio-button class="md-primary" value="fixed_amount">
                                         Fixed </md-radio-button>
                                     <md-radio-button value="percent" >

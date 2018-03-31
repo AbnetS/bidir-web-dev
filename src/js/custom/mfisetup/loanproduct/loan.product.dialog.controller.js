@@ -20,6 +20,7 @@
         vm.showCancelForEdit = _showCancelForEdit;
         vm.saveLoanProduct = _saveLoanProduct;
         vm.removeLoanProductCostItem = _removeLoanProductCostItem;
+        vm.onLPTypeChange = _onLPTypeChange;
 
 
         initialize();
@@ -165,7 +166,8 @@
                     myBlockUI.stop();
                 }, function (error) {
                     myBlockUI.stop();
-                    AlertService.showError("LOAN PRODUCT", "Failed to create Loan Product");
+                    var message = error.data.error.message;
+                    AlertService.showError("FAILED TO CREATE LOAN PRODUCT", message);
                     console.log("error", error);
                 });
             } else {
@@ -175,10 +177,32 @@
                     myBlockUI.stop();
                     $mdDialog.hide();
                 }, function (error) {
-                    AlertService.showError("LOAN PRODUCT", "Failed to update Loan Product");
+                    var message = error.data.error.message;
+                    AlertService.showError("FAILED TO UPDATE LOAN PRODUCT", message);
                     myBlockUI.stop();
                     console.log("error", error);
                 });
+            }
+
+        }
+
+        function _onLPTypeChange(isDeductible) {
+            if(vm.isEditCostOfLoan || vm.isEditDeductible){
+                AlertService.showConfirmForDelete("You are about to change type," +
+                    " Which will reset amount/percent field to 0.",
+                    "Are you sure?", "YES, CHANGE IT!", "warning", true,function (isConfirm) {
+                        if(isConfirm){
+                            if(isDeductible) {
+                                vm.loan_product.deductible.fixed_amount = 0;
+                                vm.loan_product.deductible.percent = 0;
+                            }else{
+                                vm.loan_product.costOfLoan.fixed_amount = 0;
+                                vm.loan_product.costOfLoan.percent = 0;
+                            }
+                        }
+                    });
+            }else{
+                console.log("type on create",type);
             }
 
         }
