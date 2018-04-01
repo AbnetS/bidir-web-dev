@@ -82,3 +82,7 @@ var ACAT_GROUP_CONSTANT = {
     LABOUR_COST:"LABOUR_COST",
     OTHER_COST:"OTHER_COST"
 };
+var ACAT_COST_LIST_TYPE = {
+    LINEAR: "linear",
+    GROUPED: "grouped"
+};

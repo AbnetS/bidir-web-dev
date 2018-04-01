@@ -41,6 +41,12 @@
                     seedCostList:[],
                     fertilizerCostList:[],
                     chemicalsCostList:[]
+                },
+                labour_cost:{
+                    list_type : 'linear'
+                },
+                other_cost:{
+                    list_type : 'linear'
                 }
             };
 
@@ -52,17 +58,41 @@
             }
 
         }
+        function SetListType(type) {
+            switch (type){
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    vm.acat.fertilizer.list_type = vm.acat.fertilizer_costs.linear.length>0?
+                        ACAT_COST_LIST_TYPE.LINEAR : ACAT_COST_LIST_TYPE.GROUPED;
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    vm.acat.chemicals.list_type = vm.acat.chemicals_costs.linear.length>0?
+                        ACAT_COST_LIST_TYPE.LINEAR : ACAT_COST_LIST_TYPE.GROUPED;
+                    break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    vm.acat.labour_cost.list_type = vm.acat.labour_costs.linear.length>0?
+                        ACAT_COST_LIST_TYPE.LINEAR : ACAT_COST_LIST_TYPE.GROUPED;
+                    break;
+                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    vm.acat.other_cost.list_type = vm.acat.seed_costs.linear.length>0?
+                        ACAT_COST_LIST_TYPE.LINEAR : ACAT_COST_LIST_TYPE.GROUPED;
+                    break;
+                default:
+                    break;
+            }
+        }
 
         function setSubSectionCostFromResponse(subSections) {
             vm.acat.input = subSections[0];
             vm.acat.labour_costs = subSections[1].cost_list;
             vm.acat.other_costs =  subSections[2].cost_list;
 
-
             vm.acat.input.seedCostList = vm.acat.input.sub_sections[0].cost_list.linear;
+            vm.acat.input.seed_costs = vm.acat.input.sub_sections[0].cost_list;
             vm.acat.input.fertilizerCostList = vm.acat.input.sub_sections[1].cost_list.linear;
+            vm.acat.input.fertilizer_costs = vm.acat.input.sub_sections[1].cost_list;
             vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
-
+            vm.acat.input.chemicals_costs = vm.acat.input.sub_sections[2].cost_list;
+            SetListType();
         }
         function callAPI() {
             var myBlockUIOnStart = blockUI.instances.get('ACATBuilderBlockUI');
