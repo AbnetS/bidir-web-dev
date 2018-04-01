@@ -37,7 +37,9 @@
                 </div>
 
                 <div class="form-group">
-                    <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6" keypress-enter='vm.addToDeductibleList(vm.loan_product.deductible)'>
+                    <!--DEDUCTIBLE-->
+                    <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6"
+                         keypress-enter='vm.addToDeductibleList(vm.loan_product.deductible)'>
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <md-input-container class="md-block">
                                 <md-radio-group id="deductibleType"
@@ -81,12 +83,13 @@
                             <a class="btn btn-success btn-outline"
                                     ng-disabled="loanProductForm.txt_deductible_item.$invalid"
                                     ng-click="vm.addToDeductibleList(vm.loan_product.deductible)">
-                                <i ng-class="vm.isEditDeductible? 'fa fa-refresh':'fa fa-plus'"></i>
+                                {{vm.isEditDeductible? 'Update':'Add'}}
                              </a>
                         </div>
                     </div>
-
-                    <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6" keypress-enter='vm.addToCostOfLoanList(vm.loan_product.costOfLoan)'>
+                    <!--COST OF LOAN-->
+                    <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6"
+                         keypress-enter='vm.addToCostOfLoanList(vm.loan_product.costOfLoan)'>
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <md-input-container class="md-block">
                                 <md-radio-group id="costOfLoanType"
@@ -138,6 +141,7 @@
                 </div>
 
                 <div class="form-group">
+                    <!--DEDUCTIBLE-->
                     <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label>&nbsp;</label>
                         <div class="table-responsive">
@@ -177,6 +181,7 @@
                             </table>
                         </div>
                     </div>
+                    <!--COST OF LOAN-->
                     <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6">
                         <label>&nbsp;</label>
                         <div class="table-responsive">

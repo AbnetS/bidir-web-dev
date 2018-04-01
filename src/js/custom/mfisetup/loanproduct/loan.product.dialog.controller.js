@@ -72,19 +72,25 @@
 
         function _addToDeductibleList(item) {
             if (!_.isUndefined(item.item) && item.item !== '' && (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )) {
+                console.log("vm.isEditDeductible",vm.isEditDeductible);
                 if (!vm.isEditDeductible) {
                     vm.loan_product.deductibles.push(item);
                     vm.loan_product.deductible = {type: 'fixed_amount'};
                 } else {
+                    console.log("item",item);
+                    vm.loan_product.deductibles = _.filter(vm.loan_product.deductibles,function (dedu) {
+                        return dedu._id !== item._id;
+                    });
+                    vm.loan_product.deductibles.push(item);
+                    console.log("vm.loan_product.deductibles",vm.loan_product.deductibles);
                     vm.cancelEdit('deductible');
                 }
-
             }
 
         }
 
         function _editDeductibleItem(item) {
-            vm.loan_product.deductible = item;
+            vm.loan_product.deductible =angular.copy(item);
             vm.isEditDeductible = true;
         }
 
@@ -199,6 +205,8 @@
                                 vm.loan_product.costOfLoan.fixed_amount = 0;
                                 vm.loan_product.costOfLoan.percent = 0;
                             }
+                        }else{
+                        //    REVERT BACK THE TYPE TO THE FIRST
                         }
                     });
             }else{

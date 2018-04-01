@@ -74,12 +74,6 @@
 
 
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
-})();
 (function(angular) {
   "use strict";
 
@@ -93,6 +87,12 @@
 
 })(window.angular);
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
+})();
 (function() {
     'use strict';
 
@@ -120,12 +120,6 @@
     angular
         .module('app.lazyload', []);
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar', []);
-})();
 /**
  * Created by Yoni on 11/30/2017.
  */
@@ -141,6 +135,12 @@
 
     function routeConfig() {}
 
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar', []);
 })();
 /**
  * Created by Yoni on 11/30/2017.
@@ -345,56 +345,6 @@
     }
 })(window.angular);
 
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
 
 (function(angular) {
   "use strict";
@@ -618,6 +568,56 @@ var ACAT_GROUP_CONSTANT = {
     FERTILIZER: "FERTILIZER",
     CHEMICALS: "CHEMICALS"
 };
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
+
 (function() {
     'use strict';
 
@@ -916,50 +916,6 @@ var ACAT_GROUP_CONSTANT = {
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
-
-})();
 /**
  * Created by Yoni on 12/10/2017.
  */
@@ -1234,6 +1190,50 @@ var ACAT_GROUP_CONSTANT = {
 
 })(window.angular);
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
+
+})();
 /**
  * Created by Yoni on 12/2/2017.
  */
@@ -5154,6 +5154,105 @@ function runBlock() {
 /**
  * Created by Yoni on 3/5/2018.
  */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        callApi();
+
+       function callApi(){
+           ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error");
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
 (function(angular) {
     "use strict";
 
@@ -5212,9 +5311,33 @@ function runBlock() {
             vm.acat.other_costs = subSections[2];
 
             vm.acat.input.seedCostList = vm.acat.input.sub_sections[0].cost_list.linear;
-            vm.acat.input.fertilizerCostList = vm.acat.input.sub_sections[1].cost_list.linear;
-            vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
+
+            if(vm.acat.input.sub_sections[1].cost_list.linear.length > 0){
+                vm.acat = {  fertilizer:{ list_type :'linear' }};
+                    vm.acat.input.fertilizerCostList =  vm.acat.input.sub_sections[1].cost_list.linear;
+            }
+            else{
+                vm.acat = {
+                    fertilizer:{
+                        list_type :'grouped'
+                    }};
+                vm.acat.input.fertilizerCostList =  vm.acat.input.sub_sections[1].cost_list.grouped;
+                }
+
+
+            if(vm.acat.input.sub_sections[2].cost_list.linear.length > 0){
+                vm.acat = {chemicals:{list_type : 'grouped' }};
+                vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.linear;
+            }else {
+                vm.acat = {chemicals: {list_type: 'linear'}};
+                vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
+            }
+
+
+
+
         }
+
         function callAPI() {
             var myBlockUIOnStart = blockUI.instances.get('ACATBuilderBlockUI');
             myBlockUIOnStart.start();
@@ -5223,7 +5346,6 @@ function runBlock() {
                 vm.acat.selected_crop = response.data.crop;
                 var subSections = response.data.sections[0].sub_sections;
                 setSubSectionCostFromResponse(subSections);
-
                 myBlockUIOnStart.stop();
 
             },function (error) {
@@ -5560,105 +5682,6 @@ function runBlock() {
         }
 
 
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        callApi();
-
-       function callApi(){
-           ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error");
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
 
     }
 
@@ -6398,109 +6421,6 @@ function runBlock() {
 (function(angular) {
   "use strict";
 
-  angular.module("app.mfi").controller("MFIController", MFIController);
-
-  MFIController.$inject = ['AlertService', '$scope','MainService','CommonService','blockUI'];
-
-  function MFIController(AlertService,$scope,MainService,CommonService,blockUI)
-
-  {
-    var vm = this;
-    vm.saveChanges = saveChanges;
-
-    vm.MFISetupForm = {
-      IsnameValid: true,
-      IslocationValid: true,
-      IslogoValid: true,
-      Isestablishment_yearValid: true
-  };
-
-    init();
-
-    function saveChanges() {
-
-      vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFISetupForm, vm.MFI);
-
-      if (vm.IsValidData) {
-          var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
-          myBlockUI.start();
-        if (_.isUndefined(vm.MFI._id)) {
-          MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
-              myBlockUI.stop();
-              AlertService.showSuccess("Created MFI successfully","MFI Information created successfully");
-              console.log("Create MFI", response);
-            }, function(error) {
-              myBlockUI.stop();
-              console.log("Create MFI Error", error);
-              var message = error.data.error.message;
-            AlertService.showError("Failed to create MFI!", message);
-
-            });
-        } else {
-          
-          MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
-              myBlockUI.stop();
-              AlertService.showSuccess("MFI Info updated successfully","MFI Information updated successfully");
-              console.log("Update MFI", response);
-            }, function(error) {
-              myBlockUI.stop();
-              console.log("UpdateMFI Error", error);
-              var message = error.data.error.message;
-              AlertService.showError("MFI Information update failed",message);
-            });
-        }
-      } else {
-          AlertService.showWarning("Warning","Please fill the required fields and try again.");
-      }
-    }
-
-    function init() {
-        var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
-        myBlockUI.start();
-      MainService.GetMFI().then(
-        function(response) {
-            myBlockUI.stop();
-          if (response.data.length > 0) {
-            vm.MFI = response.data[0];
-            var dt = new Date(vm.MFI.establishment_year);
-            vm.MFI.establishment_year = dt;
-          }
-          console.log("Get MFI", response);
-        },
-        function(error) {
-            myBlockUI.stop();
-          console.log("Get MFI Error", error);
-        }
-      );
-
-      $scope.clear = function() {
-        $scope.dt = null;
-      };
-
-      $scope.dateOptions = {
-        dateDisabled: false,
-        formatYear: "yy",
-        maxDate: new Date(2020, 5, 22),
-        startingDay: 1
-      };
-
-      $scope.open1 = function() {
-        $scope.popup1.opened = true;
-      };
-
-      $scope.format = "dd-MMMM-yyyy";
-      $scope.altInputFormats = ["M!/d!/yyyy"];
-
-      $scope.popup1 = {
-        opened: false
-      };
-    }
-  }
-})(window.angular);
-
-(function(angular) {
-  "use strict";
-
     angular.module("app.mfi").controller("BranchController", BranchController);
 
     BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
@@ -6661,19 +6581,25 @@ function runBlock() {
 
         function _addToDeductibleList(item) {
             if (!_.isUndefined(item.item) && item.item !== '' && (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )) {
+                console.log("vm.isEditDeductible",vm.isEditDeductible);
                 if (!vm.isEditDeductible) {
                     vm.loan_product.deductibles.push(item);
                     vm.loan_product.deductible = {type: 'fixed_amount'};
                 } else {
+                    console.log("item",item);
+                    vm.loan_product.deductibles = _.filter(vm.loan_product.deductibles,function (dedu) {
+                        return dedu._id !== item._id;
+                    });
+                    vm.loan_product.deductibles.push(item);
+                    console.log("vm.loan_product.deductibles",vm.loan_product.deductibles);
                     vm.cancelEdit('deductible');
                 }
-
             }
 
         }
 
         function _editDeductibleItem(item) {
-            vm.loan_product.deductible = item;
+            vm.loan_product.deductible =angular.copy(item);
             vm.isEditDeductible = true;
         }
 
@@ -6788,6 +6714,8 @@ function runBlock() {
                                 vm.loan_product.costOfLoan.fixed_amount = 0;
                                 vm.loan_product.costOfLoan.percent = 0;
                             }
+                        }else{
+                        //    REVERT BACK THE TYPE TO THE FIRST
                         }
                     });
             }else{
@@ -6901,6 +6829,109 @@ function runBlock() {
 
 
 })(window.angular);
+(function(angular) {
+  "use strict";
+
+  angular.module("app.mfi").controller("MFIController", MFIController);
+
+  MFIController.$inject = ['AlertService', '$scope','MainService','CommonService','blockUI'];
+
+  function MFIController(AlertService,$scope,MainService,CommonService,blockUI)
+
+  {
+    var vm = this;
+    vm.saveChanges = saveChanges;
+
+    vm.MFISetupForm = {
+      IsnameValid: true,
+      IslocationValid: true,
+      IslogoValid: true,
+      Isestablishment_yearValid: true
+  };
+
+    init();
+
+    function saveChanges() {
+
+      vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFISetupForm, vm.MFI);
+
+      if (vm.IsValidData) {
+          var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
+          myBlockUI.start();
+        if (_.isUndefined(vm.MFI._id)) {
+          MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
+              myBlockUI.stop();
+              AlertService.showSuccess("Created MFI successfully","MFI Information created successfully");
+              console.log("Create MFI", response);
+            }, function(error) {
+              myBlockUI.stop();
+              console.log("Create MFI Error", error);
+              var message = error.data.error.message;
+            AlertService.showError("Failed to create MFI!", message);
+
+            });
+        } else {
+          
+          MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
+              myBlockUI.stop();
+              AlertService.showSuccess("MFI Info updated successfully","MFI Information updated successfully");
+              console.log("Update MFI", response);
+            }, function(error) {
+              myBlockUI.stop();
+              console.log("UpdateMFI Error", error);
+              var message = error.data.error.message;
+              AlertService.showError("MFI Information update failed",message);
+            });
+        }
+      } else {
+          AlertService.showWarning("Warning","Please fill the required fields and try again.");
+      }
+    }
+
+    function init() {
+        var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
+        myBlockUI.start();
+      MainService.GetMFI().then(
+        function(response) {
+            myBlockUI.stop();
+          if (response.data.length > 0) {
+            vm.MFI = response.data[0];
+            var dt = new Date(vm.MFI.establishment_year);
+            vm.MFI.establishment_year = dt;
+          }
+          console.log("Get MFI", response);
+        },
+        function(error) {
+            myBlockUI.stop();
+          console.log("Get MFI Error", error);
+        }
+      );
+
+      $scope.clear = function() {
+        $scope.dt = null;
+      };
+
+      $scope.dateOptions = {
+        dateDisabled: false,
+        formatYear: "yy",
+        maxDate: new Date(2020, 5, 22),
+        startingDay: 1
+      };
+
+      $scope.open1 = function() {
+        $scope.popup1.opened = true;
+      };
+
+      $scope.format = "dd-MMMM-yyyy";
+      $scope.altInputFormats = ["M!/d!/yyyy"];
+
+      $scope.popup1 = {
+        opened: false
+      };
+    }
+  }
+})(window.angular);
+
 (function(angular) {
   'use strict';
 
