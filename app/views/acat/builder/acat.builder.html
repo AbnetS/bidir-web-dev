@@ -396,7 +396,157 @@
 
                     <md-tab label="LABOUR COSTS">
                         <md-content class="md-padding">
-                            <h1 class="md-display-2">LABOUR COSTS</h1>
+                            <!--LABOUR COST SECTION-->
+                            <div class="row">
+                                <div class="col-md-4 bg-success text-center text-uppercase">
+                                    <h5 class="">Labour Costs</h5>
+                                </div>
+                                <!--COST LIST-->
+                                <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
+                                    <md-input-container class="md-block">
+                                        <md-radio-group id="LabourCostsListType" layout="row"
+                                                        ng-model="vm.acat.labour_cost.list_type"
+                                                        ng-change="vm.onCostListTypeChange()">
+                                            <md-radio-button value="linear">
+                                                Linear List </md-radio-button>
+                                            <md-radio-button value="grouped" >
+                                                Group List</md-radio-button>
+                                        </md-radio-group>
+                                    </md-input-container>
+                                </div>
+
+
+                                <!--IF LIST IS GROUPED-->
+                                <div ng-show="vm.acat.labour_cost.list_type==='grouped'">
+                                    <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
+                                        <div class="col-md-4">
+                                            <md-input-container class="md-block">
+                                                <md-switch class="md-warm" name="labourCostGroupSwitch"
+                                                           ng-model="vm.acat.labour_cost.existing_group"
+                                                           required>
+                                                    Add to Existing Group
+                                                </md-switch>
+                                            </md-input-container>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div ng-show="!vm.acat.labour_cost.existing_group" class="form-group">
+                                                <label>Group</label>
+                                                <input class="form-control" type="text"
+                                                       ng-model="vm.acat.labour_cost.title"
+                                                       name="item" placeholder="Group Name" />
+                                            </div>
+                                            <div ng-show="vm.acat.labour_cost.existing_group">
+                                                <label>Group</label>
+                                                <div class="form-group">
+                                                    <ui-select ng-model="vm.acat.labour_cost.selected_group"
+                                                               theme="select2"
+                                                               title="Choose Group">
+                                                        <ui-select-match placeholder="Select Group from the list...">
+                                                            {{$select.selected.title}}
+                                                        </ui-select-match>
+                                                        <ui-select-choices repeat="groupItem in vm.acat.labour_costs.grouped | filter: $select.search">
+                                                            <span ng-bind-html="groupItem.title | highlight: $select.search"></span>
+                                                        </ui-select-choices>
+                                                    </ui-select>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Item</label>
+                                                <input class="form-control" type="text"
+                                                       ng-model="vm.acat.labour_cost.item"
+                                                       name="item" placeholder="Item" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Unit</label>
+                                                <input class="form-control" type="text"
+                                                       ng-model="vm.acat.labour_cost.unit"
+                                                       name="unit" placeholder="unit" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <br/>
+                                            <button class="btn btn-success btn-outline"
+                                                    ng-click="vm.addGroupedCostList(vm.acat.labour_cost,'LABOUR_COST')">
+                                                <i class="fa fa-plus"></i>
+                                                Add
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- START LABOUR COST ROW-->
+                                <div ng-show="vm.acat.labour_cost.list_type==='linear'"
+                                     class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Item</label>
+                                            <input class="form-control" type="text"
+                                                   ng-model="vm.acat.labour_cost.item"
+                                                   name="item" placeholder="Item" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Unit</label>
+                                            <input class="form-control" type="text"
+                                                   ng-model="vm.acat.labour_cost.unit"
+                                                   name="unit" placeholder="unit" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <br/>
+                                        <button class="btn btn-success btn-outline"
+                                                ng-click="vm.addToCostList(vm.acat.labour_cost,'LABOUR_COST')">
+                                            <i class="fa fa-plus"></i>
+                                            Add</button>
+                                    </div>
+                                </div>
+                                <!-- END LABOUR COST ROW-->
+
+                                <!--ITEM TABLE FOR LINEAR-->
+                                <div ng-show="vm.acat.labour_cost.list_type==='linear'">
+                                    <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                <tr class="bg-inverse-light">
+                                                    <th>#</th>
+                                                    <th>Item</th>
+                                                    <th>Unit</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr ng-repeat="cost in vm.acat.labour_costs.linear">
+                                                    <td>{{$index + 1}}</td>
+                                                    <td>{{cost.item}}</td>
+                                                    <td>{{cost.unit}}</td>
+                                                    <td>
+                                                        <a class="btn btn-xs btn-outline btn-default"
+                                                           ng-click="vm.editCostItem(cost,'LABOUR_COST')">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                        <a  class="btn btn-xs btn-outline btn-danger"
+                                                            ng-click="vm.removeCostItem(cost,'LABOUR_COST')">
+                                                            <i class="fa fa-times"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12"><p></p></div>
+                            </div>
                         </md-content>
                     </md-tab>
                     <md-tab label="OTHER COSTS">

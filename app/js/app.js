@@ -120,12 +120,6 @@
     angular
         .module('app.lazyload', []);
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar', []);
-})();
 /**
  * Created by Yoni on 11/30/2017.
  */
@@ -142,6 +136,18 @@
     function routeConfig() {}
 
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps', []);
+})();
 /**
  * Created by Yoni on 11/30/2017.
  */
@@ -156,12 +162,6 @@
 
 
 
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.maps', []);
 })();
 (function() {
     'use strict';
@@ -616,7 +616,9 @@ var QUESTION_TYPE = {
 var ACAT_GROUP_CONSTANT = {
     SEED: "SEED",
     FERTILIZER: "FERTILIZER",
-    CHEMICALS: "CHEMICALS"
+    CHEMICALS: "CHEMICALS",
+    LABOUR_COST:"LABOUR_COST",
+    OTHER_COST:"OTHER_COST"
 };
 (function() {
     'use strict';
@@ -916,50 +918,6 @@ var ACAT_GROUP_CONSTANT = {
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
-
-})();
 /**
  * Created by Yoni on 12/10/2017.
  */
@@ -1233,6 +1191,215 @@ var ACAT_GROUP_CONSTANT = {
     }
 
 })(window.angular);
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
+
+})();
+/**=========================================================
+ * Module: modals.js
+ * Provides a simple way to implement bootstrap modals from templates
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps')
+        .controller('ModalGmapController', ModalGmapController);
+
+    ModalGmapController.$inject = ['$uibModal'];
+    function ModalGmapController($uibModal) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+
+          vm.open = function (size) {
+
+            //var modalInstance =
+            $uibModal.open({
+              templateUrl: '/myModalContent.html',
+              controller: ModalInstanceCtrl,
+              size: size
+            });
+          };
+
+          // Please note that $uibModalInstance represents a modal window (instance) dependency.
+          // It is not the same as the $uibModal service used above.
+
+          ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout'];
+          function ModalInstanceCtrl($scope, $uibModalInstance, $timeout) {
+
+            $uibModalInstance.opened.then(function () {
+              var position = new google.maps.LatLng(33.790807, -117.835734);
+
+              $scope.mapOptionsModal = {
+                zoom: 14,
+                center: position,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+              };
+
+              // we use timeout to wait maps to be ready before add a markers
+              $timeout(function(){
+                // 1. Add a marker at the position it was initialized
+                new google.maps.Marker({
+                  map: $scope.myMapModal,
+                  position: position
+                });
+                // 2. Trigger a resize so the map is redrawed
+                google.maps.event.trigger($scope.myMapModal, 'resize');
+                // 3. Move to the center if it is misaligned
+                $scope.myMapModal.panTo(position);
+              });
+
+            });
+
+            $scope.ok = function () {
+              $uibModalInstance.close('closed');
+            };
+
+            $scope.cancel = function () {
+              $uibModalInstance.dismiss('cancel');
+            };
+
+          }
+
+        }
+    }
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps')
+        .controller('GMapController', GMapController);
+
+    GMapController.$inject = ['$timeout'];
+    function GMapController($timeout) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+          var position = [
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.787453, -117.835858)
+            ];
+          
+          vm.addMarker = addMarker;
+          // we use timeout to wait maps to be ready before add a markers
+          $timeout(function(){
+            addMarker(vm.myMap1, position[0]);
+            addMarker(vm.myMap2, position[1]);
+            addMarker(vm.myMap3, position[2]);
+            addMarker(vm.myMap5, position[3]);
+          });
+
+          vm.mapOptions1 = {
+            zoom: 14,
+            center: position[0],
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+          };
+
+          vm.mapOptions2 = {
+            zoom: 19,
+            center: position[1],
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+
+          vm.mapOptions3 = {
+            zoom: 14,
+            center: position[2],
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+          };
+
+          vm.mapOptions4 = {
+            zoom: 14,
+            center: position[3],
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+
+          // for multiple markers
+          $timeout(function(){
+            addMarker(vm.myMap4, position[3]);
+            addMarker(vm.myMap4, position[4]);
+          });
+
+          // custom map style
+          var MapStyles = [{'featureType':'water','stylers':[{'visibility':'on'},{'color':'#bdd1f9'}]},{'featureType':'all','elementType':'labels.text.fill','stylers':[{'color':'#334165'}]},{featureType:'landscape',stylers:[{color:'#e9ebf1'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#c5c6c6'}]},{featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'road.local',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'transit',elementType:'geometry',stylers:[{color:'#d8dbe0'}]},{featureType:'poi',elementType:'geometry',stylers:[{color:'#cfd5e0'}]},{featureType:'administrative',stylers:[{visibility:'on'},{lightness:33}]},{featureType:'poi.park',elementType:'labels',stylers:[{visibility:'on'},{lightness:20}]},{featureType:'road',stylers:[{color:'#d8dbe0',lightness:20}]}];
+          vm.mapOptions5 = {
+            zoom: 14,
+            center: position[3],
+            styles: MapStyles,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+          };
+
+          ///////////////
+          
+          function addMarker(map, position) {
+            return new google.maps.Marker({
+              map: map,
+              position: position
+            });
+          }
+
+        }
+    }
+})();
 
 /**
  * Created by Yoni on 12/2/2017.
@@ -1664,171 +1831,6 @@ var ACAT_GROUP_CONSTANT = {
     }
 
 })(window.angular);
-
-/**=========================================================
- * Module: modals.js
- * Provides a simple way to implement bootstrap modals from templates
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.maps')
-        .controller('ModalGmapController', ModalGmapController);
-
-    ModalGmapController.$inject = ['$uibModal'];
-    function ModalGmapController($uibModal) {
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-
-          vm.open = function (size) {
-
-            //var modalInstance =
-            $uibModal.open({
-              templateUrl: '/myModalContent.html',
-              controller: ModalInstanceCtrl,
-              size: size
-            });
-          };
-
-          // Please note that $uibModalInstance represents a modal window (instance) dependency.
-          // It is not the same as the $uibModal service used above.
-
-          ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout'];
-          function ModalInstanceCtrl($scope, $uibModalInstance, $timeout) {
-
-            $uibModalInstance.opened.then(function () {
-              var position = new google.maps.LatLng(33.790807, -117.835734);
-
-              $scope.mapOptionsModal = {
-                zoom: 14,
-                center: position,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-              };
-
-              // we use timeout to wait maps to be ready before add a markers
-              $timeout(function(){
-                // 1. Add a marker at the position it was initialized
-                new google.maps.Marker({
-                  map: $scope.myMapModal,
-                  position: position
-                });
-                // 2. Trigger a resize so the map is redrawed
-                google.maps.event.trigger($scope.myMapModal, 'resize');
-                // 3. Move to the center if it is misaligned
-                $scope.myMapModal.panTo(position);
-              });
-
-            });
-
-            $scope.ok = function () {
-              $uibModalInstance.close('closed');
-            };
-
-            $scope.cancel = function () {
-              $uibModalInstance.dismiss('cancel');
-            };
-
-          }
-
-        }
-    }
-
-})();
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.maps')
-        .controller('GMapController', GMapController);
-
-    GMapController.$inject = ['$timeout'];
-    function GMapController($timeout) {
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-          var position = [
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.787453, -117.835858)
-            ];
-          
-          vm.addMarker = addMarker;
-          // we use timeout to wait maps to be ready before add a markers
-          $timeout(function(){
-            addMarker(vm.myMap1, position[0]);
-            addMarker(vm.myMap2, position[1]);
-            addMarker(vm.myMap3, position[2]);
-            addMarker(vm.myMap5, position[3]);
-          });
-
-          vm.mapOptions1 = {
-            zoom: 14,
-            center: position[0],
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            scrollwheel: false
-          };
-
-          vm.mapOptions2 = {
-            zoom: 19,
-            center: position[1],
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
-
-          vm.mapOptions3 = {
-            zoom: 14,
-            center: position[2],
-            mapTypeId: google.maps.MapTypeId.SATELLITE
-          };
-
-          vm.mapOptions4 = {
-            zoom: 14,
-            center: position[3],
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
-
-          // for multiple markers
-          $timeout(function(){
-            addMarker(vm.myMap4, position[3]);
-            addMarker(vm.myMap4, position[4]);
-          });
-
-          // custom map style
-          var MapStyles = [{'featureType':'water','stylers':[{'visibility':'on'},{'color':'#bdd1f9'}]},{'featureType':'all','elementType':'labels.text.fill','stylers':[{'color':'#334165'}]},{featureType:'landscape',stylers:[{color:'#e9ebf1'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#c5c6c6'}]},{featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'road.local',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'transit',elementType:'geometry',stylers:[{color:'#d8dbe0'}]},{featureType:'poi',elementType:'geometry',stylers:[{color:'#cfd5e0'}]},{featureType:'administrative',stylers:[{visibility:'on'},{lightness:33}]},{featureType:'poi.park',elementType:'labels',stylers:[{visibility:'on'},{lightness:20}]},{featureType:'road',stylers:[{color:'#d8dbe0',lightness:20}]}];
-          vm.mapOptions5 = {
-            zoom: 14,
-            center: position[3],
-            styles: MapStyles,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            scrollwheel: false
-          };
-
-          ///////////////
-          
-          function addMarker(map, position) {
-            return new google.maps.Marker({
-              map: map,
-              position: position
-            });
-          }
-
-        }
-    }
-})();
 
 
 (function() {
@@ -5154,422 +5156,6 @@ function runBlock() {
 /**
  * Created by Yoni on 3/5/2018.
  */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("ACATController", ACATController);
-
-    ACATController.$inject = ['ACATService','$stateParams','blockUI','$state','AlertService'];
-
-    function ACATController(ACATService,$stateParams,blockUI,$state,AlertService) {
-        var vm = this;
-        vm.isEdit = $stateParams.id !== "0";
-        vm.ACATId = $stateParams.id;
-
-
-        vm.addToCostList = _addToCostList;
-        vm.addGroupedCostList = _addGroupedCostList;
-        vm.editCostItem = _editCostItem;
-        vm.removeCostItem = _removeCostItem;
-        vm.cancelCostItem = _cancelCostItem;
-        vm.cropSelectChanged = _cropSelectChanged;
-        vm.onCostListTypeChange = _onCostListTypeChange;
-
-
-
-        initialize();
-
-        function initialize() {
-
-            callApiForCrops();
-
-            vm.acat = {
-                fertilizer:{
-                    list_type :'linear'
-                },
-                chemicals:{
-                    list_type : 'grouped'
-                },
-                input:{
-                    seedCostList:[],
-                    fertilizerCostList:[],
-                    chemicalsCostList:[]
-                }
-            };
-
-            vm.isEditSeedCost = false; //edit seed cost list
-            if(vm.isEdit){
-                callAPI();
-            }else{
-
-            }
-
-        }
-
-        function setSubSectionCostFromResponse(subSections) {
-            vm.acat.input = subSections[0];
-            vm.acat.labour_costs = subSections[1];
-            vm.acat.other_costs = subSections[2];
-
-            vm.acat.input.seedCostList = vm.acat.input.sub_sections[0].cost_list.linear;
-            vm.acat.input.fertilizerCostList = vm.acat.input.sub_sections[1].cost_list.linear;
-            vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
-        }
-        function callAPI() {
-            var myBlockUIOnStart = blockUI.instances.get('ACATBuilderBlockUI');
-            myBlockUIOnStart.start();
-            ACATService.GetACATById(vm.ACATId).then(function (response) {
-                console.log("GetACATById",response.data);
-                vm.acat.selected_crop = response.data.crop;
-                var subSections = response.data.sections[0].sub_sections;
-                setSubSectionCostFromResponse(subSections);
-
-                myBlockUIOnStart.stop();
-
-            },function (error) {
-                myBlockUIOnStart.stop();
-                console.log("error",error);
-            });
-        }
-
-        function callApiForCrops(){
-        ACATService.GetCrops().then(function (response) {
-            vm.crops = response.data.docs;
-        });
-
-    }
-
-
-        function _addToCostList(cost,type) {
-
-                if(!_.isUndefined(cost) && !_.isUndefined(cost.item) && !_.isUndefined(cost.unit)){
-                    var items = [];
-                    switch (type){
-                        case 'SEED':
-                            items = vm.acat.input.seedCostList;
-                            var costItem = {
-                                type: 'linear',
-                                parent_cost_list: vm.acat.input.sub_sections[0].cost_list._id,//Fertilizer cost list
-                                item:cost.item,
-                                unit:cost.unit
-                            };
-                            if(vm.isEditSeedCost){
-                                costItem._id = cost._id;
-                                updateCostListAPI(costItem,type);
-                            }else{
-                                if(!DoesItemExistInCostList(cost,items)){
-                                    addCostListAPI(costItem,type);
-                                }
-                            }
-                            vm.acat.input.seed = {};//reset cost item
-                            break;
-                        case 'FERTILIZER':
-                            items = vm.acat.input.fertilizerCostList;
-                            if(vm.isEditSeedCost){
-                                updateCostListAPI(cost,type);
-                            }else{
-                                var item_unit_exist = DoesItemExistInCostList(cost,items);
-                                if(!item_unit_exist){
-                                    addCostListAPI({
-                                        type: vm.acat.fertilizer.list_type,
-                                        parent_cost_list: vm.acat.input.sub_sections[1].cost_list._id,//Fertilizer cost list
-                                        item:cost.item,
-                                        unit:cost.unit
-                                    },type);
-                                }
-                            }
-                            vm.acat.fertilizer = {};//reset cost item
-                            break;
-                        case 'CHEMICALS':
-                            items = vm.acat.input.chemicalsCostList;
-                            if(vm.isEditSeedCost){
-                                updateCostListAPI(cost,type);
-                            }else{
-                                var item_exist = DoesItemExistInCostList(cost,items);
-                                if(!item_exist){
-                                    var prepareCost =   {
-                                        type: vm.acat.chemicals.list_type,
-                                        parent_cost_list: vm.acat.input.sub_sections[2].cost_list._id,//Fertilizer cost list
-                                        item:cost.item,
-                                        unit:cost.unit
-                                    };
-                                    addCostListAPI(prepareCost,type);
-                                }
-                            }
-                            vm.acat.chemicals = {};
-                            break;
-                        default:
-                            items = [];
-                            break;
-                    }
-
-                }
-
-        }
-
-        function _addGroupedCostList(groupInfo, type) {
-
-            if(!_.isUndefined(groupInfo)){
-                    if(groupInfo.existing_group){
-                        var costItem = {
-                            parent_grouped_list:groupInfo.selected_group._id, //"5ab12ecea682310001a24401"
-                            item: groupInfo.item,
-                            unit: groupInfo.unit
-                        };
-                        AddCostItemToGroup(costItem,type);
-                    }else{
-                        var groupCost = {
-                            type: 'grouped',
-                            parent_cost_list:vm.acat.input.sub_sections[2].cost_list._id,
-                            title:groupInfo.title
-                        };
-
-                        //ADD THE NEW GROUP TO COST LIST PARENT
-                        ACATService.AddCostList(groupCost).then(function (response) {
-                            console.log("group created",response.data);
-                            var groupItem = response.data; //Group Information captured
-                            //    TODO:create item unit here
-                            var costItem = {
-                                parent_grouped_list:groupItem._id,
-                                item: groupInfo.item,
-                                unit: groupInfo.unit
-                            };
-                            AddCostItemToGroup(costItem,type);
-
-                        },function (error) {
-                            console.log("error on group creation",error);
-                        });
-                    }
-
-            }
-        }
-        function resetCostItem(type) {
-            switch (type){
-                case ACAT_GROUP_CONSTANT.SEED:
-                    vm.isEditSeedCost =  true;
-                    vm.acat.input.seed = undefined;
-                    break;
-                case ACAT_GROUP_CONSTANT.FERTILIZER:
-                    vm.acat.fertilizer.item = undefined;
-                    vm.acat.fertilizer.unit = undefined;
-                    break;
-                case ACAT_GROUP_CONSTANT.CHEMICALS:
-                    vm.acat.chemicals.item = undefined;
-                    vm.acat.chemicals.unit = undefined;
-                    vm.acat.chemicals.title = undefined;
-                    break;
-                default:
-                    break;
-            }
-        }
-        function AddCostItemToGroup(costItem,type) {
-            ACATService.AddCostList(costItem).then(function (response) {
-                console.log("adding cost item on group",response);
-                resetCostItem(type);
-                callAPI();
-            },function (error) {
-                console.log("error while adding cost item on group",error);
-            });
-        }
-
-        function DoesItemExistInCostList(item, items) {
-            return _.some(items,function (costItem) {
-                return costItem.item === item.item && costItem.unit === item.unit;
-            });
-        }
-
-
-        function _cancelCostItem(type) {
-            switch (type){
-                case 'SEED':
-                    vm.isEditSeedCost = false;
-                    vm.acat.input.seed = {};
-                    break;
-                case 'FERTILIZER':
-                    vm.isEditFertilizerCost =  false;
-                    vm.acat.fertilizer = {};
-                    break;
-                case 'CHEMICALS':
-                    vm.isEditChemicalsCost = false;
-                    vm.acat.chemicals = {};
-                    break;
-                default:
-                    break;
-            }
-
-        }
-
-        function _editCostItem(cost,type,group) {
-            console.log("CHEMICALS cost",group);
-            switch (type){
-                case ACAT_GROUP_CONSTANT.SEED:
-                    vm.isEditSeedCost =  true;
-                    vm.acat.input.seed = cost;
-                    break;
-                case ACAT_GROUP_CONSTANT.FERTILIZER:
-                    vm.isEditFertilizerCost =  true;
-                    vm.acat.fertilizer = cost;
-                    break;
-                case ACAT_GROUP_CONSTANT.CHEMICALS:
-                    vm.isEditChemicalsCost = true;
-                    vm.acat.chemicals = cost;
-                    break;
-                default:
-                    break;
-            }
-
-        }
-        function _removeCostItem(cost,type) {
-            console.log("Remove Cost Item",cost);
-        }
-
-        function addCostListAPI(cost,type) {
-
-            ACATService.AddCostList(cost).then(function (response) {
-                console.log("COST LIST ADDED FOR " + type,response);
-                var newCost = response.data;
-                switch (type){
-                    case 'SEED':
-                        vm.acat.input.seedCostList.push(newCost);
-                        break;
-                    case 'FERTILIZER':
-                        vm.acat.input.fertilizerCostList.push(newCost);
-                        break;
-                    case 'CHEMICALS':
-                        vm.acat.input.chemicalsCostList.push(newCost);
-                        break;
-                    default:
-                            break;
-                }
-
-            },function (error) {
-                console.log("error while adding cost item for " + type,error);
-            });
-        }
-
-        function updateCostListAPI(cost,type) {
-
-            var prepareCost = {
-                _id: cost._id,
-                item:cost.item,
-                unit:cost.unit
-            };
-
-            ACATService.UpdateCostList(prepareCost).then(function (response) {
-                var newCost = response.data;
-                switch (type){
-                    case 'SEED':
-                        vm.acat.input.seedCostList = _.filter(vm.acat.input.seedCostList,
-                            function (itemCost) {
-                                return itemCost._id !== cost._id;
-                            });
-                        vm.acat.input.seedCostList.push(newCost);
-                        vm.isEditSeedCost = false;
-                        break;
-                    case 'FERTILIZER':
-                        vm.acat.input.fertilizerCostList = _.filter(vm.acat.input.fertilizerCostList,
-                            function (itemCost) {
-                                return itemCost._id !== cost._id;
-                            });
-                        vm.acat.input.fertilizerCostList.push(newCost);
-                        vm.isEditFertilizerCost = false;
-                        break;
-                    case 'CHEMICALS':
-                        vm.acat.input.chemicalsCostList = _.filter(vm.acat.input.chemicalsCostList,
-                            function (itemCost) {
-                                return itemCost._id !== cost._id;
-                            });
-                        vm.acat.input.chemicalsCostList.push(newCost);
-                        vm.isEditChemicalsCost = false;
-                        break;
-                    default:
-                        break;
-                }
-
-            },function (error) {
-                console.log("error updating cost list",error);
-            });
-        }
-
-        //UPDATE CROP FOR CROP OR CREATE NEW ACAT FOR A CROP
-        function _cropSelectChanged() {
-            if(vm.isEdit){
-                //    UPDATE ACAT CROP
-            }else {
-                // Initialize ACAT with this crop
-                // vm.acat.selected_crop
-                var acatCrop =   {
-                    title: vm.acat.selected_crop.name +  '-CAT',
-                    description: vm.acat.selected_crop.name +  '-CAT desc',
-                    crop: vm.acat.selected_crop._id
-                };
-                ACATService.CreateACAT(acatCrop).then(function (response) {
-                    console.log("ACAT ",response);
-                    var acatData = response.data;
-                    $state.go('app.acatbuilder',{id:acatData._id},{inherit:true});
-                },function (error) {
-                    console.log("error on initializeing acat",error);
-                })
-            }
-        }
-        function _onCostListTypeChange(type) {
-
-            AlertService.showConfirmForDelete("You are about to change Cost List type, Which will clear the previous type data",
-                "Are you sure?", "YES, CHANGE IT!", "warning", true,function (isConfirm) {
-                    if(isConfirm){
-
-                    }
-                });
-        }
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/19/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("ACATListController", ACATListController);
-
-    ACATListController.$inject = ['ACATService','$state'];
-
-    function ACATListController(ACATService,$state) {
-        var vm = this;
-        vm.addACAT = _addACAT;
-        vm.editACAT = _editACAT;
-
-        function _addACAT() {
-            $state.go('app.acatbuilder',{id:0});
-        }
-
-        function _editACAT(acat) {
-            $state.go('app.acatbuilder',{id:acat._id});
-        }
-
-        initialize();
-
-        function initialize() {
-            ACATService.GetAllACATList().then(function (response) {
-                vm.acat_list = response.data.docs;
-                console.log("vm.acat_list",response);
-            })
-
-        }
-
-
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
 
 (function(angular) {
     "use strict";
@@ -6396,95 +5982,450 @@ function runBlock() {
 
 
 })(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
 (function(angular) {
-  "use strict";
+    "use strict";
 
-    angular.module("app.mfi").controller("BranchController", BranchController);
+    angular.module("app.acat").controller("ACATController", ACATController);
 
-    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
+    ACATController.$inject = ['ACATService','$stateParams','blockUI','$state','AlertService'];
 
-  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
-    var vm = this;
+    function ACATController(ACATService,$stateParams,blockUI,$state,AlertService) {
+        var vm = this;
+        vm.isEdit = $stateParams.id !== "0";
+        vm.ACATId = $stateParams.id;
 
-    vm.addBranch = addBranch;
-    vm.editBranch = _editBranch;
-    vm.changeStatus = _changeStatus;
 
-     getBranches();
+        vm.addToCostList = _addToCostList;
+        vm.addGroupedCostList = _addGroupedCostList;
+        vm.editCostItem = _editCostItem;
+        vm.removeCostItem = _removeCostItem;
+        vm.cancelCostItem = _cancelCostItem;
+        vm.cropSelectChanged = _cropSelectChanged;
+        vm.onCostListTypeChange = _onCostListTypeChange;
 
-    function getBranches() {
-      MainService.GetBranches().then(
-        function(response) {
-          vm.branches = response.data.docs;
-        },
-        function(error) {
-          console.log("error", error);
+
+
+        initialize();
+
+        function initialize() {
+
+            callApiForCrops();
+
+            vm.acat = {
+                fertilizer:{
+                    list_type :'linear'
+                },
+                chemicals:{
+                    list_type : 'grouped'
+                },
+                input:{
+                    seedCostList:[],
+                    fertilizerCostList:[],
+                    chemicalsCostList:[]
+                }
+            };
+
+            vm.isEditSeedCost = false; //edit seed cost list
+            if(vm.isEdit){
+                callAPI();
+            }else{
+
+            }
+
         }
-      );
 
-    }
+        function setSubSectionCostFromResponse(subSections) {
+            vm.acat.input = subSections[0];
+            vm.acat.labour_costs = subSections[1].cost_list;
+            vm.acat.other_costs =  subSections[2].cost_list;
 
-    function addBranch(ev) {
-        $mdDialog.show({
-            locals: {items: null},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
+
+            vm.acat.input.seedCostList = vm.acat.input.sub_sections[0].cost_list.linear;
+            vm.acat.input.fertilizerCostList = vm.acat.input.sub_sections[1].cost_list.linear;
+            vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
+
+        }
+        function callAPI() {
+            var myBlockUIOnStart = blockUI.instances.get('ACATBuilderBlockUI');
+            myBlockUIOnStart.start();
+            ACATService.GetACATById(vm.ACATId).then(function (response) {
+                console.log("GetACATById",response.data);
+                vm.acat.selected_crop = response.data.crop;
+                var subSections = response.data.sections[0].sub_sections;
+                setSubSectionCostFromResponse(subSections);
+
+                myBlockUIOnStart.stop();
+
+            },function (error) {
+                myBlockUIOnStart.stop();
+                console.log("error",error);
+            });
+        }
+
+        function callApiForCrops(){
+        ACATService.GetCrops().then(function (response) {
+            vm.crops = response.data.docs;
         });
 
     }
 
-    function _editBranch(selectedBranch,ev) {
-        $mdDialog.show({
-            locals: {items: selectedBranch},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-    }
 
-    function _changeStatus(ChangeStatus) {
-      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
-      MainService.UpdateBranch(ChangeStatus).then(
-        function(response) {
+        function _addToCostList(cost,type) {
 
-          AlertService.showSuccess(
-              "Updated branch status",
-              "Updated Status successfully."
-          );
-          // console.log("updated successfully", response);
+                if(!_.isUndefined(cost) && !_.isUndefined(cost.item) && !_.isUndefined(cost.unit)){
+                    var items = [];
+                    switch (type){
+                        case ACAT_GROUP_CONSTANT.SEED:
+                            items = vm.acat.input.seedCostList;
+                            var costItem = {
+                                type: 'linear',
+                                parent_cost_list: vm.acat.input.sub_sections[0].cost_list._id,//Fertilizer cost list
+                                item:cost.item,
+                                unit:cost.unit
+                            };
+                            if(vm.isEditSeedCost){
+                                costItem._id = cost._id;
+                                updateCostListAPI(costItem,type);
+                            }else{
+                                if(!DoesItemExistInCostList(cost,items)){
+                                    AddCostListAPI(costItem,type);
+                                }
+                            }
+                            vm.acat.input.seed = {};//reset cost item
+                            break;
+                        case ACAT_GROUP_CONSTANT.FERTILIZER:
+                            items = vm.acat.input.fertilizerCostList;
+                            if(vm.isEditSeedCost){
+                                updateCostListAPI(cost,type);
+                            }else{
+                                var item_unit_exist = DoesItemExistInCostList(cost,items);
+                                if(!item_unit_exist){
+                                    AddCostListAPI({
+                                        type: vm.acat.fertilizer.list_type,
+                                        parent_cost_list: vm.acat.input.sub_sections[1].cost_list._id,//Fertilizer cost list
+                                        item:cost.item,
+                                        unit:cost.unit
+                                    },type);
+                                }
+                            }
+                            vm.acat.fertilizer = {};//reset cost item
+                            break;
+                        case ACAT_GROUP_CONSTANT.CHEMICALS:
+                            items = vm.acat.input.chemicalsCostList;
+                            if(vm.isEditSeedCost){
+                                updateCostListAPI(cost,type);
+                            }else{
+                                var item_exist = DoesItemExistInCostList(cost,items);
+                                if(!item_exist){
+                                    var prepareCost =   {
+                                        type: vm.acat.chemicals.list_type,
+                                        parent_cost_list: vm.acat.input.sub_sections[2].cost_list._id,//Fertilizer cost list
+                                        item:cost.item,
+                                        unit:cost.unit
+                                    };
+                                    AddCostListAPI(prepareCost,type);
+                                }
+                            }
+                            vm.acat.chemicals = {};
+                            break;
+                        case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                            items = vm.acat.labour_costs;
+                            if(vm.isEditLabourCost){
+                                // updateCostListAPI(cost,type);
+                            }else{
 
-        },
-        function(error) {
-          // console.log("could not be updated", error);
-          AlertService.showError(
-            "Status not changed. Please try again.",
-            "ERROR"
-          );
+                                if(!DoesItemExistInCostList(cost,items)){
+                                    AddCostListAPI({
+                                        type: vm.acat.labour_cost.list_type,
+                                        parent_cost_list: vm.acat.labour_costs._id,//Fertilizer cost list
+                                        item:cost.item,
+                                        unit:cost.unit
+                                    },type);
+                                }
+                            }
+                            vm.acat.labour_cost = {};
+                            break;
+                        case ACAT_GROUP_CONSTANT.OTHER_COST:
+
+                            break;
+                        default:
+                            items = [];
+                            break;
+                    }
+
+                }
+
         }
-      );
+
+        function _addGroupedCostList(groupInfo, type) {
+
+            if(!_.isUndefined(groupInfo)){
+                    if(groupInfo.existing_group){
+                        var costItem = {
+                            parent_grouped_list:groupInfo.selected_group._id, //"5ab12ecea682310001a24401"
+                            item: groupInfo.item,
+                            unit: groupInfo.unit
+                        };
+                        AddCostItemToGroup(costItem,type);
+                    }else{
+                        var groupCost = {
+                            type: 'grouped',
+                            parent_cost_list:vm.acat.input.sub_sections[2].cost_list._id,
+                            title:groupInfo.title
+                        };
+
+                        //ADD THE NEW GROUP TO COST LIST PARENT
+                        ACATService.AddCostList(groupCost).then(function (response) {
+                            console.log("group created",response.data);
+                            var groupItem = response.data; //Group Information captured
+                            //    TODO:create item unit here
+                            var costItem = {
+                                parent_grouped_list:groupItem._id,
+                                item: groupInfo.item,
+                                unit: groupInfo.unit
+                            };
+                            AddCostItemToGroup(costItem,type);
+
+                        },function (error) {
+                            console.log("error on group creation",error);
+                        });
+                    }
+
+            }
+        }
+        function resetCostItem(type) {
+            switch (type){
+                case ACAT_GROUP_CONSTANT.SEED:
+                    vm.isEditSeedCost =  true;
+                    vm.acat.input.seed = undefined;
+                    break;
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    vm.acat.fertilizer.item = undefined;
+                    vm.acat.fertilizer.unit = undefined;
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    vm.acat.chemicals.item = undefined;
+                    vm.acat.chemicals.unit = undefined;
+                    vm.acat.chemicals.title = undefined;
+                    break;
+                default:
+                    break;
+            }
+        }
+        function AddCostItemToGroup(costItem,type) {
+            ACATService.AddCostList(costItem).then(function (response) {
+                console.log("adding cost item on group",response);
+                resetCostItem(type);
+                callAPI();
+            },function (error) {
+                console.log("error while adding cost item on group",error);
+            });
+        }
+
+        function DoesItemExistInCostList(item, items) {
+            return _.some(items,function (costItem) {
+                return costItem.item === item.item && costItem.unit === item.unit;
+            });
+        }
+
+
+        function _cancelCostItem(type) {
+            switch (type){
+                case 'SEED':
+                    vm.isEditSeedCost = false;
+                    vm.acat.input.seed = {};
+                    break;
+                case 'FERTILIZER':
+                    vm.isEditFertilizerCost =  false;
+                    vm.acat.fertilizer = {};
+                    break;
+                case 'CHEMICALS':
+                    vm.isEditChemicalsCost = false;
+                    vm.acat.chemicals = {};
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+        function _editCostItem(cost,type,group) {
+            console.log("CHEMICALS cost",group);
+            switch (type){
+                case ACAT_GROUP_CONSTANT.SEED:
+                    vm.isEditSeedCost =  true;
+                    vm.acat.input.seed = cost;
+                    break;
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    vm.isEditFertilizerCost =  true;
+                    vm.acat.fertilizer = cost;
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    vm.isEditChemicalsCost = true;
+                    vm.acat.chemicals = cost;
+                    break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    vm.isEditLabourCost = true;
+                    vm.acat.labour_cost = cost;
+                    break;
+                default:
+                    break;
+            }
+
+        }
+        function _removeCostItem(cost,type) {
+            console.log("Remove Cost Item",cost);
+        }
+
+        function AddCostListAPI(cost,type) {
+
+            ACATService.AddCostList(cost).then(function (response) {
+                console.log("COST LIST ADDED FOR " + type,response);
+                var newCost = response.data;
+                switch (type){
+                    case 'SEED':
+                        vm.acat.input.seedCostList.push(newCost);
+                        break;
+                    case 'FERTILIZER':
+                        vm.acat.input.fertilizerCostList.push(newCost);
+                        break;
+                    case 'CHEMICALS':
+                        vm.acat.input.chemicalsCostList.push(newCost);
+                        break;
+                    default:
+                            break;
+                }
+
+            },function (error) {
+                console.log("error while adding cost item for " + type,error);
+            });
+        }
+
+        function updateCostListAPI(cost,type) {
+
+            var prepareCost = {
+                _id: cost._id,
+                item:cost.item,
+                unit:cost.unit
+            };
+
+            ACATService.UpdateCostList(prepareCost).then(function (response) {
+                var newCost = response.data;
+                switch (type){
+                    case 'SEED':
+                        vm.acat.input.seedCostList = _.filter(vm.acat.input.seedCostList,
+                            function (itemCost) {
+                                return itemCost._id !== cost._id;
+                            });
+                        vm.acat.input.seedCostList.push(newCost);
+                        vm.isEditSeedCost = false;
+                        break;
+                    case 'FERTILIZER':
+                        vm.acat.input.fertilizerCostList = _.filter(vm.acat.input.fertilizerCostList,
+                            function (itemCost) {
+                                return itemCost._id !== cost._id;
+                            });
+                        vm.acat.input.fertilizerCostList.push(newCost);
+                        vm.isEditFertilizerCost = false;
+                        break;
+                    case 'CHEMICALS':
+                        vm.acat.input.chemicalsCostList = _.filter(vm.acat.input.chemicalsCostList,
+                            function (itemCost) {
+                                return itemCost._id !== cost._id;
+                            });
+                        vm.acat.input.chemicalsCostList.push(newCost);
+                        vm.isEditChemicalsCost = false;
+                        break;
+                    default:
+                        break;
+                }
+
+            },function (error) {
+                console.log("error updating cost list",error);
+            });
+        }
+
+        //UPDATE CROP FOR CROP OR CREATE NEW ACAT FOR A CROP
+        function _cropSelectChanged() {
+            if(vm.isEdit){
+                //    UPDATE ACAT CROP
+            }else {
+                // Initialize ACAT with this crop
+                // vm.acat.selected_crop
+                var acatCrop =   {
+                    title: vm.acat.selected_crop.name +  '-CAT',
+                    description: vm.acat.selected_crop.name +  '-CAT desc',
+                    crop: vm.acat.selected_crop._id
+                };
+                ACATService.CreateACAT(acatCrop).then(function (response) {
+                    console.log("ACAT ",response);
+                    var acatData = response.data;
+                    $state.go('app.acatbuilder',{id:acatData._id},{inherit:true});
+                },function (error) {
+                    console.log("error on initializeing acat",error);
+                })
+            }
+        }
+
+        function _onCostListTypeChange(type) {
+
+            AlertService.showConfirm("You are about to change Cost List type, " +
+                "Which will clear the previous type data",
+                "Are you sure?", "Yes, Change It!", "warning", true,function (isConfirm) {
+                    if(isConfirm){
+
+                    }
+                });
+        }
 
     }
 
-  }
+
+
 })(window.angular);
+/**
+ * Created by Yoni on 3/19/2018.
+ */
+(function(angular) {
+    "use strict";
 
+    angular.module("app.acat").controller("ACATListController", ACATListController);
+
+    ACATListController.$inject = ['ACATService','$state'];
+
+    function ACATListController(ACATService,$state) {
+        var vm = this;
+        vm.addACAT = _addACAT;
+        vm.editACAT = _editACAT;
+
+        function _addACAT() {
+            $state.go('app.acatbuilder',{id:0});
+        }
+
+        function _editACAT(acat) {
+            $state.go('app.acatbuilder',{id:acat._id});
+        }
+
+        initialize();
+
+        function initialize() {
+            ACATService.GetAllACATList().then(function (response) {
+                vm.acat_list = response.data.docs;
+                console.log("vm.acat_list",response);
+            })
+
+        }
+
+
+
+    }
+
+
+
+})(window.angular);
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -6807,6 +6748,95 @@ function runBlock() {
 
 
 })(window.angular);
+(function(angular) {
+  "use strict";
+
+    angular.module("app.mfi").controller("BranchController", BranchController);
+
+    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
+
+  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
+    var vm = this;
+
+    vm.addBranch = addBranch;
+    vm.editBranch = _editBranch;
+    vm.changeStatus = _changeStatus;
+
+     getBranches();
+
+    function getBranches() {
+      MainService.GetBranches().then(
+        function(response) {
+          vm.branches = response.data.docs;
+        },
+        function(error) {
+          console.log("error", error);
+        }
+      );
+
+    }
+
+    function addBranch(ev) {
+        $mdDialog.show({
+            locals: {items: null},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+
+    }
+
+    function _editBranch(selectedBranch,ev) {
+        $mdDialog.show({
+            locals: {items: selectedBranch},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+    }
+
+    function _changeStatus(ChangeStatus) {
+      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
+      MainService.UpdateBranch(ChangeStatus).then(
+        function(response) {
+
+          AlertService.showSuccess(
+              "Updated branch status",
+              "Updated Status successfully."
+          );
+          // console.log("updated successfully", response);
+
+        },
+        function(error) {
+          // console.log("could not be updated", error);
+          AlertService.showError(
+            "Status not changed. Please try again.",
+            "ERROR"
+          );
+        }
+      );
+
+    }
+
+  }
+})(window.angular);
+
 (function(angular) {
   "use strict";
 
