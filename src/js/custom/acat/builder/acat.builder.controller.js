@@ -195,7 +195,21 @@
                             vm.acat.labour_cost = {};
                             break;
                         case ACAT_GROUP_CONSTANT.OTHER_COST:
+                            items = vm.acat.other_costs;
+                            if(vm.isEditOtherCost){
+                                // updateCostListAPI(cost,type);
+                            }else{
 
+                                if(!DoesItemExistInCostList(cost,items)){
+                                    AddCostListAPI({
+                                        type: vm.acat.other_cost.list_type,
+                                        parent_cost_list: vm.acat.other_costs._id,//Fertilizer cost list
+                                        item:cost.item,
+                                        unit:cost.unit
+                                    },type);
+                                }
+                            }
+                            vm.acat.other_cost = {};
                             break;
                         default:
                             items = [];
