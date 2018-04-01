@@ -203,6 +203,7 @@
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
                     vm.acat.chemicals.item = undefined;
                     vm.acat.chemicals.unit = undefined;
+                    vm.acat.chemicals.title = undefined;
                     break;
                 default:
                     break;
