@@ -5,11 +5,11 @@
 </h3>
 
 
-<div class="panel panel-default">
+<div class="panel panel-default" userpermission="['FORM_BUILDER_FORM_VIEW','FORM_BUILDER_FORM_CREATE','FORM_BUILDER_FORM_UPDATE']">
 
     <div class="panel-body">
         <p></p>
-        <div class="row" userpermission="['FORM_BUILDER_FORM_VIEW','FORM_BUILDER_FORM_VIEW']">
+        <div class="row" userpermission="'FORM_BUILDER_FORM_CREATE'">
             <div class="col-xs-10 col-lg-12">
                 <p><a class="btn btn-success pull-right" ui-sref="app.builder({id:0})">
                     <i class="fa fa-plus"></i>
@@ -44,7 +44,8 @@
                             <td md-cell>{{form.subtitle}}</td>
                             <td md-cell>{{form.has_sections? form.sectionCount + ' Sections,  ' + form.questionCount + ' Qns':form.questionCount + ' Qns'}}</td>
                             <td md-cell>
-                                <a ng-click="vm.editForm(form,$event)">
+                                <a userpermission="['FORM_BUILDER_FORM_CREATE','FORM_BUILDER_FORM_UPDATE']"
+                                   ng-click="vm.editForm(form,$event)">
                                     <i class="fa fa-edit"></i>
                                 </a>
                             </td>

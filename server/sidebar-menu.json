@@ -48,7 +48,7 @@
     "sref": "#",
     "icon": "fa fa-table",
     "submenu": [
-      {"text": "Form List",     "sref": "app.forms" ,   "permission": "FORM_BUILDER_VIEW"}
+      {"text": "Form List",     "sref": "app.forms" ,   "permission": "FORM_BUILDER_FORM"}
     ]
   },
   {
