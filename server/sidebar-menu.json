@@ -57,8 +57,8 @@
     "sref": "#",
     "icon": "fa fa-cubes",
     "submenu": [
-      {"text": "Manage Crop",     "sref": "app.crop" ,   "permission": "ACAT_BUILDER_VIEW"},
-      {"text": "ACAT Builder",     "sref": "app.acat" ,   "permission": "ACAT_BUILDER_VIEW"}
+      {"text": "Manage Crop",     "sref": "app.crop" ,   "permission": "ACAT_BUILDER_CROP"},
+      {"text": "ACAT Builder",     "sref": "app.acat" ,   "permission": "ACAT_BUILDER_ACAT"}
     ]
   }
 ]

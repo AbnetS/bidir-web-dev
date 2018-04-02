@@ -3,10 +3,10 @@
 </h3>
 
 <!-- ngRepeat + ngResource-->
-<div class="panel panel-default">
+<div class="panel panel-default" userpermission="['ACAT_BUILDER_CROP_VIEW','ACAT_BUILDER_CROP_CREATE','ACAT_BUILDER_CROP_UPDATE']">
     <div class="panel-body">
         <div class="row">
-            <div class="col-xs-10 col-lg-12">
+            <div class="col-xs-10 col-lg-12" userpermission="['ACAT_BUILDER_CROP_CREATE']">
                 <p><a class="btn btn-success pull-right" href="" ng-click="vm.addCrop(null,$event)">
                     <i class="fa fa-plus"></i>
                     Add</a>
@@ -34,7 +34,8 @@
                             <td md-cell>{{crop.name}}</td>
                             <td md-cell>{{crop.category}}</td>
                             <td md-cell>
-                                <a ng-click="vm.editCrop(crop,$event)">
+                                <a userpermission="['ACAT_BUILDER_CROP_CREATE','ACAT_BUILDER_CROP_UPDATE']"
+                                    ng-click="vm.editCrop(crop,$event)">
                                     <i class="fa fa-edit"></i>
                                 </a>
                             </td>
