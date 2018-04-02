@@ -364,21 +364,17 @@
                         vm.isEditSeedCost = false;
                         break;
                     case ACAT_GROUP_CONSTANT.FERTILIZER:
-                        console.log("fertilizer update before",vm.acat.fertilizer_costs);
-
                         if(vm.acat.fertilizer.list_type === ACAT_COST_LIST_TYPE.GROUPED){
                             _.filter(vm.acat.fertilizer_costs.grouped,
                                 function (group) {
                                     if(group._id === cost.parent_grouped_list){
-                                        console.log("group info b4",group);
                                         group.items = _.filter(group.items, function (itemCost) {
                                                 return itemCost._id !== newCost._id;
                                             });
                                         group.items.push(newCost);
-                                        console.log("group info after",group);
                                     }
                                 });
-                            console.log("fertilizer update after",vm.acat.fertilizer_costs.grouped);
+                            resetCostItem(type);
                         }else{
                             vm.acat.fertilizer_costs.linear = _.filter(vm.acat.fertilizer_costs.linear,
                                 function (itemCost) {
@@ -509,6 +505,8 @@
                 case ACAT_GROUP_CONSTANT.FERTILIZER:
                     vm.acat.fertilizer.item = undefined;
                     vm.acat.fertilizer.unit = undefined;
+                    vm.acat.fertilizer.selected_group = undefined;
+                    vm.acat.fertilizer.existing_group = false;
                     break;
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
                     vm.acat.chemicals.item = undefined;
