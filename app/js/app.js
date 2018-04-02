@@ -6819,7 +6819,7 @@ function runBlock() {
         }
 
         function _editDeductibleItem(item) {
-            vm.loan_product.deductible =angular.copy(item);
+            vm.loan_product.deductible = item;
             vm.isEditDeductible = true;
         }
 
