@@ -203,13 +203,13 @@
     'use strict';
 
     angular
-        .module('app.translate', []);
+        .module('app.sidebar', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.sidebar', []);
+        .module('app.translate', []);
 })();
 (function() {
     'use strict';
@@ -3120,70 +3120,6 @@ var ACAT_COST_LIST_TYPE = {
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .config(translateConfig)
-        ;
-    translateConfig.$inject = ['$translateProvider'];
-    function translateConfig($translateProvider){
-
-      $translateProvider.useStaticFilesLoader({
-          prefix : 'app/i18n/',
-          suffix : '.json'
-      });
-
-      $translateProvider.preferredLanguage('en');
-      $translateProvider.useLocalStorage();
-      $translateProvider.usePostCompiling(true);
-      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
-
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .run(translateRun)
-        ;
-    translateRun.$inject = ['$rootScope', '$translate'];
-    
-    function translateRun($rootScope, $translate){
-
-      // Internationalization
-      // ----------------------
-
-      $rootScope.language = {
-        // Handles language dropdown
-        listIsOpen: false,
-        // list of available languages
-        available: {
-          'en':       'English',
-          'es_AR':    'Español'
-        },
-        // display always the current ui language
-        init: function () {
-          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
-          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
-          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
-        },
-        set: function (localeId) {
-          // Set the new idiom
-          $translate.use(localeId);
-          // save a reference for the current language
-          $rootScope.language.selected = $rootScope.language.available[localeId];
-          // finally toggle dropdown
-          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
-        }
-      };
-
-      $rootScope.language.init();
-
-    }
-})();
 /**=========================================================
  * Module: sidebar-menu.js
  * Handle sidebar collapsible elements
@@ -3587,6 +3523,70 @@ var ACAT_COST_LIST_TYPE = {
     }
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .config(translateConfig)
+        ;
+    translateConfig.$inject = ['$translateProvider'];
+    function translateConfig($translateProvider){
+
+      $translateProvider.useStaticFilesLoader({
+          prefix : 'app/i18n/',
+          suffix : '.json'
+      });
+
+      $translateProvider.preferredLanguage('en');
+      $translateProvider.useLocalStorage();
+      $translateProvider.usePostCompiling(true);
+      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
+
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .run(translateRun)
+        ;
+    translateRun.$inject = ['$rootScope', '$translate'];
+    
+    function translateRun($rootScope, $translate){
+
+      // Internationalization
+      // ----------------------
+
+      $rootScope.language = {
+        // Handles language dropdown
+        listIsOpen: false,
+        // list of available languages
+        available: {
+          'en':       'English',
+          'es_AR':    'Español'
+        },
+        // display always the current ui language
+        init: function () {
+          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
+          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
+          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
+        },
+        set: function (localeId) {
+          // Set the new idiom
+          $translate.use(localeId);
+          // save a reference for the current language
+          $rootScope.language.selected = $rootScope.language.available[localeId];
+          // finally toggle dropdown
+          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
+        }
+      };
+
+      $rootScope.language.init();
+
+    }
+})();
 /**=========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
@@ -5217,28 +5217,8 @@ function runBlock() {
             }
 
         }
-        function SetListType(type) {
-            switch (type){
-                case ACAT_GROUP_CONSTANT.FERTILIZER:
-                    vm.acat.fertilizer.list_type = vm.acat.fertilizer_costs.linear.length>0?
-                        ACAT_COST_LIST_TYPE.LINEAR : ACAT_COST_LIST_TYPE.GROUPED;
-                    break;
-                case ACAT_GROUP_CONSTANT.CHEMICALS:
-                    vm.acat.chemicals.list_type = vm.acat.chemicals_costs.linear.length>0?
-                        ACAT_COST_LIST_TYPE.LINEAR : ACAT_COST_LIST_TYPE.GROUPED;
-                    break;
-                case ACAT_GROUP_CONSTANT.LABOUR_COST:
-                    vm.acat.labour_cost.list_type = vm.acat.labour_costs.linear.length>0?
-                        ACAT_COST_LIST_TYPE.LINEAR : ACAT_COST_LIST_TYPE.GROUPED;
-                    break;
-                case ACAT_GROUP_CONSTANT.OTHER_COST:
-                    vm.acat.other_cost.list_type = vm.acat.seed_costs.linear.length>0?
-                        ACAT_COST_LIST_TYPE.LINEAR : ACAT_COST_LIST_TYPE.GROUPED;
-                    break;
-                default:
-                    break;
-            }
-        }
+
+
 
         function setSubSectionCostFromResponse(subSections) {
             vm.acat.input = subSections[0];
@@ -5246,18 +5226,39 @@ function runBlock() {
             vm.acat.other_costs =  subSections[2].cost_list;
 
             vm.acat.input.seedCostList = vm.acat.input.sub_sections[0].cost_list.linear;
-            vm.acat.input.seed_costs = vm.acat.input.sub_sections[0].cost_list;
+            vm.acat.seed_costs = vm.acat.input.sub_sections[0].cost_list;
+
             vm.acat.input.fertilizerCostList = vm.acat.input.sub_sections[1].cost_list.linear;
-            vm.acat.input.fertilizer_costs = vm.acat.input.sub_sections[1].cost_list;
+            vm.acat.fertilizer_costs = vm.acat.input.sub_sections[1].cost_list;
+
             vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
-            vm.acat.input.chemicals_costs = vm.acat.input.sub_sections[2].cost_list;
+            vm.acat.chemicals_costs = vm.acat.input.sub_sections[2].cost_list;
+            console.log("vm.acat.labour_costs", vm.acat);
             SetListType();
         }
+
+        function SetListType() {
+
+            vm.acat.fertilizer.list_type = vm.acat.fertilizer_costs.linear.length > 0 ?
+                ACAT_COST_LIST_TYPE.LINEAR : ACAT_COST_LIST_TYPE.GROUPED;
+
+            vm.acat.chemicals.list_type = vm.acat.chemicals_costs.linear.length > 0 ?
+                ACAT_COST_LIST_TYPE.LINEAR : ACAT_COST_LIST_TYPE.GROUPED;
+
+            vm.acat.labour_cost.list_type = vm.acat.labour_costs.linear.length > 0 ?
+                ACAT_COST_LIST_TYPE.LINEAR : ACAT_COST_LIST_TYPE.GROUPED;
+
+            vm.acat.other_cost.list_type = vm.acat.seed_costs.linear.length > 0 ?
+                ACAT_COST_LIST_TYPE.LINEAR : ACAT_COST_LIST_TYPE.GROUPED;
+
+        }
+
         function callAPI() {
             var myBlockUIOnStart = blockUI.instances.get('ACATBuilderBlockUI');
             myBlockUIOnStart.start();
             ACATService.GetACATById(vm.ACATId).then(function (response) {
                 console.log("GetACATById",response.data);
+
                 vm.acat.selected_crop = response.data.crop;
                 var subSections = response.data.sections[0].sub_sections;
                 setSubSectionCostFromResponse(subSections);
@@ -5275,8 +5276,7 @@ function runBlock() {
             vm.crops = response.data.docs;
         });
 
-    }
-
+        }
 
         function _addToCostList(cost,type) {
 
@@ -5384,28 +5384,24 @@ function runBlock() {
             if(!_.isUndefined(groupInfo)){
                     if(groupInfo.existing_group){
                         var costItem = {
-                            parent_grouped_list:groupInfo.selected_group._id, //"5ab12ecea682310001a24401"
+                            parent_grouped_list:groupInfo.selected_group._id,
                             item: groupInfo.item,
                             unit: groupInfo.unit
                         };
                         AddCostItemToGroup(costItem,type);
                     }else{
-                        var groupCost = {
-                            type: 'grouped',
-                            parent_cost_list:vm.acat.input.sub_sections[2].cost_list._id,
-                            title:groupInfo.title
-                        };
+                        var groupCost = PrepareGroupCostListForAdd(groupInfo, type);
 
                         //ADD THE NEW GROUP TO COST LIST PARENT
                         ACATService.AddCostList(groupCost).then(function (response) {
                             console.log("group created",response.data);
                             var groupItem = response.data; //Group Information captured
-                            //    TODO:create item unit here
                             var costItem = {
                                 parent_grouped_list:groupItem._id,
                                 item: groupInfo.item,
                                 unit: groupInfo.unit
                             };
+
                             AddCostItemToGroup(costItem,type);
 
                         },function (error) {
@@ -5415,6 +5411,42 @@ function runBlock() {
 
             }
         }
+
+        function PrepareGroupCostListForAdd(groupInfo,type) {
+            switch (type){
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    return  {
+                        type: 'grouped',
+                        parent_cost_list: vm.acat.fertilizer_costs._id,
+                        title:groupInfo.title
+                    };
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    return  {
+                        type: 'grouped',
+                        parent_cost_list: vm.acat.chemicals_costs._id,
+                        title:groupInfo.title
+                    };
+                    break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    return  {
+                        type: 'grouped',
+                        parent_cost_list: vm.acat.labour_costs._id,
+                        title:groupInfo.title
+                    };
+                    break;
+                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    return  {
+                        type: 'grouped',
+                        parent_cost_list: vm.acat.other_costs._id,
+                        title:groupInfo.title
+                    };
+                    break;
+                default:
+                    break;
+            }
+        }
+
         function resetCostItem(type) {
             switch (type){
                 case ACAT_GROUP_CONSTANT.SEED:
@@ -5430,10 +5462,21 @@ function runBlock() {
                     vm.acat.chemicals.unit = undefined;
                     vm.acat.chemicals.title = undefined;
                     break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    vm.acat.labour_cost.item = undefined;
+                    vm.acat.labour_cost.unit = undefined;
+                    vm.acat.labour_cost.title = undefined;
+                    break;
+                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    vm.acat.other_cost.item = undefined;
+                    vm.acat.other_cost.unit = undefined;
+                    vm.acat.other_cost.title = undefined;
+                    break;
                 default:
                     break;
             }
         }
+
         function AddCostItemToGroup(costItem,type) {
             ACATService.AddCostList(costItem).then(function (response) {
                 console.log("adding cost item on group",response);
@@ -5448,55 +5491,6 @@ function runBlock() {
             return _.some(items,function (costItem) {
                 return costItem.item === item.item && costItem.unit === item.unit;
             });
-        }
-
-
-        function _cancelCostItem(type) {
-            switch (type){
-                case 'SEED':
-                    vm.isEditSeedCost = false;
-                    vm.acat.input.seed = {};
-                    break;
-                case 'FERTILIZER':
-                    vm.isEditFertilizerCost =  false;
-                    vm.acat.fertilizer = {};
-                    break;
-                case 'CHEMICALS':
-                    vm.isEditChemicalsCost = false;
-                    vm.acat.chemicals = {};
-                    break;
-                default:
-                    break;
-            }
-
-        }
-
-        function _editCostItem(cost,type,group) {
-            console.log("CHEMICALS cost",group);
-            switch (type){
-                case ACAT_GROUP_CONSTANT.SEED:
-                    vm.isEditSeedCost =  true;
-                    vm.acat.input.seed = cost;
-                    break;
-                case ACAT_GROUP_CONSTANT.FERTILIZER:
-                    vm.isEditFertilizerCost =  true;
-                    vm.acat.fertilizer = cost;
-                    break;
-                case ACAT_GROUP_CONSTANT.CHEMICALS:
-                    vm.isEditChemicalsCost = true;
-                    vm.acat.chemicals = cost;
-                    break;
-                case ACAT_GROUP_CONSTANT.LABOUR_COST:
-                    vm.isEditLabourCost = true;
-                    vm.acat.labour_cost = cost;
-                    break;
-                default:
-                    break;
-            }
-
-        }
-        function _removeCostItem(cost,type) {
-            console.log("Remove Cost Item",cost);
         }
 
         function AddCostListAPI(cost,type) {
@@ -5567,6 +5561,54 @@ function runBlock() {
             });
         }
 
+
+        function _cancelCostItem(type) {
+            switch (type){
+                case 'SEED':
+                    vm.isEditSeedCost = false;
+                    vm.acat.input.seed = {};
+                    break;
+                case 'FERTILIZER':
+                    vm.isEditFertilizerCost =  false;
+                    vm.acat.fertilizer = {};
+                    break;
+                case 'CHEMICALS':
+                    vm.isEditChemicalsCost = false;
+                    vm.acat.chemicals = {};
+                    break;
+                default:
+                    break;
+            }
+
+        }
+        function _editCostItem(cost,type,group) {
+            console.log("CHEMICALS cost",group);
+            switch (type){
+                case ACAT_GROUP_CONSTANT.SEED:
+                    vm.isEditSeedCost =  true;
+                    vm.acat.input.seed = cost;
+                    break;
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    vm.isEditFertilizerCost =  true;
+                    vm.acat.fertilizer = cost;
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    vm.isEditChemicalsCost = true;
+                    vm.acat.chemicals = cost;
+                    break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    vm.isEditLabourCost = true;
+                    vm.acat.labour_cost = cost;
+                    break;
+                default:
+                    break;
+            }
+
+        }
+        function _removeCostItem(cost,type) {
+            console.log("Remove Cost Item",cost);
+        }
+
         //UPDATE CROP FOR CROP OR CREATE NEW ACAT FOR A CROP
         function _cropSelectChanged() {
             if(vm.isEdit){
@@ -5588,7 +5630,6 @@ function runBlock() {
                 })
             }
         }
-
         function _onCostListTypeChange(type) {
 
             AlertService.showConfirm("You are about to change Cost List type, " +
