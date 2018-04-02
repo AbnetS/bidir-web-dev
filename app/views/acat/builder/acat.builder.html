@@ -141,7 +141,7 @@
                                 </div>
 
                                 <!-- START FERTILIZER ROW-->
-                                <div ng-show="vm.acat.fertilizer.list_type==='linear'"
+                                <div ng-if="vm.acat.fertilizer.list_type==='linear'"
                                      class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -174,7 +174,7 @@
                                     </div>
                                 </div>
                                 <!--IF LIST IS GROUPED-->
-                                <div ng-show="vm.acat.fertilizer.list_type==='grouped'">
+                                <div ng-if="vm.acat.fertilizer.list_type==='grouped'">
                                     <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
                                         <div class="col-md-4">
                                             <md-input-container class="md-block">
@@ -361,7 +361,7 @@
                                                         <ui-select-match placeholder="Select Group from the list...">
                                                             {{$select.selected.title}}
                                                         </ui-select-match>
-                                                        <ui-select-choices repeat="groupItem in vm.acat.input.chemicalsCostList | filter: $select.search">
+                                                        <ui-select-choices repeat="groupItem in vm.acat.chemicals_costs | filter: $select.search">
                                                             <span ng-bind-html="groupItem.title | highlight: $select.search"></span>
                                                         </ui-select-choices>
                                                     </ui-select>
