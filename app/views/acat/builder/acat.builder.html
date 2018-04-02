@@ -130,7 +130,7 @@
                                         <md-radio-group id="fertilizerListType"
                                                         name="fertilizerListType"
                                                         layout="row"
-                                                        ng-change="vm.onCostListTypeChange()"
+                                                        ng-change="vm.onCostListTypeChange('FERTILIZER')"
                                                         ng-model="vm.acat.fertilizer.list_type" >
                                             <md-radio-button value="linear">
                                                 Linear List </md-radio-button>
@@ -201,7 +201,7 @@
                                                         <ui-select-match placeholder="Select Group from the list...">
                                                             {{$select.selected.title}}
                                                         </ui-select-match>
-                                                        <ui-select-choices repeat="groupItem in vm.acat.fertilizer_costs.grouped | filter: $select.search">
+                                                        <ui-select-choices repeat="groupItem in vm.acat.fertilizer_costs.grouped">
                                                             <span ng-bind-html="groupItem.title | highlight: $select.search"></span>
                                                         </ui-select-choices>
                                                     </ui-select>
@@ -231,7 +231,7 @@
                                             <br/>
                                             <button class="btn btn-success btn-outline"
                                                     ng-click="vm.addGroupedCostList(vm.acat.fertilizer,'FERTILIZER')">
-                                                Add
+                                                {{vm.isEditFertilizerCost?'Update':'Add'}}
                                             </button>
                                         </div>
                                     </div>
@@ -276,7 +276,7 @@
                                      class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                     <div class="table-responsive">
                                         <table class="table table-bordered"
-                                               ng-repeat="groupItem in vm.acat.fertilizer_costs">
+                                               ng-repeat="groupItem in vm.acat.fertilizer_costs.grouped">
                                             <thead>
                                             <tr class="text-center text-uppercase text-inverse">
                                                 <th colspan="4">{{groupItem.title}}</th>
@@ -295,11 +295,11 @@
                                                 <td>{{cost.unit}}</td>
                                                 <td>
                                                     <a class="btn btn-xs btn-outline btn-default"
-                                                       ng-click="vm.editCostItem(cost,'OTHER_COST',groupItem)">
+                                                       ng-click="vm.editGroupCostItem(cost,'FERTILIZER',groupItem)">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
                                                     <a  class="btn btn-xs btn-outline btn-danger"
-                                                        ng-click="vm.removeCostItem(cost,'OTHER_COST',groupItem)">
+                                                        ng-click="vm.removeCostItem(cost,'FERTILIZER',groupItem)">
                                                         <i class="fa fa-times"></i>
                                                     </a>
                                                 </td>
@@ -361,7 +361,7 @@
                                                         <ui-select-match placeholder="Select Group from the list...">
                                                             {{$select.selected.title}}
                                                         </ui-select-match>
-                                                        <ui-select-choices repeat="groupItem in vm.acat.chemicals_costs | filter: $select.search">
+                                                        <ui-select-choices repeat="groupItem in vm.acat.chemicals_costs">
                                                             <span ng-bind-html="groupItem.title | highlight: $select.search"></span>
                                                         </ui-select-choices>
                                                     </ui-select>
@@ -427,7 +427,7 @@
                                 <!-- END CHEMICALS ROW-->
 
                                 <!-- ITEMS TABLE-->
-                                <div ng-show="vm.acat.chemicals.list_type==='grouped'"
+                                <div ng-show="vm.acat.chemicals.list_type==='grouped' && vm.acat.chemicals_costs.grouped.length > 0"
                                      class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                     <div class="table-responsive">
                                         <table class="table table-bordered"
@@ -552,7 +552,7 @@
                                                         <ui-select-match placeholder="Select Group from the list...">
                                                             {{$select.selected.title}}
                                                         </ui-select-match>
-                                                        <ui-select-choices repeat="groupItem in vm.acat.labour_costs.grouped | filter: $select.search">
+                                                        <ui-select-choices repeat="groupItem in vm.acat.labour_costs.grouped">
                                                             <span ng-bind-html="groupItem.title | highlight: $select.search"></span>
                                                         </ui-select-choices>
                                                     </ui-select>
@@ -743,7 +743,7 @@
                                                         <ui-select-match placeholder="Select Group from the list...">
                                                             {{$select.selected.title}}
                                                         </ui-select-match>
-                                                        <ui-select-choices repeat="groupItem in vm.acat.other_costs.grouped | filter: $select.search">
+                                                        <ui-select-choices repeat="groupItem in vm.acat.other_costs.grouped">
                                                             <span ng-bind-html="groupItem.title | highlight: $select.search"></span>
                                                         </ui-select-choices>
                                                     </ui-select>
