@@ -5250,7 +5250,7 @@ function runBlock() {
 
             // // vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
             // vm.acat.chemicals_costs = vm.acat.input.sub_sections[2].cost_list;
-            // SetListType();
+            SetListType();
 
             console.log("vm.acat", vm.acat);
         }
@@ -5259,14 +5259,14 @@ function runBlock() {
             vm.acat.fertilizer.list_type = vm.acat.fertilizer_costs.grouped.length > 0 ?
                 ACAT_COST_LIST_TYPE.GROUPED :vm.acat.fertilizer_costs.linear.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
-            vm.acat.chemicals.list_type = vm.acat.chemicals_costs.grouped.length > 0 ?
-                ACAT_COST_LIST_TYPE.GROUPED :  vm.acat.chemicals_costs.linear.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
-
-            vm.acat.labour_cost.list_type = vm.acat.labour_costs.grouped.length > 0 ?
-                ACAT_COST_LIST_TYPE.GROUPED : vm.acat.labour_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
-
-            vm.acat.other_cost.list_type = vm.acat.other_costs.grouped.length > 0 ?
-                ACAT_COST_LIST_TYPE.GROUPED :vm.acat.other_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+            // vm.acat.chemicals.list_type = vm.acat.chemicals_costs.grouped.length > 0 ?
+            //     ACAT_COST_LIST_TYPE.GROUPED :  vm.acat.chemicals_costs.linear.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+            //
+            // vm.acat.labour_cost.list_type = vm.acat.labour_costs.grouped.length > 0 ?
+            //     ACAT_COST_LIST_TYPE.GROUPED : vm.acat.labour_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+            //
+            // vm.acat.other_cost.list_type = vm.acat.other_costs.grouped.length > 0 ?
+            //     ACAT_COST_LIST_TYPE.GROUPED :vm.acat.other_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
         }
 
@@ -5474,6 +5474,7 @@ function runBlock() {
                 return costItem.item === item.item && costItem.unit === item.unit;
             });
         }
+
         function AddCostListAPI(cost,type) {
 
             ACATService.AddCostList(cost).then(function (response) {
@@ -5490,10 +5491,6 @@ function runBlock() {
                             {
                             vm.acat.fertilizer_costs.linear.push(newCost);
                         }
-
-                        break;
-                    case 'CHEMICALS':
-                        vm.acat.input.chemicalsCostList.push(newCost);
                         break;
                     default:
                             break;
