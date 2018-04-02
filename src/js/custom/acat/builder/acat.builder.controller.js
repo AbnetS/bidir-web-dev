@@ -545,7 +545,22 @@
         }
 
         function _removeCostItem(cost,type) {
-            console.log("Remove Cost Item",cost);
+            // console.log("Remove Cost Item",cost);
+            AlertService.showConfirmForDelete("You are about to DELETE COST LIST",
+                "Are you sure?", "Yes, Remove It!", "warning", true,function (isConfirm) {
+
+                    if(isConfirm){
+
+                        ACATService.RemoveCostList(cost,ACAT_COST_LIST_TYPE.LINEAR).then(function (response) {
+                            console.log("Removed Cost Item.........",response);
+
+                        },function (error) {
+                            console.log("error when removing cost list",error);
+                        });
+                    }
+
+                });
+
         }
 
         //UPDATE CROP FOR CROP OR CREATE NEW ACAT FOR A CROP

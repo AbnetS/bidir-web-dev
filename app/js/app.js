@@ -4537,22 +4537,6 @@ var ACAT_COST_LIST_TYPE = {
 })();
 
 /**
- * Created by Yoni on 1/29/2018.
- */
-(function() {
-    "use strict";
-
-    config.$inject = ["$mdIconProvider"];
-    angular.module("app.forms", [
-    ]).run(runBlock).config(config);
-
-    function runBlock() {}
-    function config($mdIconProvider) {
-        $mdIconProvider.iconSet("avatars", 'app/img/icons/avatar-icons.svg',128);
-    };
-
-})();
-/**
  * Created by Yoni on 1/8/2018.
  */
 (function() {
@@ -4568,6 +4552,22 @@ var ACAT_COST_LIST_TYPE = {
 
 })();
 
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function() {
+    "use strict";
+
+    config.$inject = ["$mdIconProvider"];
+    angular.module("app.forms", [
+    ]).run(runBlock).config(config);
+
+    function runBlock() {}
+    function config($mdIconProvider) {
+        $mdIconProvider.iconSet("avatars", 'app/img/icons/avatar-icons.svg',128);
+    };
+
+})();
 (function() {
   "use strict";
 
@@ -4666,172 +4666,6 @@ function runBlock() {
         }
         function _createACAT(acat) {
             return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
-        }
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 2/9/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.forms')
-        .constant('MW_QUESTION_TYPES', [
-            {name:'Fill In Blank',url:'fib',code:'FILL_IN_BLANK',type:'text'},
-            {name:'Yes/No Question',code:'YES_NO',url:'yn',type:'yn',options:['Yes','No']},
-            {name:'Multiple Choice',url:'mc',code:'MULTIPLE_CHOICE',options:[],type:'checkbox'},
-            {name:'Single Choice',url:'sc',code:'SINGLE_CHOICE',options:[],type:'select'},
-            {name:'Grouped Question',url:'GROUPED',code:'GROUPED',type:'grouped'}])
-        .constant('MW_FORM_TYPES', [
-            {name:'ACAT',code:'ACAT'},
-            {name:'Loan Application',code:'LOAN_APPLICATION'},
-            {name:'Screening',code:'SCREENING'},
-            {name:'Group Application',code:'GROUP_APPLICATION'},
-            {name:'Test',code:'TEST'}]);
-})(window.angular);
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.forms").controller("FormsController", FormsController);
-
-    FormsController.$inject = ['FormService','$state'];
-
-    function FormsController(FormService,$state) {
-        var vm = this;
-        vm.forms = [];
-        vm.logPagination = _logPagination;
-        vm.editForm = _editForm;
-
-        vm.pageSizes = [10, 25, 50, 100, 250, 500];
-
-        vm.options = {
-            rowSelection: true,
-            multiSelect: true,
-            autoSelect: true,
-            decapitate: false,
-            largeEditDialog: false,
-            boundaryLinks: true,
-            limitSelect: true,
-            pageSelect: false
-        };
-
-        vm.request = {
-            page: 1,
-            per_page: 10,
-            Search: ""
-        };
-
-        initialize();
-
-
-        function initialize() {
-            callApi();//fetch first page data initially
-        }
-
-        function _logPagination(page, pageSize) {
-            vm.request.page = page;
-            vm.request.per_page = pageSize;
-            vm.request.Start = page - 1;
-            callApi();
-        }
-
-        function callApi() {
-            FormService.GetFormsPerPage(vm.request).then(function (response) {
-                vm.forms = response.data.docs;
-                _.forEach(vm.forms,function (form) {
-                    if(form.has_sections){
-                        form.sectionCount = form.sections.length;
-                        var questionCount = 0;
-                        _.forEach(form.sections,function (sec) {
-                            questionCount = questionCount + sec.questions.length;
-                        });
-                        form.questionCount = questionCount;
-                    }else{
-                        form.questionCount = form.questions.length;
-                    }
-                })
-            },function (error) {
-                console.log(error);
-            })
-        }
-
-        function _editForm(form, ev) {
-            $state.go('app.builder',{id:form._id});
-            console.log("edit Form",form);
-        }
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.forms')
-
-        .service('FormService', FormService);
-
-    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES','MW_FORM_TYPES'];
-
-    function FormService($http, CommonService,MW_QUESTION_TYPES,MW_FORM_TYPES) {
-        return {
-            GetFormsPerPage: _getFormsPerPage,
-            CreateForm:_createForm,
-            GetForm:_getForm,
-            UpdateForm:_updateForm,
-            GetQuestion:_getQuestion,
-            CreateQuestion:_createQuestion,
-            UpdateQuestion:_updateQuestion,
-            DeleteQuestion:_deleteQuestion,
-            CreateSection:_createSection,
-            UpdateSection:_updateSection,
-            RemoveSection:_removeSection,
-            QuestionTypes: MW_QUESTION_TYPES,
-            FormTypes: MW_FORM_TYPES
-        };
-        function _getFormsPerPage(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
-        }
-        function _getForm(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM, API.Methods.Form.All, id));
-        }
-        function _updateForm(form) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,form._id), form);
-        }
-        function _createForm(form){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
-        }
-        //------QUESTION-----------
-        function _getQuestion(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,id));
-        }
-        function _createQuestion(question,type){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question) + '/' + type, question);
-        }
-        function _updateQuestion(question) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id), question);
-        }
-        function _deleteQuestion(question) {
-          return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id + '?form=' + question.form));
-        }
-
-
-        //    ------SECTION--------
-        function _createSection(section){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Section), section);
-        }
-        function _updateSection(section) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id), section);
-        }
-        function _removeSection(section) {
-            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id + '?form=' + section.form));
         }
     }
 
@@ -5010,6 +4844,172 @@ function runBlock() {
 
 })(window.angular);
 
+/**
+ * Created by Yoni on 2/9/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.forms')
+        .constant('MW_QUESTION_TYPES', [
+            {name:'Fill In Blank',url:'fib',code:'FILL_IN_BLANK',type:'text'},
+            {name:'Yes/No Question',code:'YES_NO',url:'yn',type:'yn',options:['Yes','No']},
+            {name:'Multiple Choice',url:'mc',code:'MULTIPLE_CHOICE',options:[],type:'checkbox'},
+            {name:'Single Choice',url:'sc',code:'SINGLE_CHOICE',options:[],type:'select'},
+            {name:'Grouped Question',url:'GROUPED',code:'GROUPED',type:'grouped'}])
+        .constant('MW_FORM_TYPES', [
+            {name:'ACAT',code:'ACAT'},
+            {name:'Loan Application',code:'LOAN_APPLICATION'},
+            {name:'Screening',code:'SCREENING'},
+            {name:'Group Application',code:'GROUP_APPLICATION'},
+            {name:'Test',code:'TEST'}]);
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.forms").controller("FormsController", FormsController);
+
+    FormsController.$inject = ['FormService','$state'];
+
+    function FormsController(FormService,$state) {
+        var vm = this;
+        vm.forms = [];
+        vm.logPagination = _logPagination;
+        vm.editForm = _editForm;
+
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
+
+        vm.options = {
+            rowSelection: true,
+            multiSelect: true,
+            autoSelect: true,
+            decapitate: false,
+            largeEditDialog: false,
+            boundaryLinks: true,
+            limitSelect: true,
+            pageSelect: false
+        };
+
+        vm.request = {
+            page: 1,
+            per_page: 10,
+            Search: ""
+        };
+
+        initialize();
+
+
+        function initialize() {
+            callApi();//fetch first page data initially
+        }
+
+        function _logPagination(page, pageSize) {
+            vm.request.page = page;
+            vm.request.per_page = pageSize;
+            vm.request.Start = page - 1;
+            callApi();
+        }
+
+        function callApi() {
+            FormService.GetFormsPerPage(vm.request).then(function (response) {
+                vm.forms = response.data.docs;
+                _.forEach(vm.forms,function (form) {
+                    if(form.has_sections){
+                        form.sectionCount = form.sections.length;
+                        var questionCount = 0;
+                        _.forEach(form.sections,function (sec) {
+                            questionCount = questionCount + sec.questions.length;
+                        });
+                        form.questionCount = questionCount;
+                    }else{
+                        form.questionCount = form.questions.length;
+                    }
+                })
+            },function (error) {
+                console.log(error);
+            })
+        }
+
+        function _editForm(form, ev) {
+            $state.go('app.builder',{id:form._id});
+            console.log("edit Form",form);
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.forms')
+
+        .service('FormService', FormService);
+
+    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES','MW_FORM_TYPES'];
+
+    function FormService($http, CommonService,MW_QUESTION_TYPES,MW_FORM_TYPES) {
+        return {
+            GetFormsPerPage: _getFormsPerPage,
+            CreateForm:_createForm,
+            GetForm:_getForm,
+            UpdateForm:_updateForm,
+            GetQuestion:_getQuestion,
+            CreateQuestion:_createQuestion,
+            UpdateQuestion:_updateQuestion,
+            DeleteQuestion:_deleteQuestion,
+            CreateSection:_createSection,
+            UpdateSection:_updateSection,
+            RemoveSection:_removeSection,
+            QuestionTypes: MW_QUESTION_TYPES,
+            FormTypes: MW_FORM_TYPES
+        };
+        function _getFormsPerPage(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
+        }
+        function _getForm(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM, API.Methods.Form.All, id));
+        }
+        function _updateForm(form) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,form._id), form);
+        }
+        function _createForm(form){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
+        }
+        //------QUESTION-----------
+        function _getQuestion(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,id));
+        }
+        function _createQuestion(question,type){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question) + '/' + type, question);
+        }
+        function _updateQuestion(question) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id), question);
+        }
+        function _deleteQuestion(question) {
+          return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id + '?form=' + question.form));
+        }
+
+
+        //    ------SECTION--------
+        function _createSection(section){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Section), section);
+        }
+        function _updateSection(section) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id), section);
+        }
+        function _removeSection(section) {
+            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id + '?form=' + section.form));
+        }
+    }
+
+
+})(window.angular);
 (function(angular) {
   'use strict';
   angular.module('app.mfi')
@@ -5704,7 +5704,22 @@ function runBlock() {
         }
 
         function _removeCostItem(cost,type) {
-            console.log("Remove Cost Item",cost);
+            // console.log("Remove Cost Item",cost);
+            AlertService.showConfirmForDelete("You are about to DELETE COST LIST",
+                "Are you sure?", "Yes, Remove It!", "warning", true,function (isConfirm) {
+
+                    if(isConfirm){
+
+                        ACATService.RemoveCostList(cost,ACAT_COST_LIST_TYPE.LINEAR).then(function (response) {
+                            console.log("Removed Cost Item.........",response);
+
+                        },function (error) {
+                            console.log("error when removing cost list",error);
+                        });
+                    }
+
+                });
+
         }
 
         //UPDATE CROP FOR CROP OR CREATE NEW ACAT FOR A CROP
