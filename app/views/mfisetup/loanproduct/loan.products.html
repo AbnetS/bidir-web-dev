@@ -3,11 +3,11 @@
 </h3>
 
 
-<div class="panel panel-default">
+<div class="panel panel-default" userpermission="['MFI_SETUP_LOAN_PRODUCT_VIEW','MFI_SETUP_LOAN_PRODUCT_CREATE','MFI_SETUP_LOAN_PRODUCT_UPDATE']">
     <div class="panel-body">
         <div class="row">
-            <div class="col-xs-10 col-lg-12">
-                <p><a class="btn btn-success pull-right" href="" ng-click="vm.addLoanProduct(null,$event)">
+            <div class="col-xs-10 col-lg-12" userpermission="'MFI_SETUP_LOAN_PRODUCT_CREATE'">
+                <p><a class="btn btn-success pull-right" ng-click="vm.addLoanProduct(null,$event)">
                     <i class="fa fa-plus"></i>
                     Add</a>
                 </p>
@@ -17,7 +17,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <md-table-container>
-                    <table md-table  md-progress="promise">
+                    <table md-table >
                         <thead  md-head>
                         <tr md-row>
                             <th></th>
@@ -36,7 +36,8 @@
                             <td md-cell>{{lproduct.maximum_loan_amount}}</td>
                             <td md-cell>{{lproduct.currency}}</td>
                             <td md-cell>
-                                <a ng-click="vm.editLoanProduct(lproduct,$event)">
+                                <a userpermission="['MFI_SETUP_LOAN_PRODUCT_CREATE','MFI_SETUP_LOAN_PRODUCT_UPDATE']"
+                                   ng-click="vm.editLoanProduct(lproduct,$event)">
                                     <i class="fa fa-edit"></i>
                                 </a>
                             </td>

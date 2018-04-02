@@ -20,7 +20,7 @@
     "submenu": [
       {"text": "MFI Setting",     "sref": "app.mfi_setting","permission": "MFI_SETUP_MFI"},
       {"text": "Manage Branches",     "sref": "app.manage_branch","permission": "MFI_SETUP_BRANCH"},
-      {"text": "Loan Product",     "sref": "app.loanproduct" ,   "permission": "ACAT_BUILDER_VIEW"}
+      {"text": "Loan Product",     "sref": "app.loanproduct" ,   "permission": "MFI_SETUP_LOAN_PRODUCT"}
     ]
   },
   {
