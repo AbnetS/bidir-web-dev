@@ -67,30 +67,29 @@
             vm.acat.other_costs =  subSections[2].cost_list;
 
             vm.acat.input.seedCostList = vm.acat.input.sub_sections[0].cost_list.linear;
-            vm.acat.seed_costs = vm.acat.input.sub_sections[0].cost_list;
 
-            vm.acat.input.fertilizerCostList = vm.acat.input.sub_sections[1].cost_list.linear;
+            // vm.acat.input.fertilizerCostList = vm.acat.input.sub_sections[1].cost_list.linear;
             vm.acat.fertilizer_costs = vm.acat.input.sub_sections[1].cost_list;
 
-            vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
+            // vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
             vm.acat.chemicals_costs = vm.acat.input.sub_sections[2].cost_list;
-            console.log("vm.acat.labour_costs", vm.acat);
             SetListType();
+            console.log("vm.acat", vm.acat);
         }
 
         function SetListType() {
 
-            vm.acat.fertilizer.list_type = vm.acat.fertilizer_costs.linear.length > 0 ?
-                ACAT_COST_LIST_TYPE.LINEAR : ACAT_COST_LIST_TYPE.GROUPED;
+            vm.acat.fertilizer.list_type = vm.acat.fertilizer_costs.grouped.length > 0 ?
+                ACAT_COST_LIST_TYPE.GROUPED : ACAT_COST_LIST_TYPE.LINEAR;
 
-            vm.acat.chemicals.list_type = vm.acat.chemicals_costs.linear.length > 0 ?
-                ACAT_COST_LIST_TYPE.LINEAR : ACAT_COST_LIST_TYPE.GROUPED;
+            vm.acat.chemicals.list_type = vm.acat.chemicals_costs.grouped.length > 0 ?
+                ACAT_COST_LIST_TYPE.GROUPED : ACAT_COST_LIST_TYPE.LINEAR;
 
-            vm.acat.labour_cost.list_type = vm.acat.labour_costs.linear.length > 0 ?
-                ACAT_COST_LIST_TYPE.LINEAR : ACAT_COST_LIST_TYPE.GROUPED;
+            vm.acat.labour_cost.list_type = vm.acat.labour_costs.grouped.length > 0 ?
+                ACAT_COST_LIST_TYPE.GROUPED : ACAT_COST_LIST_TYPE.LINEAR;
 
-            vm.acat.other_cost.list_type = vm.acat.seed_costs.linear.length > 0 ?
-                ACAT_COST_LIST_TYPE.LINEAR : ACAT_COST_LIST_TYPE.GROUPED;
+            vm.acat.other_cost.list_type = vm.acat.other_costs.grouped.length > 0 ?
+                ACAT_COST_LIST_TYPE.GROUPED : ACAT_COST_LIST_TYPE.LINEAR;
 
         }
 
@@ -98,7 +97,6 @@
             var myBlockUIOnStart = blockUI.instances.get('ACATBuilderBlockUI');
             myBlockUIOnStart.start();
             ACATService.GetACATById(vm.ACATId).then(function (response) {
-                console.log("GetACATById",response.data);
 
                 vm.acat.selected_crop = response.data.crop;
                 var subSections = response.data.sections[0].sub_sections;
@@ -143,15 +141,17 @@
                             vm.acat.input.seed = {};//reset cost item
                             break;
                         case ACAT_GROUP_CONSTANT.FERTILIZER:
-                            items = vm.acat.input.fertilizerCostList;
-                            if(vm.isEditSeedCost){
+                            items = vm.acat.fertilizer.list_type === ACAT_COST_LIST_TYPE.GROUPED ?
+                                vm.acat.fertilizer_costs.grouped : vm.acat.fertilizer_costs.linear;
+
+                            if(vm.isEditFertilizerCost){
                                 updateCostListAPI(cost,type);
                             }else{
                                 var item_unit_exist = DoesItemExistInCostList(cost,items);
                                 if(!item_unit_exist){
                                     AddCostListAPI({
                                         type: vm.acat.fertilizer.list_type,
-                                        parent_cost_list: vm.acat.input.sub_sections[1].cost_list._id,//Fertilizer cost list
+                                        parent_cost_list: vm.acat.fertilizer_costs._id,//Fertilizer cost list
                                         item:cost.item,
                                         unit:cost.unit
                                     },type);
@@ -161,6 +161,8 @@
                             break;
                         case ACAT_GROUP_CONSTANT.CHEMICALS:
                             items = vm.acat.input.chemicalsCostList;
+                            items = vm.acat.chemicals.list_type === ACAT_COST_LIST_TYPE.GROUPED ?
+                                vm.acat.chemicals_costs.grouped : vm.acat.chemicals_costs.linear;
                             if(vm.isEditSeedCost){
                                 updateCostListAPI(cost,type);
                             }else{

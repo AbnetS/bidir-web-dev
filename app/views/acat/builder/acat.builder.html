@@ -239,7 +239,8 @@
                                 <!-- END FERTILIZER ROW-->
 
                                 <!-- ITEMS TABLE-->
-                                <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                <div ng-show="vm.acat.fertilizer.list_type==='linear'"
+                                     class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                     <div class="table-responsive">
                                         <table class="table table-bordered">
                                             <thead>
@@ -251,7 +252,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr ng-repeat="cost in vm.acat.fertilizer_costs">
+                                            <tr ng-repeat="cost in vm.acat.fertilizer_costs.linear">
                                                 <td>{{$index + 1}}</td>
                                                 <td>{{cost.item}}</td>
                                                 <td>{{cost.unit}}</td>
@@ -270,6 +271,44 @@
                                         </table>
                                     </div>
                                 </div>
+                                <!--ITEM TABLE FOR GROUPED-->
+                                <div ng-show="vm.acat.fertilizer.list_type==='grouped'"
+                                     class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered"
+                                               ng-repeat="groupItem in vm.acat.fertilizer_costs">
+                                            <thead>
+                                            <tr class="text-center text-uppercase text-inverse">
+                                                <th colspan="4">{{groupItem.title}}</th>
+                                            </tr>
+                                            <tr class="bg-inverse-light">
+                                                <th>#</th>
+                                                <th>Item</th>
+                                                <th>Unit</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr ng-repeat="cost in groupItem.items">
+                                                <td>{{$index + 1}}</td>
+                                                <td>{{cost.item}}</td>
+                                                <td>{{cost.unit}}</td>
+                                                <td>
+                                                    <a class="btn btn-xs btn-outline btn-default"
+                                                       ng-click="vm.editCostItem(cost,'OTHER_COST',groupItem)">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
+                                                    <a  class="btn btn-xs btn-outline btn-danger"
+                                                        ng-click="vm.removeCostItem(cost,'OTHER_COST',groupItem)">
+                                                        <i class="fa fa-times"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
                                 <div class="col-lg-12"><p></p></div>
 
                             </div>
@@ -388,12 +427,11 @@
                                 <!-- END CHEMICALS ROW-->
 
                                 <!-- ITEMS TABLE-->
-                                <div ng-show="vm.acat.chemicals.list_type==='grouped' &&
-                                              vm.acat.input.chemicalsCostList.length > 0"
+                                <div ng-show="vm.acat.chemicals.list_type==='grouped'"
                                      class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                     <div class="table-responsive">
                                         <table class="table table-bordered"
-                                               ng-repeat="groupItem in vm.acat.input.chemicalsCostList">
+                                               ng-repeat="groupItem in vm.acat.chemicals_costs.grouped">
                                             <thead>
                                             <tr class="text-center text-uppercase text-inverse">
                                                 <th colspan="4">{{groupItem.title}}</th>
@@ -426,8 +464,7 @@
                                     </div>
                                 </div>
                                 <!--ITEM TABLE FOR LINEAR-->
-                                <div ng-show="vm.acat.chemicals.list_type==='linear'
-                                            && vm.acat.input.chemicalsCostList.length > 0">
+                                <div ng-show="vm.acat.chemicals.list_type==='linear'">
                                     <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
@@ -440,7 +477,7 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr ng-repeat="cost in vm.acat.input.chemicalsCostList">
+                                                <tr ng-repeat="cost in vm.acat.chemicals_costs.linear">
                                                     <td>{{$index + 1}}</td>
                                                     <td>{{cost.item}}</td>
                                                     <td>{{cost.unit}}</td>
