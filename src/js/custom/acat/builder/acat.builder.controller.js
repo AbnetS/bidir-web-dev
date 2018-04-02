@@ -364,13 +364,20 @@
                         vm.isEditSeedCost = false;
                         break;
                     case ACAT_GROUP_CONSTANT.FERTILIZER:
-                        console.log("fertilizer update before",vm.acat.fertilizer_costs.grouped);
+                        console.log("fertilizer update before",vm.acat.fertilizer_costs);
+
                         if(vm.acat.fertilizer.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            vm.acat.fertilizer_costs.grouped = _.filter(vm.acat.fertilizer_costs.grouped,
-                                function (itemCost) {
-                                    return itemCost._id !== cost._id;
+                            _.filter(vm.acat.fertilizer_costs.grouped,
+                                function (group) {
+                                    if(group._id === cost.parent_grouped_list){
+                                        console.log("group info b4",group);
+                                        group.items = _.filter(group.items, function (itemCost) {
+                                                return itemCost._id !== newCost._id;
+                                            });
+                                        group.items.push(newCost);
+                                        console.log("group info after",group);
+                                    }
                                 });
-                            vm.acat.fertilizer_costs.grouped.push(newCost);
                             console.log("fertilizer update after",vm.acat.fertilizer_costs.grouped);
                         }else{
                             vm.acat.fertilizer_costs.linear = _.filter(vm.acat.fertilizer_costs.linear,
