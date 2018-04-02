@@ -67,7 +67,9 @@
                                 AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
                                 myBlockUI.stop();
                             },function (error) {
-                                console.log("error");
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
                                 myBlockUI.stop();
                             });
                     }else{
@@ -78,6 +80,8 @@
                                 myBlockUI.stop();
                             },function (error) {
                                 console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
                                 myBlockUI.stop();
                             });
                     }
