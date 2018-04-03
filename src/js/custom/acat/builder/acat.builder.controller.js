@@ -68,7 +68,7 @@
             myBlockUIOnStart.start();
 
             ACATService.GetACATById(vm.ACATId).then(function (response) {
-
+                console.log("response",response);
                 vm.acat.selected_crop = response.data.crop;
                 var subSections = response.data.sections[0].sub_sections;
                 setSubSectionCostFromResponse(subSections);
@@ -86,6 +86,7 @@
             vm.acat.other_costs =  subSections[2].cost_list;
 
             vm.acat.input.seedCostList = vm.acat.input.sub_sections[0].cost_list.linear;
+            vm.acat.input.seed_costs = vm.acat.input.sub_sections[0].cost_list;
 
             vm.acat.fertilizer_costs = vm.acat.input.sub_sections[1].cost_list;
 
@@ -549,8 +550,17 @@
                 "Are you sure?", "Yes, Remove It!", "warning", true,function (isConfirm) {
 
                     if(isConfirm){
+                        var removableCost = {};
+                        if(type===ACAT_GROUP_CONSTANT.SEED){
+                            //
+                            removableCost = {
+                                _id:vm.acat.input.seed_costs._id,
+                                list_type:ACAT_COST_LIST_TYPE.LINEAR,
+                                item_id:cost._id
+                            }
+                        }
 
-                        ACATService.RemoveCostList(cost,ACAT_COST_LIST_TYPE.LINEAR).then(function (response) {
+                        ACATService.RemoveCostList(removableCost,removableCost.list_type).then(function (response) {
                             console.log("Removed Cost Item.........",response);
 
                         },function (error) {
