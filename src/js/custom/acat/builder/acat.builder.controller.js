@@ -126,8 +126,8 @@
                         case ACAT_GROUP_CONSTANT.SEED:
                             items = vm.acat.input.seedCostList;
                             var costItem = {
-                                type: 'linear',
-                                parent_cost_list: vm.acat.input.sub_sections[0].cost_list._id,//Fertilizer cost list
+                                type: ACAT_COST_LIST_TYPE.LINEAR,
+                                parent_cost_list: vm.acat.input.sub_sections[0].cost_list._id,
                                 item:cost.item,
                                 unit:cost.unit
                             };
@@ -148,17 +148,17 @@
                             if(vm.isEditFertilizerCost){
                                 updateCostListAPI(cost,type);
                             }else{
-                                var item_unit_exist = DoesItemExistInCostList(cost,items);
-                                if(!item_unit_exist){
-                                    AddCostListAPI({
-                                        type: vm.acat.fertilizer.list_type,
+                                if(!DoesItemExistInCostList(cost,items)){
+                                   var itemUnit = {
                                         parent_cost_list: vm.acat.fertilizer_costs._id,//Fertilizer cost list
                                         item:cost.item,
                                         unit:cost.unit
-                                    },type);
+                                    };
+                                    AddCostListAPI(itemUnit,type);
                                 }
                             }
-                            vm.acat.fertilizer = {};//reset cost item
+                            var resetFertilizerObj = _.pick(vm.acat.fertilizer, 'list_type');
+                            vm.acat.fertilizer = resetFertilizerObj;//reset cost item
                             break;
                         case ACAT_GROUP_CONSTANT.CHEMICALS:
                             items = vm.acat.chemicals.list_type === ACAT_COST_LIST_TYPE.GROUPED ?
@@ -439,7 +439,6 @@
             });
         }
         function _editCostItem(cost,type) {
-            console.log("CHEMICALS cost",group);
             switch (type){
                 case ACAT_GROUP_CONSTANT.SEED:
                     vm.isEditSeedCost =  true;
@@ -447,19 +446,19 @@
                     break;
                 case ACAT_GROUP_CONSTANT.FERTILIZER:
                     vm.isEditFertilizerCost =  true;
-                    vm.acat.fertilizer = cost;
+                    angular.extend(vm.acat.fertilizer,cost);
                     break;
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
                     vm.isEditChemicalsCost = true;
-                    vm.acat.chemicals = cost;
+                    angular.extend(vm.acat.chemicals,cost);
                     break;
                 case ACAT_GROUP_CONSTANT.LABOUR_COST:
                     vm.isEditLabourCost = true;
-                    vm.acat.labour_cost = cost;
+                    angular.extend(vm.acat.labour_cost,cost);
                     break;
                 case ACAT_GROUP_CONSTANT.OTHER_COST:
                     vm.isEditOtherCost = true;
-                    vm.acat.other_cost = cost;
+                    angular.extend(vm.acat.other_cost,cost);
                     break;
                 default:
                     break;
