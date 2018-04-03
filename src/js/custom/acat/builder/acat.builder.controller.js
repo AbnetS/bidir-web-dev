@@ -19,6 +19,8 @@
         vm.editCostItem = _editCostItem;
         vm.editGroupCostItem = _editGroupCostItem;
         vm.removeCostItem = _removeCostItem;
+        vm.removeGroupCostItem = _removeGroupCostItem;
+
         vm.cancelCostItem = _cancelCostItem;
         vm.cropSelectChanged = _cropSelectChanged;
         vm.onCostListTypeChange = _onCostListTypeChange;
@@ -85,13 +87,14 @@
             vm.acat.labour_costs = subSections[1].cost_list;
             vm.acat.other_costs =  subSections[2].cost_list;
 
-            vm.acat.input.seedCostList = vm.acat.input.sub_sections[0].cost_list.linear;
+            // vm.acat.input.seedCostList = vm.acat.input.sub_sections[0].cost_list.linear;
             vm.acat.input.seed_costs = vm.acat.input.sub_sections[0].cost_list;
 
             vm.acat.fertilizer_costs = vm.acat.input.sub_sections[1].cost_list;
 
             // // vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
             // vm.acat.chemicals_costs = vm.acat.input.sub_sections[2].cost_list;
+
             SetListType();
 
             console.log("vm.acat", vm.acat);
@@ -125,7 +128,7 @@
                     var items = [];
                     switch (type){
                         case ACAT_GROUP_CONSTANT.SEED:
-                            items = vm.acat.input.seedCostList;
+                            items = vm.acat.input.seed_costs.linear;
                             var costItem = {
                                 type: ACAT_COST_LIST_TYPE.LINEAR,
                                 parent_cost_list: vm.acat.input.sub_sections[0].cost_list._id,
@@ -324,7 +327,7 @@
                 var newCost = response.data;
                 switch (type){
                     case ACAT_GROUP_CONSTANT.SEED:
-                        vm.acat.input.seedCostList.push(newCost);
+                        vm.acat.input.seed_costs.linear.push(newCost);
                         break;
                     case ACAT_GROUP_CONSTANT.FERTILIZER:
                         if(vm.acat.fertilizer.list_type === ACAT_COST_LIST_TYPE.GROUPED){
@@ -354,11 +357,11 @@
                 var newCost = response.data;
                 switch (type){
                     case ACAT_GROUP_CONSTANT.SEED:
-                        vm.acat.input.seedCostList = _.filter(vm.acat.input.seedCostList,
+                        vm.acat.input.seed_costs.linear = _.filter(vm.acat.input.seed_costs.linear,
                             function (itemCost) {
                                 return itemCost._id !== cost._id;
                             });
-                        vm.acat.input.seedCostList.push(newCost);
+                        vm.acat.input.seed_costs.linear.push(newCost);
                         vm.isEditSeedCost = false;
                         break;
                     case ACAT_GROUP_CONSTANT.FERTILIZER:
@@ -545,14 +548,12 @@
         }
 
         function _removeCostItem(cost,type) {
-            // console.log("Remove Cost Item",cost);
             AlertService.showConfirmForDelete("You are about to DELETE COST LIST",
                 "Are you sure?", "Yes, Remove It!", "warning", true,function (isConfirm) {
 
                     if(isConfirm){
                         var removableCost = {};
                         if(type===ACAT_GROUP_CONSTANT.SEED){
-                            //
                             removableCost = {
                                 _id:vm.acat.input.seed_costs._id,
                                 list_type:ACAT_COST_LIST_TYPE.LINEAR,
@@ -563,7 +564,7 @@
                         ACATService.RemoveCostList(removableCost,removableCost.list_type).then(function (response) {
                             console.log("Removed Cost Item.........",response);
                             if(type===ACAT_GROUP_CONSTANT.SEED){
-                                vm.acat.input.seedCostList = _.filter(vm.acat.input.seedCostList,function(seedItem){
+                                vm.acat.input.seed_costs.linear = _.filter(vm.acat.input.seed_costs.linear,function(seedItem){
                                     return seedItem._id !== removableCost.item_id;
                                 })
                             }
@@ -576,6 +577,37 @@
                 });
 
         }
+        function _removeGroupCostItem(cost,type,group) {
+            AlertService.showConfirmForDelete("You are about to DELETE COST LIST From " + group.title,
+                "Are you sure?", "Yes, Remove It!", "warning", true,function (isConfirm) {
+
+                    if(isConfirm){
+                        var removableCost = {};
+                        if(type===ACAT_GROUP_CONSTANT.SEED){
+                            removableCost = {
+                                _id:vm.acat.input.seed_costs._id,
+                                list_type:ACAT_COST_LIST_TYPE.LINEAR,
+                                item_id:cost._id
+                            }
+                        }
+
+                        ACATService.RemoveCostList(removableCost,removableCost.list_type).then(function (response) {
+                            console.log("Removed Cost Item.........",response);
+                            if(type===ACAT_GROUP_CONSTANT.SEED){
+                                vm.acat.input.seed_costs.linear = _.filter(vm.acat.input.seed_costs.linear,function(seedItem){
+                                    return seedItem._id !== removableCost.item_id;
+                                })
+                            }
+
+                        },function (error) {
+                            console.log("error when removing cost list",error);
+                        });
+                    }
+
+                });
+
+        }
+
 
         //UPDATE CROP FOR CROP OR CREATE NEW ACAT FOR A CROP
         function _cropSelectChanged() {
@@ -607,6 +639,11 @@
                 if(isConfirm){
                         //TODO reset both grouped list & linear list
                     console.log("based on the type reset both grouped & linear list");
+                    ACATService.ResetCostList(vm.acat.fertilizer_costs).then(function(response){
+                        console.log("response",response);
+                    },function (error) {
+                        console.log("error",error);
+                    });
                     }else{
                         switch (type){
                             case ACAT_GROUP_CONSTANT.FERTILIZER:

@@ -82,7 +82,7 @@
                                             {{vm.isEditSeedCost?'Update':'Add'}}</button>
                                     </div>
                                     <!-- ITEMS LIST-->
-                                    <div ng-show="vm.acat.input.seedCostList.length>0"
+                                    <div ng-show="vm.acat.input.seed_costs.linear.length>0"
                                          class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
@@ -95,7 +95,7 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr ng-repeat="cost in vm.acat.input.seedCostList">
+                                                <tr ng-repeat="cost in vm.acat.input.seed_costs.linear">
                                                     <td>{{$index + 1}}</td>
                                                     <td>{{cost.item}}</td>
                                                     <td>{{cost.unit}}</td>
@@ -299,7 +299,7 @@
                                                         <i class="fa fa-edit"></i>
                                                     </a>
                                                     <a  class="btn btn-xs btn-outline btn-danger"
-                                                        ng-click="vm.removeCostItem(cost,'FERTILIZER',groupItem)">
+                                                        ng-click="vm.removeGroupCostItem(cost,'FERTILIZER',groupItem)">
                                                         <i class="fa fa-times"></i>
                                                     </a>
                                                 </td>
