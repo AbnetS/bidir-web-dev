@@ -667,7 +667,6 @@
                 var UpdatedACAT =   {
                     _id:$stateParams.id,
                     title: vm.acat.selected_crop.name +  '-CAT',
-                    description: vm.acat.description,
                     crop: vm.acat.selected_crop._id
                 };
                 ACATService.UpdateACAT(UpdatedACAT).then(function (response) {
