@@ -123,10 +123,14 @@
                                    name="txt_costOfLoan_percent" placeholder="Percent" />
                         </div>
                         <div class="col-md-2">
-                            <a class="btn btn-success btn-outline"
+                            <a ng-if="!vm.isEditCostOfLoan" class="btn btn-success btn-outline"
                                     ng-disabled="loanProductForm.txt_costOfLoan_item.$invalid"
                                     ng-click="vm.addToCostOfLoanList(vm.loan_product.costOfLoan)">
                                 <i ng-class="vm.isEditCostOfLoan? 'fa fa-refresh':'fa fa-plus'"></i>
+                            </a>
+                            <a ng-if="vm.isEditCostOfLoan" class="btn btn-reverse btn-outline"
+                               ng-click="vm.cancelEdit(false)">
+                                <i class="fa fa-times"></i>
                             </a>
                         </div>
                     </div>

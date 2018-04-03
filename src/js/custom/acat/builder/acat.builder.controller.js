@@ -668,10 +668,7 @@
             AlertService.showConfirmForDelete("You are about to change Cost List type " +
                 "Which will clear the previous type data",
                 "Are you sure?", "Yes, Change It!", "warning", true,function (isConfirm) {
-
                 if(isConfirm){
-                        //TODO reset both grouped list & linear list
-                    console.log("based on the type reset both grouped & linear list");
                     ACATService.ResetCostList(vm.acat.fertilizer_costs).then(function(response){
                         console.log("response",response);
                     },function (error) {
