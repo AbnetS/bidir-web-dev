@@ -707,7 +707,16 @@
                 "Are you sure?", "Yes, Change It!", "warning", true,function (isConfirm) {
                 if(isConfirm){
                     ACATService.ResetCostList(cost_list).then(function(response){
-                        console.log("response",response);
+                        switch (type){
+                            case ACAT_GROUP_CONSTANT.FERTILIZER:
+                                    vm.acat.fertilizer_costs.linear = [];
+                                    vm.acat.fertilizer_costs.grouped = [];
+                                break;
+                            case ACAT_GROUP_CONSTANT.CHEMICALS:
+                                break;
+                            default:
+                                break;
+                        }
                     },function (error) {
                         console.log("error",error);
                     });
