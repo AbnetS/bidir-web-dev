@@ -308,7 +308,7 @@
                 callAPI();
             },function (error) {
                 var message = error.data.error.message;
-                AlertService.showError("ERROR on adding cost item to group",message);
+                AlertService.showError("Error on adding cost item",message);
                 console.log("error while adding cost item on group",error);
             });
         }
@@ -597,6 +597,7 @@
 
                         ACATService.RemoveCostList(removableCost,removableCost.list_type).then(function (response) {
                             console.log("Removed Cost Item.........",response);
+                            //refresh view
                             switch (type){
                                 case ACAT_GROUP_CONSTANT.SEED:
                                     vm.acat.seed_costs.linear = _.filter(vm.acat.seed_costs.linear,function(seedItem){
@@ -635,34 +636,8 @@
                 });
 
         }
+
         function _removeGroupCostItem(cost,type,group) {
-            AlertService.showConfirmForDelete("You are about to DELETE COST LIST From " + group.title,
-                "Are you sure?", "Yes, Remove It!", "warning", true,function (isConfirm) {
-
-                    if(isConfirm){
-                        var removableCost = {};
-                        if(type===ACAT_GROUP_CONSTANT.SEED){
-                            removableCost = {
-                                _id:vm.acat.seed_costs._id,
-                                list_type:ACAT_COST_LIST_TYPE.LINEAR,
-                                item_id:cost._id
-                            }
-                        }
-
-                        ACATService.RemoveCostList(removableCost,removableCost.list_type).then(function (response) {
-                            console.log("Removed Cost Item.........",response);
-                            if(type===ACAT_GROUP_CONSTANT.SEED){
-                                vm.acat.seed_costs.linear = _.filter(vm.acat.seed_costs.linear,function(seedItem){
-                                    return seedItem._id !== removableCost.item_id;
-                                })
-                            }
-
-                        },function (error) {
-                            console.log("error when removing cost list",error);
-                        });
-                    }
-
-                });
 
         }
 
