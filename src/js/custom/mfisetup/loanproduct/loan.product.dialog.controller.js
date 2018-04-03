@@ -210,7 +210,7 @@
                         }
                     });
             }else{
-                console.log("type on create",type);
+                // console.log("type on create",type);
             }
 
         }
