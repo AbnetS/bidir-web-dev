@@ -24,9 +24,7 @@
             RemoveCostGroupList:_removeCostGroupList,
             ResetCostList:_resetCostList
         };
-        function _resetCostList(cost_list) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
-        }
+
 
         function _getCrops() {
             return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
@@ -61,6 +59,9 @@
         function _removeCostGroupList(group_cost_list,type){
             var item = {  item_id: group_cost_list.item_id  };
             return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group_cost_list._id) +'/' + type, item);
+        }
+        function _resetCostList(cost_list) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
         }
     }
 

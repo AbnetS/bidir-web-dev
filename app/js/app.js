@@ -4568,6 +4568,15 @@ var ACAT_COST_LIST_TYPE = {
 
 })();
 
+/**
+ * Created by Yoni on 3/30/2018.
+ */
+(function() {
+    'use strict';
+
+    angular.module('app.screening', []);
+
+})();
 (function() {
   "use strict";
 
@@ -4579,15 +4588,6 @@ function runBlock() {
 
 })();
 
-/**
- * Created by Yoni on 3/30/2018.
- */
-(function() {
-    'use strict';
-
-    angular.module('app.screening', []);
-
-})();
 
 // To run this code, edit file index.html or index.jade and change
 // html data-ng-app attribute from angle to myAppName
@@ -4641,9 +4641,7 @@ function runBlock() {
             RemoveCostGroupList:_removeCostGroupList,
             ResetCostList:_resetCostList
         };
-        function _resetCostList(cost_list) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
-        }
+
 
         function _getCrops() {
             return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
@@ -4678,6 +4676,9 @@ function runBlock() {
         function _removeCostGroupList(group_cost_list,type){
             var item = {  item_id: group_cost_list.item_id  };
             return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group_cost_list._id) +'/' + type, item);
+        }
+        function _resetCostList(cost_list) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
         }
     }
 
@@ -5022,6 +5023,69 @@ function runBlock() {
 
 })(window.angular);
 
+/**
+ * Created by Yoni on 3/30/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.screening").controller("ClientScreeningController", ClientScreeningController);
+
+    ClientScreeningController.$inject = ['ScreeningService'];
+
+    function ClientScreeningController(ScreeningService) {
+        var vm = this;
+        ScreeningService.GetScreeningByClientId();
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/30/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.screening").controller("ScreeningController", ScreeningController);
+
+    ScreeningController.$inject = ['ScreeningService'];
+
+    function ScreeningController(ScreeningService) {
+        var vm = this;
+        ScreeningService.GetScreenings();
+    }
+
+
+})(window.angular);
+
+/**
+ * Created by Yoni on 3/30/2018.
+ */
+
+(function(angular) {
+    'use strict';
+    angular.module('app.screening')
+
+        .service('ScreeningService', ScreeningService);
+
+    ScreeningService.$inject = ['$http','CommonService'];
+
+    function ScreeningService($http, CommonService) {
+        return {
+            GetScreenings: _getScreenings,
+            GetScreeningByClientId:_getScreeningByClientId
+        };
+        function _getScreenings() {
+            console.log("GET SCREENING LIST");
+        }
+        function _getScreeningByClientId(clientId) {
+            console.log("Get SCREENING FOR CLIENT");
+        }
+    }
+
+
+})(window.angular);
 (function(angular) {
   'use strict';
   angular.module('app.mfi')
@@ -5106,69 +5170,6 @@ function runBlock() {
 
 })(window.angular);
 
-/**
- * Created by Yoni on 3/30/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.screening").controller("ClientScreeningController", ClientScreeningController);
-
-    ClientScreeningController.$inject = ['ScreeningService'];
-
-    function ClientScreeningController(ScreeningService) {
-        var vm = this;
-        ScreeningService.GetScreeningByClientId();
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/30/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.screening").controller("ScreeningController", ScreeningController);
-
-    ScreeningController.$inject = ['ScreeningService'];
-
-    function ScreeningController(ScreeningService) {
-        var vm = this;
-        ScreeningService.GetScreenings();
-    }
-
-
-})(window.angular);
-
-/**
- * Created by Yoni on 3/30/2018.
- */
-
-(function(angular) {
-    'use strict';
-    angular.module('app.screening')
-
-        .service('ScreeningService', ScreeningService);
-
-    ScreeningService.$inject = ['$http','CommonService'];
-
-    function ScreeningService($http, CommonService) {
-        return {
-            GetScreenings: _getScreenings,
-            GetScreeningByClientId:_getScreeningByClientId
-        };
-        function _getScreenings() {
-            console.log("GET SCREENING LIST");
-        }
-        function _getScreeningByClientId(clientId) {
-            console.log("Get SCREENING FOR CLIENT");
-        }
-    }
-
-
-})(window.angular);
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -5259,10 +5260,7 @@ function runBlock() {
             vm.acat.other_costs =  subSections[2].cost_list;
             
             vm.acat.seed_costs = vm.acat.input.sub_sections[0].cost_list;
-
             vm.acat.fertilizer_costs = vm.acat.input.sub_sections[1].cost_list;
-
-            // // vm.acat.input.chemicalsCostList = vm.acat.input.sub_sections[2].cost_list.grouped;
             // vm.acat.chemicals_costs = vm.acat.input.sub_sections[2].cost_list;
 
             SetListType();
@@ -5276,7 +5274,7 @@ function runBlock() {
 
             // vm.acat.chemicals.list_type = vm.acat.chemicals_costs.grouped.length > 0 ?
             //     ACAT_COST_LIST_TYPE.GROUPED :  vm.acat.chemicals_costs.linear.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
-            //
+
             // vm.acat.labour_cost.list_type = vm.acat.labour_costs.grouped.length > 0 ?
             //     ACAT_COST_LIST_TYPE.GROUPED : vm.acat.labour_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
             //
@@ -5720,27 +5718,85 @@ function runBlock() {
             }
 
         }
+        function prepareCostListForRemoval(cost,type) {
+            switch (type){
+                case ACAT_GROUP_CONSTANT.SEED:
+                    return {
+                        _id:vm.acat.seed_costs._id,
+                        list_type:vm.acat.fertilizer.list_type,
+                        item_id:cost._id
+                    };
+                    break;
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    return {
+                        _id:vm.acat.fertilizer_costs._id,
+                        list_type:vm.acat.fertilizer.list_type,
+                        item_id:cost._id
+                    };
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    return {
+                        _id:vm.acat.chemicals_costs._id,
+                        list_type:vm.acat.chemicals.list_type,
+                        item_id:cost._id
+                    };
+                    break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    return {
+                        _id:vm.acat.labour_costs._id,
+                        list_type:vm.acat.chemicals.list_type,
+                        item_id:cost._id
+                    };
+                    break;
+                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    return {
+                        _id:vm.acat.other_costs._id,
+                        list_type:vm.acat.chemicals.list_type,
+                        item_id:cost._id
+                    };
+                    break;
+                default:
+                    break;
+            }
+        }
 
         function _removeCostItem(cost,type) {
             AlertService.showConfirmForDelete("You are about to DELETE COST LIST",
                 "Are you sure?", "Yes, Remove It!", "warning", true,function (isConfirm) {
 
                     if(isConfirm){
-                        var removableCost = {};
-                        if(type===ACAT_GROUP_CONSTANT.SEED){
-                            removableCost = {
-                                _id:vm.acat.seed_costs._id,
-                                list_type:ACAT_COST_LIST_TYPE.LINEAR,
-                                item_id:cost._id
-                            }
-                        }
+                        var removableCost = prepareCostListForRemoval(cost,type);
 
                         ACATService.RemoveCostList(removableCost,removableCost.list_type).then(function (response) {
                             console.log("Removed Cost Item.........",response);
-                            if(type===ACAT_GROUP_CONSTANT.SEED){
-                                vm.acat.seed_costs.linear = _.filter(vm.acat.seed_costs.linear,function(seedItem){
-                                    return seedItem._id !== removableCost.item_id;
-                                })
+                            switch (type){
+                                case ACAT_GROUP_CONSTANT.SEED:
+                                    vm.acat.seed_costs.linear = _.filter(vm.acat.seed_costs.linear,function(seedItem){
+                                        return seedItem._id !== removableCost.item_id;
+                                    });
+                                    break;
+                                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                                    if(vm.acat.fertilizer.list_type === ACAT_COST_LIST_TYPE.GROUPED){
+                                        vm.acat.fertilizer_costs.grouped = _.filter(vm.acat.fertilizer_costs.grouped,function(seedItem){
+                                            return seedItem._id !== removableCost.item_id;
+                                        });
+                                    }else{
+                                        vm.acat.fertilizer_costs.linear = _.filter(vm.acat.fertilizer_costs.linear,function(seedItem){
+                                            return seedItem._id !== removableCost.item_id;
+                                        });
+                                    }
+                                    break;
+                                case ACAT_GROUP_CONSTANT.CHEMICALS:
+
+                                    break;
+                                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+
+                                    break;
+                                case ACAT_GROUP_CONSTANT.OTHER_COST:
+
+                                    break;
+                                default:
+                                    break;
                             }
 
                         },function (error) {
