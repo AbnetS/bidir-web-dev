@@ -74,6 +74,12 @@
 
 
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
+})();
 (function(angular) {
   "use strict";
 
@@ -113,12 +119,6 @@
 
     angular
         .module('app.lazyload', []);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
 })();
 (function() {
     'use strict';
@@ -211,6 +211,15 @@
     angular
         .module('app.translate', []);
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.utils', [
+          'app.colors'
+          ]);
+})();
+
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -222,15 +231,6 @@
         .module('app.welcomePage', []);
 
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.utils', [
-          'app.colors'
-          ]);
-})();
-
 (function(angular) {
     'use strict';
     angular.module('app.auth')
@@ -345,6 +345,56 @@
     }
 })(window.angular);
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
 
 (function(angular) {
   "use strict";
@@ -549,6 +599,7 @@ var API = {
             LoanProducts:'loanProducts',
             CreateLoanProducts:'loanProducts/create',
             CostListUpdate: 'costLists',
+            CostListGroups: 'costLists/groups',
             CostList: 'costLists/add',
             CreateACAT:'forms/initialize'
         }
@@ -869,56 +920,6 @@ var ACAT_COST_LIST_TYPE = {
           ]
         })
         ;
-
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
 
 })();
 
@@ -3587,139 +3588,6 @@ var ACAT_COST_LIST_TYPE = {
 
     }
 })();
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.welcomePage')
-        .controller('TaskDetailController', TaskDetailController);
-
-    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items','SweetAlert'];
-
-    function TaskDetailController($mdDialog, WelcomeService ,items,SweetAlert) {
-        var vm = this
-        vm.cancel = _cancel;
-        vm.approveUser = _approveUser;
-        vm.declineUser = _declineUser;
-        vm.task = items.taskInfo;
-        console.log("task ",vm.task);
-        WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
-            // console.log("task related user",response);
-            vm.userInfo = response.data;
-
-        },function(error){
-            console.log("error",error);
-        });
-
-        function _approveUser() {
-            var task = {
-                taskId:vm.task._id ,
-                status: "approved",
-                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
-            };
-            updateStatus(task);
-        }
-
-        function _declineUser() {
-            var task = {
-                taskId:vm.task._id ,
-                status: "declined",
-                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
-            };
-            updateStatus(task);
-        }
-
-        function updateStatus(task){
-            WelcomeService.ChangeTaskStatus(task).then(
-                function(response) {
-                    SweetAlert.swal('Task Status Changed!',
-                        'Task '+ task.status + ' Successfully!',
-                        'success');
-                    console.log("task updated",response);
-                    $mdDialog.hide();
-                },
-                function(error) {
-                    SweetAlert.swal( 'Oops...',
-                        'Something went wrong!',
-                        'error');
-                    console.log("could not be updated", error);
-                }
-            );
-        }
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-    }
-
-}(window.angular));
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.welcomePage')
-        .controller('WelcomeController', WelcomeController);
-
-    WelcomeController.$inject = ['$mdDialog', 'WelcomeService','AuthService'];
-
-    function WelcomeController($mdDialog, WelcomeService ,AuthService) {
-        var vm = this;
-
-    }
-
-}(window.angular));
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.welcomePage')
-
-        .service('WelcomeService', WelcomeService);
-    WelcomeService.$inject = ['$http', 'CommonService','AuthService'];
-
-    function WelcomeService($http, CommonService,AuthService) {
-        return {
-            GetTasks: _getTasks,
-            GetUserAccount:_getUserAccount,
-            ChangeTaskStatus:_changeTaskStatus
-        };
-
-        function _getUserAccount(id){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
-        }
-        function _getTasks(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Tasks.GetAll),httpConfig);
-        }
-        function _changeTaskStatus(taskObj) {
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
-        }
-    }
-
-})(window.angular);
 /**=========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
@@ -4150,6 +4018,139 @@ var ACAT_COST_LIST_TYPE = {
     }
 })();
 
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.welcomePage')
+        .controller('TaskDetailController', TaskDetailController);
+
+    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items','SweetAlert'];
+
+    function TaskDetailController($mdDialog, WelcomeService ,items,SweetAlert) {
+        var vm = this
+        vm.cancel = _cancel;
+        vm.approveUser = _approveUser;
+        vm.declineUser = _declineUser;
+        vm.task = items.taskInfo;
+        console.log("task ",vm.task);
+        WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
+            // console.log("task related user",response);
+            vm.userInfo = response.data;
+
+        },function(error){
+            console.log("error",error);
+        });
+
+        function _approveUser() {
+            var task = {
+                taskId:vm.task._id ,
+                status: "approved",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
+        }
+
+        function _declineUser() {
+            var task = {
+                taskId:vm.task._id ,
+                status: "declined",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
+        }
+
+        function updateStatus(task){
+            WelcomeService.ChangeTaskStatus(task).then(
+                function(response) {
+                    SweetAlert.swal('Task Status Changed!',
+                        'Task '+ task.status + ' Successfully!',
+                        'success');
+                    console.log("task updated",response);
+                    $mdDialog.hide();
+                },
+                function(error) {
+                    SweetAlert.swal( 'Oops...',
+                        'Something went wrong!',
+                        'error');
+                    console.log("could not be updated", error);
+                }
+            );
+        }
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.welcomePage')
+        .controller('WelcomeController', WelcomeController);
+
+    WelcomeController.$inject = ['$mdDialog', 'WelcomeService','AuthService'];
+
+    function WelcomeController($mdDialog, WelcomeService ,AuthService) {
+        var vm = this;
+
+    }
+
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.welcomePage')
+
+        .service('WelcomeService', WelcomeService);
+    WelcomeService.$inject = ['$http', 'CommonService','AuthService'];
+
+    function WelcomeService($http, CommonService,AuthService) {
+        return {
+            GetTasks: _getTasks,
+            GetUserAccount:_getUserAccount,
+            ChangeTaskStatus:_changeTaskStatus
+        };
+
+        function _getUserAccount(id){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
+        }
+        function _getTasks(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Tasks.GetAll),httpConfig);
+        }
+        function _changeTaskStatus(taskObj) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
+        }
+    }
+
+})(window.angular);
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -4635,10 +4636,11 @@ function runBlock() {
             GetAllACATList: _getAllACAT,
             GetACATById: _getACATById,
             CreateACAT:_createACAT,
+            UpdateACAT:_updateACAT,
             AddCostList:_addCostList,
             UpdateCostList:_updateCostList,
-            RemoveCostList:_removeCostList,
-            RemoveCostGroupList:_removeCostGroupList,
+            RemoveCostListLinear:_removeCostListLinear,
+            RemoveCostListGroup:_removeCostGroupList,
             ResetCostList:_resetCostList
         };
 
@@ -4668,14 +4670,17 @@ function runBlock() {
         function _createACAT(acat) {
             return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
         }
+        function _updateACAT(acat) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,acat._id), acat);
+        }
 
-        function _removeCostList(cost_list,type){
+        function _removeCostListLinear(cost_list){
             var item = {  item_id: cost_list.item_id  };
             return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + type, item);
         }
-        function _removeCostGroupList(group_cost_list,type){
+        function _removeCostGroupList(group_cost_list){
             var item = {  item_id: group_cost_list.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group_cost_list._id) +'/' + type, item);
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,group_cost_list._id) +'/items', item);
         }
         function _resetCostList(cost_list) {
             return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
@@ -5285,8 +5290,15 @@ function runBlock() {
 
         function callApiForCrops(){
             ACATService.GetCrops().then(function (response) {
-                vm.crops = response.data.docs;
-                // console.log("crop list",vm.crops);
+                var cropList = response.data.docs;
+                if(vm.isEdit){
+                    vm.crops = _.filter(cropList,function (crp) {
+                        return !crp.has_acat;
+                    })
+                }else{
+                    vm.crops = cropList;
+                }
+                console.log("crop list",vm.crops);
             });
         }
 
@@ -5768,7 +5780,7 @@ function runBlock() {
                     if(isConfirm){
                         var removableCost = prepareCostListForRemoval(cost,type);
 
-                        ACATService.RemoveCostList(removableCost,removableCost.list_type).then(function (response) {
+                        ACATService.RemoveCostListLinear(removableCost,removableCost.list_type).then(function (response) {
                             console.log("Removed Cost Item.........",response);
                             //refresh view
                             switch (type){
@@ -5811,7 +5823,22 @@ function runBlock() {
         }
 
         function _removeGroupCostItem(cost,type,group) {
+            AlertService.showConfirmForDelete("You are about to DELETE COST LIST",
+                "Are you sure?", "Yes, Remove It!", "warning", true,function (isConfirm) {
 
+                    if(isConfirm){
+                        var removableCost = prepareCostListForRemoval(cost,type,group);
+
+                        ACATService.RemoveCostListGroup(removableCost,removableCost.list_type)
+                            .then(function (response) {
+                            console.log("Removed Cost Item.........",response);
+
+                        },function (error) {
+                            console.log("error when removing cost list",error);
+                        });
+                    }
+
+                });
         }
 
 
@@ -5819,14 +5846,28 @@ function runBlock() {
         function _cropSelectChanged() {
             if(vm.isEdit){
                 //    UPDATE ACAT CROP
+                var UpdatedACAT =   {
+                    _id:$stateParams.id,
+                    title: vm.acat.selected_crop.name +  '-CAT',
+                    description: vm.acat.description,
+                    crop: vm.acat.selected_crop._id
+                };
+                ACATService.UpdateACAT(UpdatedACAT).then(function (response) {
+                    console.log("Updated acat ",response);
+                    var acatData = response.data;
+                    $state.go('app.acatbuilder',{id:acatData._id},{inherit:true});
+                },function (error) {
+                    console.log("error on updating acat",error);
+                })
+
             }else {
                 // Initialize ACAT with this crop
-                // vm.acat.selected_crop
                 var acatCrop =   {
                     title: vm.acat.selected_crop.name +  '-CAT',
                     description: vm.acat.selected_crop.name +  '-CAT desc',
                     crop: vm.acat.selected_crop._id
                 };
+
                 ACATService.CreateACAT(acatCrop).then(function (response) {
                     console.log("ACAT ",response);
                     var acatData = response.data;
@@ -5837,12 +5878,12 @@ function runBlock() {
             }
         }
 
-        function _onCostListTypeChange(type) {
+        function _onCostListTypeChange(type,cost_list) {
             AlertService.showConfirmForDelete("You are about to change Cost List type " +
                 "Which will clear the previous type data",
                 "Are you sure?", "Yes, Change It!", "warning", true,function (isConfirm) {
                 if(isConfirm){
-                    ACATService.ResetCostList(vm.acat.fertilizer_costs).then(function(response){
+                    ACATService.ResetCostList(cost_list).then(function(response){
                         console.log("response",response);
                     },function (error) {
                         console.log("error",error);

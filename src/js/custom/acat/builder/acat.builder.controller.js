@@ -113,8 +113,15 @@
 
         function callApiForCrops(){
             ACATService.GetCrops().then(function (response) {
-                vm.crops = response.data.docs;
-                // console.log("crop list",vm.crops);
+                var cropList = response.data.docs;
+                if(vm.isEdit){
+                    vm.crops = _.filter(cropList,function (crp) {
+                        return !crp.has_acat;
+                    })
+                }else{
+                    vm.crops = cropList;
+                }
+                console.log("crop list",vm.crops);
             });
         }
 
@@ -596,7 +603,7 @@
                     if(isConfirm){
                         var removableCost = prepareCostListForRemoval(cost,type);
 
-                        ACATService.RemoveCostList(removableCost,removableCost.list_type).then(function (response) {
+                        ACATService.RemoveCostListLinear(removableCost,removableCost.list_type).then(function (response) {
                             console.log("Removed Cost Item.........",response);
                             //refresh view
                             switch (type){
@@ -639,7 +646,22 @@
         }
 
         function _removeGroupCostItem(cost,type,group) {
+            AlertService.showConfirmForDelete("You are about to DELETE COST LIST",
+                "Are you sure?", "Yes, Remove It!", "warning", true,function (isConfirm) {
 
+                    if(isConfirm){
+                        var removableCost = prepareCostListForRemoval(cost,type,group);
+
+                        ACATService.RemoveCostListGroup(removableCost,removableCost.list_type)
+                            .then(function (response) {
+                            console.log("Removed Cost Item.........",response);
+
+                        },function (error) {
+                            console.log("error when removing cost list",error);
+                        });
+                    }
+
+                });
         }
 
 
@@ -647,14 +669,28 @@
         function _cropSelectChanged() {
             if(vm.isEdit){
                 //    UPDATE ACAT CROP
+                var UpdatedACAT =   {
+                    _id:$stateParams.id,
+                    title: vm.acat.selected_crop.name +  '-CAT',
+                    description: vm.acat.description,
+                    crop: vm.acat.selected_crop._id
+                };
+                ACATService.UpdateACAT(UpdatedACAT).then(function (response) {
+                    console.log("Updated acat ",response);
+                    var acatData = response.data;
+                    $state.go('app.acatbuilder',{id:acatData._id},{inherit:true});
+                },function (error) {
+                    console.log("error on updating acat",error);
+                })
+
             }else {
                 // Initialize ACAT with this crop
-                // vm.acat.selected_crop
                 var acatCrop =   {
                     title: vm.acat.selected_crop.name +  '-CAT',
                     description: vm.acat.selected_crop.name +  '-CAT desc',
                     crop: vm.acat.selected_crop._id
                 };
+
                 ACATService.CreateACAT(acatCrop).then(function (response) {
                     console.log("ACAT ",response);
                     var acatData = response.data;
@@ -665,12 +701,12 @@
             }
         }
 
-        function _onCostListTypeChange(type) {
+        function _onCostListTypeChange(type,cost_list) {
             AlertService.showConfirmForDelete("You are about to change Cost List type " +
                 "Which will clear the previous type data",
                 "Are you sure?", "Yes, Change It!", "warning", true,function (isConfirm) {
                 if(isConfirm){
-                    ACATService.ResetCostList(vm.acat.fertilizer_costs).then(function(response){
+                    ACATService.ResetCostList(cost_list).then(function(response){
                         console.log("response",response);
                     },function (error) {
                         console.log("error",error);

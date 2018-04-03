@@ -61,6 +61,7 @@ var API = {
             LoanProducts:'loanProducts',
             CreateLoanProducts:'loanProducts/create',
             CostListUpdate: 'costLists',
+            CostListGroups: 'costLists/groups',
             CostList: 'costLists/add',
             CreateACAT:'forms/initialize'
         }

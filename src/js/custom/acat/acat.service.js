@@ -18,10 +18,11 @@
             GetAllACATList: _getAllACAT,
             GetACATById: _getACATById,
             CreateACAT:_createACAT,
+            UpdateACAT:_updateACAT,
             AddCostList:_addCostList,
             UpdateCostList:_updateCostList,
-            RemoveCostList:_removeCostList,
-            RemoveCostGroupList:_removeCostGroupList,
+            RemoveCostListLinear:_removeCostListLinear,
+            RemoveCostListGroup:_removeCostGroupList,
             ResetCostList:_resetCostList
         };
 
@@ -51,14 +52,17 @@
         function _createACAT(acat) {
             return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
         }
+        function _updateACAT(acat) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,acat._id), acat);
+        }
 
-        function _removeCostList(cost_list,type){
+        function _removeCostListLinear(cost_list){
             var item = {  item_id: cost_list.item_id  };
             return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + type, item);
         }
-        function _removeCostGroupList(group_cost_list,type){
+        function _removeCostGroupList(group_cost_list){
             var item = {  item_id: group_cost_list.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group_cost_list._id) +'/' + type, item);
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,group_cost_list._id) +'/items', item);
         }
         function _resetCostList(cost_list) {
             return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
