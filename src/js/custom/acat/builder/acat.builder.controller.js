@@ -562,6 +562,11 @@
 
                         ACATService.RemoveCostList(removableCost,removableCost.list_type).then(function (response) {
                             console.log("Removed Cost Item.........",response);
+                            if(type===ACAT_GROUP_CONSTANT.SEED){
+                                vm.acat.input.seedCostList = _.filter(vm.acat.input.seedCostList,function(seedItem){
+                                    return seedItem._id !== removableCost.item_id;
+                                })
+                            }
 
                         },function (error) {
                             console.log("error when removing cost list",error);
