@@ -113,14 +113,9 @@
 
         function callApiForCrops(){
             ACATService.GetCrops().then(function (response) {
-                var cropList = response.data.docs;
-                if(vm.isEdit){
-                    vm.crops = _.filter(cropList,function (crp) {
-                        return !crp.has_acat;
-                    })
-                }else{
-                    vm.crops = cropList;
-                }
+                vm.crops = _.filter(response.data.docs,function (crop) {
+                    return !crop.has_acat;
+                });
                 console.log("crop list",vm.crops);
             });
         }
