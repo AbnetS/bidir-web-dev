@@ -70,7 +70,7 @@
             myBlockUIOnStart.start();
 
             ACATService.GetACATById(vm.ACATId).then(function (response) {
-                console.log("response",response);
+                console.log("GetACATById",response);
                 vm.acat.selected_crop = response.data.crop;
                 var subSections = response.data.sections[0].sub_sections;
                 setSubSectionCostFromResponse(subSections);
@@ -144,7 +144,7 @@
                         case ACAT_GROUP_CONSTANT.FERTILIZER:
                             items = vm.acat.fertilizer.list_type === ACAT_COST_LIST_TYPE.GROUPED ?
                                 vm.acat.fertilizer_costs.grouped : vm.acat.fertilizer_costs.linear;
-
+                                cost.type = vm.acat.fertilizer.list_type;
                             if(vm.isEditFertilizerCost){
                                 updateCostListAPI(cost,type);
                             }else{
@@ -152,7 +152,8 @@
                                    var itemUnit = {
                                         parent_cost_list: vm.acat.fertilizer_costs._id,//Fertilizer cost list
                                         item:cost.item,
-                                        unit:cost.unit
+                                        unit:cost.unit,
+                                        type:vm.acat.fertilizer.list_type
                                     };
                                     AddCostListAPI(itemUnit,type);
                                 }
