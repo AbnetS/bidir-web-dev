@@ -821,11 +821,19 @@
         }
 
         function _editGroupSection(group, type) {
-            vm.isEditCostGroup = true;
-            vm.acat.fertilizer.title = group.title;
-            vm.acat.fertilizer._id = group._id;
-            vm.acat.fertilizer.existing_group = true;
-            console.log("edit group",vm.acat.fertilizer);
+            switch (type){
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    vm.isEditCostGroup = true;
+                    vm.acat.fertilizer.title = group.title;
+                    vm.acat.fertilizer._id = group._id;
+                    vm.acat.fertilizer.existing_group = true;
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    break;
+                default:
+                    break;
+            }
+
 
         }
 

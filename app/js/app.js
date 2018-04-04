@@ -118,13 +118,13 @@
     'use strict';
 
     angular
-        .module('app.loadingbar', []);
+        .module('app.lazyload', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.lazyload', []);
+        .module('app.loadingbar', []);
 })();
 /**
  * Created by Yoni on 11/30/2017.
@@ -746,50 +746,6 @@ var ACAT_COST_LIST_TYPE = {
     'use strict';
 
     angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.lazyload')
         .config(lazyloadConfig);
 
@@ -967,6 +923,50 @@ var ACAT_COST_LIST_TYPE = {
 
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
+
+})();
 /**
  * Created by Yoni on 12/10/2017.
  */
@@ -3077,7 +3077,7 @@ var ACAT_COST_LIST_TYPE = {
       // -----------------------------------
       $rootScope.app = {
         name: 'Bidir Web',
-        description: 'Bidir Web Application',
+        description: 'Bidir Web App',
         year: ((new Date()).getFullYear()),
         layout: {
           isFixed: true,
@@ -6008,11 +6008,19 @@ function runBlock() {
         }
 
         function _editGroupSection(group, type) {
-            vm.isEditCostGroup = true;
-            vm.acat.fertilizer.title = group.title;
-            vm.acat.fertilizer._id = group._id;
-            vm.acat.fertilizer.existing_group = true;
-            console.log("edit group",vm.acat.fertilizer);
+            switch (type){
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    vm.isEditCostGroup = true;
+                    vm.acat.fertilizer.title = group.title;
+                    vm.acat.fertilizer._id = group._id;
+                    vm.acat.fertilizer.existing_group = true;
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    break;
+                default:
+                    break;
+            }
+
 
         }
 

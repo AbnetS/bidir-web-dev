@@ -30,7 +30,7 @@
       // -----------------------------------
       $rootScope.app = {
         name: 'Bidir Web',
-        description: 'Bidir Web Application',
+        description: 'Bidir Web App',
         year: ((new Date()).getFullYear()),
         layout: {
           isFixed: true,
