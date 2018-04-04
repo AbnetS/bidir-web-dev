@@ -24,6 +24,7 @@
         vm.cancelCostItem = _cancelCostItem;
         vm.cropSelectChanged = _cropSelectChanged;
         vm.onCostListTypeChange = _onCostListTypeChange;
+        vm.addGroupOnSection = _addGroupOnSection;
 
 
 
@@ -250,22 +251,22 @@
 
 
                     }else{
-                        var groupCost = PrepareGroupCostListForAdd(groupInfo, type);
-
-                        //ADD THE NEW GROUP TO COST LIST PARENT
-                        ACATService.AddCostList(groupCost).then(function (response) {
-                            console.log("group created",response.data);
-                            var groupItem = response.data; //Group Information captured
-
-                            AddCostItemToGroup({
-                                parent_grouped_list:groupItem._id,
-                                item: groupInfo.item,
-                                unit: groupInfo.unit
-                            },type);
-
-                        },function (error) {
-                            console.log("error on group creation",error);
-                        });
+                        // var groupCost = PrepareGroupCostListForAdd(groupInfo, type);
+                        //
+                        // //ADD THE NEW GROUP TO COST LIST PARENT
+                        // ACATService.AddCostList(groupCost).then(function (response) {
+                        //     console.log("group created",response.data);
+                        //     var groupItem = response.data; //Group Information captured
+                        //
+                        //     AddCostItemToGroup({
+                        //         parent_grouped_list:groupItem._id,
+                        //         item: groupInfo.item,
+                        //         unit: groupInfo.unit
+                        //     },type);
+                        //
+                        // },function (error) {
+                        //     console.log("error on group creation",error);
+                        // });
                     }
 
             }
@@ -745,6 +746,21 @@
                     });
             }
 
+        }
+
+        function _addGroupOnSection(groupInfo,type) {
+            var groupCost = PrepareGroupCostListForAdd(groupInfo, type);
+            //ADD THE NEW GROUP TO COST LIST PARENT
+            ACATService.AddCostList(groupCost).then(function (response) {
+                console.log("group created",response.data);
+                var newGroup = response.data;
+                callAPI();
+                groupInfo.existing_group = true;
+                groupInfo.selected_group = newGroup;
+
+            },function (error) {
+                console.log("error on group creation",error);
+            });
         }
 
     }

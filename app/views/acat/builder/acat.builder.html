@@ -189,9 +189,18 @@
                                         <div class="col-md-4">
                                             <div ng-show="!vm.acat.fertilizer.existing_group" class="form-group">
                                                 <label>Group</label>
-                                                <input class="form-control" type="text"
-                                                       ng-model="vm.acat.fertilizer.title"
-                                                       name="item" placeholder="Group Name" />
+
+                                                <div class="input-group">
+                                                    <input class="form-control" type="text"
+                                                           ng-model="vm.acat.fertilizer.title"
+                                                           name="item" placeholder="Group Name" />
+                                                    <span class="input-group-btn">
+                                                         <button class="btn btn-success btn-outline"
+                                                                 ng-click="vm.addGroupOnSection(vm.acat.fertilizer,'FERTILIZER')">
+                                                                {{vm.isEditFertilizerCost?'Update':'Add Group'}}
+                                                            </button>
+                                                    </span>
+                                                </div>
                                             </div>
                                             <div ng-show="vm.acat.fertilizer.existing_group">
                                                 <label>Group</label>
