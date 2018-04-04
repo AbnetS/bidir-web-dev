@@ -5792,9 +5792,8 @@ function runBlock() {
                     });
                     break;
                 case ACAT_GROUP_CONSTANT.FERTILIZER:
-                    console.log("refresh cost list",removableCost);
                     if(vm.acat.fertilizer.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                        vm.acat.fertilizer_costs.grouped = _.filter(vm.acat.fertilizer_costs.grouped,function(seedItem){
+                        removableCost.group.items = _.filter(removableCost.group.items,function(seedItem){
                             return seedItem._id !== removableCost.item_id;
                         });
                     }else{
@@ -5817,13 +5816,14 @@ function runBlock() {
             }
         }
 
-        function _removeCostItemGrouped(cost,type,group) {
-            AlertService.showConfirmForDelete("You are about to DELETE COST LIST",
+        function _removeCostItemGrouped(cost,type,groupInfo) {
+            AlertService.showConfirmForDelete("You are about to DELETE Cost List From Group",
                 "Are you sure?", "Yes, Remove It!", "warning", true,function (isConfirm) {
 
                     if(isConfirm){
                         var removableCost = {
-                            _id:group._id,
+                            _id:groupInfo._id,
+                            group:groupInfo,
                             list_type:vm.acat.fertilizer.list_type,
                             item_id:cost._id
                         };
