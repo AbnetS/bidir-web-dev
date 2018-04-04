@@ -172,55 +172,59 @@
                         case ACAT_GROUP_CONSTANT.CHEMICALS:
                             items = vm.acat.chemicals.list_type === ACAT_COST_LIST_TYPE.GROUPED ?
                                 vm.acat.chemicals_costs.grouped : vm.acat.chemicals_costs.linear;
-                            if(vm.isEditChemicalsCost){
+                            if(vm.isEditFertilizerCost){
                                 updateCostListAPI(cost,type);
                             }else{
-                                var item_exist = DoesItemExistInCostList(cost,items);
-                                if(!item_exist){
-                                    var prepareCost =   {
-                                        type: vm.acat.chemicals.list_type,
-                                        parent_cost_list: vm.acat.input.sub_sections[2].cost_list._id,//Fertilizer cost list
+                                if(!DoesItemExistInCostList(cost,items)){
+                                    var itemUnit = {
+                                        parent_cost_list: vm.acat.chemicals_costs._id,//Fertilizer cost list
                                         item:cost.item,
-                                        unit:cost.unit
+                                        unit:cost.unit,
+                                        type:vm.acat.chemicals.list_type
                                     };
-                                    AddCostListAPI(prepareCost,type);
+                                    AddCostListAPI(itemUnit,type);
                                 }
                             }
-                            vm.acat.chemicals = _.pick(vm.acat.chemicals, 'list_type');//reset cost item
+                            var resetFertilizerObj = _.pick(vm.acat.chemicals, 'list_type');
+                            vm.acat.chemicals = resetFertilizerObj;//reset cost item
                             break;
                         case ACAT_GROUP_CONSTANT.LABOUR_COST:
-                            items = vm.acat.labour_costs;
+                            items = vm.acat.labour_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED ?
+                                vm.acat.labour_costs.grouped : vm.acat.labour_costs.linear;
                             if(vm.isEditLabourCost){
-                                // updateCostListAPI(cost,type);
+                                updateCostListAPI(cost,type);
                             }else{
-
                                 if(!DoesItemExistInCostList(cost,items)){
-                                    AddCostListAPI({
-                                        type: vm.acat.labour_cost.list_type,
+                                    var itemUnit = {
                                         parent_cost_list: vm.acat.labour_costs._id,//Fertilizer cost list
                                         item:cost.item,
-                                        unit:cost.unit
-                                    },type);
+                                        unit:cost.unit,
+                                        type:vm.acat.labour_cost.list_type
+                                    };
+                                    AddCostListAPI(itemUnit,type);
                                 }
                             }
-                            vm.acat.labour_cost = {};
+                            var resetFertilizerObj = _.pick(vm.acat.labour_cost, 'list_type');
+                            vm.acat.labour_cost = resetFertilizerObj;//reset cost item
                             break;
                         case ACAT_GROUP_CONSTANT.OTHER_COST:
-                            items = vm.acat.other_costs;
+                            items = vm.acat.other_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED ?
+                                vm.acat.other_costs.grouped : vm.acat.other_costs.linear;
                             if(vm.isEditOtherCost){
-                                // updateCostListAPI(cost,type);
+                                updateCostListAPI(cost,type);
                             }else{
-
                                 if(!DoesItemExistInCostList(cost,items)){
-                                    AddCostListAPI({
-                                        type: vm.acat.other_cost.list_type,
+                                    var itemUnit = {
                                         parent_cost_list: vm.acat.other_costs._id,//Fertilizer cost list
                                         item:cost.item,
-                                        unit:cost.unit
-                                    },type);
+                                        unit:cost.unit,
+                                        type:vm.acat.other_cost.list_type
+                                    };
+                                    AddCostListAPI(itemUnit,type);
                                 }
                             }
-                            vm.acat.other_cost = {};
+                            var resetFertilizerObj = _.pick(vm.acat.other_cost, 'list_type');
+                            vm.acat.other_cost = resetFertilizerObj;//reset cost item
                             break;
                         default:
                             items = [];
