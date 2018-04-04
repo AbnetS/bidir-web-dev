@@ -95,7 +95,7 @@
             
             vm.acat.seed_costs = vm.acat.input.sub_sections[0].cost_list;
             vm.acat.fertilizer_costs = vm.acat.input.sub_sections[1].cost_list;
-            // vm.acat.chemicals_costs = vm.acat.input.sub_sections[2].cost_list;
+            vm.acat.chemicals_costs = vm.acat.input.sub_sections[2].cost_list;
 
             SetListType();
 
@@ -106,8 +106,8 @@
             vm.acat.fertilizer.list_type = vm.acat.fertilizer_costs.grouped.length > 0 ?
                 ACAT_COST_LIST_TYPE.GROUPED :vm.acat.fertilizer_costs.linear.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
-            // vm.acat.chemicals.list_type = vm.acat.chemicals_costs.grouped.length > 0 ?
-            //     ACAT_COST_LIST_TYPE.GROUPED :  vm.acat.chemicals_costs.linear.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+            vm.acat.chemicals.list_type = vm.acat.chemicals_costs.grouped.length > 0 ?
+                ACAT_COST_LIST_TYPE.GROUPED :  vm.acat.chemicals_costs.linear.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
             // vm.acat.labour_cost.list_type = vm.acat.labour_costs.grouped.length > 0 ?
             //     ACAT_COST_LIST_TYPE.GROUPED : vm.acat.labour_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
@@ -172,7 +172,7 @@
                         case ACAT_GROUP_CONSTANT.CHEMICALS:
                             items = vm.acat.chemicals.list_type === ACAT_COST_LIST_TYPE.GROUPED ?
                                 vm.acat.chemicals_costs.grouped : vm.acat.chemicals_costs.linear;
-                            if(vm.isEditSeedCost){
+                            if(vm.isEditChemicalsCost){
                                 updateCostListAPI(cost,type);
                             }else{
                                 var item_exist = DoesItemExistInCostList(cost,items);
@@ -186,7 +186,7 @@
                                     AddCostListAPI(prepareCost,type);
                                 }
                             }
-                            vm.acat.chemicals = {};
+                            vm.acat.chemicals = _.pick(vm.acat.chemicals, 'list_type');//reset cost item
                             break;
                         case ACAT_GROUP_CONSTANT.LABOUR_COST:
                             items = vm.acat.labour_costs;
@@ -234,8 +234,6 @@
 
             if(!_.isUndefined(groupInfo)){
                     if(groupInfo.existing_group){
-
-
                         if(!_.isUndefined(groupInfo._id)){
                             var costItem = {
                                 parent_grouped_list:groupInfo.selected_group._id,
@@ -348,6 +346,14 @@
                             vm.acat.fertilizer_costs.linear.push(newCost);
                         }
                         break;
+                    case ACAT_GROUP_CONSTANT.CHEMICALS:
+                        if(vm.acat.chemicals.list_type === ACAT_COST_LIST_TYPE.GROUPED){
+                            vm.acat.chemicals_costs.grouped.push(newCost);
+                        }else
+                        {
+                            vm.acat.chemicals_costs.linear.push(newCost);
+                        }
+                        break;
                     default:
                             break;
                 }
@@ -401,11 +407,16 @@
                         break;
                     case ACAT_GROUP_CONSTANT.CHEMICALS:
                         if(vm.acat.chemicals.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            vm.acat.chemicals_costs.grouped = _.filter(vm.acat.chemicals_costs.grouped,
-                                function (itemCost) {
-                                    return itemCost._id !== cost._id;
+                            _.filter(vm.acat.chemicals_costs.grouped,
+                                function (group) {
+                                    if(group._id === cost.parent_grouped_list){
+                                        group.items = _.filter(group.items, function (itemCost) {
+                                            return itemCost._id !== newCost._id;
+                                        });
+                                        group.items.push(newCost);
+                                    }
                                 });
-                            vm.acat.chemicals_costs.grouped.push(newCost);
+                            resetCostItem(type);
                         }else{
                             vm.acat.chemicals_costs.linear = _.filter(vm.acat.chemicals_costs.linear,
                                 function (itemCost) {
@@ -493,15 +504,21 @@
                     break;
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
                     vm.isEditChemicalsCost = true;
-                    vm.acat.chemicals = cost;
+                    vm.acat.chemicals.selected_group = group;
+                    vm.acat.chemicals.existing_group = true;
+                    angular.extend(vm.acat.chemicals,cost);
                     break;
                 case ACAT_GROUP_CONSTANT.LABOUR_COST:
                     vm.isEditLabourCost = true;
-                    vm.acat.labour_cost = cost;
+                    vm.acat.labour_cost.selected_group = group;
+                    vm.acat.labour_cost.existing_group = true;
+                    angular.extend(vm.acat.labour_cost,cost);
                     break;
                 case ACAT_GROUP_CONSTANT.OTHER_COST:
                     vm.isEditOtherCost = true;
-                    vm.acat.other_cost = cost;
+                    vm.acat.other_cost.selected_group = group;
+                    vm.acat.other_cost.existing_group = true;
+                    angular.extend(vm.acat.other_cost,cost);
                     break;
                 default:
                     break;
@@ -731,6 +748,8 @@
                                         vm.acat.fertilizer_costs.grouped = [];
                                         break;
                                     case ACAT_GROUP_CONSTANT.CHEMICALS:
+                                        vm.acat.chemicals_costs.linear = [];
+                                        vm.acat.chemicals_costs.grouped = [];
                                         break;
                                     default:
                                         break;
@@ -785,6 +804,7 @@
             } else {
                     var groupCost = PrepareGroupCostListForAdd(groupInfo, type);
                     //ADD THE NEW GROUP TO COST LIST PARENT
+                    groupCost._id = undefined;
                     ACATService.AddCostList(groupCost).then(function (response) {
                         console.log("group created", response.data);
                         var newGroup = response.data;
@@ -802,11 +822,13 @@
         }
 
         function _removeGroupSection(groupInfo, type) {
+
             AlertService.showConfirmForDelete("Group: " + groupInfo.title + " including " + groupInfo.items.length + " cost items",
                 "Are you sure? You are about to DELETE group", "Yes, Change It!", "warning", true,function (isConfirm) {
                     if(isConfirm){
                         var groupCost = PrepareGroupCostListForAdd(groupInfo, type);
                         groupCost.item_id = groupInfo._id;
+
                         ACATService.RemoveCostGroup(groupCost).then(function (response) {
                             console.log("group removed successfully",response.data);
                             callAPI();
@@ -829,8 +851,25 @@
                     vm.acat.fertilizer.existing_group = true;
                     break;
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    vm.isEditCostGroup = true;
+                    vm.acat.chemicals.title = group.title;
+                    vm.acat.chemicals._id = group._id;
+                    vm.acat.chemicals.existing_group = true;
+                    break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    vm.isEditCostGroup = true;
+                    vm.acat.labour_cost.title = group.title;
+                    vm.acat.labour_cost._id = group._id;
+                    vm.acat.labour_cost.existing_group = true;
+                    break;
+                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    vm.isEditCostGroup = true;
+                    vm.acat.other_cost.title = group.title;
+                    vm.acat.other_cost._id = group._id;
+                    vm.acat.other_cost.existing_group = true;
                     break;
                 default:
+                    vm.isEditCostGroup = false;
                     break;
             }
 
