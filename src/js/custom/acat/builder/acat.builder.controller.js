@@ -668,19 +668,26 @@
         //UPDATE CROP FOR CROP OR CREATE NEW ACAT FOR A CROP
         function _cropSelectChanged() {
             if(vm.isEdit){
-                //    UPDATE ACAT CROP
-                var UpdatedACAT =   {
-                    _id:$stateParams.id,
-                    title: vm.acat.selected_crop.name +  '-CAT',
-                    crop: vm.acat.selected_crop._id
-                };
-                ACATService.UpdateACAT(UpdatedACAT).then(function (response) {
-                    console.log("Updated acat ",response);
-                    var acatData = response.data;
-                    $state.go('app.acatbuilder',{id:acatData._id},{inherit:true});
-                },function (error) {
-                    console.log("error on updating acat",error);
-                })
+                AlertService.showConfirmForDelete("You are about to change CROP for the ACAT",
+                    "Are you sure?", "Yes, Change It!", "warning", true,function (isConfirm) {
+                        if(isConfirm){
+                            //    UPDATE ACAT CROP
+                            var UpdatedACAT =   {
+                                _id:$stateParams.id,
+                                title: vm.acat.selected_crop.name +  '-CAT',
+                                crop: vm.acat.selected_crop._id
+                            };
+                            ACATService.UpdateACAT(UpdatedACAT).then(function (response) {
+                                console.log("Updated acat ",response);
+                                var acatData = response.data;
+                                $state.go('app.acatbuilder',{id:acatData._id},{inherit:true});
+                            },function (error) {
+                                console.log("error on updating acat",error);
+                            })
+                        }else{
+                           callAPI();
+                        }
+                    });
 
             }else {
                 // Initialize ACAT with this crop
