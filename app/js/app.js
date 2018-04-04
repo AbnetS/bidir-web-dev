@@ -5188,109 +5188,6 @@ function runBlock() {
 /**
  * Created by Yoni on 3/5/2018.
  */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        callApi();
-
-       function callApi(){
-           ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
 (function(angular) {
     "use strict";
 
@@ -5399,11 +5296,11 @@ function runBlock() {
             vm.acat.chemicals.list_type = vm.acat.chemicals_costs.grouped.length > 0 ?
                 ACAT_COST_LIST_TYPE.GROUPED :  vm.acat.chemicals_costs.linear.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
-            // vm.acat.labour_cost.list_type = vm.acat.labour_costs.grouped.length > 0 ?
-            //     ACAT_COST_LIST_TYPE.GROUPED : vm.acat.labour_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
-            //
-            // vm.acat.other_cost.list_type = vm.acat.other_costs.grouped.length > 0 ?
-            //     ACAT_COST_LIST_TYPE.GROUPED :vm.acat.other_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+            vm.acat.labour_cost.list_type = vm.acat.labour_costs.grouped.length > 0 ?
+                ACAT_COST_LIST_TYPE.GROUPED : vm.acat.labour_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+
+            vm.acat.other_cost.list_type = vm.acat.other_costs.grouped.length > 0 ?
+                ACAT_COST_LIST_TYPE.GROUPED :vm.acat.other_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
         }
 
@@ -5547,25 +5444,7 @@ function runBlock() {
                         }
 
 
-                    }else{
-                        // var groupCost = PrepareGroupCostListForAdd(groupInfo, type);
-                        //
-                        // //ADD THE NEW GROUP TO COST LIST PARENT
-                        // ACATService.AddCostList(groupCost).then(function (response) {
-                        //     console.log("group created",response.data);
-                        //     var groupItem = response.data; //Group Information captured
-                        //
-                        //     AddCostItemToGroup({
-                        //         parent_grouped_list:groupItem._id,
-                        //         item: groupInfo.item,
-                        //         unit: groupInfo.unit
-                        //     },type);
-                        //
-                        // },function (error) {
-                        //     console.log("error on group creation",error);
-                        // });
                     }
-
             }
         }
         function PrepareGroupCostListForAdd(groupInfo,type) {
@@ -5648,6 +5527,22 @@ function runBlock() {
                             vm.acat.chemicals_costs.linear.push(newCost);
                         }
                         break;
+                    case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                        if(vm.acat.labour_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
+                            vm.acat.labour_costs.grouped.push(newCost);
+                        }else
+                        {
+                            vm.acat.labour_costs.linear.push(newCost);
+                        }
+                        break;
+                    case ACAT_GROUP_CONSTANT.OTHER_COST:
+                        if(vm.acat.other_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
+                            vm.acat.other_costs.grouped.push(newCost);
+                        }else
+                        {
+                            vm.acat.other_costs.linear.push(newCost);
+                        }
+                        break;
                     default:
                             break;
                 }
@@ -5722,11 +5617,16 @@ function runBlock() {
                         break;
                     case ACAT_GROUP_CONSTANT.LABOUR_COST:
                         if(vm.acat.labour_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            vm.acat.labour_costs.grouped = _.filter(vm.acat.labour_costs.grouped,
-                                function (itemCost) {
-                                    return itemCost._id !== cost._id;
+                            _.filter(vm.acat.labour_costs.grouped,
+                                function (group) {
+                                    if(group._id === cost.parent_grouped_list){
+                                        group.items = _.filter(group.items, function (itemCost) {
+                                            return itemCost._id !== newCost._id;
+                                        });
+                                        group.items.push(newCost);
+                                    }
                                 });
-                            vm.acat.labour_costs.grouped.push(newCost);
+                            resetCostItem(type);
                         }else{
                             vm.acat.labour_costs.linear = _.filter(vm.acat.labour_costs.linear,
                                 function (itemCost) {
@@ -5738,17 +5638,22 @@ function runBlock() {
                         break;
                     case ACAT_GROUP_CONSTANT.OTHER_COST:
                         if(vm.acat.other_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            vm.acat.other_cost.grouped = _.filter(vm.acat.other_cost.grouped,
-                                function (itemCost) {
-                                    return itemCost._id !== cost._id;
+                            _.filter(vm.acat.other_costs.grouped,
+                                function (group) {
+                                    if(group._id === cost.parent_grouped_list){
+                                        group.items = _.filter(group.items, function (itemCost) {
+                                            return itemCost._id !== newCost._id;
+                                        });
+                                        group.items.push(newCost);
+                                    }
                                 });
-                            vm.acat.other_cost.grouped.push(newCost);
+                            resetCostItem(type);
                         }else{
-                            vm.acat.other_cost.linear = _.filter(vm.acat.other_cost.linear,
+                            vm.acat.other_costs.linear = _.filter(vm.acat.other_costs.linear,
                                 function (itemCost) {
                                     return itemCost._id !== cost._id;
                                 });
-                            vm.acat.other_cost.linear.push(newCost);
+                            vm.acat.other_costs.linear.push(newCost);
                         }
                         vm.isEditOtherCost = false;
                         break;
@@ -5859,6 +5764,14 @@ function runBlock() {
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
                     vm.isEditChemicalsCost = false;
                     vm.acat.chemicals = {};
+                    break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    vm.isEditLabourCost = false;
+                    vm.acat.labour_cost = {};
+                    break;
+                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    vm.isEditOtherCost = false;
+                    vm.acat.other_cost = {};
                     break;
                 default:
                     break;
@@ -6045,6 +5958,14 @@ function runBlock() {
                                         vm.acat.chemicals_costs.linear = [];
                                         vm.acat.chemicals_costs.grouped = [];
                                         break;
+                                    case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                                        vm.acat.labour_costs.linear = [];
+                                        vm.acat.labour_costs.grouped = [];
+                                        break;
+                                    case ACAT_GROUP_CONSTANT.OTHER_COST:
+                                        vm.acat.other_costs.linear = [];
+                                        vm.acat.other_costs.grouped = [];
+                                        break;
                                     default:
                                         break;
                                 }
@@ -6066,6 +5987,20 @@ function runBlock() {
                                         vm.acat.chemicals.list_type = ACAT_COST_LIST_TYPE.LINEAR;
                                     } else{
                                         vm.acat.chemicals.list_type = ACAT_COST_LIST_TYPE.GROUPED;
+                                    }
+                                    break;
+                                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                                    if(vm.acat.labour_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
+                                        vm.acat.labour_cost.list_type = ACAT_COST_LIST_TYPE.LINEAR;
+                                    } else{
+                                        vm.acat.labour_cost.list_type = ACAT_COST_LIST_TYPE.GROUPED;
+                                    }
+                                    break;
+                                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                                    if(vm.acat.other_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
+                                        vm.acat.other_cost.list_type = ACAT_COST_LIST_TYPE.LINEAR;
+                                    } else{
+                                        vm.acat.other_cost.list_type = ACAT_COST_LIST_TYPE.GROUPED;
                                     }
                                     break;
                                 default:
@@ -6209,6 +6144,109 @@ function runBlock() {
         }
 
 
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        callApi();
+
+       function callApi(){
+           ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
 
     }
 

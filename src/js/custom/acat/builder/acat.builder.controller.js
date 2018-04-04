@@ -109,11 +109,11 @@
             vm.acat.chemicals.list_type = vm.acat.chemicals_costs.grouped.length > 0 ?
                 ACAT_COST_LIST_TYPE.GROUPED :  vm.acat.chemicals_costs.linear.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
-            // vm.acat.labour_cost.list_type = vm.acat.labour_costs.grouped.length > 0 ?
-            //     ACAT_COST_LIST_TYPE.GROUPED : vm.acat.labour_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
-            //
-            // vm.acat.other_cost.list_type = vm.acat.other_costs.grouped.length > 0 ?
-            //     ACAT_COST_LIST_TYPE.GROUPED :vm.acat.other_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+            vm.acat.labour_cost.list_type = vm.acat.labour_costs.grouped.length > 0 ?
+                ACAT_COST_LIST_TYPE.GROUPED : vm.acat.labour_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+
+            vm.acat.other_cost.list_type = vm.acat.other_costs.grouped.length > 0 ?
+                ACAT_COST_LIST_TYPE.GROUPED :vm.acat.other_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
         }
 
@@ -257,25 +257,7 @@
                         }
 
 
-                    }else{
-                        // var groupCost = PrepareGroupCostListForAdd(groupInfo, type);
-                        //
-                        // //ADD THE NEW GROUP TO COST LIST PARENT
-                        // ACATService.AddCostList(groupCost).then(function (response) {
-                        //     console.log("group created",response.data);
-                        //     var groupItem = response.data; //Group Information captured
-                        //
-                        //     AddCostItemToGroup({
-                        //         parent_grouped_list:groupItem._id,
-                        //         item: groupInfo.item,
-                        //         unit: groupInfo.unit
-                        //     },type);
-                        //
-                        // },function (error) {
-                        //     console.log("error on group creation",error);
-                        // });
                     }
-
             }
         }
         function PrepareGroupCostListForAdd(groupInfo,type) {
@@ -358,6 +340,22 @@
                             vm.acat.chemicals_costs.linear.push(newCost);
                         }
                         break;
+                    case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                        if(vm.acat.labour_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
+                            vm.acat.labour_costs.grouped.push(newCost);
+                        }else
+                        {
+                            vm.acat.labour_costs.linear.push(newCost);
+                        }
+                        break;
+                    case ACAT_GROUP_CONSTANT.OTHER_COST:
+                        if(vm.acat.other_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
+                            vm.acat.other_costs.grouped.push(newCost);
+                        }else
+                        {
+                            vm.acat.other_costs.linear.push(newCost);
+                        }
+                        break;
                     default:
                             break;
                 }
@@ -432,11 +430,16 @@
                         break;
                     case ACAT_GROUP_CONSTANT.LABOUR_COST:
                         if(vm.acat.labour_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            vm.acat.labour_costs.grouped = _.filter(vm.acat.labour_costs.grouped,
-                                function (itemCost) {
-                                    return itemCost._id !== cost._id;
+                            _.filter(vm.acat.labour_costs.grouped,
+                                function (group) {
+                                    if(group._id === cost.parent_grouped_list){
+                                        group.items = _.filter(group.items, function (itemCost) {
+                                            return itemCost._id !== newCost._id;
+                                        });
+                                        group.items.push(newCost);
+                                    }
                                 });
-                            vm.acat.labour_costs.grouped.push(newCost);
+                            resetCostItem(type);
                         }else{
                             vm.acat.labour_costs.linear = _.filter(vm.acat.labour_costs.linear,
                                 function (itemCost) {
@@ -448,17 +451,22 @@
                         break;
                     case ACAT_GROUP_CONSTANT.OTHER_COST:
                         if(vm.acat.other_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            vm.acat.other_cost.grouped = _.filter(vm.acat.other_cost.grouped,
-                                function (itemCost) {
-                                    return itemCost._id !== cost._id;
+                            _.filter(vm.acat.other_costs.grouped,
+                                function (group) {
+                                    if(group._id === cost.parent_grouped_list){
+                                        group.items = _.filter(group.items, function (itemCost) {
+                                            return itemCost._id !== newCost._id;
+                                        });
+                                        group.items.push(newCost);
+                                    }
                                 });
-                            vm.acat.other_cost.grouped.push(newCost);
+                            resetCostItem(type);
                         }else{
-                            vm.acat.other_cost.linear = _.filter(vm.acat.other_cost.linear,
+                            vm.acat.other_costs.linear = _.filter(vm.acat.other_costs.linear,
                                 function (itemCost) {
                                     return itemCost._id !== cost._id;
                                 });
-                            vm.acat.other_cost.linear.push(newCost);
+                            vm.acat.other_costs.linear.push(newCost);
                         }
                         vm.isEditOtherCost = false;
                         break;
@@ -569,6 +577,14 @@
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
                     vm.isEditChemicalsCost = false;
                     vm.acat.chemicals = {};
+                    break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    vm.isEditLabourCost = false;
+                    vm.acat.labour_cost = {};
+                    break;
+                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    vm.isEditOtherCost = false;
+                    vm.acat.other_cost = {};
                     break;
                 default:
                     break;
@@ -755,6 +771,14 @@
                                         vm.acat.chemicals_costs.linear = [];
                                         vm.acat.chemicals_costs.grouped = [];
                                         break;
+                                    case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                                        vm.acat.labour_costs.linear = [];
+                                        vm.acat.labour_costs.grouped = [];
+                                        break;
+                                    case ACAT_GROUP_CONSTANT.OTHER_COST:
+                                        vm.acat.other_costs.linear = [];
+                                        vm.acat.other_costs.grouped = [];
+                                        break;
                                     default:
                                         break;
                                 }
@@ -776,6 +800,20 @@
                                         vm.acat.chemicals.list_type = ACAT_COST_LIST_TYPE.LINEAR;
                                     } else{
                                         vm.acat.chemicals.list_type = ACAT_COST_LIST_TYPE.GROUPED;
+                                    }
+                                    break;
+                                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                                    if(vm.acat.labour_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
+                                        vm.acat.labour_cost.list_type = ACAT_COST_LIST_TYPE.LINEAR;
+                                    } else{
+                                        vm.acat.labour_cost.list_type = ACAT_COST_LIST_TYPE.GROUPED;
+                                    }
+                                    break;
+                                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                                    if(vm.acat.other_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
+                                        vm.acat.other_cost.list_type = ACAT_COST_LIST_TYPE.LINEAR;
+                                    } else{
+                                        vm.acat.other_cost.list_type = ACAT_COST_LIST_TYPE.GROUPED;
                                     }
                                     break;
                                 default:
