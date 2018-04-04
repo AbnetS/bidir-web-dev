@@ -37,6 +37,7 @@
                 callAPI();
             }, function (response) {
                 console.log("refresh on response");
+                callAPI();
             });
         }
         function _editLoanProduct(loan_product,ev) {
@@ -54,6 +55,7 @@
                 callAPI();
             }, function (response) {
                 console.log("refresh on response");
+                callAPI();
             });
         }
 
