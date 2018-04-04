@@ -97,12 +97,6 @@
     'use strict';
 
     angular
-        .module('app.lazyload', []);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.core', [
             'ngRoute',
             'ngAnimate',
@@ -119,6 +113,12 @@
             'ngAria',
             'ngMessages'
         ]);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.lazyload', []);
 })();
 (function() {
     'use strict';
@@ -629,6 +629,123 @@ var ACAT_COST_LIST_TYPE = {
     'use strict';
 
     angular
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
+
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+      // Disables animation on items with class .ng-no-animation
+      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
+
+      // Improve performance disabling debugging features
+      // $compileProvider.debugInfoEnabled(false);
+
+    }
+
+})();
+/**=========================================================
+ * Module: constants.js
+ * Define constants to inject across the application
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .run(appRun);
+
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });*/
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
+    }
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
         .module('app.lazyload')
         .config(lazyloadConfig);
 
@@ -805,123 +922,6 @@ var ACAT_COST_LIST_TYPE = {
         ;
 
 })();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .config(coreConfig);
-
-    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
-    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
-
-      var core = angular.module('app.core');
-      // registering components after bootstrap
-      core.controller = $controllerProvider.register;
-      core.directive  = $compileProvider.directive;
-      core.filter     = $filterProvider.register;
-      core.factory    = $provide.factory;
-      core.service    = $provide.service;
-      core.constant   = $provide.constant;
-      core.value      = $provide.value;
-
-      // Disables animation on items with class .ng-no-animation
-      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
-
-      // Improve performance disabling debugging features
-      // $compileProvider.debugInfoEnabled(false);
-
-    }
-
-})();
-/**=========================================================
- * Module: constants.js
- * Define constants to inject across the application
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .constant('APP_MEDIAQUERY', {
-          'desktopLG':             1200,
-          'desktop':                992,
-          'tablet':                 768,
-          'mobile':                 480
-        })
-      ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .run(appRun);
-
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
-
-      // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });*/
-
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
-
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Hooks Example
-      // ----------------------------------- 
-
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
-
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
-
-    }
-
-})();
-
 
 (function() {
     'use strict';
@@ -4678,7 +4678,7 @@ function runBlock() {
 
         function _removeCostListLinear(cost_list){
             var item = {  item_id: cost_list.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + type, item);
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + ACAT_COST_LIST_TYPE.LINEAR, item);
         }
         function _removeCostGroupList(group_cost_list){
             var item = {  item_id: group_cost_list.item_id  };
@@ -5188,109 +5188,6 @@ function runBlock() {
 /**
  * Created by Yoni on 3/5/2018.
  */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        callApi();
-
-       function callApi(){
-           ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
 (function(angular) {
     "use strict";
 
@@ -5343,19 +5240,13 @@ function runBlock() {
                 },
                 other_cost:{
                     list_type : 'linear'
-                },
-                // fertilizer_costs:[],
-                // chemicals_costs:[],
-                // labour_costs:[],
-                // other_costs:[]
+                }
             };
             vm.isEditCostGroup = false;
 
             vm.isEditSeedCost = false; //edit seed cost list
             if(vm.isEdit){
                 callAPI();
-            }else{
-
             }
 
         }
@@ -5366,7 +5257,6 @@ function runBlock() {
             myBlockUIOnStart.start();
 
             ACATService.GetACATById(vm.ACATId).then(function (response) {
-                console.log("GetACATById",response);
                 vm.acat.selected_crop = response.data.crop;
                 var subSections = response.data.sections[0].sub_sections;
                 setSubSectionCostFromResponse(subSections);
@@ -5389,7 +5279,6 @@ function runBlock() {
 
             SetListType();
 
-            console.log("vm.acat", vm.acat);
         }
         function SetListType() {
 
@@ -5412,7 +5301,6 @@ function runBlock() {
                 vm.crops = _.filter(response.data.docs,function (crop) {
                     return !crop.has_acat;
                 });
-                console.log("crop list",vm.crops);
             });
         }
 
@@ -5609,47 +5497,7 @@ function runBlock() {
 
             ACATService.AddCostList(cost).then(function (response) {
                 console.log("COST LIST ADDED FOR " + type,response);
-                var newCost = response.data;
-                switch (type){
-                    case ACAT_GROUP_CONSTANT.SEED:
-                        vm.acat.seed_costs.linear.push(newCost);
-                        break;
-                    case ACAT_GROUP_CONSTANT.FERTILIZER:
-                        if(vm.acat.fertilizer.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            vm.acat.fertilizer_costs.grouped.push(newCost);
-                        }else
-                            {
-                            vm.acat.fertilizer_costs.linear.push(newCost);
-                        }
-                        break;
-                    case ACAT_GROUP_CONSTANT.CHEMICALS:
-                        if(vm.acat.chemicals.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            vm.acat.chemicals_costs.grouped.push(newCost);
-                        }else
-                        {
-                            vm.acat.chemicals_costs.linear.push(newCost);
-                        }
-                        break;
-                    case ACAT_GROUP_CONSTANT.LABOUR_COST:
-                        if(vm.acat.labour_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            vm.acat.labour_costs.grouped.push(newCost);
-                        }else
-                        {
-                            vm.acat.labour_costs.linear.push(newCost);
-                        }
-                        break;
-                    case ACAT_GROUP_CONSTANT.OTHER_COST:
-                        if(vm.acat.other_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            vm.acat.other_costs.grouped.push(newCost);
-                        }else
-                        {
-                            vm.acat.other_costs.linear.push(newCost);
-                        }
-                        break;
-                    default:
-                            break;
-                }
-
+                callAPI();
             },function (error) {
                 console.log("error while adding cost item for " + type,error);
                 var message = error.data.error.message;
@@ -5770,59 +5618,18 @@ function runBlock() {
                     break;
             }
         }
-        function _cancelCostItem(type) {
-            switch (type){
-                case ACAT_GROUP_CONSTANT.SEED:
-                    vm.isEditSeedCost = false;
-                    var index = vm.acat.seed_costs.linear.indexOf(vm.acat.input.seed);
-                    if (index !== -1) {
-                        vm.acat.seed_costs.linear[index] =  vm.acat.input.seedCopy;
-                    }
-                    vm.acat.input.seed = {};
-                    break;
-                case ACAT_GROUP_CONSTANT.FERTILIZER:
-                    vm.isEditFertilizerCost =  false;
-                    var index1 = vm.acat.fertilizer_costs.linear.indexOf(vm.acat.fertilizer);
-                    if (index1 !== -1) {
-                        vm.acat.fertilizer_costs.linear[index1] =  vm.acat.fertilizerCopy;
-                    }
-                    vm.acat.fertilizer = {};
-                    break;
-                case ACAT_GROUP_CONSTANT.CHEMICALS:
-                    vm.isEditChemicalsCost = false;
-                    var index2 = vm.acat.chemicals_costs.linear.indexOf(vm.acat.chemicals);
-                    if (index2 !== -1) {
-                        vm.acat.chemicals_costs.linear[index2] =  vm.acat.chemicalsCopy;
-                    }
-                    vm.acat.chemicals = {};
-                    break;
-                case ACAT_GROUP_CONSTANT.LABOUR_COST:
-                    vm.isEditLabourCost = false;
-                    var index3 = vm.acat.labour_costs.linear.indexOf(vm.acat.labour_cost);
-                    if (index3 !== -1) {
-                        vm.acat.labour_costs.linear[index3] =  vm.acat.labour_costCopy;
-                    }
-                    vm.acat.labour_cost = {};
-                    break;
-                case ACAT_GROUP_CONSTANT.OTHER_COST:
-                    vm.isEditOtherCost = false;
-                    var index4 = vm.acat.other_costs.linear.indexOf(vm.acat.other_cost);
-                    if (index4 !== -1) {
-                        vm.acat.other_costs.linear[index4] =  vm.acat.other_costCopy;
-                    }
-                    vm.acat.other_cost = {};
-                    break;
-                default:
-                    break;
-            }
 
+        function _cancelCostItem(type) {
+           resetCostItem(type);
+            callAPI();
         }
+
         function prepareCostListForRemoval(cost,type) {
             switch (type){
                 case ACAT_GROUP_CONSTANT.SEED:
                     return {
                         _id:vm.acat.seed_costs._id,
-                        list_type:vm.acat.fertilizer.list_type,
+                        list_type:ACAT_COST_LIST_TYPE.LINEAR,
                         item_id:cost._id
                     };
                     break;
@@ -5843,14 +5650,14 @@ function runBlock() {
                 case ACAT_GROUP_CONSTANT.LABOUR_COST:
                     return {
                         _id:vm.acat.labour_costs._id,
-                        list_type:vm.acat.chemicals.list_type,
+                        list_type:vm.acat.labour_cost.list_type,
                         item_id:cost._id
                     };
                     break;
                 case ACAT_GROUP_CONSTANT.OTHER_COST:
                     return {
                         _id:vm.acat.other_costs._id,
-                        list_type:vm.acat.chemicals.list_type,
+                        list_type:vm.acat.other_cost.list_type,
                         item_id:cost._id
                     };
                     break;
@@ -5869,9 +5676,12 @@ function runBlock() {
                         ACATService.RemoveCostListLinear(removableCost,removableCost.list_type).then(function (response) {
                             console.log("Removed Cost Item.........",response);
                             //refresh view
-                            RefreshCostList(removableCost,type);
+                            callAPI();
+                            // RefreshCostList(removableCost,type);
 
                         },function (error) {
+                            var message = error.data.error.message;
+                            AlertService.showError("error when removing cost list",message);
                             console.log("error when removing cost list",error);
                         });
                     }
@@ -5927,7 +5737,8 @@ function runBlock() {
                         ACATService.RemoveCostListGroup(removableCost)
                             .then(function (response) {
                             console.log("Removed Cost group item Item.........",response);
-                                RefreshCostList(removableCost,type);
+                            callAPI();
+                            // RefreshCostList(removableCost,type);
                         },function (error) {
                             console.log("error when removing cost list",error);
                         });
@@ -6184,6 +5995,109 @@ function runBlock() {
         }
 
 
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        callApi();
+
+       function callApi(){
+           ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
 
     }
 

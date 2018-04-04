@@ -53,19 +53,13 @@
                 },
                 other_cost:{
                     list_type : 'linear'
-                },
-                // fertilizer_costs:[],
-                // chemicals_costs:[],
-                // labour_costs:[],
-                // other_costs:[]
+                }
             };
             vm.isEditCostGroup = false;
 
             vm.isEditSeedCost = false; //edit seed cost list
             if(vm.isEdit){
                 callAPI();
-            }else{
-
             }
 
         }
@@ -76,7 +70,6 @@
             myBlockUIOnStart.start();
 
             ACATService.GetACATById(vm.ACATId).then(function (response) {
-                console.log("GetACATById",response);
                 vm.acat.selected_crop = response.data.crop;
                 var subSections = response.data.sections[0].sub_sections;
                 setSubSectionCostFromResponse(subSections);
@@ -99,7 +92,6 @@
 
             SetListType();
 
-            console.log("vm.acat", vm.acat);
         }
         function SetListType() {
 
@@ -122,7 +114,6 @@
                 vm.crops = _.filter(response.data.docs,function (crop) {
                     return !crop.has_acat;
                 });
-                console.log("crop list",vm.crops);
             });
         }
 
@@ -319,47 +310,7 @@
 
             ACATService.AddCostList(cost).then(function (response) {
                 console.log("COST LIST ADDED FOR " + type,response);
-                var newCost = response.data;
-                switch (type){
-                    case ACAT_GROUP_CONSTANT.SEED:
-                        vm.acat.seed_costs.linear.push(newCost);
-                        break;
-                    case ACAT_GROUP_CONSTANT.FERTILIZER:
-                        if(vm.acat.fertilizer.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            vm.acat.fertilizer_costs.grouped.push(newCost);
-                        }else
-                            {
-                            vm.acat.fertilizer_costs.linear.push(newCost);
-                        }
-                        break;
-                    case ACAT_GROUP_CONSTANT.CHEMICALS:
-                        if(vm.acat.chemicals.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            vm.acat.chemicals_costs.grouped.push(newCost);
-                        }else
-                        {
-                            vm.acat.chemicals_costs.linear.push(newCost);
-                        }
-                        break;
-                    case ACAT_GROUP_CONSTANT.LABOUR_COST:
-                        if(vm.acat.labour_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            vm.acat.labour_costs.grouped.push(newCost);
-                        }else
-                        {
-                            vm.acat.labour_costs.linear.push(newCost);
-                        }
-                        break;
-                    case ACAT_GROUP_CONSTANT.OTHER_COST:
-                        if(vm.acat.other_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            vm.acat.other_costs.grouped.push(newCost);
-                        }else
-                        {
-                            vm.acat.other_costs.linear.push(newCost);
-                        }
-                        break;
-                    default:
-                            break;
-                }
-
+                callAPI();
             },function (error) {
                 console.log("error while adding cost item for " + type,error);
                 var message = error.data.error.message;
@@ -480,59 +431,18 @@
                     break;
             }
         }
-        function _cancelCostItem(type) {
-            switch (type){
-                case ACAT_GROUP_CONSTANT.SEED:
-                    vm.isEditSeedCost = false;
-                    var index = vm.acat.seed_costs.linear.indexOf(vm.acat.input.seed);
-                    if (index !== -1) {
-                        vm.acat.seed_costs.linear[index] =  vm.acat.input.seedCopy;
-                    }
-                    vm.acat.input.seed = {};
-                    break;
-                case ACAT_GROUP_CONSTANT.FERTILIZER:
-                    vm.isEditFertilizerCost =  false;
-                    var index1 = vm.acat.fertilizer_costs.linear.indexOf(vm.acat.fertilizer);
-                    if (index1 !== -1) {
-                        vm.acat.fertilizer_costs.linear[index1] =  vm.acat.fertilizerCopy;
-                    }
-                    vm.acat.fertilizer = {};
-                    break;
-                case ACAT_GROUP_CONSTANT.CHEMICALS:
-                    vm.isEditChemicalsCost = false;
-                    var index2 = vm.acat.chemicals_costs.linear.indexOf(vm.acat.chemicals);
-                    if (index2 !== -1) {
-                        vm.acat.chemicals_costs.linear[index2] =  vm.acat.chemicalsCopy;
-                    }
-                    vm.acat.chemicals = {};
-                    break;
-                case ACAT_GROUP_CONSTANT.LABOUR_COST:
-                    vm.isEditLabourCost = false;
-                    var index3 = vm.acat.labour_costs.linear.indexOf(vm.acat.labour_cost);
-                    if (index3 !== -1) {
-                        vm.acat.labour_costs.linear[index3] =  vm.acat.labour_costCopy;
-                    }
-                    vm.acat.labour_cost = {};
-                    break;
-                case ACAT_GROUP_CONSTANT.OTHER_COST:
-                    vm.isEditOtherCost = false;
-                    var index4 = vm.acat.other_costs.linear.indexOf(vm.acat.other_cost);
-                    if (index4 !== -1) {
-                        vm.acat.other_costs.linear[index4] =  vm.acat.other_costCopy;
-                    }
-                    vm.acat.other_cost = {};
-                    break;
-                default:
-                    break;
-            }
 
+        function _cancelCostItem(type) {
+           resetCostItem(type);
+            callAPI();
         }
+
         function prepareCostListForRemoval(cost,type) {
             switch (type){
                 case ACAT_GROUP_CONSTANT.SEED:
                     return {
                         _id:vm.acat.seed_costs._id,
-                        list_type:vm.acat.fertilizer.list_type,
+                        list_type:ACAT_COST_LIST_TYPE.LINEAR,
                         item_id:cost._id
                     };
                     break;
@@ -553,14 +463,14 @@
                 case ACAT_GROUP_CONSTANT.LABOUR_COST:
                     return {
                         _id:vm.acat.labour_costs._id,
-                        list_type:vm.acat.chemicals.list_type,
+                        list_type:vm.acat.labour_cost.list_type,
                         item_id:cost._id
                     };
                     break;
                 case ACAT_GROUP_CONSTANT.OTHER_COST:
                     return {
                         _id:vm.acat.other_costs._id,
-                        list_type:vm.acat.chemicals.list_type,
+                        list_type:vm.acat.other_cost.list_type,
                         item_id:cost._id
                     };
                     break;
@@ -579,9 +489,12 @@
                         ACATService.RemoveCostListLinear(removableCost,removableCost.list_type).then(function (response) {
                             console.log("Removed Cost Item.........",response);
                             //refresh view
-                            RefreshCostList(removableCost,type);
+                            callAPI();
+                            // RefreshCostList(removableCost,type);
 
                         },function (error) {
+                            var message = error.data.error.message;
+                            AlertService.showError("error when removing cost list",message);
                             console.log("error when removing cost list",error);
                         });
                     }
@@ -637,7 +550,8 @@
                         ACATService.RemoveCostListGroup(removableCost)
                             .then(function (response) {
                             console.log("Removed Cost group item Item.........",response);
-                                RefreshCostList(removableCost,type);
+                            callAPI();
+                            // RefreshCostList(removableCost,type);
                         },function (error) {
                             console.log("error when removing cost list",error);
                         });

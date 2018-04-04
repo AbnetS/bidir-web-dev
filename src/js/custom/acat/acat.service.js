@@ -60,7 +60,7 @@
 
         function _removeCostListLinear(cost_list){
             var item = {  item_id: cost_list.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + type, item);
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + ACAT_COST_LIST_TYPE.LINEAR, item);
         }
         function _removeCostGroupList(group_cost_list){
             var item = {  item_id: group_cost_list.item_id  };
