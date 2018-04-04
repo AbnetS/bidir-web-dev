@@ -90,6 +90,7 @@
         }
 
         function _editDeductibleItem(item) {
+            vm.loan_product.deductibleCopy = angular.copy(item);
             vm.loan_product.deductible = item;
             vm.isEditDeductible = true;
         }
@@ -147,20 +148,21 @@
 
         function _cancelEdit(isDeductible) {
             if (isDeductible) {
+                var index = vm.loan_product.deductibles.indexOf(vm.loan_product.deductible);
+                if (index !== -1) {
+                    vm.loan_product.deductibles[index] =  vm.loan_product.deductibleCopy;
+                }
                 vm.loan_product.deductible = {type: 'fixed_amount'};
                 vm.isEditDeductible = false;
                 vm.showCancelForEdit(vm.loan_product.deductible, isDeductible);
             } else {
-                vm.loan_product.costOfLoan = {type: 'fixed_amount'};
-                vm.loan_product.costOfLoan = vm.loan_product.costOfLoanCopy;
 
-                console.log("vm.loan_product.costOfLoanCopy",vm.loan_product.costOfLoanCopy);
-                 _.each(vm.loan_product.cost_of_loan,function (col) {
-                     if(col._id === vm.loan_product.costOfLoanCopy._id ){
-                         // col = vm.loan_product.costOfLoanCopy;
-                         console.log("col",col);
-                     }
-                 })
+                var index = vm.loan_product.cost_of_loan.indexOf(vm.loan_product.costOfLoan);
+
+                if (index !== -1) {
+                    vm.loan_product.cost_of_loan[index] =  vm.loan_product.costOfLoanCopy;
+                }
+                vm.loan_product.costOfLoan = {type: 'fixed_amount'};
                 vm.isEditCostOfLoan = false;
                 vm.showCancelForEdit(vm.loan_product.costOfLoan, isDeductible);
             }
