@@ -66,6 +66,7 @@
                                             <label>Unit</label>
                                             <input class="form-control"
                                                    ng-model="vm.acat.input.seed.unit"
+                                                   keypress-enter="vm.addToCostList(vm.acat.input.seed,'SEED')"
                                                    type="text"
                                                    name="seed_unit" placeholder="unit" />
                                         </div>
@@ -158,6 +159,7 @@
                                             <input class="form-control" type="text"
                                                    name="unit"
                                                    ng-model="vm.acat.fertilizer.unit"
+                                                   keypress-enter="vm.addToCostList(vm.acat.fertilizer,'FERTILIZER')"
                                                    placeholder="unit" />
                                         </div>
                                     </div>
@@ -223,6 +225,7 @@
                                                 <label>Unit</label>
                                                 <input class="form-control" type="text"
                                                        ng-model="vm.acat.fertilizer.unit"
+                                                       keypress-enter="vm.addGroupedCostList(vm.acat.fertilizer,'FERTILIZER')"
                                                        name="unit" placeholder="unit" />
                                             </div>
                                         </div>
@@ -383,6 +386,7 @@
                                                 <label>Unit</label>
                                                 <input class="form-control" type="text"
                                                        ng-model="vm.acat.chemicals.unit"
+                                                       keypress-enter="vm.addGroupedCostList(vm.acat.chemicals,'CHEMICALS')"
                                                        name="unit" placeholder="unit" />
                                             </div>
                                         </div>
@@ -412,6 +416,7 @@
                                             <label>Unit</label>
                                             <input class="form-control" type="text"
                                                    ng-model="vm.acat.chemicals.unit"
+                                                   keypress-enter="vm.addToCostList(vm.acat.chemicals,'CHEMICALS')"
                                                    name="unit" placeholder="unit" />
                                         </div>
                                     </div>
