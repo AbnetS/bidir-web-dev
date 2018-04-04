@@ -490,7 +490,6 @@
                             console.log("Removed Cost Item.........",response);
                             //refresh view
                             callAPI();
-                            // RefreshCostList(removableCost,type);
 
                         },function (error) {
                             var message = error.data.error.message;
@@ -503,39 +502,8 @@
 
         }
 
-        function RefreshCostList(removableCost,type) {
-            switch (type){
-                case ACAT_GROUP_CONSTANT.SEED:
-                    vm.acat.seed_costs.linear = _.filter(vm.acat.seed_costs.linear,function(seedItem){
-                        return seedItem._id !== removableCost.item_id;
-                    });
-                    break;
-                case ACAT_GROUP_CONSTANT.FERTILIZER:
-                    if(vm.acat.fertilizer.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                        removableCost.group.items = _.filter(removableCost.group.items,function(seedItem){
-                            return seedItem._id !== removableCost.item_id;
-                        });
-                    }else{
-                        vm.acat.fertilizer_costs.linear = _.filter(vm.acat.fertilizer_costs.linear,function(seedItem){
-                            return seedItem._id !== removableCost.item_id;
-                        });
-                    }
-                    break;
-                case ACAT_GROUP_CONSTANT.CHEMICALS:
-
-                    break;
-                case ACAT_GROUP_CONSTANT.LABOUR_COST:
-
-                    break;
-                case ACAT_GROUP_CONSTANT.OTHER_COST:
-
-                    break;
-                default:
-                    break;
-            }
-        }
-
         function _removeCostItemGrouped(cost,type,groupInfo) {
+
             AlertService.showConfirmForDelete("You are about to DELETE Cost List From Group",
                 "Are you sure?", "Yes, Remove It!", "warning", true,function (isConfirm) {
 
@@ -551,7 +519,6 @@
                             .then(function (response) {
                             console.log("Removed Cost group item Item.........",response);
                             callAPI();
-                            // RefreshCostList(removableCost,type);
                         },function (error) {
                             console.log("error when removing cost list",error);
                         });

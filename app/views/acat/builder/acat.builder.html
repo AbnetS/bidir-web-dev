@@ -139,7 +139,7 @@
                                 <!-- START FERTILIZER ROW-->
                                 <div ng-if="vm.acat.fertilizer.list_type==='linear'"
                                      class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
-                                    <div class="col-md-4">
+                                    <div class="col-md-5">
                                         <div class="form-group">
                                             <label>Item</label>
                                             <input class="form-control"
@@ -159,15 +159,17 @@
                                                    placeholder="unit" />
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <br/>
                                         <button ng-show="vm.isEditFertilizerCost" class="btn btn-inverse btn-outline"
                                                 ng-click="vm.cancelCostItem('FERTILIZER')">
-                                            <i class="fa fa-times"></i>
+                                            <i class="fa fa-times"></i> Cancel
                                         </button>
-                                        <button class="btn btn-success btn-outline" ng-click="vm.addToCostList(vm.acat.fertilizer,'FERTILIZER')">
-                                            <i ng-class="vm.isEditFertilizerCost?'fa fa-refresh':'fa fa-plus'" class="fa fa-plus"></i>
-                                            {{vm.isEditFertilizerCost?'Update':'Add'}}</button>
+                                        <button  class="btn btn-success btn-outline"
+                                                 ng-click="vm.addToCostList(vm.acat.fertilizer,'FERTILIZER')">
+                                            <i ng-class="vm.isEditFertilizerCost?'fa fa-refresh':'fa fa-plus'"></i>
+                                            {{vm.isEditFertilizerCost?'Update':'Add'}}
+                                        </button>
                                     </div>
                                 </div>
                                 <!--IF LIST IS GROUPED-->
@@ -226,7 +228,7 @@
                                                        name="item" placeholder="Item" />
                                             </div>
                                         </div>
-                                        <div class="col-md-5">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Unit</label>
                                                 <input class="form-control" type="text"
@@ -235,10 +237,15 @@
                                                        name="unit" placeholder="unit" />
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             <br/>
-                                            <button class="btn btn-success btn-outline"
+                                            <button ng-show="vm.isEditFertilizerCost" class="btn btn-inverse btn-outline"
+                                                    ng-click="vm.cancelCostItem('FERTILIZER')">
+                                                <i class="fa fa-times"></i> Cancel
+                                            </button>
+                                            <button  class="btn btn-success btn-outline"
                                                     ng-click="vm.addGroupedCostList(vm.acat.fertilizer,'FERTILIZER')">
+                                                <i ng-class="vm.isEditFertilizerCost?'fa fa-refresh':'fa fa-plus'"></i>
                                                 {{vm.isEditFertilizerCost?'Update':'Add'}}
                                             </button>
                                         </div>
@@ -352,7 +359,7 @@
                                 <!-- START CHEMICALS ROW-->
                                 <div ng-show="vm.acat.chemicals.list_type==='linear'"
                                      class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
-                                    <div class="col-md-4">
+                                    <div class="col-md-5">
                                         <div class="form-group">
                                             <label>Item</label>
                                             <input class="form-control" type="text"
@@ -369,18 +376,23 @@
                                                    name="unit" placeholder="unit" />
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <br/>
-                                        <button class="btn btn-success btn-outline"
-                                                ng-click="vm.addToCostList(vm.acat.chemicals,'CHEMICALS')">
+                                        <button ng-show="vm.isEditChemicalsCost" class="btn btn-inverse btn-outline"
+                                                ng-click="vm.cancelCostItem('CHEMICALS')">
+                                            <i class="fa fa-times"></i> Cancel
+                                        </button>
+                                        <button  class="btn btn-success btn-outline"
+                                                 ng-click="vm.addToCostList(vm.acat.chemicals,'CHEMICALS')">
                                             <i ng-class="vm.isEditChemicalsCost?'fa fa-refresh':'fa fa-plus'" class="fa fa-plus"></i>
-                                            {{vm.isEditChemicalsCost?'Update':'Add'}}</button>
+                                            {{vm.isEditChemicalsCost?'Update':'Add'}}
+                                        </button>
                                     </div>
                                 </div>
                                 <!--IF LIST IS GROUPED-->
                                 <div ng-show="vm.acat.chemicals.list_type==='grouped'">
                                     <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
-                                        <div class="col-md-4">
+                                        <div class="col-md-5">
                                             <md-input-container class="md-block">
                                                 <md-switch class="md-warm" name="chemicalsGroupSwitch"
                                                            ng-model="vm.acat.chemicals.existing_group"
@@ -389,7 +401,7 @@
                                                 </md-switch>
                                             </md-input-container>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div ng-show="!vm.acat.chemicals.existing_group || (vm.acat.chemicals.existing_group && vm.isEditCostGroup)"
                                                  class="form-group">
                                                 <label>Group</label>
@@ -425,7 +437,7 @@
                                         </div>
                                     </div>
                                     <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
-                                        <div class="col-md-4">
+                                        <div class="col-md-5">
                                             <div class="form-group">
                                                 <label>Item</label>
                                                 <input class="form-control" type="text"
@@ -442,10 +454,16 @@
                                                        name="unit" placeholder="unit" />
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <br/>
-                                            <button class="btn btn-success btn-outline"
-                                                    ng-click="vm.addGroupedCostList(vm.acat.chemicals,'CHEMICALS')">
+
+                                            <button ng-show="vm.isEditChemicalsCost" class="btn btn-inverse btn-outline"
+                                                    ng-click="vm.cancelCostItem('CHEMICALS')">
+                                                <i class="fa fa-times"></i> Cancel
+                                            </button>
+                                            <button  class="btn btn-success btn-outline"
+                                                     ng-click="vm.addGroupedCostList(vm.acat.chemicals,'CHEMICALS')">
+                                                <i ng-class="vm.isEditChemicalsCost?'fa fa-refresh':'fa fa-plus'"></i>
                                                 {{vm.isEditChemicalsCost?'Update':'Add'}}
                                             </button>
                                         </div>
@@ -455,7 +473,7 @@
 
                                 <!-- ITEMS TABLE-->
                                 <div ng-show="vm.acat.chemicals.list_type==='grouped'"
-                                     class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                     class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <div class="table-responsive">
                                         <table class="table table-bordered"
                                                ng-repeat="groupItem in vm.acat.chemicals_costs.grouped">
@@ -501,7 +519,7 @@
                                 </div>
                                 <!--ITEM TABLE FOR LINEAR-->
                                 <div ng-show="vm.acat.chemicals.list_type==='linear'">
-                                    <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
                                                 <thead>
