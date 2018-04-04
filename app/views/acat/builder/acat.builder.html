@@ -187,7 +187,8 @@
                                             </md-input-container>
                                         </div>
                                         <div class="col-md-4">
-                                            <div ng-show="!vm.acat.fertilizer.existing_group" class="form-group">
+                                            <div ng-show="!vm.acat.fertilizer.existing_group || (vm.acat.fertilizer.existing_group && vm.isEditCostGroup)"
+                                                 class="form-group">
                                                 <label>Group</label>
 
                                                 <div class="input-group">
@@ -197,12 +198,12 @@
                                                     <span class="input-group-btn">
                                                          <button class="btn btn-success btn-outline"
                                                                  ng-click="vm.addGroupOnSection(vm.acat.fertilizer,'FERTILIZER')">
-                                                                {{vm.isEditFertilizerCost?'Update':'Add Group'}}
+                                                                {{vm.isEditCostGroup?'Update Group':'Add Group'}}
                                                             </button>
                                                     </span>
                                                 </div>
                                             </div>
-                                            <div ng-show="vm.acat.fertilizer.existing_group">
+                                            <div ng-show="vm.acat.fertilizer.existing_group && !vm.isEditCostGroup">
                                                 <label>Group</label>
                                                 <div class="form-group">
                                                     <ui-select ng-model="vm.acat.fertilizer.selected_group"
@@ -290,7 +291,16 @@
                                                ng-repeat="groupItem in vm.acat.fertilizer_costs.grouped">
                                             <thead>
                                             <tr class="text-center text-uppercase text-inverse">
-                                                <th colspan="4">{{groupItem.title}}</th>
+                                                <th colspan="4">{{groupItem.title}}
+                                                    <a class="btn btn-xs btn-outline btn-default"
+                                                       ng-click="vm.editGroupSection(groupItem,'FERTILIZER')">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
+                                                    <a  class="btn btn-xs btn-outline btn-danger"
+                                                        ng-click="vm.removeGroupSection(groupItem,'FERTILIZER')">
+                                                        <i class="fa fa-times"></i>
+                                                    </a>
+                                                </th>
                                             </tr>
                                             <tr class="bg-inverse-light">
                                                 <th>#</th>

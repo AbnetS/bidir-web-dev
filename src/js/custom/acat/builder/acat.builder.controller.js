@@ -24,7 +24,11 @@
         vm.cancelCostItem = _cancelCostItem;
         vm.cropSelectChanged = _cropSelectChanged;
         vm.onCostListTypeChange = _onCostListTypeChange;
+        //GROUP RELATED
         vm.addGroupOnSection = _addGroupOnSection;
+        vm.editGroupSection = _editGroupSection;
+        vm.removeGroupSection = _removeGroupSection;
+
 
 
 
@@ -55,6 +59,7 @@
                 // labour_costs:[],
                 // other_costs:[]
             };
+            vm.isEditCostGroup = false;
 
             vm.isEditSeedCost = false; //edit seed cost list
             if(vm.isEdit){
@@ -275,6 +280,7 @@
             switch (type){
                 case ACAT_GROUP_CONSTANT.FERTILIZER:
                     return  {
+                        _id: vm.acat.fertilizer_costs._id,
                         type: 'grouped',
                         parent_cost_list: vm.acat.fertilizer_costs._id,
                         title:groupInfo.title
@@ -282,6 +288,7 @@
                     break;
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
                     return  {
+                        _id: vm.acat.chemicals_costs._id,
                         type: 'grouped',
                         parent_cost_list: vm.acat.chemicals_costs._id,
                         title:groupInfo.title
@@ -289,6 +296,7 @@
                     break;
                 case ACAT_GROUP_CONSTANT.LABOUR_COST:
                     return  {
+                        _id: vm.acat.labour_costs._id,
                         type: 'grouped',
                         parent_cost_list: vm.acat.labour_costs._id,
                         title:groupInfo.title
@@ -296,6 +304,7 @@
                     break;
                 case ACAT_GROUP_CONSTANT.OTHER_COST:
                     return  {
+                        _id: vm.acat.other_costs._id,
                         type: 'grouped',
                         parent_cost_list: vm.acat.other_costs._id,
                         title:groupInfo.title
@@ -755,19 +764,66 @@
 
         }
 
-        function _addGroupOnSection(groupInfo,type) {
-            var groupCost = PrepareGroupCostListForAdd(groupInfo, type);
-            //ADD THE NEW GROUP TO COST LIST PARENT
-            ACATService.AddCostList(groupCost).then(function (response) {
-                console.log("group created",response.data);
-                var newGroup = response.data;
-                callAPI();
-                groupInfo.existing_group = true;
-                groupInfo.selected_group = newGroup;
 
-            },function (error) {
-                console.log("error on group creation",error);
-            });
+        function _addGroupOnSection(groupInfo,type) {
+            if (vm.isEditCostGroup) {
+                ACATService.UpdateCostGroup(groupInfo).then(function (response) {
+                    console.log("group updated successfully",response.data);
+                    var newGroup = response.data;
+                    callAPI();
+                    groupInfo.existing_group = true;
+                    groupInfo.selected_group = newGroup;
+                },function (error) {
+                    console.log("error on group update",error);
+                    var message = error.data.error.message;
+                    AlertService.showError("Error on updating group title",message);
+                    callAPI();
+                });
+            } else {
+                    var groupCost = PrepareGroupCostListForAdd(groupInfo, type);
+                    //ADD THE NEW GROUP TO COST LIST PARENT
+                    ACATService.AddCostList(groupCost).then(function (response) {
+                        console.log("group created", response.data);
+                        var newGroup = response.data;
+                        callAPI();
+                        groupInfo.existing_group = true;
+                        groupInfo.selected_group = newGroup;
+
+                    }, function (error) {
+                        console.log("error on group creation", error);
+                        var message = error.data.error.message;
+                        AlertService.showError("Error on creating group",message);
+
+                    });
+            }
+        }
+
+        function _removeGroupSection(groupInfo, type) {
+            AlertService.showConfirmForDelete("Group: " + groupInfo.title + " including " + groupInfo.items.length + " cost items",
+                "Are you sure? You are about to DELETE group", "Yes, Change It!", "warning", true,function (isConfirm) {
+                    if(isConfirm){
+                        var groupCost = PrepareGroupCostListForAdd(groupInfo, type);
+                        groupCost.item_id = groupInfo._id;
+                        ACATService.RemoveCostGroup(groupCost).then(function (response) {
+                            console.log("group removed successfully",response.data);
+                            callAPI();
+                        },function (error) {
+                            console.log("error on group remove",error);
+                            var message = error.data.error.message;
+                            AlertService.showError("Error on removing group",message);
+                        });
+                    }
+                });
+
+        }
+
+        function _editGroupSection(group, type) {
+            vm.isEditCostGroup = true;
+            vm.acat.fertilizer.title = group.title;
+            vm.acat.fertilizer._id = group._id;
+            vm.acat.fertilizer.existing_group = true;
+            console.log("edit group",vm.acat.fertilizer);
+
         }
 
     }

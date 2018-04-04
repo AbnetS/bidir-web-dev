@@ -21,7 +21,6 @@
             });
         }
 
-
         function _addLoanProduct(loan_product,ev) {
             $mdDialog.show({
                 locals: {data:{loan_product:loan_product}},

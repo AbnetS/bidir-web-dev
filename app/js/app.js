@@ -97,6 +97,12 @@
     'use strict';
 
     angular
+        .module('app.lazyload', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.core', [
             'ngRoute',
             'ngAnimate',
@@ -113,12 +119,6 @@
             'ngAria',
             'ngMessages'
         ]);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.lazyload', []);
 })();
 (function() {
     'use strict';
@@ -167,14 +167,6 @@
     'use strict';
 
     angular
-        .module('app.material', [
-            'ngMaterial'
-          ]);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.navsearch', []);
 })();
 (function() {
@@ -204,6 +196,14 @@
 
     angular
         .module('app.sidebar', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.material', [
+            'ngMaterial'
+          ]);
 })();
 (function() {
     'use strict';
@@ -629,123 +629,6 @@ var ACAT_COST_LIST_TYPE = {
     'use strict';
 
     angular
-        .module('app.core')
-        .config(coreConfig);
-
-    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
-    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
-
-      var core = angular.module('app.core');
-      // registering components after bootstrap
-      core.controller = $controllerProvider.register;
-      core.directive  = $compileProvider.directive;
-      core.filter     = $filterProvider.register;
-      core.factory    = $provide.factory;
-      core.service    = $provide.service;
-      core.constant   = $provide.constant;
-      core.value      = $provide.value;
-
-      // Disables animation on items with class .ng-no-animation
-      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
-
-      // Improve performance disabling debugging features
-      // $compileProvider.debugInfoEnabled(false);
-
-    }
-
-})();
-/**=========================================================
- * Module: constants.js
- * Define constants to inject across the application
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .constant('APP_MEDIAQUERY', {
-          'desktopLG':             1200,
-          'desktop':                992,
-          'tablet':                 768,
-          'mobile':                 480
-        })
-      ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .run(appRun);
-
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
-
-      // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });*/
-
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
-
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Hooks Example
-      // ----------------------------------- 
-
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
-
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
-
-    }
-
-})();
-
-
-(function() {
-    'use strict';
-
-    angular
         .module('app.lazyload')
         .config(lazyloadConfig);
 
@@ -922,6 +805,123 @@ var ACAT_COST_LIST_TYPE = {
         ;
 
 })();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
+
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+      // Disables animation on items with class .ng-no-animation
+      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
+
+      // Improve performance disabling debugging features
+      // $compileProvider.debugInfoEnabled(false);
+
+    }
+
+})();
+/**=========================================================
+ * Module: constants.js
+ * Define constants to inject across the application
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .run(appRun);
+
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });*/
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
+    }
+
+})();
+
 
 (function() {
     'use strict';
@@ -1837,740 +1837,6 @@ var ACAT_COST_LIST_TYPE = {
     }
 })();
 
-
-(function() {
-    'use strict';
-    // Used only for the BottomSheetExample
-    angular
-        .module('app.material')
-        .config(materialConfig)
-        ;
-    materialConfig.$inject = ['$mdIconProvider'];
-    function materialConfig($mdIconProvider){
-      $mdIconProvider
-        .icon('share-arrow', 'app/img/icons/share-arrow.svg', 24)
-        .icon('upload', 'app/img/icons/upload.svg', 24)
-        .icon('copy', 'app/img/icons/copy.svg', 24)
-        .icon('print', 'app/img/icons/print.svg', 24)
-        .icon('hangout', 'app/img/icons/hangout.svg', 24)
-        .icon('mail', 'app/img/icons/mail.svg', 24)
-        .icon('message', 'app/img/icons/message.svg', 24)
-        .icon('copy2', 'app/img/icons/copy2.svg', 24)
-        .icon('facebook', 'app/img/icons/facebook.svg', 24)
-        .icon('twitter', 'app/img/icons/twitter.svg', 24);
-    }
-})();
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.material')
-        .controller('MDAutocompleteCtrl', MDAutocompleteCtrl)
-        .controller('MDBottomSheetCtrl', MDBottomSheetCtrl)
-        .controller('MDListBottomSheetCtrl', MDListBottomSheetCtrl)
-        .controller('MDGridBottomSheetCtrl', MDGridBottomSheetCtrl)
-        .controller('MDCheckboxCtrl', MDCheckboxCtrl)
-        .controller('MDRadioCtrl', MDRadioCtrl)
-        .controller('MDSwitchCtrl', MDSwitchCtrl)
-        .controller('MDDialogCtrl', MDDialogCtrl)
-        .controller('MDSliderCtrl', MDSliderCtrl)
-        .controller('MDSelectCtrl', MDSelectCtrl)
-        .controller('MDInputCtrl', MDInputCtrl)
-        .controller('MDProgressCtrl', MDProgressCtrl)
-        .controller('MDSidenavCtrl', MDSidenavCtrl)
-        .controller('MDSubheaderCtrl', MDSubheaderCtrl)
-        .controller('MDToastCtrl', MDToastCtrl)
-          .controller('ToastCtrl', ToastCtrl)
-        .controller('MDTooltipCtrl', MDTooltipCtrl)
-        .controller('BottomSheetExample', BottomSheetExample)
-          .controller('ListBottomSheetCtrl', ListBottomSheetCtrl)
-          .controller('GridBottomSheetCtrl', GridBottomSheetCtrl)
-        ;
-
-    /*
-      MDAutocompleteCtrl
-     */
-    MDAutocompleteCtrl.$inject = ['$scope', '$timeout', '$q'];
-    function MDAutocompleteCtrl($scope, $timeout, $q) {
-      var self = this;
-
-      self.states        = loadAll();
-      self.selectedItem  = null;
-      self.searchText    = null;
-      self.querySearch   = querySearch;
-      self.simulateQuery = false;
-      self.isDisabled    = false;
-
-      // use $timeout to simulate remote dataservice call
-      function querySearch (query) {
-        var results = query ? self.states.filter( createFilterFor(query) ) : [],
-            deferred;
-        if (self.simulateQuery) {
-          deferred = $q.defer();
-          $timeout(function () { deferred.resolve( results ); }, Math.random() * 1000, false);
-          return deferred.promise;
-        } else {
-          return results;
-        }
-      }
-
-      function loadAll() {
-        var allStates = 'Alabama, Alaska, Arizona, Arkansas, California, Colorado, Connecticut, Delaware, Florida, Georgia, Hawaii, Idaho, Illinois, Indiana, Iowa, Kansas, Kentucky, Louisiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, Mississippi, Missouri, Montana, Nebraska, Nevada, New Hampshire, New Jersey, New Mexico, New York, North Carolina, North Dakota, Ohio, Oklahoma, Oregon, Pennsylvania, Rhode Island, South Carolina, South Dakota, Tennessee, Texas, Utah, Vermont, Virginia, Washington, West Virginia, Wisconsin, Wyoming';
-
-        return allStates.split(/, +/g).map( function (state) {
-          return {
-            value: state.toLowerCase(),
-            display: state
-          };
-        });
-      }
-
-          /**
-           * Create filter function for a query string
-           */
-          function createFilterFor(query) {
-            var lowercaseQuery = angular.lowercase(query);
-
-            return function filterFn(state) {
-              return (state.value.indexOf(lowercaseQuery) === 0);
-            };
-
-          }
-        }
-
-    /*
-    MDBottomSheetCtrl
-     */
-    MDBottomSheetCtrl.$inject = ['$scope', '$timeout', '$mdBottomSheet'];
-    function MDBottomSheetCtrl($scope, $timeout, $mdBottomSheet) {
-      $scope.alert = '';
-
-      $scope.showListBottomSheet = function($event) {
-        $scope.alert = '';
-        $mdBottomSheet.show({
-          templateUrl: 'bottom-sheet-list-template.html',
-          controller: 'ListBottomSheetCtrl',
-          targetEvent: $event,
-          disableParentScroll: false
-        }).then(function(clickedItem) {
-          $scope.alert = clickedItem.name + ' clicked!';
-        });
-      };
-
-      $scope.showGridBottomSheet = function($event) {
-        $scope.alert = '';
-        $mdBottomSheet.show({
-          templateUrl: 'bottom-sheet-grid-template.html',
-          controller: 'GridBottomSheetCtrl',
-          targetEvent: $event,
-          disableParentScroll: false
-        }).then(function(clickedItem) {
-          $scope.alert = clickedItem.name + ' clicked!';
-        });
-      };
-    }
-    /*
-    MDListBottomSheetCtrl
-     */
-    MDListBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
-    function MDListBottomSheetCtrl($scope, $mdBottomSheet) {
-
-      $scope.items = [
-        { name: 'Share', icon: 'share' },
-        { name: 'Upload', icon: 'upload' },
-        { name: 'Copy', icon: 'copy' },
-        { name: 'Print this page', icon: 'print' },
-      ];
-
-      $scope.listItemClick = function($index) {
-        var clickedItem = $scope.items[$index];
-        $mdBottomSheet.hide(clickedItem);
-      };
-    }
-    /*
-    MDGridBottomSheetCtrl
-     */
-    MDGridBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
-    function MDGridBottomSheetCtrl($scope, $mdBottomSheet) {
-
-      $scope.items = [
-        { name: 'Hangout', icon: 'hangout' },
-        { name: 'Mail', icon: 'mail' },
-        { name: 'Message', icon: 'message' },
-        { name: 'Copy', icon: 'copy' },
-        { name: 'Facebook', icon: 'facebook' },
-        { name: 'Twitter', icon: 'twitter' },
-      ];
-
-      $scope.listItemClick = function($index) {
-        var clickedItem = $scope.items[$index];
-        $mdBottomSheet.hide(clickedItem);
-      };
-    }
-    /*
-    MDCheckboxCtrl
-     */
-    MDCheckboxCtrl.$inject = ['$scope'];
-    function MDCheckboxCtrl($scope) {
-
-      $scope.data = {};
-      $scope.data.cb1 = true;
-      $scope.data.cb2 = false;
-      $scope.data.cb3 = false;
-      $scope.data.cb4 = false;
-      $scope.data.cb5 = false;
-    }
-    /*
-    MDRadioCtrl
-     */
-    MDRadioCtrl.$inject = ['$scope'];
-    function MDRadioCtrl($scope) {
-
-        $scope.data = {
-          group1 : 'Banana',
-          group2 : '2',
-          group3 : 'avatar-1'
-        };
-
-        $scope.avatarData = [{
-            id: 'svg-1',
-            title: 'avatar 1',
-            value: 'avatar-1'
-          },{
-            id: 'svg-2',
-            title: 'avatar 2',
-            value: 'avatar-2'
-          },{
-            id: 'svg-3',
-            title: 'avatar 3',
-            value: 'avatar-3'
-        }];
-
-        $scope.radioData = [
-          { label: 'Apple', value: 1 },
-          { label: 'Banana', value: 2 },
-          { label: 'Mango', value: '3', isDisabled: true }
-        ];
-
-
-        $scope.submit = function() {
-          alert('submit');
-        };
-
-        var vals = ['Apple', 'Banana', 'Mango', 'Grape', 'Melon', 'Strawberry', 'Kiwi'];
-        $scope.addItem = function() {
-          var rval = vals[Math.floor(Math.random() * vals.length)];
-          $scope.radioData.push({ label: rval, value: rval });
-        };
-
-        $scope.removeItem = function() {
-          $scope.radioData.pop();
-        };
-    }
-    /*
-    MDSwitchCtrl
-     */
-    MDSwitchCtrl.$inject = ['$scope'];
-    function MDSwitchCtrl($scope) {
-      $scope.data = {
-        cb1: true,
-        cb4: true
-      };
-      
-      $scope.onChange = function(cbState){
-         $scope.message = 'The switch is now: ' + cbState;
-      };
-    }
-    /*
-    MDDialogCtrl
-     */
-    MDDialogCtrl.$inject = ['$scope', '$mdDialog'];
-    function MDDialogCtrl($scope, $mdDialog) {
-      $scope.alert = '';
-
-      $scope.showAlert = function(ev) {
-        $mdDialog.show(
-          $mdDialog.alert()
-            .title('This is an alert title')
-            .content('You can specify some description text in here.')
-            .ariaLabel('Password notification')
-            .ok('Got it!')
-            .targetEvent(ev)
-        );
-      };
-
-      $scope.showConfirm = function(ev) {
-        var confirm = $mdDialog.confirm()
-          .title('Would you like to delete your debt?')
-          .content('All of the banks have agreed to forgive you your debts.')
-          .ariaLabel('Lucky day')
-          .ok('Please do it!')
-          .cancel('Sounds like a scam')
-          .targetEvent(ev);
-
-        $mdDialog.show(confirm).then(function() {
-          $scope.alert = 'You decided to get rid of your debt.';
-        }, function() {
-          $scope.alert = 'You decided to keep your debt.';
-        });
-      };
-
-      $scope.showAdvanced = function(ev) {
-        $mdDialog.show({
-          controller: DialogController,
-          templateUrl: 'dialog1.tmpl.html',
-          targetEvent: ev,
-        })
-        .then(function(answer) {
-          $scope.alert = 'You said the information was \'' + answer + '\'.';
-        }, function() {
-          $scope.alert = 'You cancelled the dialog.';
-        });
-      };
-      DialogController.$inject = ['$scope', '$mdDialog'];
-      function DialogController($scope, $mdDialog) {
-        $scope.hide = function() {
-          $mdDialog.hide();
-        };
-
-        $scope.cancel = function() {
-          $mdDialog.cancel();
-        };
-
-        $scope.answer = function(answer) {
-          $mdDialog.hide(answer);
-        };
-      }
-    }
-    /*
-    MDSliderCtrl
-     */
-    MDSliderCtrl.$inject = ['$scope'];
-    function MDSliderCtrl($scope) {
-
-      $scope.color = {
-        red: Math.floor(Math.random() * 255),
-        green: Math.floor(Math.random() * 255),
-        blue: Math.floor(Math.random() * 255)
-      };
-
-      $scope.rating1 = 3;
-      $scope.rating2 = 2;
-      $scope.rating3 = 4;
-
-      $scope.disabled1 = 0;
-      $scope.disabled2 = 70;
-    }
-    /*
-    MDSelectCtrl
-     */
-    function MDSelectCtrl() {
-      
-      var vm = this;
-      
-      vm.userState = '';
-      vm.states = ('AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS ' +
-          'MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI ' +
-          'WY').split(' ').map(function (state) { return { abbrev: state }; });
-
-      vm.sizes = [
-          'small (12-inch)',
-          'medium (14-inch)',
-          'large (16-inch)',
-          'insane (42-inch)'
-      ];
-      vm.toppings = [
-        { category: 'meat', name: 'Pepperoni' },
-        { category: 'meat', name: 'Sausage' },
-        { category: 'meat', name: 'Ground Beef' },
-        { category: 'meat', name: 'Bacon' },
-        { category: 'veg', name: 'Mushrooms' },
-        { category: 'veg', name: 'Onion' },
-        { category: 'veg', name: 'Green Pepper' },
-        { category: 'veg', name: 'Green Olives' }
-      ];
-    }
-    /*
-    MDInputCtrl
-     */
-    MDInputCtrl.$inject = ['$scope'];
-    function MDInputCtrl($scope) {
-      $scope.user = {
-        title: 'Developer',
-        email: 'ipsum@lorem.com',
-        firstName: '',
-        lastName: '' ,
-        company: 'Google' ,
-        address: '1600 Amphitheatre Pkwy' ,
-        city: 'Mountain View' ,
-        state: 'CA' ,
-        biography: 'Loves kittens, snowboarding, and can type at 130 WPM.\n\nAnd rumor has it she bouldered up Castle Craig!',
-        postalCode : '94043'
-      };
-      $scope.project = {
-        description: 'Nuclear Missile Defense System',
-        clientName: 'Bill Clinton',
-        rate: 500
-      };
-    }
-    /*
-    MDProgressCtrl
-     */
-    MDProgressCtrl.$inject = ['$scope', '$interval'];
-    function MDProgressCtrl($scope, $interval) {
-        $scope.mode = 'query';
-        $scope.determinateValue = 30;
-        $scope.determinateValue2 = 30;
-
-        $interval(function() {
-          $scope.determinateValue += 1;
-          $scope.determinateValue2 += 1.5;
-          if ($scope.determinateValue > 100) {
-            $scope.determinateValue = 30;
-            $scope.determinateValue2 = 30;
-          }
-        }, 100, 0, true);
-
-        $interval(function() {
-          $scope.mode = ($scope.mode === 'query' ? 'determinate' : 'query');
-        }, 7200, 0, true);
-    }
-    /*
-    MDSidenavCtrl
-     */
-    MDSidenavCtrl.$inject = ['$scope', '$timeout', '$mdSidenav', '$log'];
-    function MDSidenavCtrl($scope, $timeout, $mdSidenav, $log) {
-      $scope.toggleLeft = function() {
-        $mdSidenav('left').toggle()
-                          .then(function(){
-                              $log.debug('toggle left is done');
-                          });
-      };
-      $scope.toggleRight = function() {
-        $mdSidenav('right').toggle()
-                            .then(function(){
-                              $log.debug('toggle RIGHT is done');
-                            });
-      };
-      $scope.closeLeft = function() {
-        $mdSidenav('left').close()
-                          .then(function(){
-                            $log.debug('close LEFT is done');
-                          });
-
-      };
-      $scope.closeRight = function() {
-        $mdSidenav('right').close()
-                            .then(function(){
-                              $log.debug('close RIGHT is done');
-                            });
-      };
-    }
-    /*
-    MDSubheaderCtrl
-     */
-    MDSubheaderCtrl.$inject = ['$scope'];
-    function MDSubheaderCtrl($scope) {
-        $scope.messages = [
-          {
-            face : 'app/img/user/10.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/01.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/02.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/03.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/04.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/05.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/06.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/07.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/08.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/09.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/11.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-        ];
-    }
-    /*
-    MDToastCtrl
-     */
-    MDToastCtrl.$inject = ['$scope', '$mdToast'];
-    function MDToastCtrl($scope, $mdToast) {
-
-      $scope.toastPosition = {
-        bottom: false,
-        top: true,
-        left: false,
-        right: true
-      };
-
-      $scope.getToastPosition = function() {
-        return Object.keys($scope.toastPosition)
-          .filter(function(pos) { return $scope.toastPosition[pos]; })
-          .join(' ');
-      };
-
-      $scope.showCustomToast = function() {
-        $mdToast.show({
-          controller: 'ToastCtrl',
-          templateUrl: 'toast-template.html',
-          hideDelay: 60000,
-          parent:'#toastcontainer',
-          position: $scope.getToastPosition()
-        });
-      };
-
-      $scope.showSimpleToast = function() {
-        $mdToast.show(
-          $mdToast.simple()
-            .content('Simple Toast!')
-            .position($scope.getToastPosition())
-            .hideDelay(30000)
-        );
-      };
-
-      $scope.showActionToast = function() {
-        var toast = $mdToast.simple()
-              .content('Action Toast!')
-              .action('OK')
-              .highlightAction(false)
-              .position($scope.getToastPosition());
-
-        $mdToast.show(toast).then(function() {
-          alert('You clicked \'OK\'.');
-        });
-      };
-    }
-    /*
-    ToastCtrl
-     */
-    ToastCtrl.$inject = ['$scope', '$mdToast'];
-    function ToastCtrl($scope, $mdToast) {
-      $scope.closeToast = function() {
-        $mdToast.hide();
-      };
-    }
-    /*
-    MDTooltipCtrl
-     */
-    MDTooltipCtrl.$inject = ['$scope'];
-    function MDTooltipCtrl($scope) {
-      $scope.demo = {};
-    }
-    /*
-    BottomSheetExample
-     */
-    BottomSheetExample.$inject = ['$scope', '$timeout', '$mdBottomSheet'];
-    function BottomSheetExample($scope, $timeout, $mdBottomSheet) {
-      $scope.alert = '';
-
-      $scope.showListBottomSheet = function($event) {
-        $scope.alert = '';
-        $mdBottomSheet.show({
-          templateUrl: 'bottom-sheet-list-template.html',
-          controller: 'ListBottomSheetCtrl',
-          targetEvent: $event,
-          parent: '#bottomsheetcontainer',
-          disableParentScroll: false
-        }).then(function(clickedItem) {
-          $scope.alert = clickedItem.name + ' clicked!';
-        });
-      };
-
-      $scope.showGridBottomSheet = function($event) {
-        $scope.alert = '';
-        $mdBottomSheet.show({
-          templateUrl: 'bottom-sheet-grid-template.html',
-          controller: 'GridBottomSheetCtrl',
-          targetEvent: $event,
-          parent: '#bottomsheetcontainer',
-          disableParentScroll: false
-        }).then(function(clickedItem) {
-          $scope.alert = clickedItem.name + ' clicked!';
-        });
-      };
-    }
-    /*
-    ListBottomSheetCtrl
-     */
-    ListBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
-    function ListBottomSheetCtrl($scope, $mdBottomSheet) {
-
-      $scope.items = [
-        { name: 'Share', icon: 'share-arrow' },
-        { name: 'Upload', icon: 'upload' },
-        { name: 'Copy', icon: 'copy' },
-        { name: 'Print this page', icon: 'print' },
-      ];
-
-      $scope.listItemClick = function($index) {
-        var clickedItem = $scope.items[$index];
-        $mdBottomSheet.hide(clickedItem);
-      };
-    }
-    /*
-    GridBottomSheetCtrl
-     */
-    GridBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
-    function GridBottomSheetCtrl($scope, $mdBottomSheet) {
-      $scope.items = [
-        { name: 'Hangout', icon: 'hangout' },
-        { name: 'Mail', icon: 'mail' },
-        { name: 'Message', icon: 'message' },
-        { name: 'Copy', icon: 'copy2' },
-        { name: 'Facebook', icon: 'facebook' },
-        { name: 'Twitter', icon: 'twitter' },
-      ];
-
-      $scope.listItemClick = function($index) {
-        var clickedItem = $scope.items[$index];
-        $mdBottomSheet.hide(clickedItem);
-      };
-    }
-
-
-})();
-
-(function() {
-    'use strict';
-    // Used only for the BottomSheetExample
-    angular
-        .module('app.material')
-        .run(materialRun)
-        ;
-    materialRun.$inject = ['$http', '$templateCache'];
-    function materialRun($http, $templateCache){
-      var urls = [
-        'app/img/icons/share-arrow.svg',
-        'app/img/icons/upload.svg',
-        'app/img/icons/copy.svg',
-        'app/img/icons/print.svg',
-        'app/img/icons/hangout.svg',
-        'app/img/icons/mail.svg',
-        'app/img/icons/message.svg',
-        'app/img/icons/copy2.svg',
-        'app/img/icons/facebook.svg',
-        'app/img/icons/twitter.svg'
-      ];
-
-      angular.forEach(urls, function(url) {
-        $http.get(url, {cache: $templateCache});
-      });
-
-    }
-
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.material')
-        .controller('MaterialWidgetsController', MaterialWidgetsController);
-
-    MaterialWidgetsController.$inject = ['Colors'];
-    function MaterialWidgetsController(Colors) {
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-
-          vm.sparkOption1 = {
-            type : 'line',
-            width : '100%',
-            height : '140px',
-            tooltipOffsetX : -20,
-            tooltipOffsetY : 20,
-            lineColor : Colors.byName('success'),
-            fillColor : Colors.byName('success'),
-            spotColor : 'rgba(0,0,0,.26)',
-            minSpotColor : 'rgba(0,0,0,.26)',
-            maxSpotColor : 'rgba(0,0,0,.26)',
-            highlightSpotColor : 'rgba(0,0,0,.26)',
-            highlightLineColor : 'rgba(0,0,0,.26)',
-            spotRadius : 2,
-            tooltipPrefix : '',
-            tooltipSuffix : ' Visits',
-            tooltipFormat : '{{prefix}}{{y}}{{suffix}}',
-            chartRangeMin: 0,
-            resize: true
-          };
-
-          vm.sparkOptionPie = {
-            type: 'pie',
-            width : '2em',
-            height : '2em',
-            sliceColors: [ Colors.byName('success'), Colors.byName('gray-light')]
-          };
-        
-        }
-    }
-})();
 /**=========================================================
  * Module: navbar-search.js
  * Navbar search toggler * Auto dismiss on ESC key
@@ -3524,6 +2790,740 @@ var ACAT_COST_LIST_TYPE = {
     }
 })();
 
+
+(function() {
+    'use strict';
+    // Used only for the BottomSheetExample
+    angular
+        .module('app.material')
+        .config(materialConfig)
+        ;
+    materialConfig.$inject = ['$mdIconProvider'];
+    function materialConfig($mdIconProvider){
+      $mdIconProvider
+        .icon('share-arrow', 'app/img/icons/share-arrow.svg', 24)
+        .icon('upload', 'app/img/icons/upload.svg', 24)
+        .icon('copy', 'app/img/icons/copy.svg', 24)
+        .icon('print', 'app/img/icons/print.svg', 24)
+        .icon('hangout', 'app/img/icons/hangout.svg', 24)
+        .icon('mail', 'app/img/icons/mail.svg', 24)
+        .icon('message', 'app/img/icons/message.svg', 24)
+        .icon('copy2', 'app/img/icons/copy2.svg', 24)
+        .icon('facebook', 'app/img/icons/facebook.svg', 24)
+        .icon('twitter', 'app/img/icons/twitter.svg', 24);
+    }
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.material')
+        .controller('MDAutocompleteCtrl', MDAutocompleteCtrl)
+        .controller('MDBottomSheetCtrl', MDBottomSheetCtrl)
+        .controller('MDListBottomSheetCtrl', MDListBottomSheetCtrl)
+        .controller('MDGridBottomSheetCtrl', MDGridBottomSheetCtrl)
+        .controller('MDCheckboxCtrl', MDCheckboxCtrl)
+        .controller('MDRadioCtrl', MDRadioCtrl)
+        .controller('MDSwitchCtrl', MDSwitchCtrl)
+        .controller('MDDialogCtrl', MDDialogCtrl)
+        .controller('MDSliderCtrl', MDSliderCtrl)
+        .controller('MDSelectCtrl', MDSelectCtrl)
+        .controller('MDInputCtrl', MDInputCtrl)
+        .controller('MDProgressCtrl', MDProgressCtrl)
+        .controller('MDSidenavCtrl', MDSidenavCtrl)
+        .controller('MDSubheaderCtrl', MDSubheaderCtrl)
+        .controller('MDToastCtrl', MDToastCtrl)
+          .controller('ToastCtrl', ToastCtrl)
+        .controller('MDTooltipCtrl', MDTooltipCtrl)
+        .controller('BottomSheetExample', BottomSheetExample)
+          .controller('ListBottomSheetCtrl', ListBottomSheetCtrl)
+          .controller('GridBottomSheetCtrl', GridBottomSheetCtrl)
+        ;
+
+    /*
+      MDAutocompleteCtrl
+     */
+    MDAutocompleteCtrl.$inject = ['$scope', '$timeout', '$q'];
+    function MDAutocompleteCtrl($scope, $timeout, $q) {
+      var self = this;
+
+      self.states        = loadAll();
+      self.selectedItem  = null;
+      self.searchText    = null;
+      self.querySearch   = querySearch;
+      self.simulateQuery = false;
+      self.isDisabled    = false;
+
+      // use $timeout to simulate remote dataservice call
+      function querySearch (query) {
+        var results = query ? self.states.filter( createFilterFor(query) ) : [],
+            deferred;
+        if (self.simulateQuery) {
+          deferred = $q.defer();
+          $timeout(function () { deferred.resolve( results ); }, Math.random() * 1000, false);
+          return deferred.promise;
+        } else {
+          return results;
+        }
+      }
+
+      function loadAll() {
+        var allStates = 'Alabama, Alaska, Arizona, Arkansas, California, Colorado, Connecticut, Delaware, Florida, Georgia, Hawaii, Idaho, Illinois, Indiana, Iowa, Kansas, Kentucky, Louisiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, Mississippi, Missouri, Montana, Nebraska, Nevada, New Hampshire, New Jersey, New Mexico, New York, North Carolina, North Dakota, Ohio, Oklahoma, Oregon, Pennsylvania, Rhode Island, South Carolina, South Dakota, Tennessee, Texas, Utah, Vermont, Virginia, Washington, West Virginia, Wisconsin, Wyoming';
+
+        return allStates.split(/, +/g).map( function (state) {
+          return {
+            value: state.toLowerCase(),
+            display: state
+          };
+        });
+      }
+
+          /**
+           * Create filter function for a query string
+           */
+          function createFilterFor(query) {
+            var lowercaseQuery = angular.lowercase(query);
+
+            return function filterFn(state) {
+              return (state.value.indexOf(lowercaseQuery) === 0);
+            };
+
+          }
+        }
+
+    /*
+    MDBottomSheetCtrl
+     */
+    MDBottomSheetCtrl.$inject = ['$scope', '$timeout', '$mdBottomSheet'];
+    function MDBottomSheetCtrl($scope, $timeout, $mdBottomSheet) {
+      $scope.alert = '';
+
+      $scope.showListBottomSheet = function($event) {
+        $scope.alert = '';
+        $mdBottomSheet.show({
+          templateUrl: 'bottom-sheet-list-template.html',
+          controller: 'ListBottomSheetCtrl',
+          targetEvent: $event,
+          disableParentScroll: false
+        }).then(function(clickedItem) {
+          $scope.alert = clickedItem.name + ' clicked!';
+        });
+      };
+
+      $scope.showGridBottomSheet = function($event) {
+        $scope.alert = '';
+        $mdBottomSheet.show({
+          templateUrl: 'bottom-sheet-grid-template.html',
+          controller: 'GridBottomSheetCtrl',
+          targetEvent: $event,
+          disableParentScroll: false
+        }).then(function(clickedItem) {
+          $scope.alert = clickedItem.name + ' clicked!';
+        });
+      };
+    }
+    /*
+    MDListBottomSheetCtrl
+     */
+    MDListBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
+    function MDListBottomSheetCtrl($scope, $mdBottomSheet) {
+
+      $scope.items = [
+        { name: 'Share', icon: 'share' },
+        { name: 'Upload', icon: 'upload' },
+        { name: 'Copy', icon: 'copy' },
+        { name: 'Print this page', icon: 'print' },
+      ];
+
+      $scope.listItemClick = function($index) {
+        var clickedItem = $scope.items[$index];
+        $mdBottomSheet.hide(clickedItem);
+      };
+    }
+    /*
+    MDGridBottomSheetCtrl
+     */
+    MDGridBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
+    function MDGridBottomSheetCtrl($scope, $mdBottomSheet) {
+
+      $scope.items = [
+        { name: 'Hangout', icon: 'hangout' },
+        { name: 'Mail', icon: 'mail' },
+        { name: 'Message', icon: 'message' },
+        { name: 'Copy', icon: 'copy' },
+        { name: 'Facebook', icon: 'facebook' },
+        { name: 'Twitter', icon: 'twitter' },
+      ];
+
+      $scope.listItemClick = function($index) {
+        var clickedItem = $scope.items[$index];
+        $mdBottomSheet.hide(clickedItem);
+      };
+    }
+    /*
+    MDCheckboxCtrl
+     */
+    MDCheckboxCtrl.$inject = ['$scope'];
+    function MDCheckboxCtrl($scope) {
+
+      $scope.data = {};
+      $scope.data.cb1 = true;
+      $scope.data.cb2 = false;
+      $scope.data.cb3 = false;
+      $scope.data.cb4 = false;
+      $scope.data.cb5 = false;
+    }
+    /*
+    MDRadioCtrl
+     */
+    MDRadioCtrl.$inject = ['$scope'];
+    function MDRadioCtrl($scope) {
+
+        $scope.data = {
+          group1 : 'Banana',
+          group2 : '2',
+          group3 : 'avatar-1'
+        };
+
+        $scope.avatarData = [{
+            id: 'svg-1',
+            title: 'avatar 1',
+            value: 'avatar-1'
+          },{
+            id: 'svg-2',
+            title: 'avatar 2',
+            value: 'avatar-2'
+          },{
+            id: 'svg-3',
+            title: 'avatar 3',
+            value: 'avatar-3'
+        }];
+
+        $scope.radioData = [
+          { label: 'Apple', value: 1 },
+          { label: 'Banana', value: 2 },
+          { label: 'Mango', value: '3', isDisabled: true }
+        ];
+
+
+        $scope.submit = function() {
+          alert('submit');
+        };
+
+        var vals = ['Apple', 'Banana', 'Mango', 'Grape', 'Melon', 'Strawberry', 'Kiwi'];
+        $scope.addItem = function() {
+          var rval = vals[Math.floor(Math.random() * vals.length)];
+          $scope.radioData.push({ label: rval, value: rval });
+        };
+
+        $scope.removeItem = function() {
+          $scope.radioData.pop();
+        };
+    }
+    /*
+    MDSwitchCtrl
+     */
+    MDSwitchCtrl.$inject = ['$scope'];
+    function MDSwitchCtrl($scope) {
+      $scope.data = {
+        cb1: true,
+        cb4: true
+      };
+      
+      $scope.onChange = function(cbState){
+         $scope.message = 'The switch is now: ' + cbState;
+      };
+    }
+    /*
+    MDDialogCtrl
+     */
+    MDDialogCtrl.$inject = ['$scope', '$mdDialog'];
+    function MDDialogCtrl($scope, $mdDialog) {
+      $scope.alert = '';
+
+      $scope.showAlert = function(ev) {
+        $mdDialog.show(
+          $mdDialog.alert()
+            .title('This is an alert title')
+            .content('You can specify some description text in here.')
+            .ariaLabel('Password notification')
+            .ok('Got it!')
+            .targetEvent(ev)
+        );
+      };
+
+      $scope.showConfirm = function(ev) {
+        var confirm = $mdDialog.confirm()
+          .title('Would you like to delete your debt?')
+          .content('All of the banks have agreed to forgive you your debts.')
+          .ariaLabel('Lucky day')
+          .ok('Please do it!')
+          .cancel('Sounds like a scam')
+          .targetEvent(ev);
+
+        $mdDialog.show(confirm).then(function() {
+          $scope.alert = 'You decided to get rid of your debt.';
+        }, function() {
+          $scope.alert = 'You decided to keep your debt.';
+        });
+      };
+
+      $scope.showAdvanced = function(ev) {
+        $mdDialog.show({
+          controller: DialogController,
+          templateUrl: 'dialog1.tmpl.html',
+          targetEvent: ev,
+        })
+        .then(function(answer) {
+          $scope.alert = 'You said the information was \'' + answer + '\'.';
+        }, function() {
+          $scope.alert = 'You cancelled the dialog.';
+        });
+      };
+      DialogController.$inject = ['$scope', '$mdDialog'];
+      function DialogController($scope, $mdDialog) {
+        $scope.hide = function() {
+          $mdDialog.hide();
+        };
+
+        $scope.cancel = function() {
+          $mdDialog.cancel();
+        };
+
+        $scope.answer = function(answer) {
+          $mdDialog.hide(answer);
+        };
+      }
+    }
+    /*
+    MDSliderCtrl
+     */
+    MDSliderCtrl.$inject = ['$scope'];
+    function MDSliderCtrl($scope) {
+
+      $scope.color = {
+        red: Math.floor(Math.random() * 255),
+        green: Math.floor(Math.random() * 255),
+        blue: Math.floor(Math.random() * 255)
+      };
+
+      $scope.rating1 = 3;
+      $scope.rating2 = 2;
+      $scope.rating3 = 4;
+
+      $scope.disabled1 = 0;
+      $scope.disabled2 = 70;
+    }
+    /*
+    MDSelectCtrl
+     */
+    function MDSelectCtrl() {
+      
+      var vm = this;
+      
+      vm.userState = '';
+      vm.states = ('AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS ' +
+          'MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI ' +
+          'WY').split(' ').map(function (state) { return { abbrev: state }; });
+
+      vm.sizes = [
+          'small (12-inch)',
+          'medium (14-inch)',
+          'large (16-inch)',
+          'insane (42-inch)'
+      ];
+      vm.toppings = [
+        { category: 'meat', name: 'Pepperoni' },
+        { category: 'meat', name: 'Sausage' },
+        { category: 'meat', name: 'Ground Beef' },
+        { category: 'meat', name: 'Bacon' },
+        { category: 'veg', name: 'Mushrooms' },
+        { category: 'veg', name: 'Onion' },
+        { category: 'veg', name: 'Green Pepper' },
+        { category: 'veg', name: 'Green Olives' }
+      ];
+    }
+    /*
+    MDInputCtrl
+     */
+    MDInputCtrl.$inject = ['$scope'];
+    function MDInputCtrl($scope) {
+      $scope.user = {
+        title: 'Developer',
+        email: 'ipsum@lorem.com',
+        firstName: '',
+        lastName: '' ,
+        company: 'Google' ,
+        address: '1600 Amphitheatre Pkwy' ,
+        city: 'Mountain View' ,
+        state: 'CA' ,
+        biography: 'Loves kittens, snowboarding, and can type at 130 WPM.\n\nAnd rumor has it she bouldered up Castle Craig!',
+        postalCode : '94043'
+      };
+      $scope.project = {
+        description: 'Nuclear Missile Defense System',
+        clientName: 'Bill Clinton',
+        rate: 500
+      };
+    }
+    /*
+    MDProgressCtrl
+     */
+    MDProgressCtrl.$inject = ['$scope', '$interval'];
+    function MDProgressCtrl($scope, $interval) {
+        $scope.mode = 'query';
+        $scope.determinateValue = 30;
+        $scope.determinateValue2 = 30;
+
+        $interval(function() {
+          $scope.determinateValue += 1;
+          $scope.determinateValue2 += 1.5;
+          if ($scope.determinateValue > 100) {
+            $scope.determinateValue = 30;
+            $scope.determinateValue2 = 30;
+          }
+        }, 100, 0, true);
+
+        $interval(function() {
+          $scope.mode = ($scope.mode === 'query' ? 'determinate' : 'query');
+        }, 7200, 0, true);
+    }
+    /*
+    MDSidenavCtrl
+     */
+    MDSidenavCtrl.$inject = ['$scope', '$timeout', '$mdSidenav', '$log'];
+    function MDSidenavCtrl($scope, $timeout, $mdSidenav, $log) {
+      $scope.toggleLeft = function() {
+        $mdSidenav('left').toggle()
+                          .then(function(){
+                              $log.debug('toggle left is done');
+                          });
+      };
+      $scope.toggleRight = function() {
+        $mdSidenav('right').toggle()
+                            .then(function(){
+                              $log.debug('toggle RIGHT is done');
+                            });
+      };
+      $scope.closeLeft = function() {
+        $mdSidenav('left').close()
+                          .then(function(){
+                            $log.debug('close LEFT is done');
+                          });
+
+      };
+      $scope.closeRight = function() {
+        $mdSidenav('right').close()
+                            .then(function(){
+                              $log.debug('close RIGHT is done');
+                            });
+      };
+    }
+    /*
+    MDSubheaderCtrl
+     */
+    MDSubheaderCtrl.$inject = ['$scope'];
+    function MDSubheaderCtrl($scope) {
+        $scope.messages = [
+          {
+            face : 'app/img/user/10.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/01.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/02.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/03.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/04.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/05.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/06.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/07.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/08.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/09.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/11.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+        ];
+    }
+    /*
+    MDToastCtrl
+     */
+    MDToastCtrl.$inject = ['$scope', '$mdToast'];
+    function MDToastCtrl($scope, $mdToast) {
+
+      $scope.toastPosition = {
+        bottom: false,
+        top: true,
+        left: false,
+        right: true
+      };
+
+      $scope.getToastPosition = function() {
+        return Object.keys($scope.toastPosition)
+          .filter(function(pos) { return $scope.toastPosition[pos]; })
+          .join(' ');
+      };
+
+      $scope.showCustomToast = function() {
+        $mdToast.show({
+          controller: 'ToastCtrl',
+          templateUrl: 'toast-template.html',
+          hideDelay: 60000,
+          parent:'#toastcontainer',
+          position: $scope.getToastPosition()
+        });
+      };
+
+      $scope.showSimpleToast = function() {
+        $mdToast.show(
+          $mdToast.simple()
+            .content('Simple Toast!')
+            .position($scope.getToastPosition())
+            .hideDelay(30000)
+        );
+      };
+
+      $scope.showActionToast = function() {
+        var toast = $mdToast.simple()
+              .content('Action Toast!')
+              .action('OK')
+              .highlightAction(false)
+              .position($scope.getToastPosition());
+
+        $mdToast.show(toast).then(function() {
+          alert('You clicked \'OK\'.');
+        });
+      };
+    }
+    /*
+    ToastCtrl
+     */
+    ToastCtrl.$inject = ['$scope', '$mdToast'];
+    function ToastCtrl($scope, $mdToast) {
+      $scope.closeToast = function() {
+        $mdToast.hide();
+      };
+    }
+    /*
+    MDTooltipCtrl
+     */
+    MDTooltipCtrl.$inject = ['$scope'];
+    function MDTooltipCtrl($scope) {
+      $scope.demo = {};
+    }
+    /*
+    BottomSheetExample
+     */
+    BottomSheetExample.$inject = ['$scope', '$timeout', '$mdBottomSheet'];
+    function BottomSheetExample($scope, $timeout, $mdBottomSheet) {
+      $scope.alert = '';
+
+      $scope.showListBottomSheet = function($event) {
+        $scope.alert = '';
+        $mdBottomSheet.show({
+          templateUrl: 'bottom-sheet-list-template.html',
+          controller: 'ListBottomSheetCtrl',
+          targetEvent: $event,
+          parent: '#bottomsheetcontainer',
+          disableParentScroll: false
+        }).then(function(clickedItem) {
+          $scope.alert = clickedItem.name + ' clicked!';
+        });
+      };
+
+      $scope.showGridBottomSheet = function($event) {
+        $scope.alert = '';
+        $mdBottomSheet.show({
+          templateUrl: 'bottom-sheet-grid-template.html',
+          controller: 'GridBottomSheetCtrl',
+          targetEvent: $event,
+          parent: '#bottomsheetcontainer',
+          disableParentScroll: false
+        }).then(function(clickedItem) {
+          $scope.alert = clickedItem.name + ' clicked!';
+        });
+      };
+    }
+    /*
+    ListBottomSheetCtrl
+     */
+    ListBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
+    function ListBottomSheetCtrl($scope, $mdBottomSheet) {
+
+      $scope.items = [
+        { name: 'Share', icon: 'share-arrow' },
+        { name: 'Upload', icon: 'upload' },
+        { name: 'Copy', icon: 'copy' },
+        { name: 'Print this page', icon: 'print' },
+      ];
+
+      $scope.listItemClick = function($index) {
+        var clickedItem = $scope.items[$index];
+        $mdBottomSheet.hide(clickedItem);
+      };
+    }
+    /*
+    GridBottomSheetCtrl
+     */
+    GridBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
+    function GridBottomSheetCtrl($scope, $mdBottomSheet) {
+      $scope.items = [
+        { name: 'Hangout', icon: 'hangout' },
+        { name: 'Mail', icon: 'mail' },
+        { name: 'Message', icon: 'message' },
+        { name: 'Copy', icon: 'copy2' },
+        { name: 'Facebook', icon: 'facebook' },
+        { name: 'Twitter', icon: 'twitter' },
+      ];
+
+      $scope.listItemClick = function($index) {
+        var clickedItem = $scope.items[$index];
+        $mdBottomSheet.hide(clickedItem);
+      };
+    }
+
+
+})();
+
+(function() {
+    'use strict';
+    // Used only for the BottomSheetExample
+    angular
+        .module('app.material')
+        .run(materialRun)
+        ;
+    materialRun.$inject = ['$http', '$templateCache'];
+    function materialRun($http, $templateCache){
+      var urls = [
+        'app/img/icons/share-arrow.svg',
+        'app/img/icons/upload.svg',
+        'app/img/icons/copy.svg',
+        'app/img/icons/print.svg',
+        'app/img/icons/hangout.svg',
+        'app/img/icons/mail.svg',
+        'app/img/icons/message.svg',
+        'app/img/icons/copy2.svg',
+        'app/img/icons/facebook.svg',
+        'app/img/icons/twitter.svg'
+      ];
+
+      angular.forEach(urls, function(url) {
+        $http.get(url, {cache: $templateCache});
+      });
+
+    }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.material')
+        .controller('MaterialWidgetsController', MaterialWidgetsController);
+
+    MaterialWidgetsController.$inject = ['Colors'];
+    function MaterialWidgetsController(Colors) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+
+          vm.sparkOption1 = {
+            type : 'line',
+            width : '100%',
+            height : '140px',
+            tooltipOffsetX : -20,
+            tooltipOffsetY : 20,
+            lineColor : Colors.byName('success'),
+            fillColor : Colors.byName('success'),
+            spotColor : 'rgba(0,0,0,.26)',
+            minSpotColor : 'rgba(0,0,0,.26)',
+            maxSpotColor : 'rgba(0,0,0,.26)',
+            highlightSpotColor : 'rgba(0,0,0,.26)',
+            highlightLineColor : 'rgba(0,0,0,.26)',
+            spotRadius : 2,
+            tooltipPrefix : '',
+            tooltipSuffix : ' Visits',
+            tooltipFormat : '{{prefix}}{{y}}{{suffix}}',
+            chartRangeMin: 0,
+            resize: true
+          };
+
+          vm.sparkOptionPie = {
+            type: 'pie',
+            width : '2em',
+            height : '2em',
+            sliceColors: [ Colors.byName('success'), Colors.byName('gray-light')]
+          };
+        
+        }
+    }
+})();
 (function() {
     'use strict';
 
@@ -4538,22 +4538,6 @@ var ACAT_COST_LIST_TYPE = {
 })();
 
 /**
- * Created by Yoni on 1/8/2018.
- */
-(function() {
-    "use strict";
-
-    angular.module("app.clients", [
-    ]).run(runBlock);
-
-    function runBlock() {
-        // console.log("client app run");
-    }
-
-
-})();
-
-/**
  * Created by Yoni on 1/29/2018.
  */
 (function() {
@@ -4569,6 +4553,22 @@ var ACAT_COST_LIST_TYPE = {
     };
 
 })();
+/**
+ * Created by Yoni on 1/8/2018.
+ */
+(function() {
+    "use strict";
+
+    angular.module("app.clients", [
+    ]).run(runBlock);
+
+    function runBlock() {
+        // console.log("client app run");
+    }
+
+
+})();
+
 (function() {
   "use strict";
 
@@ -4641,6 +4641,8 @@ function runBlock() {
             UpdateCostList:_updateCostList,
             RemoveCostListLinear:_removeCostListLinear,
             RemoveCostListGroup:_removeCostGroupList,
+            RemoveCostGroup:_removeCostGroup,
+            UpdateCostGroup:_updateCostGroup,
             ResetCostList:_resetCostList
         };
 
@@ -4682,8 +4684,182 @@ function runBlock() {
             var item = {  item_id: group_cost_list.item_id  };
             return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,group_cost_list._id) +'/items', item);
         }
+        function _removeCostGroup(group){
+            var item = {  item_id: group.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group._id) +'/group', item);
+        }
+
+        function _updateCostGroup(group) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,'grouped') +'/' +group._id, group);
+        }
         function _resetCostList(cost_list) {
             return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 2/9/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.forms')
+        .constant('MW_QUESTION_TYPES', [
+            {name:'Fill In Blank',url:'fib',code:'FILL_IN_BLANK',type:'text'},
+            {name:'Yes/No Question',code:'YES_NO',url:'yn',type:'yn',options:['Yes','No']},
+            {name:'Multiple Choice',url:'mc',code:'MULTIPLE_CHOICE',options:[],type:'checkbox'},
+            {name:'Single Choice',url:'sc',code:'SINGLE_CHOICE',options:[],type:'select'},
+            {name:'Grouped Question',url:'GROUPED',code:'GROUPED',type:'grouped'}])
+        .constant('MW_FORM_TYPES', [
+            {name:'ACAT',code:'ACAT'},
+            {name:'Loan Application',code:'LOAN_APPLICATION'},
+            {name:'Screening',code:'SCREENING'},
+            {name:'Group Application',code:'GROUP_APPLICATION'},
+            {name:'Test',code:'TEST'}]);
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.forms").controller("FormsController", FormsController);
+
+    FormsController.$inject = ['FormService','$state'];
+
+    function FormsController(FormService,$state) {
+        var vm = this;
+        vm.forms = [];
+        vm.logPagination = _logPagination;
+        vm.editForm = _editForm;
+
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
+
+        vm.options = {
+            rowSelection: true,
+            multiSelect: true,
+            autoSelect: true,
+            decapitate: false,
+            largeEditDialog: false,
+            boundaryLinks: true,
+            limitSelect: true,
+            pageSelect: false
+        };
+
+        vm.request = {
+            page: 1,
+            per_page: 10,
+            Search: ""
+        };
+
+        initialize();
+
+
+        function initialize() {
+            callApi();//fetch first page data initially
+        }
+
+        function _logPagination(page, pageSize) {
+            vm.request.page = page;
+            vm.request.per_page = pageSize;
+            vm.request.Start = page - 1;
+            callApi();
+        }
+
+        function callApi() {
+            FormService.GetFormsPerPage(vm.request).then(function (response) {
+                vm.forms = response.data.docs;
+                _.forEach(vm.forms,function (form) {
+                    if(form.has_sections){
+                        form.sectionCount = form.sections.length;
+                        var questionCount = 0;
+                        _.forEach(form.sections,function (sec) {
+                            questionCount = questionCount + sec.questions.length;
+                        });
+                        form.questionCount = questionCount;
+                    }else{
+                        form.questionCount = form.questions.length;
+                    }
+                })
+            },function (error) {
+                console.log(error);
+            })
+        }
+
+        function _editForm(form, ev) {
+            $state.go('app.builder',{id:form._id});
+            console.log("edit Form",form);
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.forms')
+
+        .service('FormService', FormService);
+
+    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES','MW_FORM_TYPES'];
+
+    function FormService($http, CommonService,MW_QUESTION_TYPES,MW_FORM_TYPES) {
+        return {
+            GetFormsPerPage: _getFormsPerPage,
+            CreateForm:_createForm,
+            GetForm:_getForm,
+            UpdateForm:_updateForm,
+            GetQuestion:_getQuestion,
+            CreateQuestion:_createQuestion,
+            UpdateQuestion:_updateQuestion,
+            DeleteQuestion:_deleteQuestion,
+            CreateSection:_createSection,
+            UpdateSection:_updateSection,
+            RemoveSection:_removeSection,
+            QuestionTypes: MW_QUESTION_TYPES,
+            FormTypes: MW_FORM_TYPES
+        };
+        function _getFormsPerPage(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
+        }
+        function _getForm(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM, API.Methods.Form.All, id));
+        }
+        function _updateForm(form) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,form._id), form);
+        }
+        function _createForm(form){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
+        }
+        //------QUESTION-----------
+        function _getQuestion(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,id));
+        }
+        function _createQuestion(question,type){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question) + '/' + type, question);
+        }
+        function _updateQuestion(question) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id), question);
+        }
+        function _deleteQuestion(question) {
+          return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id + '?form=' + question.form));
+        }
+
+
+        //    ------SECTION--------
+        function _createSection(section){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Section), section);
+        }
+        function _updateSection(section) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id), section);
+        }
+        function _removeSection(section) {
+            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id + '?form=' + section.form));
         }
     }
 
@@ -4862,172 +5038,6 @@ function runBlock() {
 
 })(window.angular);
 
-/**
- * Created by Yoni on 2/9/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.forms')
-        .constant('MW_QUESTION_TYPES', [
-            {name:'Fill In Blank',url:'fib',code:'FILL_IN_BLANK',type:'text'},
-            {name:'Yes/No Question',code:'YES_NO',url:'yn',type:'yn',options:['Yes','No']},
-            {name:'Multiple Choice',url:'mc',code:'MULTIPLE_CHOICE',options:[],type:'checkbox'},
-            {name:'Single Choice',url:'sc',code:'SINGLE_CHOICE',options:[],type:'select'},
-            {name:'Grouped Question',url:'GROUPED',code:'GROUPED',type:'grouped'}])
-        .constant('MW_FORM_TYPES', [
-            {name:'ACAT',code:'ACAT'},
-            {name:'Loan Application',code:'LOAN_APPLICATION'},
-            {name:'Screening',code:'SCREENING'},
-            {name:'Group Application',code:'GROUP_APPLICATION'},
-            {name:'Test',code:'TEST'}]);
-})(window.angular);
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.forms").controller("FormsController", FormsController);
-
-    FormsController.$inject = ['FormService','$state'];
-
-    function FormsController(FormService,$state) {
-        var vm = this;
-        vm.forms = [];
-        vm.logPagination = _logPagination;
-        vm.editForm = _editForm;
-
-        vm.pageSizes = [10, 25, 50, 100, 250, 500];
-
-        vm.options = {
-            rowSelection: true,
-            multiSelect: true,
-            autoSelect: true,
-            decapitate: false,
-            largeEditDialog: false,
-            boundaryLinks: true,
-            limitSelect: true,
-            pageSelect: false
-        };
-
-        vm.request = {
-            page: 1,
-            per_page: 10,
-            Search: ""
-        };
-
-        initialize();
-
-
-        function initialize() {
-            callApi();//fetch first page data initially
-        }
-
-        function _logPagination(page, pageSize) {
-            vm.request.page = page;
-            vm.request.per_page = pageSize;
-            vm.request.Start = page - 1;
-            callApi();
-        }
-
-        function callApi() {
-            FormService.GetFormsPerPage(vm.request).then(function (response) {
-                vm.forms = response.data.docs;
-                _.forEach(vm.forms,function (form) {
-                    if(form.has_sections){
-                        form.sectionCount = form.sections.length;
-                        var questionCount = 0;
-                        _.forEach(form.sections,function (sec) {
-                            questionCount = questionCount + sec.questions.length;
-                        });
-                        form.questionCount = questionCount;
-                    }else{
-                        form.questionCount = form.questions.length;
-                    }
-                })
-            },function (error) {
-                console.log(error);
-            })
-        }
-
-        function _editForm(form, ev) {
-            $state.go('app.builder',{id:form._id});
-            console.log("edit Form",form);
-        }
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.forms')
-
-        .service('FormService', FormService);
-
-    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES','MW_FORM_TYPES'];
-
-    function FormService($http, CommonService,MW_QUESTION_TYPES,MW_FORM_TYPES) {
-        return {
-            GetFormsPerPage: _getFormsPerPage,
-            CreateForm:_createForm,
-            GetForm:_getForm,
-            UpdateForm:_updateForm,
-            GetQuestion:_getQuestion,
-            CreateQuestion:_createQuestion,
-            UpdateQuestion:_updateQuestion,
-            DeleteQuestion:_deleteQuestion,
-            CreateSection:_createSection,
-            UpdateSection:_updateSection,
-            RemoveSection:_removeSection,
-            QuestionTypes: MW_QUESTION_TYPES,
-            FormTypes: MW_FORM_TYPES
-        };
-        function _getFormsPerPage(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
-        }
-        function _getForm(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM, API.Methods.Form.All, id));
-        }
-        function _updateForm(form) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,form._id), form);
-        }
-        function _createForm(form){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
-        }
-        //------QUESTION-----------
-        function _getQuestion(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,id));
-        }
-        function _createQuestion(question,type){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question) + '/' + type, question);
-        }
-        function _updateQuestion(question) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id), question);
-        }
-        function _deleteQuestion(question) {
-          return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id + '?form=' + question.form));
-        }
-
-
-        //    ------SECTION--------
-        function _createSection(section){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Section), section);
-        }
-        function _updateSection(section) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id), section);
-        }
-        function _removeSection(section) {
-            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id + '?form=' + section.form));
-        }
-    }
-
-
-})(window.angular);
 (function(angular) {
   'use strict';
   angular.module('app.mfi')
@@ -5178,109 +5188,6 @@ function runBlock() {
 /**
  * Created by Yoni on 3/5/2018.
  */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        callApi();
-
-       function callApi(){
-           ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
 (function(angular) {
     "use strict";
 
@@ -5304,7 +5211,11 @@ function runBlock() {
         vm.cancelCostItem = _cancelCostItem;
         vm.cropSelectChanged = _cropSelectChanged;
         vm.onCostListTypeChange = _onCostListTypeChange;
+        //GROUP RELATED
         vm.addGroupOnSection = _addGroupOnSection;
+        vm.editGroupSection = _editGroupSection;
+        vm.removeGroupSection = _removeGroupSection;
+
 
 
 
@@ -5335,6 +5246,7 @@ function runBlock() {
                 // labour_costs:[],
                 // other_costs:[]
             };
+            vm.isEditCostGroup = false;
 
             vm.isEditSeedCost = false; //edit seed cost list
             if(vm.isEdit){
@@ -5555,6 +5467,7 @@ function runBlock() {
             switch (type){
                 case ACAT_GROUP_CONSTANT.FERTILIZER:
                     return  {
+                        _id: vm.acat.fertilizer_costs._id,
                         type: 'grouped',
                         parent_cost_list: vm.acat.fertilizer_costs._id,
                         title:groupInfo.title
@@ -5562,6 +5475,7 @@ function runBlock() {
                     break;
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
                     return  {
+                        _id: vm.acat.chemicals_costs._id,
                         type: 'grouped',
                         parent_cost_list: vm.acat.chemicals_costs._id,
                         title:groupInfo.title
@@ -5569,6 +5483,7 @@ function runBlock() {
                     break;
                 case ACAT_GROUP_CONSTANT.LABOUR_COST:
                     return  {
+                        _id: vm.acat.labour_costs._id,
                         type: 'grouped',
                         parent_cost_list: vm.acat.labour_costs._id,
                         title:groupInfo.title
@@ -5576,6 +5491,7 @@ function runBlock() {
                     break;
                 case ACAT_GROUP_CONSTANT.OTHER_COST:
                     return  {
+                        _id: vm.acat.other_costs._id,
                         type: 'grouped',
                         parent_cost_list: vm.acat.other_costs._id,
                         title:groupInfo.title
@@ -6035,19 +5951,66 @@ function runBlock() {
 
         }
 
-        function _addGroupOnSection(groupInfo,type) {
-            var groupCost = PrepareGroupCostListForAdd(groupInfo, type);
-            //ADD THE NEW GROUP TO COST LIST PARENT
-            ACATService.AddCostList(groupCost).then(function (response) {
-                console.log("group created",response.data);
-                var newGroup = response.data;
-                callAPI();
-                groupInfo.existing_group = true;
-                groupInfo.selected_group = newGroup;
 
-            },function (error) {
-                console.log("error on group creation",error);
-            });
+        function _addGroupOnSection(groupInfo,type) {
+            if (vm.isEditCostGroup) {
+                ACATService.UpdateCostGroup(groupInfo).then(function (response) {
+                    console.log("group updated successfully",response.data);
+                    var newGroup = response.data;
+                    callAPI();
+                    groupInfo.existing_group = true;
+                    groupInfo.selected_group = newGroup;
+                },function (error) {
+                    console.log("error on group update",error);
+                    var message = error.data.error.message;
+                    AlertService.showError("Error on updating group title",message);
+                    callAPI();
+                });
+            } else {
+                    var groupCost = PrepareGroupCostListForAdd(groupInfo, type);
+                    //ADD THE NEW GROUP TO COST LIST PARENT
+                    ACATService.AddCostList(groupCost).then(function (response) {
+                        console.log("group created", response.data);
+                        var newGroup = response.data;
+                        callAPI();
+                        groupInfo.existing_group = true;
+                        groupInfo.selected_group = newGroup;
+
+                    }, function (error) {
+                        console.log("error on group creation", error);
+                        var message = error.data.error.message;
+                        AlertService.showError("Error on creating group",message);
+
+                    });
+            }
+        }
+
+        function _removeGroupSection(groupInfo, type) {
+            AlertService.showConfirmForDelete("Group: " + groupInfo.title + " including " + groupInfo.items.length + " cost items",
+                "Are you sure? You are about to DELETE group", "Yes, Change It!", "warning", true,function (isConfirm) {
+                    if(isConfirm){
+                        var groupCost = PrepareGroupCostListForAdd(groupInfo, type);
+                        groupCost.item_id = groupInfo._id;
+                        ACATService.RemoveCostGroup(groupCost).then(function (response) {
+                            console.log("group removed successfully",response.data);
+                            callAPI();
+                        },function (error) {
+                            console.log("error on group remove",error);
+                            var message = error.data.error.message;
+                            AlertService.showError("Error on removing group",message);
+                        });
+                    }
+                });
+
+        }
+
+        function _editGroupSection(group, type) {
+            vm.isEditCostGroup = true;
+            vm.acat.fertilizer.title = group.title;
+            vm.acat.fertilizer._id = group._id;
+            vm.acat.fertilizer.existing_group = true;
+            console.log("edit group",vm.acat.fertilizer);
+
         }
 
     }
@@ -6089,6 +6052,109 @@ function runBlock() {
         }
 
 
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        callApi();
+
+       function callApi(){
+           ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
 
     }
 
@@ -7199,7 +7265,6 @@ function runBlock() {
                 vm.loanProducts = response.data.docs;
             });
         }
-
 
         function _addLoanProduct(loan_product,ev) {
             $mdDialog.show({
