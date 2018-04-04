@@ -97,6 +97,12 @@
     'use strict';
 
     angular
+        .module('app.lazyload', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.core', [
             'ngRoute',
             'ngAnimate',
@@ -113,12 +119,6 @@
             'ngAria',
             'ngMessages'
         ]);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.lazyload', []);
 })();
 (function() {
     'use strict';
@@ -629,123 +629,6 @@ var ACAT_COST_LIST_TYPE = {
     'use strict';
 
     angular
-        .module('app.core')
-        .config(coreConfig);
-
-    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
-    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
-
-      var core = angular.module('app.core');
-      // registering components after bootstrap
-      core.controller = $controllerProvider.register;
-      core.directive  = $compileProvider.directive;
-      core.filter     = $filterProvider.register;
-      core.factory    = $provide.factory;
-      core.service    = $provide.service;
-      core.constant   = $provide.constant;
-      core.value      = $provide.value;
-
-      // Disables animation on items with class .ng-no-animation
-      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
-
-      // Improve performance disabling debugging features
-      // $compileProvider.debugInfoEnabled(false);
-
-    }
-
-})();
-/**=========================================================
- * Module: constants.js
- * Define constants to inject across the application
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .constant('APP_MEDIAQUERY', {
-          'desktopLG':             1200,
-          'desktop':                992,
-          'tablet':                 768,
-          'mobile':                 480
-        })
-      ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .run(appRun);
-
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
-
-      // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });*/
-
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
-
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Hooks Example
-      // ----------------------------------- 
-
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
-
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
-
-    }
-
-})();
-
-
-(function() {
-    'use strict';
-
-    angular
         .module('app.lazyload')
         .config(lazyloadConfig);
 
@@ -922,6 +805,123 @@ var ACAT_COST_LIST_TYPE = {
         ;
 
 })();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
+
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+      // Disables animation on items with class .ng-no-animation
+      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
+
+      // Improve performance disabling debugging features
+      // $compileProvider.debugInfoEnabled(false);
+
+    }
+
+})();
+/**=========================================================
+ * Module: constants.js
+ * Define constants to inject across the application
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .run(appRun);
+
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });*/
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
+    }
+
+})();
+
 
 (function() {
     'use strict';
@@ -5188,6 +5188,109 @@ function runBlock() {
 /**
  * Created by Yoni on 3/5/2018.
  */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        callApi();
+
+       function callApi(){
+           ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
 (function(angular) {
     "use strict";
 
@@ -5563,103 +5666,10 @@ function runBlock() {
 
             ACATService.UpdateCostList(prepareCost).then(function (response) {
                 var newCost = response.data;
-                switch (type){
-                    case ACAT_GROUP_CONSTANT.SEED:
-                        vm.acat.seed_costs.linear = _.filter(vm.acat.seed_costs.linear,
-                            function (itemCost) {
-                                return itemCost._id !== cost._id;
-                            });
-                        vm.acat.seed_costs.linear.push(newCost);
-                        vm.isEditSeedCost = false;
-                        break;
-                    case ACAT_GROUP_CONSTANT.FERTILIZER:
-                        if(vm.acat.fertilizer.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            _.filter(vm.acat.fertilizer_costs.grouped,
-                                function (group) {
-                                    if(group._id === cost.parent_grouped_list){
-                                        group.items = _.filter(group.items, function (itemCost) {
-                                                return itemCost._id !== newCost._id;
-                                            });
-                                        group.items.push(newCost);
-                                    }
-                                });
-                            resetCostItem(type);
-                        }else{
-                            vm.acat.fertilizer_costs.linear = _.filter(vm.acat.fertilizer_costs.linear,
-                                function (itemCost) {
-                                    return itemCost._id !== cost._id;
-                                });
-                            vm.acat.fertilizer_costs.linear.push(newCost);
-                        }
+                console.log("UPDATED COST ITEM",newCost);
+                callAPI();
+                resetCostItem(type);
 
-                        vm.isEditFertilizerCost = false;
-                        break;
-                    case ACAT_GROUP_CONSTANT.CHEMICALS:
-                        if(vm.acat.chemicals.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            _.filter(vm.acat.chemicals_costs.grouped,
-                                function (group) {
-                                    if(group._id === cost.parent_grouped_list){
-                                        group.items = _.filter(group.items, function (itemCost) {
-                                            return itemCost._id !== newCost._id;
-                                        });
-                                        group.items.push(newCost);
-                                    }
-                                });
-                            resetCostItem(type);
-                        }else{
-                            vm.acat.chemicals_costs.linear = _.filter(vm.acat.chemicals_costs.linear,
-                                function (itemCost) {
-                                    return itemCost._id !== cost._id;
-                                });
-                            vm.acat.chemicals_costs.linear.push(newCost);
-                        }
-                        vm.isEditChemicalsCost = false;
-                        break;
-                    case ACAT_GROUP_CONSTANT.LABOUR_COST:
-                        if(vm.acat.labour_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            _.filter(vm.acat.labour_costs.grouped,
-                                function (group) {
-                                    if(group._id === cost.parent_grouped_list){
-                                        group.items = _.filter(group.items, function (itemCost) {
-                                            return itemCost._id !== newCost._id;
-                                        });
-                                        group.items.push(newCost);
-                                    }
-                                });
-                            resetCostItem(type);
-                        }else{
-                            vm.acat.labour_costs.linear = _.filter(vm.acat.labour_costs.linear,
-                                function (itemCost) {
-                                    return itemCost._id !== cost._id;
-                                });
-                            vm.acat.labour_costs.linear.push(newCost);
-                        }
-                        vm.isEditLabourCost = false;
-                        break;
-                    case ACAT_GROUP_CONSTANT.OTHER_COST:
-                        if(vm.acat.other_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            _.filter(vm.acat.other_costs.grouped,
-                                function (group) {
-                                    if(group._id === cost.parent_grouped_list){
-                                        group.items = _.filter(group.items, function (itemCost) {
-                                            return itemCost._id !== newCost._id;
-                                        });
-                                        group.items.push(newCost);
-                                    }
-                                });
-                            resetCostItem(type);
-                        }else{
-                            vm.acat.other_costs.linear = _.filter(vm.acat.other_costs.linear,
-                                function (itemCost) {
-                                    return itemCost._id !== cost._id;
-                                });
-                            vm.acat.other_costs.linear.push(newCost);
-                        }
-                        vm.isEditOtherCost = false;
-                        break;
-                    default:
-                        break;
-                }
 
             },function (error) {
                 console.log("error updating cost list",error);
@@ -5670,22 +5680,27 @@ function runBlock() {
                 case ACAT_GROUP_CONSTANT.SEED:
                     vm.isEditSeedCost =  true;
                     vm.acat.input.seed = cost;
+                    vm.acat.input.seedCopy = angular.copy(cost);
                     break;
                 case ACAT_GROUP_CONSTANT.FERTILIZER:
                     vm.isEditFertilizerCost =  true;
                     angular.extend(vm.acat.fertilizer,cost);
+                    vm.acat.input.fertilizerCopy = angular.copy(cost);
                     break;
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
                     vm.isEditChemicalsCost = true;
                     angular.extend(vm.acat.chemicals,cost);
+                    vm.acat.input.chemicalsCopy = angular.copy(cost);
                     break;
                 case ACAT_GROUP_CONSTANT.LABOUR_COST:
                     vm.isEditLabourCost = true;
                     angular.extend(vm.acat.labour_cost,cost);
+                    vm.acat.input.labour_costCopy = angular.copy(cost);
                     break;
                 case ACAT_GROUP_CONSTANT.OTHER_COST:
                     vm.isEditOtherCost = true;
                     angular.extend(vm.acat.other_cost,cost);
+                    vm.acat.input.other_costCopy = angular.copy(cost);
                     break;
                 default:
                     break;
@@ -5728,22 +5743,26 @@ function runBlock() {
         function resetCostItem(type) {
             switch (type){
                 case ACAT_GROUP_CONSTANT.SEED:
-                    vm.isEditSeedCost =  true;
+                    vm.isEditSeedCost =  false;
                     vm.acat.input.seed = undefined;
                     break;
                 case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    vm.isEditFertilizerCost =  false;
                     vm.acat.fertilizer.item = undefined;
                     vm.acat.fertilizer.unit = undefined;
                     break;
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    vm.isEditChemicalsCost =  false;
                     vm.acat.chemicals.item = undefined;
                     vm.acat.chemicals.unit = undefined;
                     break;
                 case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    vm.isEditLabourCost =  false;
                     vm.acat.labour_cost.item = undefined;
                     vm.acat.labour_cost.unit = undefined;
                     break;
                 case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    vm.isEditOtherCost =  false;
                     vm.acat.other_cost.item = undefined;
                     vm.acat.other_cost.unit = undefined;
                     break;
@@ -5755,22 +5774,42 @@ function runBlock() {
             switch (type){
                 case ACAT_GROUP_CONSTANT.SEED:
                     vm.isEditSeedCost = false;
+                    var index = vm.acat.seed_costs.linear.indexOf(vm.acat.input.seed);
+                    if (index !== -1) {
+                        vm.acat.seed_costs.linear[index] =  vm.acat.input.seedCopy;
+                    }
                     vm.acat.input.seed = {};
                     break;
                 case ACAT_GROUP_CONSTANT.FERTILIZER:
                     vm.isEditFertilizerCost =  false;
+                    var index1 = vm.acat.fertilizer_costs.linear.indexOf(vm.acat.fertilizer);
+                    if (index1 !== -1) {
+                        vm.acat.fertilizer_costs.linear[index1] =  vm.acat.fertilizerCopy;
+                    }
                     vm.acat.fertilizer = {};
                     break;
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
                     vm.isEditChemicalsCost = false;
+                    var index2 = vm.acat.chemicals_costs.linear.indexOf(vm.acat.chemicals);
+                    if (index2 !== -1) {
+                        vm.acat.chemicals_costs.linear[index2] =  vm.acat.chemicalsCopy;
+                    }
                     vm.acat.chemicals = {};
                     break;
                 case ACAT_GROUP_CONSTANT.LABOUR_COST:
                     vm.isEditLabourCost = false;
+                    var index3 = vm.acat.labour_costs.linear.indexOf(vm.acat.labour_cost);
+                    if (index3 !== -1) {
+                        vm.acat.labour_costs.linear[index3] =  vm.acat.labour_costCopy;
+                    }
                     vm.acat.labour_cost = {};
                     break;
                 case ACAT_GROUP_CONSTANT.OTHER_COST:
                     vm.isEditOtherCost = false;
+                    var index4 = vm.acat.other_costs.linear.indexOf(vm.acat.other_cost);
+                    if (index4 !== -1) {
+                        vm.acat.other_costs.linear[index4] =  vm.acat.other_costCopy;
+                    }
                     vm.acat.other_cost = {};
                     break;
                 default:
@@ -6145,109 +6184,6 @@ function runBlock() {
         }
 
 
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        callApi();
-
-       function callApi(){
-           ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
 
     }
 

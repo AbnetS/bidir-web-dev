@@ -26,10 +26,6 @@
                     </ui-select>
                 </div>
                 <div class="col-xs-10 col-sm-8 col-md-8 col-lg-8">
-                    <!--<input class="form-control"-->
-                           <!--ng-model="vm.acat.description"-->
-                           <!--type="text"-->
-                           <!--name="description" placeholder="description" />-->
                 </div>
             </div>
             <div class="col-lg-12"></div>
@@ -75,7 +71,7 @@
                                         <br/>
                                         <button ng-show="vm.isEditSeedCost" class="btn btn-inverse btn-outline"
                                                 ng-click="vm.cancelCostItem('SEED')">
-                                            <i class="fa fa-times"></i>
+                                            <i class="fa fa-times"></i> Cancel
                                             </button>
                                         <button class="btn btn-success btn-outline" ng-click="vm.addToCostList(vm.acat.input.seed,'SEED')">
                                             <i ng-class="vm.isEditSeedCost?'fa fa-refresh':'fa fa-plus'" class="fa fa-plus"></i>
@@ -83,7 +79,7 @@
                                     </div>
                                     <!-- ITEMS LIST-->
                                     <div ng-show="vm.acat.seed_costs.linear.length>0"
-                                         class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                         class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
                                                 <thead>
@@ -177,7 +173,7 @@
                                 <!--IF LIST IS GROUPED-->
                                 <div ng-if="vm.acat.fertilizer.list_type==='grouped'">
                                     <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
-                                        <div class="col-md-4">
+                                        <div class="col-md-5">
                                             <md-input-container class="md-block">
                                                 <md-switch class="md-warm" name="fertilizerCostGroupSwitch"
                                                            ng-model="vm.acat.fertilizer.existing_group"
@@ -186,7 +182,7 @@
                                                 </md-switch>
                                             </md-input-container>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div ng-show="!vm.acat.fertilizer.existing_group || (vm.acat.fertilizer.existing_group && vm.isEditCostGroup)"
                                                  class="form-group">
                                                 <label>Group</label>
@@ -222,7 +218,7 @@
                                         </div>
                                     </div>
                                     <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
-                                        <div class="col-md-4">
+                                        <div class="col-md-5">
                                             <div class="form-group">
                                                 <label>Item</label>
                                                 <input class="form-control" type="text"
@@ -230,7 +226,7 @@
                                                        name="item" placeholder="Item" />
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-5">
                                             <div class="form-group">
                                                 <label>Unit</label>
                                                 <input class="form-control" type="text"
@@ -239,7 +235,7 @@
                                                        name="unit" placeholder="unit" />
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-2">
                                             <br/>
                                             <button class="btn btn-success btn-outline"
                                                     ng-click="vm.addGroupedCostList(vm.acat.fertilizer,'FERTILIZER')">
@@ -252,7 +248,7 @@
 
                                 <!-- ITEMS TABLE-->
                                 <div ng-show="vm.acat.fertilizer.list_type==='linear'"
-                                     class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                     class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <div class="table-responsive">
                                         <table class="table table-bordered">
                                             <thead>
@@ -285,7 +281,7 @@
                                 </div>
                                 <!--ITEM TABLE FOR GROUPED-->
                                 <div ng-show="vm.acat.fertilizer.list_type==='grouped'"
-                                     class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                     class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <div class="table-responsive">
                                         <table class="table table-bordered"
                                                ng-repeat="groupItem in vm.acat.fertilizer_costs.grouped">

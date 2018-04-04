@@ -376,103 +376,10 @@
 
             ACATService.UpdateCostList(prepareCost).then(function (response) {
                 var newCost = response.data;
-                switch (type){
-                    case ACAT_GROUP_CONSTANT.SEED:
-                        vm.acat.seed_costs.linear = _.filter(vm.acat.seed_costs.linear,
-                            function (itemCost) {
-                                return itemCost._id !== cost._id;
-                            });
-                        vm.acat.seed_costs.linear.push(newCost);
-                        vm.isEditSeedCost = false;
-                        break;
-                    case ACAT_GROUP_CONSTANT.FERTILIZER:
-                        if(vm.acat.fertilizer.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            _.filter(vm.acat.fertilizer_costs.grouped,
-                                function (group) {
-                                    if(group._id === cost.parent_grouped_list){
-                                        group.items = _.filter(group.items, function (itemCost) {
-                                                return itemCost._id !== newCost._id;
-                                            });
-                                        group.items.push(newCost);
-                                    }
-                                });
-                            resetCostItem(type);
-                        }else{
-                            vm.acat.fertilizer_costs.linear = _.filter(vm.acat.fertilizer_costs.linear,
-                                function (itemCost) {
-                                    return itemCost._id !== cost._id;
-                                });
-                            vm.acat.fertilizer_costs.linear.push(newCost);
-                        }
+                console.log("UPDATED COST ITEM",newCost);
+                callAPI();
+                resetCostItem(type);
 
-                        vm.isEditFertilizerCost = false;
-                        break;
-                    case ACAT_GROUP_CONSTANT.CHEMICALS:
-                        if(vm.acat.chemicals.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            _.filter(vm.acat.chemicals_costs.grouped,
-                                function (group) {
-                                    if(group._id === cost.parent_grouped_list){
-                                        group.items = _.filter(group.items, function (itemCost) {
-                                            return itemCost._id !== newCost._id;
-                                        });
-                                        group.items.push(newCost);
-                                    }
-                                });
-                            resetCostItem(type);
-                        }else{
-                            vm.acat.chemicals_costs.linear = _.filter(vm.acat.chemicals_costs.linear,
-                                function (itemCost) {
-                                    return itemCost._id !== cost._id;
-                                });
-                            vm.acat.chemicals_costs.linear.push(newCost);
-                        }
-                        vm.isEditChemicalsCost = false;
-                        break;
-                    case ACAT_GROUP_CONSTANT.LABOUR_COST:
-                        if(vm.acat.labour_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            _.filter(vm.acat.labour_costs.grouped,
-                                function (group) {
-                                    if(group._id === cost.parent_grouped_list){
-                                        group.items = _.filter(group.items, function (itemCost) {
-                                            return itemCost._id !== newCost._id;
-                                        });
-                                        group.items.push(newCost);
-                                    }
-                                });
-                            resetCostItem(type);
-                        }else{
-                            vm.acat.labour_costs.linear = _.filter(vm.acat.labour_costs.linear,
-                                function (itemCost) {
-                                    return itemCost._id !== cost._id;
-                                });
-                            vm.acat.labour_costs.linear.push(newCost);
-                        }
-                        vm.isEditLabourCost = false;
-                        break;
-                    case ACAT_GROUP_CONSTANT.OTHER_COST:
-                        if(vm.acat.other_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                            _.filter(vm.acat.other_costs.grouped,
-                                function (group) {
-                                    if(group._id === cost.parent_grouped_list){
-                                        group.items = _.filter(group.items, function (itemCost) {
-                                            return itemCost._id !== newCost._id;
-                                        });
-                                        group.items.push(newCost);
-                                    }
-                                });
-                            resetCostItem(type);
-                        }else{
-                            vm.acat.other_costs.linear = _.filter(vm.acat.other_costs.linear,
-                                function (itemCost) {
-                                    return itemCost._id !== cost._id;
-                                });
-                            vm.acat.other_costs.linear.push(newCost);
-                        }
-                        vm.isEditOtherCost = false;
-                        break;
-                    default:
-                        break;
-                }
 
             },function (error) {
                 console.log("error updating cost list",error);
@@ -483,22 +390,27 @@
                 case ACAT_GROUP_CONSTANT.SEED:
                     vm.isEditSeedCost =  true;
                     vm.acat.input.seed = cost;
+                    vm.acat.input.seedCopy = angular.copy(cost);
                     break;
                 case ACAT_GROUP_CONSTANT.FERTILIZER:
                     vm.isEditFertilizerCost =  true;
                     angular.extend(vm.acat.fertilizer,cost);
+                    vm.acat.input.fertilizerCopy = angular.copy(cost);
                     break;
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
                     vm.isEditChemicalsCost = true;
                     angular.extend(vm.acat.chemicals,cost);
+                    vm.acat.input.chemicalsCopy = angular.copy(cost);
                     break;
                 case ACAT_GROUP_CONSTANT.LABOUR_COST:
                     vm.isEditLabourCost = true;
                     angular.extend(vm.acat.labour_cost,cost);
+                    vm.acat.input.labour_costCopy = angular.copy(cost);
                     break;
                 case ACAT_GROUP_CONSTANT.OTHER_COST:
                     vm.isEditOtherCost = true;
                     angular.extend(vm.acat.other_cost,cost);
+                    vm.acat.input.other_costCopy = angular.copy(cost);
                     break;
                 default:
                     break;
@@ -541,22 +453,26 @@
         function resetCostItem(type) {
             switch (type){
                 case ACAT_GROUP_CONSTANT.SEED:
-                    vm.isEditSeedCost =  true;
+                    vm.isEditSeedCost =  false;
                     vm.acat.input.seed = undefined;
                     break;
                 case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    vm.isEditFertilizerCost =  false;
                     vm.acat.fertilizer.item = undefined;
                     vm.acat.fertilizer.unit = undefined;
                     break;
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    vm.isEditChemicalsCost =  false;
                     vm.acat.chemicals.item = undefined;
                     vm.acat.chemicals.unit = undefined;
                     break;
                 case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    vm.isEditLabourCost =  false;
                     vm.acat.labour_cost.item = undefined;
                     vm.acat.labour_cost.unit = undefined;
                     break;
                 case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    vm.isEditOtherCost =  false;
                     vm.acat.other_cost.item = undefined;
                     vm.acat.other_cost.unit = undefined;
                     break;
@@ -568,22 +484,42 @@
             switch (type){
                 case ACAT_GROUP_CONSTANT.SEED:
                     vm.isEditSeedCost = false;
+                    var index = vm.acat.seed_costs.linear.indexOf(vm.acat.input.seed);
+                    if (index !== -1) {
+                        vm.acat.seed_costs.linear[index] =  vm.acat.input.seedCopy;
+                    }
                     vm.acat.input.seed = {};
                     break;
                 case ACAT_GROUP_CONSTANT.FERTILIZER:
                     vm.isEditFertilizerCost =  false;
+                    var index1 = vm.acat.fertilizer_costs.linear.indexOf(vm.acat.fertilizer);
+                    if (index1 !== -1) {
+                        vm.acat.fertilizer_costs.linear[index1] =  vm.acat.fertilizerCopy;
+                    }
                     vm.acat.fertilizer = {};
                     break;
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
                     vm.isEditChemicalsCost = false;
+                    var index2 = vm.acat.chemicals_costs.linear.indexOf(vm.acat.chemicals);
+                    if (index2 !== -1) {
+                        vm.acat.chemicals_costs.linear[index2] =  vm.acat.chemicalsCopy;
+                    }
                     vm.acat.chemicals = {};
                     break;
                 case ACAT_GROUP_CONSTANT.LABOUR_COST:
                     vm.isEditLabourCost = false;
+                    var index3 = vm.acat.labour_costs.linear.indexOf(vm.acat.labour_cost);
+                    if (index3 !== -1) {
+                        vm.acat.labour_costs.linear[index3] =  vm.acat.labour_costCopy;
+                    }
                     vm.acat.labour_cost = {};
                     break;
                 case ACAT_GROUP_CONSTANT.OTHER_COST:
                     vm.isEditOtherCost = false;
+                    var index4 = vm.acat.other_costs.linear.indexOf(vm.acat.other_cost);
+                    if (index4 !== -1) {
+                        vm.acat.other_costs.linear[index4] =  vm.acat.other_costCopy;
+                    }
                     vm.acat.other_cost = {};
                     break;
                 default:
