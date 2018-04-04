@@ -4569,15 +4569,6 @@ var ACAT_COST_LIST_TYPE = {
 
 })();
 
-/**
- * Created by Yoni on 3/30/2018.
- */
-(function() {
-    'use strict';
-
-    angular.module('app.screening', []);
-
-})();
 (function() {
   "use strict";
 
@@ -4589,6 +4580,15 @@ function runBlock() {
 
 })();
 
+/**
+ * Created by Yoni on 3/30/2018.
+ */
+(function() {
+    'use strict';
+
+    angular.module('app.screening', []);
+
+})();
 
 // To run this code, edit file index.html or index.jade and change
 // html data-ng-app attribute from angle to myAppName
@@ -5038,69 +5038,6 @@ function runBlock() {
 
 })(window.angular);
 
-/**
- * Created by Yoni on 3/30/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.screening").controller("ClientScreeningController", ClientScreeningController);
-
-    ClientScreeningController.$inject = ['ScreeningService'];
-
-    function ClientScreeningController(ScreeningService) {
-        var vm = this;
-        ScreeningService.GetScreeningByClientId();
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/30/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.screening").controller("ScreeningController", ScreeningController);
-
-    ScreeningController.$inject = ['ScreeningService'];
-
-    function ScreeningController(ScreeningService) {
-        var vm = this;
-        ScreeningService.GetScreenings();
-    }
-
-
-})(window.angular);
-
-/**
- * Created by Yoni on 3/30/2018.
- */
-
-(function(angular) {
-    'use strict';
-    angular.module('app.screening')
-
-        .service('ScreeningService', ScreeningService);
-
-    ScreeningService.$inject = ['$http','CommonService'];
-
-    function ScreeningService($http, CommonService) {
-        return {
-            GetScreenings: _getScreenings,
-            GetScreeningByClientId:_getScreeningByClientId
-        };
-        function _getScreenings() {
-            console.log("GET SCREENING LIST");
-        }
-        function _getScreeningByClientId(clientId) {
-            console.log("Get SCREENING FOR CLIENT");
-        }
-    }
-
-
-})(window.angular);
 (function(angular) {
   'use strict';
   angular.module('app.mfi')
@@ -5185,6 +5122,69 @@ function runBlock() {
 
 })(window.angular);
 
+/**
+ * Created by Yoni on 3/30/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.screening").controller("ClientScreeningController", ClientScreeningController);
+
+    ClientScreeningController.$inject = ['ScreeningService'];
+
+    function ClientScreeningController(ScreeningService) {
+        var vm = this;
+        ScreeningService.GetScreeningByClientId();
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/30/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.screening").controller("ScreeningController", ScreeningController);
+
+    ScreeningController.$inject = ['ScreeningService'];
+
+    function ScreeningController(ScreeningService) {
+        var vm = this;
+        ScreeningService.GetScreenings();
+    }
+
+
+})(window.angular);
+
+/**
+ * Created by Yoni on 3/30/2018.
+ */
+
+(function(angular) {
+    'use strict';
+    angular.module('app.screening')
+
+        .service('ScreeningService', ScreeningService);
+
+    ScreeningService.$inject = ['$http','CommonService'];
+
+    function ScreeningService($http, CommonService) {
+        return {
+            GetScreenings: _getScreenings,
+            GetScreeningByClientId:_getScreeningByClientId
+        };
+        function _getScreenings() {
+            console.log("GET SCREENING LIST");
+        }
+        function _getScreeningByClientId(clientId) {
+            console.log("Get SCREENING FOR CLIENT");
+        }
+    }
+
+
+})(window.angular);
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -5941,6 +5941,7 @@ function runBlock() {
         }
 
         function _onCostListTypeChange(type,cost_list) {
+            console.log("cost_list is empty",cost_list);
             if(cost_list.linear.length === 0 && cost_list.grouped.length === 0){
                 console.log("cost_list is empty",cost_list);
             }else{

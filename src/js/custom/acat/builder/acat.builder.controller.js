@@ -754,6 +754,7 @@
         }
 
         function _onCostListTypeChange(type,cost_list) {
+            console.log("cost_list is empty",cost_list);
             if(cost_list.linear.length === 0 && cost_list.grouped.length === 0){
                 console.log("cost_list is empty",cost_list);
             }else{

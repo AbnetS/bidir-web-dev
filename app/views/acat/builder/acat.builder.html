@@ -555,7 +555,7 @@
                                     <md-input-container class="md-block">
                                         <md-radio-group id="LabourListType" layout="row"
                                                         ng-model="vm.acat.labour_cost.list_type"
-                                                        ng-change="vm.onCostListTypeChange('LABOUR_COST',vm.acat.labour_cost)">
+                                                        ng-change="vm.onCostListTypeChange('LABOUR_COST',vm.acat.labour_costs)">
                                             <md-radio-button value="linear">
                                                 Linear List </md-radio-button>
                                             <md-radio-button value="grouped" >
@@ -766,7 +766,7 @@
                                     <md-input-container class="md-block">
                                         <md-radio-group id="OtherListType" layout="row"
                                                         ng-model="vm.acat.other_cost.list_type"
-                                                        ng-change="vm.onCostListTypeChange('OTHER_COST',vm.acat.other_cost)">
+                                                        ng-change="vm.onCostListTypeChange('OTHER_COST',vm.acat.other_costs)">
                                             <md-radio-button value="linear">
                                                 Linear List </md-radio-button>
                                             <md-radio-button value="grouped" >
