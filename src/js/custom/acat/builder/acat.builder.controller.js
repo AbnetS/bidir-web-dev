@@ -700,46 +700,51 @@
         }
 
         function _onCostListTypeChange(type,cost_list) {
-            AlertService.showConfirmForDelete("You are about to change Cost List type " +
-                "Which will clear the previous type data",
-                "Are you sure?", "Yes, Change It!", "warning", true,function (isConfirm) {
-                if(isConfirm){
-                    ACATService.ResetCostList(cost_list).then(function(response){
-                        switch (type){
-                            case ACAT_GROUP_CONSTANT.FERTILIZER:
-                                    vm.acat.fertilizer_costs.linear = [];
-                                    vm.acat.fertilizer_costs.grouped = [];
-                                break;
-                            case ACAT_GROUP_CONSTANT.CHEMICALS:
-                                break;
-                            default:
-                                break;
-                        }
-                    },function (error) {
-                        console.log("error",error);
-                    });
-                    }else{
-                        switch (type){
-                            case ACAT_GROUP_CONSTANT.FERTILIZER:
+            if(cost_list.linear.length === 0 && cost_list.grouped.length === 0){
+                console.log("cost_list is empty",cost_list);
+            }else{
+                AlertService.showConfirmForDelete("You are about to change Cost List type " +
+                    "Which will clear the previous type data",
+                    "Are you sure?", "Yes, Change It!", "warning", true,function (isConfirm) {
+                        if(isConfirm){
+                            ACATService.ResetCostList(cost_list).then(function(response){
+                                switch (type){
+                                    case ACAT_GROUP_CONSTANT.FERTILIZER:
+                                        vm.acat.fertilizer_costs.linear = [];
+                                        vm.acat.fertilizer_costs.grouped = [];
+                                        break;
+                                    case ACAT_GROUP_CONSTANT.CHEMICALS:
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            },function (error) {
+                                console.log("error",error);
+                            });
+                        }else{
+                            switch (type){
+                                case ACAT_GROUP_CONSTANT.FERTILIZER:
 
-                                if(vm.acat.fertilizer.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                                    vm.acat.fertilizer.list_type = ACAT_COST_LIST_TYPE.LINEAR;
-                                } else{
-                                    vm.acat.fertilizer.list_type = ACAT_COST_LIST_TYPE.GROUPED;
-                                }
-                                break;
-                            case ACAT_GROUP_CONSTANT.CHEMICALS:
-                                if(vm.acat.chemicals.list_type === ACAT_COST_LIST_TYPE.GROUPED){
-                                    vm.acat.chemicals.list_type = ACAT_COST_LIST_TYPE.LINEAR;
-                                } else{
-                                    vm.acat.chemicals.list_type = ACAT_COST_LIST_TYPE.GROUPED;
-                                }
-                                break;
-                            default:
-                                break;
+                                    if(vm.acat.fertilizer.list_type === ACAT_COST_LIST_TYPE.GROUPED){
+                                        vm.acat.fertilizer.list_type = ACAT_COST_LIST_TYPE.LINEAR;
+                                    } else{
+                                        vm.acat.fertilizer.list_type = ACAT_COST_LIST_TYPE.GROUPED;
+                                    }
+                                    break;
+                                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                                    if(vm.acat.chemicals.list_type === ACAT_COST_LIST_TYPE.GROUPED){
+                                        vm.acat.chemicals.list_type = ACAT_COST_LIST_TYPE.LINEAR;
+                                    } else{
+                                        vm.acat.chemicals.list_type = ACAT_COST_LIST_TYPE.GROUPED;
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
-                    }
-                });
+                    });
+            }
+
         }
 
     }
