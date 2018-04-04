@@ -771,8 +771,11 @@
                     console.log("group updated successfully",response.data);
                     var newGroup = response.data;
                     callAPI();
-                    groupInfo.existing_group = true;
+                    groupInfo.existing_group = false;
                     groupInfo.selected_group = newGroup;
+                    groupInfo.title = '';
+                    vm.isEditCostGroup = false;
+
                 },function (error) {
                     console.log("error on group update",error);
                     var message = error.data.error.message;
