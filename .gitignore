@@ -7,3 +7,4 @@ bower_components/
 build/
 dist/
 node_modules/
+src/debug.log
