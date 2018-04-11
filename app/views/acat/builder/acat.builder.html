@@ -56,7 +56,7 @@
                                             <input class="form-control"
                                                    ng-model="vm.acat.input.seed.item"
                                                    type="text"
-                                                   name="seed_item" placeholder="Item" />
+                                                   name="seed_item" id="seed_item_text" placeholder="Item" />
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -75,7 +75,10 @@
                                                 ng-click="vm.cancelCostItem('SEED')">
                                             <i class="fa fa-times"></i> Cancel
                                             </button>
-                                        <button class="btn btn-success btn-outline" ng-click="vm.addToCostList(vm.acat.input.seed,'SEED')">
+                                        <button class="btn btn-success btn-outline"
+                                                event-focus='click'
+                                                event-focus-id='seed_item_text'
+                                                ng-click="vm.addToCostList(vm.acat.input.seed,'SEED')">
                                             <i ng-class="vm.isEditSeedCost?'fa fa-refresh':'fa fa-plus'" class="fa fa-plus"></i>
                                             {{vm.isEditSeedCost?'Update':'Add'}}</button>
                                     </div>
@@ -400,6 +403,8 @@
                                             <i class="fa fa-times"></i> Cancel
                                         </button>
                                         <button  class="btn btn-success btn-outline"
+                                                 event-focus='click'
+                                                 event-focus-id='chemicals_item_text'
                                                  ng-click="vm.addToCostList(vm.acat.chemicals,'CHEMICALS')">
                                             <i ng-class="vm.isEditChemicalsCost?'fa fa-refresh':'fa fa-plus'" class="fa fa-plus"></i>
                                             {{vm.isEditChemicalsCost?'Update':'Add'}}
@@ -450,6 +455,9 @@
                                             <md-input-container class="md-block">
                                                 <md-switch class="md-warm" name="chemicalsGroupSwitch"
                                                            ng-model="vm.acat.chemicals.existing_group"
+                                                           event-focus='click'
+                                                           event-focus-id='chemicals_group_text'
+                                                           ng-change="vm.onToggleExistingGroup(vm.acat.chemicals.existing_group,'CHEMICALS')"
                                                            required>
                                                     Add to Existing Group
                                                 </md-switch>
@@ -630,6 +638,8 @@
                                             <i class="fa fa-times"></i> Cancel
                                         </button>
                                         <button class="btn btn-success btn-outline"
+                                                event-focus='click'
+                                                event-focus-id='labour_cost_item_text'
                                                 ng-click="vm.addToCostList(vm.acat.labour_cost,'LABOUR_COST')">
                                             <i ng-class="vm.isEditLabourCost?'fa fa-refresh':'fa fa-plus'"></i>
                                             {{vm.isEditLabourCost?'Update':'Add'}}</button>
@@ -680,6 +690,9 @@
                                             <md-input-container class="md-block">
                                                 <md-switch class="md-warm" name="labourCostGroupSwitch"
                                                            ng-model="vm.acat.labour_cost.existing_group"
+                                                           event-focus='click'
+                                                           event-focus-id='labour_cost_group_text'
+                                                           ng-change="vm.onToggleExistingGroup(vm.acat.labour_cost.existing_group,'LABOUR_COST')"
                                                            required>
                                                     Add to Existing Group
                                                 </md-switch>
@@ -915,6 +928,9 @@
                                             <md-input-container class="md-block">
                                                 <md-switch class="md-warm" name="OtherCostGroupSwitch"
                                                            ng-model="vm.acat.other_cost.existing_group"
+                                                           event-focus='click'
+                                                           event-focus-id='other_cost_group_text'
+                                                           ng-change="vm.onToggleExistingGroup(vm.acat.other_cost.existing_group,'OTHER_COST')"
                                                            required>
                                                     Add to Existing Group
                                                 </md-switch>

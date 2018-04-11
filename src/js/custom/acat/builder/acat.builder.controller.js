@@ -440,20 +440,30 @@
             }
         }
         function _onToggleExistingGroup(value,type) {
-            console.log("value",value);
             switch (type){
                 case ACAT_GROUP_CONSTANT.FERTILIZER:
-
-                    vm.acat.fertilizer.title = value? undefined:vm.acat.fertilizer.title;
+                    if(value){
+                        vm.acat.fertilizer.selected_group = undefined;
+                        vm.acat.fertilizer.title =  undefined;
+                    }
                     break;
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
-                    vm.acat.chemicals.title = value? undefined:vm.acat.chemicals.title;
+                    if(value){
+                        vm.acat.chemicals.selected_group = undefined;
+                        vm.acat.chemicals.title =  undefined;
+                    }
                     break;
                 case ACAT_GROUP_CONSTANT.LABOUR_COST:
-                    vm.acat.labour_cost.title = value? undefined:vm.acat.labour_cost.title;
+                    if(value){
+                        vm.acat.labour_cost.selected_group = undefined;
+                        vm.acat.labour_cost.title =  undefined;
+                    }
                     break;
                 case ACAT_GROUP_CONSTANT.OTHER_COST:
-                    vm.acat.other_cost.title = value? undefined:vm.acat.other_cost.title;
+                    if(value){
+                        vm.acat.other_cost.selected_group = undefined;
+                        vm.acat.other_cost.title =  undefined;
+                    }
                     break;
                 default:
                     break;

@@ -64,6 +64,12 @@
     'use strict';
 
     angular
+        .module('app.colors', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.auth', [])
         .run(runBlock)
         .config(routeConfig);
@@ -73,12 +79,6 @@
     function routeConfig() {}
 
 
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
 })();
 (function(angular) {
   "use strict";
@@ -231,6 +231,56 @@
         .module('app.welcomePage', []);
 
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
+
 (function(angular) {
     'use strict';
     angular.module('app.auth')
@@ -345,56 +395,6 @@
     }
 })(window.angular);
 
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
 
 (function(angular) {
   "use strict";
@@ -5730,20 +5730,30 @@ function runBlock() {
             }
         }
         function _onToggleExistingGroup(value,type) {
-            console.log("value",value);
             switch (type){
                 case ACAT_GROUP_CONSTANT.FERTILIZER:
-
-                    vm.acat.fertilizer.title = value? undefined:vm.acat.fertilizer.title;
+                    if(value){
+                        vm.acat.fertilizer.selected_group = undefined;
+                        vm.acat.fertilizer.title =  undefined;
+                    }
                     break;
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
-                    vm.acat.chemicals.title = value? undefined:vm.acat.chemicals.title;
+                    if(value){
+                        vm.acat.chemicals.selected_group = undefined;
+                        vm.acat.chemicals.title =  undefined;
+                    }
                     break;
                 case ACAT_GROUP_CONSTANT.LABOUR_COST:
-                    vm.acat.labour_cost.title = value? undefined:vm.acat.labour_cost.title;
+                    if(value){
+                        vm.acat.labour_cost.selected_group = undefined;
+                        vm.acat.labour_cost.title =  undefined;
+                    }
                     break;
                 case ACAT_GROUP_CONSTANT.OTHER_COST:
-                    vm.acat.other_cost.title = value? undefined:vm.acat.other_cost.title;
+                    if(value){
+                        vm.acat.other_cost.selected_group = undefined;
+                        vm.acat.other_cost.title =  undefined;
+                    }
                     break;
                 default:
                     break;
