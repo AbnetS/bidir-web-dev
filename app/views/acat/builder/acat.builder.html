@@ -380,7 +380,7 @@
                                         <md-radio-group id="ChemicalsListType" layout="row"
                                                         ng-model="vm.acat.chemicals.list_type"
                                                         event-focus='click'
-                                                        event-focus-id='chemicals_group_text'
+                                                        event-focus-id="chemicals_group_text"
                                                         ng-change="vm.onCostListTypeChange('CHEMICALS',vm.acat.chemicals_costs)">
                                             <md-radio-button value="linear">
                                                 Linear List </md-radio-button>
@@ -398,7 +398,7 @@
                                             <label>Item</label>
                                             <input class="form-control" type="text"
                                                    ng-model="vm.acat.chemicals.item"
-                                                   name="chemicals_item_text" id="chemicals_item_id" placeholder="Item" />
+                                                   name="chemicals_item_linear_text" id="chemicals_item_linear_text" placeholder="Item" />
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -407,7 +407,7 @@
                                             <input class="form-control" type="text"
                                                    ng-model="vm.acat.chemicals.unit"
                                                    keypress-enter="vm.addToCostList(vm.acat.chemicals,'CHEMICALS')"
-                                                   name="unit" placeholder="unit" />
+                                                   name="chemicals_unit_linear_text" id="chemicals_unit_linear_text" placeholder="unit" />
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -418,7 +418,7 @@
                                         </button>
                                         <button  class="btn btn-success btn-outline"
                                                  event-focus='click'
-                                                 event-focus-id='chemicals_item_text'
+                                                 event-focus-id='chemicals_item_linear_text'
                                                  ng-click="vm.addToCostList(vm.acat.chemicals,'CHEMICALS')">
                                             <i ng-class="vm.isEditChemicalsCost?'fa fa-refresh':'fa fa-plus'" class="fa fa-plus"></i>
                                             {{vm.isEditChemicalsCost?'Update':'Add'}}
@@ -493,7 +493,7 @@
                                                 <input class="form-control" type="text"
                                                        ng-model="vm.acat.chemicals.unit"
                                                        keypress-enter="vm.addGroupedCostList(vm.acat.chemicals,'CHEMICALS')"
-                                                       name="unit" placeholder="unit" />
+                                                       name="chemicals_unit_text" id="chemicals_unit_text" placeholder="unit" />
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -504,6 +504,8 @@
                                                 <i class="fa fa-times"></i> Cancel
                                             </button>
                                             <button  class="btn btn-success btn-outline"
+                                                     event-focus='click'
+                                                     event-focus-id='chemicals_item_text'
                                                      ng-click="vm.addGroupedCostList(vm.acat.chemicals,'CHEMICALS')">
                                                 <i ng-class="vm.isEditChemicalsCost?'fa fa-refresh':'fa fa-plus'"></i>
                                                 {{vm.isEditChemicalsCost?'Update':'Add'}}
@@ -548,6 +550,8 @@
                                                 <td>{{cost.unit}}</td>
                                                 <td>
                                                     <a class="btn btn-xs btn-outline btn-default"
+                                                                   event-focus='click'
+                                                                   event-focus-id='chemicals_item_text'
                                                             ng-click="vm.editGroupCostItem(cost,'CHEMICALS',groupItem)">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
@@ -581,6 +585,8 @@
                                                     <td>{{cost.unit}}</td>
                                                     <td>
                                                         <a class="btn btn-xs btn-outline btn-default"
+                                                           event-focus='click'
+                                                           event-focus-id='chemicals_item_linear_text'
                                                            ng-click="vm.editCostItem(cost,'CHEMICALS')">
                                                             <i class="fa fa-edit"></i>
                                                         </a>
