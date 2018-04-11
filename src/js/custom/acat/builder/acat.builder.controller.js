@@ -443,28 +443,20 @@
 
             switch (type){
                 case ACAT_GROUP_CONSTANT.FERTILIZER:
-                    if(value){
-                        vm.acat.fertilizer.selected_group = undefined;
-                        vm.acat.fertilizer.title =  undefined;
-                    }
+                    vm.acat.fertilizer.selected_group = undefined;
+                    vm.acat.fertilizer.title =  undefined;
                     break;
                 case ACAT_GROUP_CONSTANT.CHEMICALS:
-                    if(value){
-                        vm.acat.chemicals.selected_group = undefined;
-                        vm.acat.chemicals.title =  undefined;
-                    }
+                    vm.acat.chemicals.selected_group = undefined;
+                    vm.acat.chemicals.title =  undefined;
                     break;
                 case ACAT_GROUP_CONSTANT.LABOUR_COST:
-                    if(value){
-                        vm.acat.labour_cost.selected_group = undefined;
-                        vm.acat.labour_cost.title =  undefined;
-                    }
+                    vm.acat.labour_cost.selected_group = undefined;
+                    vm.acat.labour_cost.title =  undefined;
                     break;
                 case ACAT_GROUP_CONSTANT.OTHER_COST:
-                    if(value){
-                        vm.acat.other_cost.selected_group = undefined;
-                        vm.acat.other_cost.title =  undefined;
-                    }
+                    vm.acat.other_cost.selected_group = undefined;
+                    vm.acat.other_cost.title =  undefined;
                     break;
                 default:
                     break;
