@@ -154,6 +154,7 @@
                                             <input class="form-control"
                                                    type="text"
                                                    name="fertilizer_item_linear_text"
+                                                   id="fertilizer_item_linear_text"
                                                    ng-model="vm.acat.fertilizer.item"
                                                    placeholder="Item" />
                                         </div>
@@ -163,6 +164,7 @@
                                             <label>Unit</label>
                                             <input class="form-control" type="text"
                                                    name="fertilizer_unit_linear_text"
+                                                   id="fertilizer_unit_linear_text"
                                                    ng-model="vm.acat.fertilizer.unit"
                                                    keypress-enter="vm.addToCostList(vm.acat.fertilizer,'FERTILIZER')"
                                                    placeholder="unit" />
@@ -170,12 +172,13 @@
                                     </div>
                                     <div class="col-md-3">
                                         <br/>
-                                        <button ng-show="vm.isEditFertilizerCost" class="btn btn-inverse btn-outline"
+                                        <button ng-show="vm.isEditFertilizerCost"
+                                                class="btn btn-inverse btn-outline"
                                                 ng-click="vm.cancelCostItem('FERTILIZER')">
                                             <i class="fa fa-times"></i> Cancel
                                         </button>
                                         <button  class="btn btn-success btn-outline"
-                                                 event-focus='enter'
+                                                 event-focus='click'
                                                  event-focus-id='fertilizer_item_linear_text'
                                                  ng-click="vm.addToCostList(vm.acat.fertilizer,'FERTILIZER')">
                                             <i ng-class="vm.isEditFertilizerCost?'fa fa-refresh':'fa fa-plus'"></i>
@@ -191,8 +194,7 @@
                                                 <label>Group</label>
                                                 <div class="form-group">
                                                     <ui-select ng-model="vm.acat.fertilizer.selected_group"
-                                                               theme="select2"
-                                                               title="Choose Group">
+                                                               theme="select2" title="Choose Group">
                                                         <ui-select-match placeholder="Select Group from the list...">
                                                             {{$select.selected.title}}
                                                         </ui-select-match>
@@ -201,12 +203,11 @@
                                                         </ui-select-choices>
                                                     </ui-select>
                                                 </div>
-
                                             </div>
+
                                             <div ng-show="!vm.acat.fertilizer.existing_group || (vm.acat.fertilizer.existing_group && vm.isEditCostGroup)"
                                                  class="form-group">
                                                 <label>Group</label>
-
                                                 <div class="input-group">
                                                     <input class="form-control" type="text"
                                                            ng-model="vm.acat.fertilizer.title"
@@ -223,6 +224,7 @@
                                                             </button>
                                                     </span>
                                                 </div>
+
                                             </div>
                                         </div>
                                         <div class="col-md-5">
@@ -243,7 +245,8 @@
                                                 <label>Item</label>
                                                 <input class="form-control" type="text"
                                                        ng-model="vm.acat.fertilizer.item"
-                                                       name="fertilizer_item_text" id="fertilizer_item_text" placeholder="Item" />
+                                                       name="fertilizer_item_text"
+                                                       id="fertilizer_item_text" placeholder="Item" />
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -252,16 +255,21 @@
                                                 <input class="form-control" type="text"
                                                        ng-model="vm.acat.fertilizer.unit"
                                                        keypress-enter="vm.addGroupedCostList(vm.acat.fertilizer,'FERTILIZER')"
-                                                       name="unit" placeholder="unit" />
+                                                       name="fertilizer_unit_text"
+                                                       id="fertilizer_unit_text"
+                                                       placeholder="unit" />
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <br/>
-                                            <button ng-show="vm.isEditFertilizerCost" class="btn btn-inverse btn-outline"
+                                            <button ng-show="vm.isEditFertilizerCost"
+                                                    class="btn btn-inverse btn-outline"
                                                     ng-click="vm.cancelCostItem('FERTILIZER')">
                                                 <i class="fa fa-times"></i> Cancel
                                             </button>
                                             <button  class="btn btn-success btn-outline"
+                                                     event-focus='click'
+                                                     event-focus-id='fertilizer_item_text'
                                                     ng-click="vm.addGroupedCostList(vm.acat.fertilizer,'FERTILIZER')">
                                                 <i ng-class="vm.isEditFertilizerCost?'fa fa-refresh':'fa fa-plus'"></i>
                                                 {{vm.isEditFertilizerCost?'Update':'Add'}}
@@ -291,6 +299,8 @@
                                                 <td>{{cost.unit}}</td>
                                                 <td>
                                                     <a class="btn btn-xs btn-outline btn-default"
+                                                       event-focus='click'
+                                                       event-focus-id='fertilizer_item_linear_text'
                                                        ng-click="vm.editCostItem(cost,'FERTILIZER')">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
@@ -339,6 +349,8 @@
                                                 <td>{{cost.unit}}</td>
                                                 <td>
                                                     <a class="btn btn-xs btn-outline btn-default"
+                                                       event-focus='click'
+                                                       event-focus-id='fertilizer_item_text'
                                                        ng-click="vm.editGroupCostItem(cost,'FERTILIZER',groupItem)">
                                                         <i class="fa fa-edit"></i>
                                                     </a>

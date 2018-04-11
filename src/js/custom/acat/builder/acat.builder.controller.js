@@ -440,6 +440,7 @@
             }
         }
         function _onToggleExistingGroup(value,type) {
+            
             switch (type){
                 case ACAT_GROUP_CONSTANT.FERTILIZER:
                     if(value){
