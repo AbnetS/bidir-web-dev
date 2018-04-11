@@ -128,6 +128,8 @@
                                         <md-radio-group id="fertilizerListType"
                                                         name="fertilizerListType"
                                                         layout="row"
+                                                        event-focus='click'
+                                                        event-focus-id='fertilizer_group_text'
                                                         ng-change="vm.onCostListTypeChange('FERTILIZER',vm.acat.fertilizer_costs)"
                                                         ng-model="vm.acat.fertilizer.list_type" >
                                             <md-radio-button value="linear">
@@ -204,7 +206,9 @@
                                                            event-focus='enter'
                                                            event-focus-id='fertilizer_item_text'
                                                            keypress-enter="vm.addGroupOnSection(vm.acat.fertilizer,'FERTILIZER')"
-                                                           name="item" placeholder="Group Name" />
+                                                           name="fertilizer_group_text"
+                                                           id="fertilizer_group_text"
+                                                           placeholder="Group Name" />
                                                     <span class="input-group-btn">
                                                          <button class="btn btn-success btn-outline"
                                                                  event-focus='click'
@@ -225,7 +229,6 @@
                                                 </md-switch>
                                             </md-input-container>
                                         </div>
-
                                     </div>
                                     <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
                                         <div class="col-md-5">
@@ -304,6 +307,8 @@
                                             <tr class="text-center text-uppercase text-inverse">
                                                 <th colspan="4">{{groupItem.title}}
                                                     <a class="btn btn-xs btn-outline btn-default"
+                                                       event-focus='click'
+                                                       event-focus-id='fertilizer_group_text'
                                                        ng-click="vm.editGroupSection(groupItem,'FERTILIZER')">
                                                         <i class="fa fa-edit"></i>
                                                     </a>

@@ -34,12 +34,9 @@
                 vm.loan_product = data.loan_product;
                 LoadDeductibleAndCostOfLoanTypes(vm.loan_product);
 
-                vm.loan_product.deductible = {
-                    type: 'fixed_amount'
-                };
-                vm.loan_product.costOfLoan = {
-                    type: 'fixed_amount'
-                };
+                vm.loan_product.deductible = {type: 'fixed_amount'};
+                vm.loan_product.costOfLoan = { type: 'fixed_amount'};
+
             } else {
                 vm.loan_product = {
                     deductibles: [],

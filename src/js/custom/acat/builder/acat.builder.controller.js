@@ -119,7 +119,7 @@
 
         function _addToCostList(cost,type) {
 
-                if(!_.isUndefined(cost) && !_.isUndefined(cost.item) && !_.isUndefined(cost.unit)){
+                if(!_.isUndefined(cost) && !_.isUndefined(cost.item)){
                     var items = [];
                     switch (type){
                         case ACAT_GROUP_CONSTANT.SEED:
@@ -222,6 +222,9 @@
                             break;
                     }
 
+                }else{
+                    console.log("Cost is undefined",!_.isUndefined(cost) && !_.isUndefined(cost.item));
+                    AlertService.showWarning("Cost List on " + type,"Item is not filled, Please fill all required fields");
                 }
 
         }
@@ -331,8 +334,9 @@
                 callAPI();
                 resetCostItem(type);
 
-
             },function (error) {
+                var message = error.data.error.message;
+                AlertService.showError("error when updating cost list",message);
                 console.log("error updating cost list",error);
             });
         }
