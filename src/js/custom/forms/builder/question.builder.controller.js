@@ -293,8 +293,8 @@
             vm.isSubEdit = true;
             vm.showSubQuestion = true;
             vm.sub_question = question;
-            console.log("vm.sub_question.validation_factor",vm.sub_question.validation_factor);
             SetValidationObj(true);
+            console.log("vm.sub_question.selected_validation",vm.sub_question);
         }
 
         function spliceQuestionFromList(question) {
