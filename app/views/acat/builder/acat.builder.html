@@ -879,7 +879,7 @@
                                             <label>Item</label>
                                             <input class="form-control" type="text"
                                                    ng-model="vm.acat.other_cost.item"
-                                                   name="other_cost_item_text" placeholder="Item" />
+                                                   name="other_cost_item_linear_text" id="other_cost_item_linear_text" placeholder="Item" />
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -888,7 +888,7 @@
                                             <input class="form-control" type="text"
                                                    ng-model="vm.acat.other_cost.unit"
                                                    keypress-enter="vm.addToCostList(vm.acat.other_cost,'OTHER_COST')"
-                                                   name="unit" placeholder="unit" />
+                                                   name="other_cost_unit_linear_text" id="other_cost_unit_linear_text" placeholder="unit" />
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -899,7 +899,7 @@
                                         </button>
                                         <button class="btn btn-success btn-outline"
                                                 event-focus='click'
-                                                event-focus-id='other_cost_item_text'
+                                                event-focus-id='other_cost_item_linear_text'
                                                 ng-click="vm.addToCostList(vm.acat.other_cost,'OTHER_COST')">
                                             <i ng-class="vm.isEditOtherCost?'fa fa-refresh':'fa fa-plus'" class="fa fa-plus"></i>
                                             {{vm.isEditOtherCost?'Update':'Add'}}</button>
@@ -974,7 +974,7 @@
                                                 <input class="form-control" type="text"
                                                        ng-model="vm.acat.other_cost.unit"
                                                        keypress-enter="vm.addGroupedCostList(vm.acat.other_cost,'OTHER_COST')"
-                                                       name="unit" placeholder="unit" />
+                                                       name="other_cost_unit_text" id="other_cost_unit_text" placeholder="unit" />
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -1066,7 +1066,7 @@
                                                     <td>
                                                         <a class="btn btn-xs btn-outline btn-default"
                                                            event-focus='click'
-                                                           event-focus-id='other_cost_item_text'
+                                                           event-focus-id='other_cost_item_linear_text'
                                                            ng-click="vm.editCostItem(cost,'OTHER_COST')">
                                                             <i class="fa fa-edit"></i>
                                                         </a>
