@@ -148,7 +148,7 @@
                                             <label>Item</label>
                                             <input class="form-control"
                                                    type="text"
-                                                   name="item"
+                                                   name="fertilizer_item_linear_text"
                                                    ng-model="vm.acat.fertilizer.item"
                                                    placeholder="Item" />
                                         </div>
@@ -157,7 +157,7 @@
                                         <div class="form-group">
                                             <label>Unit</label>
                                             <input class="form-control" type="text"
-                                                   name="unit"
+                                                   name="fertilizer_unit_linear_text"
                                                    ng-model="vm.acat.fertilizer.unit"
                                                    keypress-enter="vm.addToCostList(vm.acat.fertilizer,'FERTILIZER')"
                                                    placeholder="unit" />
@@ -170,6 +170,8 @@
                                             <i class="fa fa-times"></i> Cancel
                                         </button>
                                         <button  class="btn btn-success btn-outline"
+                                                 event-focus='enter'
+                                                 event-focus-id='fertilizer_item_linear_text'
                                                  ng-click="vm.addToCostList(vm.acat.fertilizer,'FERTILIZER')">
                                             <i ng-class="vm.isEditFertilizerCost?'fa fa-refresh':'fa fa-plus'"></i>
                                             {{vm.isEditFertilizerCost?'Update':'Add'}}
@@ -203,8 +205,6 @@
                                                 <div class="input-group">
                                                     <input class="form-control" type="text"
                                                            ng-model="vm.acat.fertilizer.title"
-                                                           event-focus='enter'
-                                                           event-focus-id='fertilizer_item_text'
                                                            keypress-enter="vm.addGroupOnSection(vm.acat.fertilizer,'FERTILIZER')"
                                                            name="fertilizer_group_text"
                                                            id="fertilizer_group_text"
@@ -224,7 +224,9 @@
                                             <md-input-container class="md-block">
                                                 <md-switch class="md-warm" name="fertilizerCostGroupSwitch"
                                                            ng-model="vm.acat.fertilizer.existing_group"
-                                                           required>
+                                                           event-focus='click'
+                                                           event-focus-id='fertilizer_group_text'
+                                                           ng-change="vm.onToggleExistingGroup(vm.acat.fertilizer.existing_group,'FERTILIZER')">
                                                     Add to Existing Group
                                                 </md-switch>
                                             </md-input-container>
@@ -360,6 +362,8 @@
                                     <md-input-container class="md-block">
                                         <md-radio-group id="ChemicalsListType" layout="row"
                                                         ng-model="vm.acat.chemicals.list_type"
+                                                        event-focus='click'
+                                                        event-focus-id='chemicals_group_text'
                                                         ng-change="vm.onCostListTypeChange('CHEMICALS',vm.acat.chemicals_costs)">
                                             <md-radio-button value="linear">
                                                 Linear List </md-radio-button>
@@ -377,7 +381,7 @@
                                             <label>Item</label>
                                             <input class="form-control" type="text"
                                                    ng-model="vm.acat.chemicals.item"
-                                                   name="item" placeholder="Item" />
+                                                   name="chemicals_item_text" id="chemicals_item_id" placeholder="Item" />
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -405,15 +409,6 @@
                                 <!--IF LIST IS GROUPED-->
                                 <div ng-show="vm.acat.chemicals.list_type==='grouped'">
                                     <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
-                                        <div class="col-md-5">
-                                            <md-input-container class="md-block">
-                                                <md-switch class="md-warm" name="chemicalsGroupSwitch"
-                                                           ng-model="vm.acat.chemicals.existing_group"
-                                                           required>
-                                                    Add to Existing Group
-                                                </md-switch>
-                                            </md-input-container>
-                                        </div>
                                         <div class="col-md-6">
                                             <div ng-show="!vm.acat.chemicals.existing_group || (vm.acat.chemicals.existing_group && vm.isEditCostGroup)"
                                                  class="form-group">
@@ -423,9 +418,11 @@
                                                     <input class="form-control" type="text"
                                                            ng-model="vm.acat.chemicals.title"
                                                            keypress-enter="vm.addGroupOnSection(vm.acat.chemicals,'CHEMICALS')"
-                                                           name="item" placeholder="Group Name" />
+                                                           name="chemicals_group_text" id="chemicals_group_text" placeholder="Group Name" />
                                                     <span class="input-group-btn">
                                                          <button class="btn btn-success btn-outline"
+                                                                 event-focus='click'
+                                                                 event-focus-id='chemicals_item_text'
                                                                  ng-click="vm.addGroupOnSection(vm.acat.chemicals,'CHEMICALS')">
                                                                 {{vm.isEditCostGroup?'Update Group':'Add Group'}}
                                                             </button>
@@ -449,6 +446,15 @@
 
                                             </div>
                                         </div>
+                                        <div class="col-md-5">
+                                            <md-input-container class="md-block">
+                                                <md-switch class="md-warm" name="chemicalsGroupSwitch"
+                                                           ng-model="vm.acat.chemicals.existing_group"
+                                                           required>
+                                                    Add to Existing Group
+                                                </md-switch>
+                                            </md-input-container>
+                                        </div>
                                     </div>
                                     <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
                                         <div class="col-md-5">
@@ -456,7 +462,7 @@
                                                 <label>Item</label>
                                                 <input class="form-control" type="text"
                                                        ng-model="vm.acat.chemicals.item"
-                                                       name="item" placeholder="Item" />
+                                                       name="chemicals_item_text" id="chemicals_item_text" placeholder="Item" />
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -495,6 +501,8 @@
                                             <tr class="text-center text-uppercase text-inverse">
                                                 <th colspan="4">{{groupItem.title}}
                                                     <a class="btn btn-xs btn-outline btn-default"
+                                                       event-focus='click'
+                                                       event-focus-id='chemicals_group_text'
                                                        ng-click="vm.editGroupSection(groupItem,'CHEMICALS')">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
@@ -583,6 +591,8 @@
                                     <md-input-container class="md-block">
                                         <md-radio-group id="LabourListType" layout="row"
                                                         ng-model="vm.acat.labour_cost.list_type"
+                                                        event-focus='click'
+                                                        event-focus-id='labour_cost_group_text'
                                                         ng-change="vm.onCostListTypeChange('LABOUR_COST',vm.acat.labour_costs)">
                                             <md-radio-button value="linear">
                                                 Linear List </md-radio-button>
@@ -628,15 +638,7 @@
 
                                 <div ng-show="vm.acat.labour_cost.list_type==='grouped'">
                                     <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
-                                        <div class="col-md-5">
-                                            <md-input-container class="md-block">
-                                                <md-switch class="md-warm" name="labourCostGroupSwitch"
-                                                           ng-model="vm.acat.labour_cost.existing_group"
-                                                           required>
-                                                    Add to Existing Group
-                                                </md-switch>
-                                            </md-input-container>
-                                        </div>
+
                                         <div class="col-md-6">
                                             <div ng-show="!vm.acat.labour_cost.existing_group || (vm.acat.labour_cost.existing_group && vm.isEditCostGroup)"
                                                  class="form-group">
@@ -646,9 +648,11 @@
                                                     <input class="form-control" type="text"
                                                            ng-model="vm.acat.labour_cost.title"
                                                            keypress-enter="vm.addGroupOnSection(vm.acat.labour_cost,'LABOUR_COST')"
-                                                           name="item" placeholder="Group Name" />
+                                                           name="labour_cost_group_text" id="labour_cost_group_text" placeholder="Group Name" />
                                                     <span class="input-group-btn">
                                                          <button class="btn btn-success btn-outline"
+                                                                 event-focus='click'
+                                                                 event-focus-id='labour_cost_item_text'
                                                                  ng-click="vm.addGroupOnSection(vm.acat.labour_cost,'LABOUR_COST')">
                                                                 {{vm.isEditCostGroup?'Update Group':'Add Group'}}
                                                             </button>
@@ -672,6 +676,15 @@
 
                                             </div>
                                         </div>
+                                        <div class="col-md-5">
+                                            <md-input-container class="md-block">
+                                                <md-switch class="md-warm" name="labourCostGroupSwitch"
+                                                           ng-model="vm.acat.labour_cost.existing_group"
+                                                           required>
+                                                    Add to Existing Group
+                                                </md-switch>
+                                            </md-input-container>
+                                        </div>
                                     </div>
                                     <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
                                         <div class="col-md-5">
@@ -679,7 +692,7 @@
                                                 <label>Item</label>
                                                 <input class="form-control" type="text"
                                                        ng-model="vm.acat.labour_cost.item"
-                                                       name="item" placeholder="Item" />
+                                                       name="labour_cost_item_text" id="labour_cost_item_text" placeholder="Item" />
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -698,6 +711,8 @@
                                                 <i class="fa fa-times"></i> Cancel
                                             </button>
                                             <button class="btn btn-success btn-outline"
+                                                    event-focus='click'
+                                                    event-focus-id='labour_cost_item_text'
                                                     ng-click="vm.addGroupedCostList(vm.acat.labour_cost,'LABOUR_COST')">
                                                 <i ng-class="vm.isEditLabourCost?'fa fa-refresh':'fa fa-plus'"></i>
                                                 {{vm.isEditLabourCost?'Update':'Add'}}
@@ -719,6 +734,8 @@
                                             <tr class="text-center text-uppercase text-inverse">
                                                 <th colspan="4">{{groupItem.title}}
                                                     <a class="btn btn-xs btn-outline btn-default"
+                                                       event-focus='click'
+                                                       event-focus-id='labour_cost_group_text'
                                                        ng-click="vm.editGroupSection(groupItem,'LABOUR_COST')">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
@@ -775,6 +792,8 @@
                                                     <td>{{cost.unit}}</td>
                                                     <td>
                                                         <a class="btn btn-xs btn-outline btn-default"
+                                                           event-focus='click'
+                                                           event-focus-id='labour_cost_item_text'
                                                            ng-click="vm.editCostItem(cost,'LABOUR_COST')">
                                                             <i class="fa fa-edit"></i>
                                                         </a>
@@ -806,6 +825,8 @@
                                     <md-input-container class="md-block">
                                         <md-radio-group id="OtherListType" layout="row"
                                                         ng-model="vm.acat.other_cost.list_type"
+                                                        event-focus='click'
+                                                        event-focus-id='other_cost_group_text'
                                                         ng-change="vm.onCostListTypeChange('OTHER_COST',vm.acat.other_costs)">
                                             <md-radio-button value="linear">
                                                 Linear List </md-radio-button>
@@ -823,7 +844,7 @@
                                             <label>Item</label>
                                             <input class="form-control" type="text"
                                                    ng-model="vm.acat.other_cost.item"
-                                                   name="item" placeholder="Item" />
+                                                   name="other_cost_item_text" placeholder="Item" />
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -842,6 +863,8 @@
                                             <i class="fa fa-times"></i> Cancel
                                         </button>
                                         <button class="btn btn-success btn-outline"
+                                                event-focus='click'
+                                                event-focus-id='other_cost_item_text'
                                                 ng-click="vm.addToCostList(vm.acat.other_cost,'OTHER_COST')">
                                             <i ng-class="vm.isEditOtherCost?'fa fa-refresh':'fa fa-plus'" class="fa fa-plus"></i>
                                             {{vm.isEditOtherCost?'Update':'Add'}}</button>
@@ -850,15 +873,7 @@
 
                                 <div ng-show="vm.acat.other_cost.list_type==='grouped'">
                                     <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
-                                        <div class="col-md-5">
-                                            <md-input-container class="md-block">
-                                                <md-switch class="md-warm" name="OtherCostGroupSwitch"
-                                                           ng-model="vm.acat.other_cost.existing_group"
-                                                           required>
-                                                    Add to Existing Group
-                                                </md-switch>
-                                            </md-input-container>
-                                        </div>
+
                                         <div class="col-md-6">
                                             <div ng-show="!vm.acat.other_cost.existing_group || (vm.acat.other_cost.existing_group && vm.isEditCostGroup)"
                                                  class="form-group">
@@ -868,9 +883,11 @@
                                                     <input class="form-control" type="text"
                                                            ng-model="vm.acat.other_cost.title"
                                                            keypress-enter="vm.addGroupOnSection(vm.acat.other_cost,'OTHER_COST')"
-                                                           name="item" placeholder="Group Name" />
+                                                           name="other_cost_group_text" id="other_cost_group_text" placeholder="Group Name" />
                                                     <span class="input-group-btn">
                                                          <button class="btn btn-success btn-outline"
+                                                                 event-focus='click'
+                                                                 event-focus-id='other_cost_item_text'
                                                                  ng-click="vm.addGroupOnSection(vm.acat.other_cost,'OTHER_COST')">
                                                                 {{vm.isEditCostGroup?'Update Group':'Add Group'}}
                                                             </button>
@@ -894,6 +911,15 @@
 
                                             </div>
                                         </div>
+                                        <div class="col-md-5">
+                                            <md-input-container class="md-block">
+                                                <md-switch class="md-warm" name="OtherCostGroupSwitch"
+                                                           ng-model="vm.acat.other_cost.existing_group"
+                                                           required>
+                                                    Add to Existing Group
+                                                </md-switch>
+                                            </md-input-container>
+                                        </div>
                                     </div>
                                     <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
                                         <div class="col-md-5">
@@ -901,7 +927,7 @@
                                                 <label>Item</label>
                                                 <input class="form-control" type="text"
                                                        ng-model="vm.acat.other_cost.item"
-                                                       name="item" placeholder="Item" />
+                                                       name="other_cost_item_text" id="other_cost_item_text" placeholder="Item" />
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -920,6 +946,8 @@
                                                 <i class="fa fa-times"></i> Cancel
                                             </button>
                                             <button class="btn btn-success btn-outline"
+                                                    event-focus='click'
+                                                    event-focus-id='other_cost_item_text'
                                                     ng-click="vm.addGroupedCostList(vm.acat.other_cost,'OTHER_COST')">
                                                 {{vm.isEditOtherCost?'Update':'Add'}}
                                             </button>
@@ -939,6 +967,8 @@
                                             <tr class="text-center text-uppercase text-inverse">
                                                 <th colspan="4">{{groupItem.title}}
                                                     <a class="btn btn-xs btn-outline btn-default"
+                                                       event-focus='click'
+                                                       event-focus-id='other_cost_group_text'
                                                        ng-click="vm.editGroupSection(groupItem,'OTHER_COST')">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
@@ -962,6 +992,8 @@
                                                 <td>{{cost.unit}}</td>
                                                 <td>
                                                     <a class="btn btn-xs btn-outline btn-default"
+                                                       event-focus='click'
+                                                       event-focus-id='other_cost_item_text'
                                                        ng-click="vm.editGroupCostItem(cost,'OTHER_COST',groupItem)">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
@@ -995,6 +1027,8 @@
                                                     <td>{{cost.unit}}</td>
                                                     <td>
                                                         <a class="btn btn-xs btn-outline btn-default"
+                                                           event-focus='click'
+                                                           event-focus-id='other_cost_item_text'
                                                            ng-click="vm.editCostItem(cost,'OTHER_COST')">
                                                             <i class="fa fa-edit"></i>
                                                         </a>

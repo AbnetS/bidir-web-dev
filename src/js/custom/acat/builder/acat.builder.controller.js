@@ -29,6 +29,7 @@
         vm.editGroupSection = _editGroupSection;
         vm.removeGroupSection = _removeGroupSection;
 
+        vm.onToggleExistingGroup = _onToggleExistingGroup;
 
 
 
@@ -118,7 +119,6 @@
         }
 
         function _addToCostList(cost,type) {
-
                 if(!_.isUndefined(cost) && !_.isUndefined(cost.item)){
                     var items = [];
                     switch (type){
@@ -310,18 +310,22 @@
         }
 
         function AddCostListAPI(cost,type) {
-
+            var myBlockUIOnStart = blockUI.instances.get('ACATBuilderBlockUI');
+            myBlockUIOnStart.start();
             ACATService.AddCostList(cost).then(function (response) {
+                myBlockUIOnStart.stop();
                 console.log("COST LIST ADDED FOR " + type,response);
                 callAPI();
             },function (error) {
+                myBlockUIOnStart.stop();
                 console.log("error while adding cost item for " + type,error);
                 var message = error.data.error.message;
                 AlertService.showError("Error when adding cost item on " + type,message);
             });
         }
         function updateCostListAPI(cost,type) {
-
+            var myBlockUIOnStart = blockUI.instances.get('ACATBuilderBlockUI');
+            myBlockUIOnStart.start();
             var prepareCost = {
                 _id: cost._id,
                 item:cost.item,
@@ -329,12 +333,13 @@
             };
 
             ACATService.UpdateCostList(prepareCost).then(function (response) {
-                var newCost = response.data;
-                console.log("UPDATED COST ITEM",newCost);
+                console.log("UPDATED COST ITEM", response.data);
+                myBlockUIOnStart.stop();
                 callAPI();
                 resetCostItem(type);
 
             },function (error) {
+                myBlockUIOnStart.stop();
                 var message = error.data.error.message;
                 AlertService.showError("error when updating cost list",message);
                 console.log("error updating cost list",error);
@@ -402,7 +407,6 @@
                 default:
                     break;
             }
-
         }
 
         function resetCostItem(type) {
@@ -430,6 +434,26 @@
                     vm.isEditOtherCost =  false;
                     vm.acat.other_cost.item = undefined;
                     vm.acat.other_cost.unit = undefined;
+                    break;
+                default:
+                    break;
+            }
+        }
+        function _onToggleExistingGroup(value,type) {
+            console.log("value",value);
+            switch (type){
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+
+                    vm.acat.fertilizer.title = value? undefined:vm.acat.fertilizer.title;
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    vm.acat.chemicals.title = value? undefined:vm.acat.chemicals.title;
+                    break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    vm.acat.labour_cost.title = value? undefined:vm.acat.labour_cost.title;
+                    break;
+                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    vm.acat.other_cost.title = value? undefined:vm.acat.other_cost.title;
                     break;
                 default:
                     break;
