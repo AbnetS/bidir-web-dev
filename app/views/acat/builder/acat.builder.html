@@ -638,7 +638,7 @@
                                             <label>Item</label>
                                             <input class="form-control" type="text"
                                                    ng-model="vm.acat.labour_cost.item"
-                                                   name="item" placeholder="Item" />
+                                                   name="labour_cost_item_linear_text" id="labour_cost_item_linear_text" placeholder="Item" />
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -647,7 +647,7 @@
                                             <input class="form-control" type="text"
                                                    ng-model="vm.acat.labour_cost.unit"
                                                    keypress-enter="vm.addToCostList(vm.acat.labour_cost,'LABOUR_COST')"
-                                                   name="unit" placeholder="unit" />
+                                                   name="labour_cost_unit_linear_text" id="labour_cost_unit_linear_text" placeholder="unit" />
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -659,7 +659,7 @@
                                         </button>
                                         <button class="btn btn-success btn-outline"
                                                 event-focus='click'
-                                                event-focus-id='labour_cost_item_text'
+                                                event-focus-id='labour_cost_item_linear_text'
                                                 ng-click="vm.addToCostList(vm.acat.labour_cost,'LABOUR_COST')">
                                             <i ng-class="vm.isEditLabourCost?'fa fa-refresh':'fa fa-plus'"></i>
                                             {{vm.isEditLabourCost?'Update':'Add'}}</button>
@@ -734,7 +734,7 @@
                                                 <input class="form-control" type="text"
                                                        ng-model="vm.acat.labour_cost.unit"
                                                        keypress-enter="vm.addGroupedCostList(vm.acat.labour_cost,'LABOUR_COST')"
-                                                       name="unit" placeholder="unit" />
+                                                       name="labour_cost_unit_text" id="labour_cost_unit_text" placeholder="unit" />
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -792,6 +792,8 @@
                                                 <td>{{cost.unit}}</td>
                                                 <td>
                                                     <a class="btn btn-xs btn-outline btn-default"
+                                                       event-focus='click'
+                                                       event-focus-id='labour_cost_item_text'
                                                        ng-click="vm.editGroupCostItem(cost,'LABOUR_COST',groupItem)">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
@@ -826,7 +828,7 @@
                                                     <td>
                                                         <a class="btn btn-xs btn-outline btn-default"
                                                            event-focus='click'
-                                                           event-focus-id='labour_cost_item_text'
+                                                           event-focus-id='labour_cost_item_linear_text'
                                                            ng-click="vm.editCostItem(cost,'LABOUR_COST')">
                                                             <i class="fa fa-edit"></i>
                                                         </a>
