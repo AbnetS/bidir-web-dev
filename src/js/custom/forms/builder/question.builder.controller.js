@@ -71,7 +71,8 @@
                 return val.name === 'NONE'; //set sub question validation default to NONE
             }));
             vm.questionList = _.filter(data.form.questions,function (question) {
-               return question.options.length > 0;//question list used for WHEN is selected
+                return question.options.length > 0 && (question.type === QUESTION_TYPE.YES_NO || question.type === QUESTION_TYPE.SINGLE_CHOICE);
+               //question list used for WHEN is selected
             });
 
             if(vm.isEdit){
