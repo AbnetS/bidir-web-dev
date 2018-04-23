@@ -30,7 +30,7 @@ var ignored_files = '!' + hidden_files;
 // MAIN PATHS
 var paths = {
     app: '../app/',
-    markup: 'js/',
+    markup: 'pug/',
     styles: 'less/',
     scripts: 'js/'
 };
@@ -268,7 +268,6 @@ gulp.task('templates:index', ['templates:views'], function() {
     });
     return gulp.src(source.templates.index)
         .pipe($.if(useCache, $.inject(tplscript, injectOptions))) // inject the templates.js into index
-        .pipe($.pug())
         .on('error', handleError)
         .pipe($.htmlPrettify(prettifyOpts))
         .pipe(gulp.dest(build.templates.index))
@@ -284,8 +283,6 @@ gulp.task('templates:views', function() {
     if (useCache) {
 
         return gulp.src(source.templates.views)
-            .pipe($.pug())
-            .on('error', handleError)
             .pipe($.angularTemplatecache(tplCacheOptions))
             .pipe($.if(isProduction, $.uglify({
                 preserveComments: 'some',
@@ -303,7 +300,6 @@ gulp.task('templates:views', function() {
             .pipe($.if(!isProduction, $.changed(build.templates.views, {
                 extension: '.html'
             })))
-            .pipe($.pug())
             .on('error', handleError)
             .pipe($.htmlPrettify(prettifyOpts))
             .pipe(gulp.dest(build.templates.views))

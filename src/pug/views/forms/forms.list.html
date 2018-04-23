@@ -1,0 +1,66 @@
+
+
+<h3>Manage Forms
+    <small>Form management and Builder.</small>
+</h3>
+
+
+<div class="panel panel-default" userpermission="['FORM_BUILDER_FORM_VIEW','FORM_BUILDER_FORM_CREATE','FORM_BUILDER_FORM_UPDATE']">
+
+    <div class="panel-body">
+        <p></p>
+        <div class="row" userpermission="['FORM_BUILDER_FORM_CREATE']">
+            <div class="col-xs-10 col-lg-12">
+                <p><a class="btn btn-success pull-right" ui-sref="app.builder({id:0})">
+                    <i class="fa fa-plus"></i>
+                    Add</a>
+                </p>
+            </div>
+
+            <div class="col-lg-12">
+
+                <md-table-container>
+                    <table md-table md-progress="promise" class="table-hover">
+                        <thead md-head class="bg-grey md-head">
+                        <tr md-row>
+                            <th md-column ><span> No</span></th>
+                            <th md-column ><span>Title</span></th>
+                            <th md-column ><span>Type</span></th>
+                            <th md-column ><span>Layout</span></th>
+                            <th md-column ><span>Purpose</span></th>
+                            <th md-column ><span>Subtitle</span></th>
+                            <th md-column  ><span>Questions</span></th>
+                            <th md-column>Action</th>
+                        </tr>
+                        </thead>
+
+                        <tbody md-body>
+                        <tr md-row ng-repeat="form in vm.forms">
+                            <td md-cell>{{$index + 1}}</td>
+                            <td md-cell>{{form.title}}</td>
+                            <td md-cell>{{form.type}}</td>
+                            <td md-cell>{{form.layout}}</td>
+                            <td md-cell>{{form.purpose}}</td>
+                            <td md-cell>{{form.subtitle}}</td>
+                            <td md-cell>{{form.has_sections? form.sectionCount + ' Sections,  ' + form.questionCount + ' Qns':form.questionCount + ' Qns'}}</td>
+                            <td md-cell>
+                                <a userpermission="['FORM_BUILDER_FORM_CREATE','FORM_BUILDER_FORM_UPDATE']"
+                                   ng-click="vm.editForm(form,$event)">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </md-table-container>
+
+                <md-table-pagination md-limit="vm.request.PageSize" md-limit-options="vm.pageSizes"
+                                     md-page="vm.request.Draw" md-total="{{vm.totalCount}}"
+                                     md-page-select="vm.options.pageSelect"
+                                     md-boundary-links="vm.options.boundaryLinks"
+                                     md-on-paginate="vm.logPagination">
+                </md-table-pagination>
+            </div>
+        </div>
+    </div>
+</div>
