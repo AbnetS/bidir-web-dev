@@ -1,24 +1,24 @@
 <div class="md-welcome">
-    <div class="md-welcome-msg">
-        <div class="container container-sm">
-            <h2 class="animated fadeInLeft anim-delay-15">BIDIR Web App Welcome page</h2>
-        </div>
-    </div>
+   <div class="md-welcome-msg">
+      <div class="container container-sm">
+         <h2 class="animated fadeInLeft anim-delay-15">BIDIR Web App Welcome page</h2>
+      </div>
+   </div>
 </div>
 <div class="container container-md">
-        <div >
-                <h1> No Tasks found enjoy your day.</h1>
-        </div>
+   <div>
+      <h1>No Tasks found enjoy your day.</h1>
+   </div>
 
-    <div ng-if="false" class="panel">
-        <h4 class="layout-padding-sm">
-            <em class="fa fa-clock-o fa-fw"></em>Tasks List</h4>
-        <div>
-            <div ng-hide="vm.taskList">
-                <h1> No Tasks found enjoy your day.</h1>
-            </div>
-            <!-- START list group-->
-            <!-- <div ng-show="vm.taskList" class="list-group mb0">
+   <div ng-if="false" class="panel">
+      <h4 class="layout-padding-sm">
+         <em class="fa fa-clock-o fa-fw"></em>Tasks List</h4>
+      <div>
+         <div ng-hide="vm.taskList">
+            <h1>No Tasks found enjoy your day.</h1>
+         </div>
+         <!-- START list group-->
+         <!-- <div ng-show="vm.taskList" class="list-group mb0">
          <a ng-click="vm.viewTaskDetail(tsk,$event)" class="list-group-item" ng-repeat="tsk in vm.taskList">
             <button class="btn btn-default pull-right">View Detail</button>
 
@@ -27,10 +27,10 @@
             <span class="label label-info">{{tsk.last_modified | date:'medium'}}</span>
          </a>
       </div> -->
-            <!-- END list group-->
-            <div class="panel-footer text-right">
-                <a class="btn btn-default btn-sm" ng-click="">View All</a>
-            </div>
-        </div>
-    </div>
+         <!-- END list group-->
+         <div class="panel-footer text-right">
+            <a class="btn btn-default btn-sm" ng-click="">View All</a>
+         </div>
+      </div>
+   </div>
 </div>

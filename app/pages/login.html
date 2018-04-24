@@ -8,19 +8,19 @@
       </div>
       <div class="panel-body">
          <p class="text-center pv">SIGN IN TO CONTINUE.</p>
-         <form class="form-validate mb-lg" role="form"  name="vm.loginForm" block-ui="loginFormBlockUI">
+         <form class="form-validate mb-lg" role="form" name="vm.loginForm" block-ui="loginFormBlockUI">
             <div class="form-group has-feedback">
                <input class="form-control" ng-model="vm.user.username" type="text" name="username" placeholder="Username" required>
                <span class="fa fa-envelope form-control-feedback text-muted"></span>
                <span class="text-danger" ng-show="vm.loginForm.username.$dirty &amp;&amp; vm.loginForm.username.$error.required">username is required</span>
             </div>
             <div class="form-group has-feedback">
-               <input class="form-control" id="password" ng-model="vm.user.password"  type="password" name="password"  placeholder="Password" required>
+               <input class="form-control" id="password" ng-model="vm.user.password" type="password" name="password" placeholder="Password" required>
                <span class="fa fa-lock form-control-feedback text-muted"></span>
                <span class="text-danger" ng-show="vm.loginForm.password.$dirty &amp;&amp; vm.loginForm.password.$error.required">password is required</span>
             </div>
 
-            <button ng-disabled="vm.loginForm.$invalid" class="btn btn-block btn-success mt-lg"  ng-click="vm.login()">Login</button>
+            <button ng-disabled="vm.loginForm.$invalid" class="btn btn-block btn-success mt-lg" ng-click="vm.login()">Login</button>
          </form>
          <!--<div class="alert alert-danger text-center" ng-show="login.authMsg">{{login.authMsg}}</div>-->
       </div>

@@ -8,3 +8,6 @@ build/
 dist/
 node_modules/
 src/debug.log
+app/views/
+app/pages/
+app/js/
