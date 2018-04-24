@@ -40,8 +40,16 @@
     "icon": "fa fa-shield",
     "submenu": [
       {"text": "Manage Clients",     "sref": "app.manage_clients" ,   "permission": "CLIENT_MANAGEMENT_CLIENT"},
-      {"text": "Screening",     "sref": "app.screenings" ,   "permission": "CLIENT_MANAGEMENT_SCREENING"},
       {"text": "Loan Application",     "sref": "app.loan_applications" ,   "permission": "CLIENT_MANAGEMENT_LOAN_APPLICATION"}
+    ]
+  },
+  {
+    "text": "Screening",
+    "module": "SCREENING",
+    "sref": "#",
+    "icon": "fa fa-paper-plane",
+    "submenu": [
+      {"text": "Screening",     "sref": "app.screenings" }
     ]
   },
   {

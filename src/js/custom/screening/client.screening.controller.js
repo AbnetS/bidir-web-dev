@@ -10,7 +10,6 @@
 
     function ClientScreeningController(ScreeningService) {
         var vm = this;
-        ScreeningService.GetScreeningByClientId();
 
         vm.client = ScreeningService.GetStaticClientInfo();
         vm.saveForm = saveForm;
@@ -28,7 +27,7 @@
                 if (prQue) {
                     var prerequisite = prQue.prerequisites[0];
                     //Set question's show based by comparing current value with expected preq. value
-                    prQue.show = (prerequisite.answer == question.values[0]);
+                    prQue.show = (prerequisite.answer === question.values[0]);
                 }
             });
 
