@@ -139,7 +139,7 @@
                 title: "Screening",
                 templateUrl:helper.basepath('screening/client.screening.html'),
                 resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "ScreeningController",
+                controller: "ClientScreeningController",
                 controllerAs: 'vm'
             })
 
