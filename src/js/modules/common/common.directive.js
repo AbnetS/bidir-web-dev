@@ -9,44 +9,44 @@
 
     angular.module('app.common')
         .directive('userpermission', function(PermissionService) {
-        return {
-            restrict: 'A',
-            link: function(scope, element, attrs) {
-                scope.$watch(attrs.userpermission, function(value) {
-                    var permission = value;
-                    var hasPermission = false;
-                    if (_.isString(permission)) {
-                        hasPermission = PermissionService.hasThisPermission(permission);
-                    } else if (_.isArray(permission)) {
-                        hasPermission = PermissionService.hasThesePermissions(permission); //multiple permissions
-                    }
+            return {
+                restrict: 'A',
+                link: function(scope, element, attrs) {
+                    scope.$watch(attrs.userpermission, function(value) {
+                        var permission = value;
+                        var hasPermission = false;
+                        if (_.isString(permission)) {
+                            hasPermission = PermissionService.hasThisPermission(permission);
+                        } else if (_.isArray(permission)) {
+                            hasPermission = PermissionService.hasThesePermissions(permission); //multiple permissions
+                        }
 
-                    toggleVisibility(hasPermission);
-                });
+                        toggleVisibility(hasPermission);
+                    });
 
-                function toggleVisibility(hasPermission) {
-                    if (hasPermission) {
-                        element.show();
-                    } else {
-                        element.hide();
+                    function toggleVisibility(hasPermission) {
+                        if (hasPermission) {
+                            element.show();
+                        } else {
+                            element.hide();
+                        }
                     }
                 }
-            }
-        };
-    })
+            };
+        })
         // Text Editor template directive
         .directive('editor', function() {
-        return {
-            restrict: 'E',
-            template: "<div ng-show='vm.editorEnabledForElement === (radioOption);'>" +
-            "<input class='editableTextInput' type='text' ng-model='vm.text' ng-required='true' " +
-            "show-focus='vm.editorEnabledForElement === (radioOption);' " +
-            "keypress-enter='vm.saveOption(radioOption, vm.text)' " +
-            "ng-blur='vm.saveOption(radioOption, vm.text)'" +
-            " show-focus select-on-click >" +
-            "</div>"
-        };
-    })
+            return {
+                restrict: 'E',
+                template: "<div ng-show='vm.editorEnabledForElement === (radioOption);'>" +
+                    "<input class='editableTextInput' type='text' ng-model='vm.text' ng-required='true' " +
+                    "show-focus='vm.editorEnabledForElement === (radioOption);' " +
+                    "keypress-enter='vm.saveOption(radioOption, vm.text)' " +
+                    "ng-blur='vm.saveOption(radioOption, vm.text)'" +
+                    " show-focus select-on-click >" +
+                    "</div>"
+            };
+        })
         .directive('keypressEnter', function() {
             return function(scope, element, attrs) {
                 element.bind("keydown keypress", function(event) {
@@ -60,10 +60,10 @@
                 });
             };
         })
-    // Put focus on element when event is triggered.
-// https://coderwall.com/p/a41lwa/angularjs-auto-focus-into-input-field-when-ng-show-event-is-triggered
+        // Put focus on element when event is triggered.
+        // https://coderwall.com/p/a41lwa/angularjs-auto-focus-into-input-field-when-ng-show-event-is-triggered
 
-        .directive('eventFocus', function(focus) {
+    .directive('eventFocus', function(focus) {
             return function(scope, elem, attr) {
                 elem.on(attr.eventFocus, function() {
                     focus(attr.eventFocusId);
@@ -76,23 +76,92 @@
                 // });
             };
         })
-    // Select text on focus.
-// http://stackoverflow.com/questions/14995884/select-text-on-input-focus
-    .directive('selectOnClick', ['$window', function($window) {
-        return {
-            restrict: 'A',
-            link: function(scope, element, attrs) {
-                element.on('focus', function() {
-                    if (!$window.getSelection().toString()) {
-                        // Required for mobile Safari
-                        this.setSelectionRange(0, this.value.length)
-                    }
-                });
-            }
-        };
-    }]);
+        // Select text on focus.
+        // http://stackoverflow.com/questions/14995884/select-text-on-input-focus
+        .directive('selectOnClick', ['$window', function($window) {
+            return {
+                restrict: 'A',
+                link: function(scope, element, attrs) {
+                    element.on('focus', function() {
+                        if (!$window.getSelection().toString()) {
+                            // Required for mobile Safari
+                            this.setSelectionRange(0, this.value.length)
+                        }
+                    });
+                }
+            };
+        }])
+
+    .directive('questionRow', function($timeout, $compile, $filter) {
+            return {
+                restrict: 'E',
+                replace: true,
+                scope: {
+                    questionRowData: '=questionRowData',
+                    layoutData: '=layoutData',
+                    rowNo: '=rowNo',
+                    isSubquestion: '=isSubquestion',
+                    valueChanged: '='
+                },
+                link: function($scope, element, attrs) {
+                    $scope.$watch('questionRowData.values', function(newValue) {
+                        if (!_.isEmpty(newValue)) {
+                            $scope.valueChanged($scope.questionRowData);
+                        }
+                    }, true);
+                },
+                templateUrl: 'app/views/common/directives/templates/question_row.tmpl.html'
+            };
+        })
+        .directive('question', function($timeout, $compile, $filter) {
+            return {
+                restrict: 'E',
+                replace: true,
+                scope: {
+                    questionData: '=questionData'
+                },
+                link: function($scope, element, attrs) {
+
+                    $scope.$watch('questionData', function(questionData) {
+                        if (questionData) {
+                            var questionType = questionData.type.toLowerCase();
+
+
+                            switch (questionType) {
+                                case "fill_in_blank":
+                                    {
+                                        break;
+                                    }
+                                case "yes_no":
+                                    {
+                                        questionType = "single_choice";
+                                        break;
+                                    }
+                            }
+
+                            $scope.dynamicTemplateUrl = 'app/views/common/directives/templates/' + questionType + '.tmpl.html';
+                        }
+                    });
+
+                    //Helping function
+                    //Multi-select
+                    $scope.toggle = function(item, list) {
+                        var idx = list.indexOf(item);
+                        if (idx > -1) {
+                            list.splice(idx, 1);
+                        } else {
+                            list.push(item);
+                        }
+                    };
+
+                    $scope.exists = function(item, list) {
+                        return list.indexOf(item) > -1;
+                    };
+                },
+
+                template: '<ng-include src="dynamicTemplateUrl"></ng-include>'
+            };
+        });
 
 
 })(window.angular);
-
-
