@@ -49,7 +49,7 @@
     "sref": "#",
     "icon": "fa fa-paper-plane",
     "submenu": [
-      {"text": "Screening",     "sref": "app.screenings" }
+      {"text": "Clients", "sref": "app.screenings" }
     ]
   },
   {
