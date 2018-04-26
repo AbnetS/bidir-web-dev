@@ -44,15 +44,6 @@
     ]
   },
   {
-    "text": "Screening",
-    "module": "SCREENING",
-    "sref": "#",
-    "icon": "fa fa-paper-plane",
-    "submenu": [
-      {"text": "Clients", "sref": "app.screenings" }
-    ]
-  },
-  {
     "text": "Forms",
     "module": "FORM_BUILDER",
     "sref": "#",
