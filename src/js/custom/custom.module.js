@@ -10,7 +10,7 @@
             'app.clients',
             'app.forms',
             'app.acat',
-            'app.screening'
+            'app.loan_management'
 
         ]).run(customRun);
 

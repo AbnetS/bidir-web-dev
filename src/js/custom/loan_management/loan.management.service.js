@@ -1,16 +1,15 @@
 /**
- * Created by Yoni on 3/30/2018.
+ * Created by Yonas on 4/27/2018.
  */
-
 (function(angular) {
     'use strict';
-    angular.module('app.screening')
+    angular.module('app.loan_management')
 
-    .service('ScreeningService', ScreeningService);
+        .service('LoanManagementService', LoanManagementService);
 
-    ScreeningService.$inject = ['$http', 'CommonService'];
+    LoanManagementService.$inject = ['$http', 'CommonService'];
 
-    function ScreeningService($http, CommonService) {
+    function LoanManagementService($http, CommonService) {
         return {
             GetScreenings: _getScreenings,
             GetStaticClientInfo: _getStaticClientInfo,
@@ -71,57 +70,33 @@
                     "Checked By"
                 ],
                 "sections": [{
-                        "_id": "5ad880fba11a250001e480b5",
-                        "last_modified": "2018-04-19T11:43:55.785Z",
-                        "date_created": "2018-04-19T11:43:55.785Z",
-                        "questions": [{
-                                "_id": "5ac87cdbc0b33b0001d2f1b9",
-                                "question_text": "Agriculture:",
-                                "prerequisites": [],
-                                "show": true,
-                                "values": [],
-                                "sub_questions": [{
-                                        "_id": "5ac87cdcc0b33b0001d2f1ba",
-                                        "question_text": "Which crops?",
-                                        "prerequisites": [],
-                                        "show": true,
-                                        "values": [],
-                                        "sub_questions": [],
-                                        "options": [],
-                                        "measurement_unit": null,
-                                        "validation_factor": "NONE",
-                                        "required": false,
-                                        "type": "FILL_IN_BLANK",
-                                        "remark": "",
-                                        "number": 0
-                                    },
-                                    {
-                                        "_id": "5ac87cdcc0b33b0001d2f1bb",
-                                        "question_text": "Which agriculture crops?",
-                                        "prerequisites": [],
-                                        "show": true,
-                                        "values": [],
-                                        "sub_questions": [],
-                                        "options": [],
-                                        "measurement_unit": null,
-                                        "validation_factor": "NONE",
-                                        "required": false,
-                                        "type": "FILL_IN_BLANK",
-                                        "remark": "",
-                                        "number": 0
-                                    }
-                                ],
-                                "options": [],
-                                "measurement_unit": null,
-                                "validation_factor": "NONE",
-                                "required": false,
-                                "type": "GROUPED",
-                                "remark": "",
-                                "number": 0
-                            },
+                    "_id": "5ad880fba11a250001e480b5",
+                    "last_modified": "2018-04-19T11:43:55.785Z",
+                    "date_created": "2018-04-19T11:43:55.785Z",
+                    "questions": [{
+                        "_id": "5ac87cdbc0b33b0001d2f1b9",
+                        "question_text": "Agriculture:",
+                        "prerequisites": [],
+                        "show": true,
+                        "values": [],
+                        "sub_questions": [{
+                            "_id": "5ac87cdcc0b33b0001d2f1ba",
+                            "question_text": "Which crops?",
+                            "prerequisites": [],
+                            "show": true,
+                            "values": [],
+                            "sub_questions": [],
+                            "options": [],
+                            "measurement_unit": null,
+                            "validation_factor": "NONE",
+                            "required": false,
+                            "type": "FILL_IN_BLANK",
+                            "remark": "",
+                            "number": 0
+                        },
                             {
-                                "_id": "5ac87cf3c0b33b0001d2f1bd",
-                                "question_text": "Livestock: Which animals?",
+                                "_id": "5ac87cdcc0b33b0001d2f1bb",
+                                "question_text": "Which agriculture crops?",
                                 "prerequisites": [],
                                 "show": true,
                                 "values": [],
@@ -132,109 +107,133 @@
                                 "required": false,
                                 "type": "FILL_IN_BLANK",
                                 "remark": "",
-                                "number": 1
-                            },
-                            {
-                                "_id": "5ac87d1ac0b33b0001d2f1bf",
-                                "question_text": "Other Income:",
+                                "number": 0
+                            }
+                        ],
+                        "options": [],
+                        "measurement_unit": null,
+                        "validation_factor": "NONE",
+                        "required": false,
+                        "type": "GROUPED",
+                        "remark": "",
+                        "number": 0
+                    },
+                        {
+                            "_id": "5ac87cf3c0b33b0001d2f1bd",
+                            "question_text": "Livestock: Which animals?",
+                            "prerequisites": [],
+                            "show": true,
+                            "values": [],
+                            "sub_questions": [],
+                            "options": [],
+                            "measurement_unit": null,
+                            "validation_factor": "NONE",
+                            "required": false,
+                            "type": "FILL_IN_BLANK",
+                            "remark": "",
+                            "number": 1
+                        },
+                        {
+                            "_id": "5ac87d1ac0b33b0001d2f1bf",
+                            "question_text": "Other Income:",
+                            "prerequisites": [],
+                            "show": true,
+                            "values": [],
+                            "sub_questions": [{
+                                "_id": "5ac87d1bc0b33b0001d2f1c0",
+                                "question_text": "Regular:",
                                 "prerequisites": [],
                                 "show": true,
                                 "values": [],
-                                "sub_questions": [{
-                                        "_id": "5ac87d1bc0b33b0001d2f1c0",
-                                        "question_text": "Regular:",
-                                        "prerequisites": [],
-                                        "show": true,
-                                        "values": [],
-                                        "sub_questions": [],
-                                        "options": [],
-                                        "measurement_unit": "ETB",
-                                        "validation_factor": "NONE",
-                                        "required": false,
-                                        "type": "FILL_IN_BLANK",
-                                        "remark": "",
-                                        "number": 0
-                                    },
-                                    {
-                                        "_id": "5ac87d61c0b33b0001d2f1c5",
-                                        "question_text": "Individual responsible for this income:",
-                                        "prerequisites": [],
-                                        "show": true,
-                                        "values": [],
-                                        "sub_questions": [],
-                                        "options": [],
-                                        "measurement_unit": null,
-                                        "validation_factor": "NONE",
-                                        "required": false,
-                                        "type": "FILL_IN_BLANK",
-                                        "remark": "",
-                                        "number": 1
-                                    },
-                                    {
-                                        "_id": "5ac87d61c0b33b0001d2f1c6",
-                                        "question_text": "Irregular",
-                                        "prerequisites": [],
-                                        "show": true,
-                                        "values": [],
-                                        "sub_questions": [],
-                                        "options": [],
-                                        "measurement_unit": "ETB",
-                                        "validation_factor": "NUMERIC",
-                                        "required": false,
-                                        "type": "FILL_IN_BLANK",
-                                        "remark": "",
-                                        "number": 2
-                                    },
-                                    {
-                                        "_id": "5ac87d61c0b33b0001d2f1c7",
-                                        "question_text": "Individual for the irregular income:",
-                                        "prerequisites": [],
-                                        "show": true,
-                                        "values": [],
-                                        "sub_questions": [],
-                                        "options": [],
-                                        "measurement_unit": null,
-                                        "validation_factor": "NONE",
-                                        "required": false,
-                                        "type": "FILL_IN_BLANK",
-                                        "remark": "",
-                                        "number": 3
-                                    }
-                                ],
+                                "sub_questions": [],
                                 "options": [],
-                                "measurement_unit": null,
+                                "measurement_unit": "ETB",
                                 "validation_factor": "NONE",
                                 "required": false,
-                                "type": "GROUPED",
+                                "type": "FILL_IN_BLANK",
                                 "remark": "",
-                                "number": 2
-                            }
-                        ],
-                        "number": 1,
-                        "title": "Economic Activities"
-                    },
+                                "number": 0
+                            },
+                                {
+                                    "_id": "5ac87d61c0b33b0001d2f1c5",
+                                    "question_text": "Individual responsible for this income:",
+                                    "prerequisites": [],
+                                    "show": true,
+                                    "values": [],
+                                    "sub_questions": [],
+                                    "options": [],
+                                    "measurement_unit": null,
+                                    "validation_factor": "NONE",
+                                    "required": false,
+                                    "type": "FILL_IN_BLANK",
+                                    "remark": "",
+                                    "number": 1
+                                },
+                                {
+                                    "_id": "5ac87d61c0b33b0001d2f1c6",
+                                    "question_text": "Irregular",
+                                    "prerequisites": [],
+                                    "show": true,
+                                    "values": [],
+                                    "sub_questions": [],
+                                    "options": [],
+                                    "measurement_unit": "ETB",
+                                    "validation_factor": "NUMERIC",
+                                    "required": false,
+                                    "type": "FILL_IN_BLANK",
+                                    "remark": "",
+                                    "number": 2
+                                },
+                                {
+                                    "_id": "5ac87d61c0b33b0001d2f1c7",
+                                    "question_text": "Individual for the irregular income:",
+                                    "prerequisites": [],
+                                    "show": true,
+                                    "values": [],
+                                    "sub_questions": [],
+                                    "options": [],
+                                    "measurement_unit": null,
+                                    "validation_factor": "NONE",
+                                    "required": false,
+                                    "type": "FILL_IN_BLANK",
+                                    "remark": "",
+                                    "number": 3
+                                }
+                            ],
+                            "options": [],
+                            "measurement_unit": null,
+                            "validation_factor": "NONE",
+                            "required": false,
+                            "type": "GROUPED",
+                            "remark": "",
+                            "number": 2
+                        }
+                    ],
+                    "number": 1,
+                    "title": "Economic Activities"
+                },
                     {
                         "_id": "5ad880fba11a250001e480b6",
                         "last_modified": "2018-04-19T11:43:55.796Z",
                         "date_created": "2018-04-19T11:43:55.796Z",
                         "questions": [{
-                                "_id": "5ac87e03c0b33b0001d2f1dc",
-                                "question_text": "Borrowed in the past:",
-                                "prerequisites": [],
-                                "show": true,
-                                "values": [],
-                                "sub_questions": [],
-                                "options": [
-                                    "Yes",
-                                    "No"
-                                ],
-                                "measurement_unit": null,
-                                "validation_factor": "NONE",
-                                "required": false,
-                                "type": "YES_NO",
-                                "remark": "",
-                                "number": 1
-                            },
+                            "_id": "5ac87e03c0b33b0001d2f1dc",
+                            "question_text": "Borrowed in the past:",
+                            "prerequisites": [],
+                            "show": true,
+                            "values": [],
+                            "sub_questions": [],
+                            "options": [
+                                "Yes",
+                                "No"
+                            ],
+                            "measurement_unit": null,
+                            "validation_factor": "NONE",
+                            "required": false,
+                            "type": "YES_NO",
+                            "remark": "",
+                            "number": 1
+                        },
                             {
                                 "_id": "5ac87e8ec0b33b0001d2f1de",
                                 "question_text": "If borrowed in the past:",
@@ -246,20 +245,20 @@
                                 "show": false,
                                 "values": [],
                                 "sub_questions": [{
-                                        "_id": "5ac87e8ec0b33b0001d2f1df",
-                                        "question_text": "Where",
-                                        "prerequisites": [],
-                                        "show": true,
-                                        "values": [],
-                                        "sub_questions": [],
-                                        "options": [],
-                                        "measurement_unit": null,
-                                        "validation_factor": "NONE",
-                                        "required": false,
-                                        "type": "FILL_IN_BLANK",
-                                        "remark": "",
-                                        "number": 0
-                                    },
+                                    "_id": "5ac87e8ec0b33b0001d2f1df",
+                                    "question_text": "Where",
+                                    "prerequisites": [],
+                                    "show": true,
+                                    "values": [],
+                                    "sub_questions": [],
+                                    "options": [],
+                                    "measurement_unit": null,
+                                    "validation_factor": "NONE",
+                                    "required": false,
+                                    "type": "FILL_IN_BLANK",
+                                    "remark": "",
+                                    "number": 0
+                                },
                                     {
                                         "_id": "5ac87e90c0b33b0001d2f1e0",
                                         "question_text": "Amount of last loan",
@@ -325,20 +324,20 @@
                                 "show": false,
                                 "values": [],
                                 "sub_questions": [{
-                                        "_id": "5ac87e8ec0b33b0001d2f1df",
-                                        "question_text": "Where",
-                                        "prerequisites": [],
-                                        "show": true,
-                                        "values": [],
-                                        "sub_questions": [],
-                                        "options": [],
-                                        "measurement_unit": null,
-                                        "validation_factor": "NONE",
-                                        "required": false,
-                                        "type": "FILL_IN_BLANK",
-                                        "remark": "",
-                                        "number": 0
-                                    },
+                                    "_id": "5ac87e8ec0b33b0001d2f1df",
+                                    "question_text": "Where",
+                                    "prerequisites": [],
+                                    "show": true,
+                                    "values": [],
+                                    "sub_questions": [],
+                                    "options": [],
+                                    "measurement_unit": null,
+                                    "validation_factor": "NONE",
+                                    "required": false,
+                                    "type": "FILL_IN_BLANK",
+                                    "remark": "",
+                                    "number": 0
+                                },
                                     {
                                         "_id": "5ac87e90c0b33b0001d2f1e0",
                                         "question_text": "Amount of last loan",

@@ -134,12 +134,12 @@
                 controller: "LoanProductsController",
                 controllerAs: 'vm'
             })
-            .state("app.screenings", {
-                url: "/screenings",
-                title: "Screening",
-                templateUrl:helper.basepath('screening/client.screening.html'),
+            .state("app.loan_processing", {
+                url: "/loan_processing",
+                title: "Loan Processing",
+                templateUrl:helper.basepath('loan_management/loan_processing/screening.html'),
                 resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "ClientScreeningController",
+                controller: "ScreeningController",
                 controllerAs: 'vm'
             })
 

@@ -4,20 +4,20 @@
 (function(angular) {
     "use strict";
 
-    angular.module("app.screening").controller("ClientScreeningController", ClientScreeningController);
+    angular.module("app.loan_management").controller("ScreeningController", ScreeningController);
 
-    ClientScreeningController.$inject = ['ScreeningService'];
+    ScreeningController.$inject = ['LoanManagementService'];
 
-    function ClientScreeningController(ScreeningService) {
+    function ScreeningController(LoanManagementService) {
         var vm = this;
 
-        // vm.client = ScreeningService.GetStaticClientInfo();
+        // vm.client = LoanManagementService.GetStaticClientInfo();
         var clientId = "5acfa99a81862f000115b93c";
-        ScreeningService.GetClientScreening(clientId).then(function (response) {
+        LoanManagementService.GetClientScreening(clientId).then(function (response) {
             vm.client = response.data;
             console.log("vm.client",vm.client);
         });
-        ScreeningService.GetScreenings().then(function (response) {
+        LoanManagementService.GetScreenings().then(function (response) {
             console.log("client info",response);
         });
 
