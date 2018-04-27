@@ -1,6 +1,8 @@
 <div class="panel panel-default">
     <div class="panel-body">
-        <!-- <h3>{{vm.client.first_name}} {{vm.client.last_name}} </h3> -->
+         <h3>{{vm.client.client.first_name}} {{vm.client.client.last_name}} </h3>
+        <form name="screeningForm">
+
 
         <div class="row">
             <div class="col-md-1">
@@ -16,7 +18,9 @@
                 <b>Remark</b>
             </div>
         </div>
+
         <hr>
+
         <div ng-switch on="vm.client.has_sections">
             <div ng-switch-when="true">
                 <div ng-repeat="section in vm.client.sections">
@@ -37,4 +41,6 @@
                 </md-button>
             </div>
         </div>
+        </form>
     </div>
+</div>

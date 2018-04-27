@@ -78,7 +78,7 @@
           return API.Config.BaseUrl + service +'/' + url;
         }
         function _buildPaginatedUrl(service,url) {
-            var parameters = {start:1,limit:500};
+            var parameters = {start:1,limit:200};
             return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
                 API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
         }

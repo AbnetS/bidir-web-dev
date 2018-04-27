@@ -13,16 +13,13 @@
     function ScreeningService($http, CommonService) {
         return {
             GetScreenings: _getScreenings,
-            GetScreeningByClientId: _getScreeningByClientId,
-            GetStaticClientInfo: _getStaticClientInfo
+            GetStaticClientInfo: _getStaticClientInfo,
+            GetClientScreening:_getClientScreening
         };
 
         function _getScreenings() {
-            console.log("GET SCREENING LIST");
-        }
-
-        function _getScreeningByClientId(clientId) {
-            console.log("Get SCREENING FOR CLIENT");
+            // return $http.get(CommonService.buildPaginatedUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening) + '?source=web');
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening) + 'paginate?source=web');
         }
 
         function _getStaticClientInfo() {
@@ -377,6 +374,10 @@
                 "subtitle": "sub title.",
                 "title": "Loan Form"
             };
+        }
+
+        function _getClientScreening(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
         }
     }
 

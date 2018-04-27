@@ -64,6 +64,10 @@ var API = {
             CostListGroups: 'costLists/groups',
             CostList: 'costLists/add',
             CreateACAT:'forms/initialize'
+        },
+        SCREENING:{
+            Screening:'',
+            Clients:'clients'
         }
     }
 };
