@@ -6,7 +6,11 @@ var args = require('yargs').argv,
     browserSync = require('browser-sync'),
     reload = browserSync.reload,
     PluginError = $.util.PluginError,
-    del = require('del');
+    del = require('del'),
+    karmaServer = require('karma').Server,
+    protractor = $.protractor.protractor,
+    webdriver = $.protractor.webdriver,
+    express = require('express');
 
 // production mode (see build task)
 var isProduction = false;
@@ -227,25 +231,6 @@ gulp.task('styles:app', function() {
         }));
 });
 
-// APP RTL
-gulp.task('styles:app:rtl', function() {
-    log('Building application RTL styles..');
-    return gulp.src(source.styles.app)
-        .pipe($.if(useSourceMaps, $.sourcemaps.init()))
-        .pipe(useSass ? $.sass() : $.less())
-        .on('error', handleError)
-        .pipe($.rtlcss()) /* RTL Magic ! */
-        .pipe($.if(isProduction, $.cssnano(cssnanoOpts)))
-        .pipe($.if(useSourceMaps, $.sourcemaps.write()))
-        .pipe($.rename(function(path) {
-            path.basename += "-rtl";
-            return path;
-        }))
-        .pipe(gulp.dest(build.styles))
-        .pipe(reload({
-            stream: true
-        }));
-});
 
 // LESS THEMES
 gulp.task('styles:themes', function() {
@@ -331,9 +316,11 @@ gulp.task('browsersync', function() {
 
     browserSync({
         notify: false,
+        port: 5000,
         server: {
             baseDir: '..'
-        }
+        },
+        middleware: [require('connect-history-api-fallback')()]
     });
 
 });
@@ -416,6 +403,34 @@ gulp.task('assets', [
     'templates:views'
 ]);
 
+/// Testing tasks
+
+gulp.task('test:unit', function(done) {
+    startKarmaTests(true, done);
+});
+
+gulp.task('webdriver', webdriver);
+gulp.task('test:e2e', ['webdriver'], function(cb) {
+
+    var testFiles = gulp.src('test/e2e/**/*.js');
+
+    testServer({
+        port: '4444',
+        dir: './app/'
+    }).then(function(server) {
+        testFiles.pipe(protractor({
+            configFile: 'tests/protractor.conf.js',
+        })).on('error', function(err) {
+            // Make sure failed tests cause gulp to exit non-zero
+            throw err;
+        }).on('end', function() {
+            server.close(cb)
+        });
+    });
+
+});
+
+gulp.task('test', ['test:unit', 'test:e2e'])
 
 /////////////////////
 
@@ -434,4 +449,44 @@ function handleError(err) {
 // log to console using
 function log(msg) {
     $.util.log($.util.colors.blue(msg));
+}
+
+function testServer(params) {
+
+    var app = express();
+
+    app.use(express.static(params.dir));
+
+    return new Promise(function(res, rej) {
+        var server = app.listen(params.port, function() {
+            res(server)
+        });
+    });
+}
+
+function startKarmaTests(singleRun, done) {
+
+    var excludeFiles = [];
+
+    var server = new karmaServer({
+        configFile: __dirname + '/tests/karma.conf.js',
+        exclude: excludeFiles,
+        singleRun: !!singleRun
+    }, karmaCompleted);
+
+    server.start();
+
+    ////////////////
+
+    function karmaCompleted(karmaResult) {
+        log('Karma completed');
+
+        if (karmaResult === 1) {
+            done('\n********************************'+
+                 '\nkarma: tests failed with code ' + karmaResult +
+                 '\n********************************');
+        } else {
+            done();
+        }
+    }
 }

@@ -44,6 +44,16 @@
     ]
   },
   {
+    "text": "Loan Processing",
+    "module": "LOAN_PROCESSING",
+    "sref": "#",
+    "icon": "fa fa-spinner",
+    "submenu": [
+      {"text": "Manage Clients",     "sref": "app.manage_clients" ,   "permission": "CLIENT_MANAGEMENT_CLIENT"},
+      {"text": "Screening",     "sref": "app.screenings" ,   "permission": "CLIENT_MANAGEMENT_LOAN_APPLICATION"}
+    ]
+  },
+  {
     "text": "Forms",
     "module": "FORM_BUILDER",
     "sref": "#",
