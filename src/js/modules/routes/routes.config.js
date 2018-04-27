@@ -134,6 +134,14 @@
                 controller: "LoanProductsController",
                 controllerAs: 'vm'
             })
+            .state("app.clients", {
+                url: "/client_management",
+                title: "Client Management",
+                templateUrl:helper.basepath('loan_management/client_management/client.management.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "ClientManagementController",
+                controllerAs: 'vm'
+            })
             .state("app.loan_processing", {
                 url: "/loan_processing",
                 title: "Loan Processing",
