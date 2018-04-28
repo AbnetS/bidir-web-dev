@@ -10,15 +10,26 @@
 
     function ScreeningController(LoanManagementService) {
         var vm = this;
+        vm.screeningDetail = _screeningDetail;
+        vm.visibility = {
+            showScreeningDetail:false,
+            showClientDetail:false,
+            showLoanApplicationDetail:false,
+            showACATDetail:false
+        };
 
-        // vm.client = LoanManagementService.GetStaticClientInfo();
-        var clientId = "5acfa99a81862f000115b93c";
-        LoanManagementService.GetClientScreening(clientId).then(function (response) {
-            vm.client = response.data;
-            console.log("vm.client",vm.client);
-        });
+        function _screeningDetail(screening) {
+            var client = screening.client;
+            LoanManagementService.GetClientScreening(client._id).then(function (response) {
+                vm.client = response.data;
+                vm.visibility.showScreeningDetail = true;
+                console.log("vm.client",vm.client);
+            });
+        }
+
         LoanManagementService.GetScreenings().then(function (response) {
             console.log("client info",response);
+            vm.screenings = response.data.docs;
         });
 
         vm.saveForm = saveForm;
