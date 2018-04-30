@@ -11,6 +11,10 @@
     function ScreeningController(LoanManagementService) {
         var vm = this;
         vm.screeningDetail = _screeningDetail;
+        vm.backToList = _backToList;
+        vm.saveForm = saveForm;
+        vm.questionValueChanged = questionValueChanged;
+
         vm.visibility = {
             showScreeningDetail:false,
             showClientDetail:false,
@@ -18,7 +22,11 @@
             showACATDetail:false
         };
 
+        initialize();
+
         function _screeningDetail(screening) {
+            vm.selectedScreening = screening;
+            console.log("screening detail");
             var client = screening.client;
             LoanManagementService.GetClientScreening(client._id).then(function (response) {
                 vm.client = response.data;
@@ -26,18 +34,38 @@
                 console.log("vm.client",vm.client);
             });
         }
+        function _backToList(type) {
+            switch(type){
+                case 'SCREENING':
+                    vm.visibility.showScreeningDetail = false;
+                    break;
+            }
 
-        LoanManagementService.GetScreenings().then(function (response) {
-            console.log("client info",response);
-            vm.screenings = response.data.docs;
-        });
-
-        vm.saveForm = saveForm;
-        vm.questionValueChanged = questionValueChanged;
-
-        function saveForm() {
-            console.log(" vm.client", vm.client);
         }
+        function saveForm(client) {
+            console.log("save screening ", client);
+
+            var screening = {
+                status: "submitted",
+                questions: client.questions
+            };
+
+            LoanManagementService.SaveClientScreening(screening,client._id)
+                .then(function (response) {
+                console.log("saved screening ", screening);
+            },function (error) {
+                console.log("error on saving screening ", error);
+            });
+
+        }
+
+        function initialize() {
+            LoanManagementService.GetScreenings().then(function (response) {
+                console.log("client info",response);
+                vm.screenings = response.data.docs;
+            });
+        }
+
 
         function questionValueChanged(question) {
 

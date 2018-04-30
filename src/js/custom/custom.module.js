@@ -12,9 +12,13 @@
             'app.acat',
             'app.loan_management'
 
-        ]).run(customRun);
+        ]).config(customConfig)
+        .run(customRun);
 
     function customRun() {
         console.log("custom app run");
+    }
+    function customConfig($mdAriaProvider) {
+        $mdAriaProvider.disableWarnings();
     }
 })();

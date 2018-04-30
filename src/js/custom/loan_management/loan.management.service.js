@@ -13,12 +13,16 @@
         return {
             GetScreenings: _getScreenings,
             GetStaticClientInfo: _getStaticClientInfo,
-            GetClientScreening:_getClientScreening
+            GetClientScreening:_getClientScreening,
+            SaveClientScreening:_saveClientScreening
         };
 
         function _getScreenings() {
             // return $http.get(CommonService.buildPaginatedUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening) + '?source=web');
             return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening) + 'paginate?source=web');
+        }
+        function _saveClientScreening(screening,id) {
+            return $http.post(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,id),screening);
         }
 
         function _getStaticClientInfo() {
