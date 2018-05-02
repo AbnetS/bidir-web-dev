@@ -30,13 +30,14 @@
       <question-row ng-repeat="question in vm.client.questions | filter:{show: true}" question-row-data="question" layout-data="vm.client.layout" row-no="$index + 1" value-changed="vm.questionValueChanged">
       </question-row>
    </div>
+   <br/>
 
    <div class="col-lg-12 col-sm-12">
       <span class="pull-right">
-         <button class="btn btn-sm btn-inverse" ng-click="vm.saveForm(vm.client)">
+         <button class="btn btn-sm btn-inverse" ng-click="vm.saveForm(vm.client,'')">
             Save
          </button>
-         <button class="btn btn-sm btn-info" ng-click="vm.saveForm(vm.client)">
+         <button class="btn btn-sm btn-info" ng-click="vm.saveForm(vm.client,'')">
             Submit
          </button>
          <button class="btn btn-sm btn-success" ng-click="vm.saveForm(vm.client)">
