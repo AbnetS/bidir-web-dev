@@ -697,6 +697,15 @@ var ACAT_COST_LIST_TYPE = {
     LINEAR: "linear",
     GROUPED: "grouped"
 };
+
+var SCREENING_STATUS = {
+    IN_PROGRESS:{code:'inprogress',name:'In Progress'},
+    SUBMITTED:{code:'submitted',name:'Submitted'},
+    APPROVED:{code:'approved',name:'Approved'},
+    DECLINED_FINAL:{code:'declined_final',name:'Declined Final'},
+    DECLINED_UNDER_REVIEW:{code:'declined_under_review',name:'Declined Under Review'}
+};
+
 (function() {
     'use strict';
 
@@ -7299,13 +7308,13 @@ function runBlock() {
 
     angular.module("app.loan_management").controller("ScreeningController", ScreeningController);
 
-    ScreeningController.$inject = ['LoanManagementService'];
+    ScreeningController.$inject = ['LoanManagementService','AlertService'];
 
-    function ScreeningController(LoanManagementService) {
+    function ScreeningController(LoanManagementService,AlertService) {
         var vm = this;
         vm.screeningDetail = _screeningDetail;
         vm.backToList = _backToList;
-        vm.saveForm = saveForm;
+        vm.saveScreeningForm = _saveScreeningForm;
         vm.questionValueChanged = questionValueChanged;
 
         vm.visibility = {
@@ -7335,18 +7344,25 @@ function runBlock() {
             }
 
         }
-        function saveForm(client) {
-            console.log("save screening ", client);
+        function _saveScreeningForm(client,screening_status) {
 
+            var status = _.find(SCREENING_STATUS,function (stat) {
+                return stat.code === screening_status;
+            });
             var screening = {
-                status: "submitted",
+                status: status.code,
                 questions: client.questions
             };
 
+            // console.log("save screening status ", screening);
+
             LoanManagementService.SaveClientScreening(screening,client._id)
                 .then(function (response) {
+                    AlertService.showSuccess('Screening',"Successfully saved screening information  with status: " + status.name);
                 console.log("saved screening ", screening);
             },function (error) {
+                    var message = error.data.error.message;
+                    AlertService.showError("Error when saving screening",message);
                 console.log("error on saving screening ", error);
             });
 

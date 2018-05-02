@@ -91,3 +91,11 @@ var ACAT_COST_LIST_TYPE = {
     LINEAR: "linear",
     GROUPED: "grouped"
 };
+
+var SCREENING_STATUS = {
+    IN_PROGRESS:{code:'inprogress',name:'In Progress'},
+    SUBMITTED:{code:'submitted',name:'Submitted'},
+    APPROVED:{code:'approved',name:'Approved'},
+    DECLINED_FINAL:{code:'declined_final',name:'Declined Final'},
+    DECLINED_UNDER_REVIEW:{code:'declined_under_review',name:'Declined Under Review'}
+};

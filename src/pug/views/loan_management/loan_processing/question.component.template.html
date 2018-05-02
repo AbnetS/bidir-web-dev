@@ -38,18 +38,45 @@
 
     <div class="col-lg-12 col-sm-12">
         <span class="pull-right">
-            <button class="btn btn-sm btn-inverse" ng-click="vm.saveForm(vm.client,'')" >
-            Save
-        </button>
-        <button class="btn btn-sm btn-info" ng-click="vm.saveForm(vm.client,'')" >
-            Submit
-        </button>
-        <button class="btn btn-sm btn-success" ng-click="vm.saveForm(vm.client)" >
-            Accept
-        </button>
-        <button class="btn btn-sm btn-danger" ng-click="vm.saveForm(vm.client)" >
-            Decline
-        </button>
+            <!-- START button group-->
+            <div class="btn-group mb-sm" uib-dropdown="dropdown">
+               <button class="btn dropdown-toggle btn-info" type="button"
+                       uib-dropdown-toggle="">Save
+                  <span class="caret"></span>
+               </button>
+               <ul class="dropdown-menu" role="menu">
+                  <li><a  ng-click="vm.saveScreeningForm(vm.client,'inprogress')">Save</a></li>
+                  <li><a  ng-click="vm.saveScreeningForm(vm.client,'submitted')">Submit</a></li>
+               </ul>
+            </div>
+            <!-- END button group-->
+
+            <!-- START button group-->
+            <div class="btn-group mb-sm" uib-dropdown="dropdown">
+               <button class="btn dropdown-toggle btn-success" type="button"
+                       uib-dropdown-toggle="">Approve
+                  <span class="caret"></span>
+               </button>
+               <ul class="dropdown-menu" role="menu">
+                  <li><a  ng-click="vm.saveScreeningForm(vm.client,'approved')">Approve</a></li>
+               </ul>
+            </div>
+            <!-- END button group-->
+
+            <!-- START button group-->
+            <div class="btn-group mb-sm" uib-dropdown="dropdown">
+               <button class="btn dropdown-toggle btn-danger" type="button"
+                       uib-dropdown-toggle="">Decline
+                  <span class="caret"></span>
+               </button>
+               <ul class="dropdown-menu" role="menu">
+                  <li><a ng-click="vm.saveScreeningForm(vm.client,'declined_final')">Decline Final</a>
+                  </li>
+                  <li><a ng-click="vm.saveScreeningForm(vm.client,'declined_under_review')">Decline Under Review</a>
+                  </li>
+               </ul>
+            </div>
+            <!-- END button group-->
         </span>
     </div>
 </div>
