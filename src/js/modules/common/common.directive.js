@@ -105,7 +105,7 @@
                 },
                 link: function($scope, element, attrs) {
                     $scope.$watch('questionRowData.values', function(newValue) {
-                        if (!_.isEmpty(newValue)) {
+                        if (!_.isEmpty(newValue) && $scope.questionRowData.type !== QUESTION_TYPE.FILL_IN_BLANK  ) {
                             $scope.valueChanged($scope.questionRowData);
                         }
                     }, true);
