@@ -11,7 +11,7 @@
 
     function LoanManagementService($http, CommonService) {
         return {
-            GetClientLoans: _getClientLoans,
+            GetLoanApplications: _getLoanApplications,
             GetScreenings: _getScreenings,
             GetStaticClientInfo: _getStaticClientInfo,
             GetClientScreening:_getClientScreening,
@@ -20,7 +20,6 @@
 
         function _getScreenings() {
             return $http.get(CommonService.buildPaginatedUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening));
-            // return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening) + 'paginate?source=web');
         }
         function _saveClientScreening(screening,id) {
             return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,id),screening);
@@ -383,9 +382,10 @@
         function _getClientScreening(clientId) {
             return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
         }
-        function _getClientLoans() {
+        function _getLoanApplications() {
             return $http.get(CommonService.buildPaginatedUrl(API.Service.LOANS,API.Methods.LOANS.Loans));
         }
+
     }
 
 

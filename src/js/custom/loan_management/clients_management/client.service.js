@@ -5,7 +5,6 @@
 (function(angular) {
     'use strict';
     angular.module('app.clients')
-
         .service('ClientService', ClientService);
 
     ClientService.$inject = ['$http','CommonService'];
@@ -20,14 +19,15 @@
         function _searchClient(searchText) {
             return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
         }
-        function _getClients(){
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.All));
-        }
+
         function _getClientDetail(id){
             return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
         }
         function _getBranches(){
             return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+        }
+        function _getClients(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients));
         }
     }
 

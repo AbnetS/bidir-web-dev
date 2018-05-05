@@ -120,12 +120,6 @@
     angular
         .module('app.lazyload', []);
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar', []);
-})();
 /**
  * Created by Yoni on 11/30/2017.
  */
@@ -141,6 +135,12 @@
 
     function routeConfig() {}
 
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar', []);
 })();
 /**
  * Created by Yoni on 11/30/2017.
@@ -1010,50 +1010,6 @@ var SCREENING_STATUS = {
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
-
-})();
 /**
  * Created by Yoni on 12/10/2017.
  */
@@ -1328,6 +1284,50 @@ var SCREENING_STATUS = {
 
 })(window.angular);
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
+
+})();
 /**
  * Created by Yoni on 12/2/2017.
  */
@@ -4654,6 +4654,15 @@ var SCREENING_STATUS = {
 
 })();
 /**
+ * Created by Yonas on 4/27/2018.
+ */
+(function() {
+    'use strict';
+
+    angular.module('app.loan_management', []);
+
+})();
+/**
  * Created by Yoni on 1/8/2018.
  */
 (function() {
@@ -4680,15 +4689,6 @@ function runBlock() {
 
 })();
 
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function() {
-    'use strict';
-
-    angular.module('app.loan_management', []);
-
-})();
 
 // To run this code, edit file index.html or index.jade and change
 // html data-ng-app attribute from angle to myAppName
@@ -4966,263 +4966,6 @@ function runBlock() {
 
 })(window.angular);
 /**
- * Created by Yoni on 1/9/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.clients").controller("ClientDetailController", ClientDetailController);
-
-    ClientDetailController.$inject = ['ClientService','$stateParams','blockUI'];
-
-    function ClientDetailController(ClientService,$stateParams,blockUI) {
-        var vm = this;
-        vm.clientId =  $stateParams.id;
-
-        var myBlockUI = blockUI.instances.get('ClientBlockUI');
-        myBlockUI.start();
-        ClientService.GetClientDetail(vm.clientId)
-            .then(function(response){
-                myBlockUI.stop();
-                vm.client = response.data;
-                console.log("client detail",response);
-            },function(error){
-                myBlockUI.stop();
-                console.log("error getting client detail",error);
-            })
-
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 1/8/2018.
- */
-
-(function(angular) {
-    'use strict';
-    angular.module('app.clients')
-
-        .service('ClientService', ClientService);
-
-    ClientService.$inject = ['$http','CommonService'];
-
-    function ClientService($http, CommonService) {
-        return {
-            GetClients: _getClients,
-            GetClientDetail:_getClientDetail,
-            SearchClient:_searchClient,
-            GetBranches: _getBranches
-        };
-        function _searchClient(searchText) {
-            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
-        }
-        function _getClients(){
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.All));
-        }
-        function _getClientDetail(id){
-            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
-        }
-        function _getBranches(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
-        }
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 1/8/2018.
- */
-
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.clients").controller("ClientsController", ClientsController);
-
-    ClientsController.$inject = ['ClientService','$state','$scope','AuthService'];
-
-    function ClientsController(ClientService,$state,$scope,AuthService) {
-        var vm = this;
-        vm.currentUser = {
-            selected_access_branch:undefined
-        };
-        vm.pageSizes = [10, 25, 50, 100, 250, 500];
-        vm.filter = {show : true};
-        vm.request = {
-            Start: 1,
-            limit:100,
-            PageSize: 10,
-            Search:''
-        };
-
-        vm.clientDetail = _clientDetail;
-        vm.onSelectedBranch = _onSelectedBranch;
-
-        vm.clearSearch = function(){
-            vm.request.Search = "";
-            vm.filter.show = false;
-            callApi();
-        };
-
-
-
-        callApi();
-        GetBranchFilter();
-
-
-        function GetBranchFilter() {
-            if(AuthService.IsSuperuser()){
-                ClientService.GetBranches().then(function(response){
-                    vm.currentUser.user_access_branches = response.data.docs;
-                },function(error){
-                    vm.currentUser.user_access_branches = [];
-                });
-            }
-            else {
-                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
-            }
-        }
-
-        function callApi(){
-            $scope.promise = ClientService.GetClients().then(function(response){
-                vm.clients = response.data.docs;
-                vm.clientsCopy = angular.copy(vm.clients);
-            },function (error) {
-                console.log("error",error);
-            });
-
-        }
-
-        function SearchApi(SearchText){
-            $scope.promise = ClientService.SearchClient(SearchText)
-                .then(function(response){
-                vm.clients = response.data.docs;
-                vm.clientsCount = response.data.total_docs_count;
-                console.log(response);
-            },function (error) {
-                vm.clients = vm.clientsCopy;
-                console.log("error",error);
-            });
-        }
-
-        function _clientDetail(client,ev) {
-            $state.go('app.client_detail',{id:client._id});
-        }
-
-        function _onSelectedBranch(){
-            vm.clients = vm.clientsCopy;
-
-            vm.clients = _.filter(vm.clients,function(client){
-                if(!_.isUndefined(client.branch)){
-                        return client.branch._id === vm.currentUser.selected_access_branch._id;
-                }
-            });
-
-        }
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.request.Search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                if(newValue.length > 2){
-                    SearchApi(newValue);
-                }else{
-                    vm.clients = vm.clientsCopy;
-                }
-
-            }
-        });
-    }
-
-
-})(window.angular);
-
-(function(angular) {
-  'use strict';
-  angular.module('app.mfi')
-
-  .service('MainService', MainService);
-
-  MainService.$inject = ['$http','CommonService','AuthService'];
-
-  function MainService($http, CommonService,AuthService) {
-
-      return {
-        GetMFI: _getMFI,
-        UpdateMFI: _updateMFI,
-        CreateMFI:_createMFI,
-        UpdateBranch: _updateBranch,
-        GetBranches: _getBranches,
-        CreateBranch:_createBranch
-      };
-
-      function _getBranches(){
-          return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
-      }
-      function _createBranch(branch){
-        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch), branch);
-      }
-      function _updateBranch(updated_branch){
-          return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.Branches,updated_branch._id), updated_branch);
-      }
-
-      function _getMFI(){
-        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll));
-      }
-      function _updateMFI(data,logo){
-        var updatedMFI = setAttribute(data,logo);
-
-        return $http({
-          url: CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.MFIUpdate,data._id),
-          method: 'PUT',
-          data: updatedMFI,
-          //assigning content-type as undefined,let the browser
-          //assign the correct boundary for us
-          headers: {
-                  'Content-Type': undefined},
-          //prevents serializing payload.  don't do it.
-          transformRequest: angular.identity
-      });
-      }
-
-      function _createMFI(data,logo){
-        var mfiData = setAttribute(data,logo);
-
-        return $http({
-          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFIUpdate),
-          method: 'POST',
-          data: mfiData,
-          //assigning content-type as undefined,let the browser handle it
-          headers: {
-            'Authorization': 'Bearer ' + AuthService.GetToken(),
-            'Content-Type': undefined},
-          //prevents serializing data.  don't do it.
-          transformRequest: angular.identity
-      });
-
-      }
-
-      function setAttribute(mfi,picFile){
-          var mfiData = new FormData();
-          mfiData.append("name", mfi.name);
-          mfiData.append("location", mfi.location);
-          mfiData.append("establishment_year", mfi.establishment_year);
-          mfiData.append("contact_person", _.isUndefined(mfi.contact_person)?'':mfi.contact_person);
-          mfiData.append("phone", _.isUndefined(mfi.phone)?'':mfi.phone);
-          mfiData.append("email", _.isUndefined(mfi.email)?'':mfi.email);
-          mfiData.append("website_link", _.isUndefined(mfi.website_link)?'':mfi.website_link);
-          if(!_.isUndefined(picFile)){
-              mfiData.append("logo", picFile);
-          }
-
-          return mfiData;
-      }
-  }
-
-})(window.angular);
-
-/**
  * Created by Yonas on 4/27/2018.
  */
 (function(angular) {
@@ -5235,7 +4978,7 @@ function runBlock() {
 
     function LoanManagementService($http, CommonService) {
         return {
-            GetClientLoans: _getClientLoans,
+            GetLoanApplications: _getLoanApplications,
             GetScreenings: _getScreenings,
             GetStaticClientInfo: _getStaticClientInfo,
             GetClientScreening:_getClientScreening,
@@ -5244,7 +4987,6 @@ function runBlock() {
 
         function _getScreenings() {
             return $http.get(CommonService.buildPaginatedUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening));
-            // return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening) + 'paginate?source=web');
         }
         function _saveClientScreening(screening,id) {
             return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,id),screening);
@@ -5607,13 +5349,236 @@ function runBlock() {
         function _getClientScreening(clientId) {
             return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
         }
-        function _getClientLoans() {
+        function _getLoanApplications() {
             return $http.get(CommonService.buildPaginatedUrl(API.Service.LOANS,API.Methods.LOANS.Loans));
         }
+
     }
 
 
 })(window.angular);
+/**
+ * Created by Yoni on 1/9/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.clients").controller("ClientDetailController", ClientDetailController);
+
+    ClientDetailController.$inject = ['ClientService','$stateParams','blockUI'];
+
+    function ClientDetailController(ClientService,$stateParams,blockUI) {
+        var vm = this;
+        vm.clientId =  $stateParams.id;
+
+        var myBlockUI = blockUI.instances.get('ClientBlockUI');
+        myBlockUI.start();
+        ClientService.GetClientDetail(vm.clientId)
+            .then(function(response){
+                myBlockUI.stop();
+                vm.client = response.data;
+                console.log("client detail",response);
+            },function(error){
+                myBlockUI.stop();
+                console.log("error getting client detail",error);
+            })
+
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 1/8/2018.
+ */
+
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.clients").controller("ClientsController", ClientsController);
+
+    ClientsController.$inject = ['ClientService','$state','$scope','AuthService'];
+
+    function ClientsController(ClientService,$state,$scope,AuthService) {
+        var vm = this;
+        vm.currentUser = {
+            selected_access_branch:undefined
+        };
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
+        vm.filter = {show : true};
+        vm.request = {
+            Start: 1,
+            limit:100,
+            PageSize: 10,
+            Search:''
+        };
+
+        vm.clientDetail = _clientDetail;
+        vm.onSelectedBranch = _onSelectedBranch;
+
+        vm.clearSearch = function(){
+            vm.request.Search = "";
+            vm.filter.show = false;
+            callApi();
+        };
+
+
+
+        callApi();
+        GetBranchFilter();
+
+
+        function GetBranchFilter() {
+            if(AuthService.IsSuperuser()){
+                ClientService.GetBranches().then(function(response){
+                    vm.currentUser.user_access_branches = response.data.docs;
+                },function(error){
+                    vm.currentUser.user_access_branches = [];
+                });
+            }
+            else {
+                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
+            }
+        }
+
+        function callApi(){
+            $scope.promise = ClientService.GetClients().then(function(response){
+                vm.clients = response.data.docs;
+                vm.clientsCopy = angular.copy(vm.clients);
+            },function (error) {
+                console.log("error",error);
+            });
+
+        }
+
+        function SearchApi(SearchText){
+            $scope.promise = ClientService.SearchClient(SearchText)
+                .then(function(response){
+                vm.clients = response.data.docs;
+                vm.clientsCount = response.data.total_docs_count;
+                console.log(response);
+            },function (error) {
+                vm.clients = vm.clientsCopy;
+                console.log("error",error);
+            });
+        }
+
+        function _clientDetail(client,ev) {
+            $state.go('app.client_detail',{id:client._id});
+        }
+
+        function _onSelectedBranch(){
+            vm.clients = vm.clientsCopy;
+
+            vm.clients = _.filter(vm.clients,function(client){
+                if(!_.isUndefined(client.branch)){
+                        return client.branch._id === vm.currentUser.selected_access_branch._id;
+                }
+            });
+
+        }
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.request.Search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                if(newValue.length > 2){
+                    SearchApi(newValue);
+                }else{
+                    vm.clients = vm.clientsCopy;
+                }
+
+            }
+        });
+    }
+
+
+})(window.angular);
+
+(function(angular) {
+  'use strict';
+  angular.module('app.mfi')
+
+  .service('MainService', MainService);
+
+  MainService.$inject = ['$http','CommonService','AuthService'];
+
+  function MainService($http, CommonService,AuthService) {
+
+      return {
+        GetMFI: _getMFI,
+        UpdateMFI: _updateMFI,
+        CreateMFI:_createMFI,
+        UpdateBranch: _updateBranch,
+        GetBranches: _getBranches,
+        CreateBranch:_createBranch
+      };
+
+      function _getBranches(){
+          return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+      }
+      function _createBranch(branch){
+        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch), branch);
+      }
+      function _updateBranch(updated_branch){
+          return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.Branches,updated_branch._id), updated_branch);
+      }
+
+      function _getMFI(){
+        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll));
+      }
+      function _updateMFI(data,logo){
+        var updatedMFI = setAttribute(data,logo);
+
+        return $http({
+          url: CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.MFIUpdate,data._id),
+          method: 'PUT',
+          data: updatedMFI,
+          //assigning content-type as undefined,let the browser
+          //assign the correct boundary for us
+          headers: {
+                  'Content-Type': undefined},
+          //prevents serializing payload.  don't do it.
+          transformRequest: angular.identity
+      });
+      }
+
+      function _createMFI(data,logo){
+        var mfiData = setAttribute(data,logo);
+
+        return $http({
+          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFIUpdate),
+          method: 'POST',
+          data: mfiData,
+          //assigning content-type as undefined,let the browser handle it
+          headers: {
+            'Authorization': 'Bearer ' + AuthService.GetToken(),
+            'Content-Type': undefined},
+          //prevents serializing data.  don't do it.
+          transformRequest: angular.identity
+      });
+
+      }
+
+      function setAttribute(mfi,picFile){
+          var mfiData = new FormData();
+          mfiData.append("name", mfi.name);
+          mfiData.append("location", mfi.location);
+          mfiData.append("establishment_year", mfi.establishment_year);
+          mfiData.append("contact_person", _.isUndefined(mfi.contact_person)?'':mfi.contact_person);
+          mfiData.append("phone", _.isUndefined(mfi.phone)?'':mfi.phone);
+          mfiData.append("email", _.isUndefined(mfi.email)?'':mfi.email);
+          mfiData.append("website_link", _.isUndefined(mfi.website_link)?'':mfi.website_link);
+          if(!_.isUndefined(picFile)){
+              mfiData.append("logo", picFile);
+          }
+
+          return mfiData;
+      }
+  }
+
+})(window.angular);
+
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -7262,6 +7227,221 @@ function runBlock() {
 
 
 })(window.angular);
+/**
+ * Created by Yoni on 1/8/2018.
+ */
+
+(function(angular) {
+    'use strict';
+    angular.module('app.clients')
+        .service('ClientService', ClientService);
+
+    ClientService.$inject = ['$http','CommonService'];
+
+    function ClientService($http, CommonService) {
+        return {
+            GetClients: _getClients,
+            GetClientDetail:_getClientDetail,
+            SearchClient:_searchClient,
+            GetBranches: _getBranches
+        };
+        function _searchClient(searchText) {
+            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
+        }
+
+        function _getClientDetail(id){
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
+        }
+        function _getBranches(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+        }
+        function _getClients(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients));
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.loan_management")
+        .controller("ClientManagementController", ClientManagementController);
+
+    ClientManagementController.$inject = ['$state','$scope'];
+
+    function ClientManagementController($state,$scope) {
+        var vm = this;
+        callApi();
+
+        function callApi(){
+                console.log("ClientManagement Controller");
+        }
+
+
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.loan_management")
+        .controller("LoanProcessingController", LoanProcessingController);
+
+    LoanProcessingController.$inject = ['$state','$scope'];
+
+    function LoanProcessingController($state,$scope) {
+        var vm = this;
+        callApi();
+
+        function callApi(){
+            console.log("LoanProcessing Controller");
+        }
+
+
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/30/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.loan_management").controller("ScreeningController", ScreeningController);
+
+    ScreeningController.$inject = ['LoanManagementService','AlertService'];
+
+    function ScreeningController(LoanManagementService,AlertService) {
+        var vm = this;
+        vm.screeningDetail = _screeningDetail;
+        vm.backToList = _backToList;
+        vm.saveScreeningForm = _saveScreeningForm;
+        vm.questionValueChanged = questionValueChanged;
+
+
+        vm.clientDetail = _clientDetail;
+
+
+
+        vm.visibility = {
+            showScreeningDetail:false,
+            showClientDetail:false,
+            showLoanApplicationDetail:false,
+            showACATDetail:false
+        };
+
+        initialize();
+        function _clientDetail(client, ev) {
+            console.log("Client detail",client);
+        }
+
+        function _screeningDetail(screening) {
+            vm.selectedScreening = screening;
+            console.log("screening detail");
+            var client = screening.client;
+            LoanManagementService.GetClientScreening(client._id).then(function (response) {
+                vm.client = response.data;
+                vm.visibility.showScreeningDetail = true;
+                console.log("vm.client",vm.client);
+            });
+        }
+        function _backToList(type) {
+            switch(type){
+                case 'SCREENING':
+                    vm.visibility.showScreeningDetail = false;
+                    break;
+            }
+
+        }
+        function _saveScreeningForm(client,screening_status) {
+
+            var status = _.find(SCREENING_STATUS,function (stat) {
+                return stat.code === screening_status;
+            });
+            var screening = {
+                status: status.code,
+                questions: client.questions
+            };
+
+            // console.log("save screening status ", screening);
+
+            LoanManagementService.SaveClientScreening(screening,client._id)
+                .then(function (response) {
+                    AlertService.showSuccess('Screening',"Successfully saved screening information  with status: " + status.name);
+                console.log("saved screening ", screening);
+            },function (error) {
+                    var message = error.data.error.message;
+                    AlertService.showError("Error when saving screening",message);
+                console.log("error on saving screening ", error);
+            });
+
+        }
+
+        function initialize() {
+            LoanManagementService.GetScreenings().then(function (response) {
+                console.log("client info",response);
+                vm.screenings = response.data.docs;
+            });
+
+            LoanManagementService.GetLoanApplications().then(function (response) {
+                console.log("Loans client",response);
+            });
+
+        }
+
+
+        function questionValueChanged(question) {
+
+            var prQues = getPrerequisiteQuestion(question._id);
+
+            _.each(prQues, function(prQue) {
+                if (prQue) {
+                    var prerequisite = prQue.prerequisites[0];
+                    //Set question's show based by comparing current value with expected preq. value
+                    prQue.show = (prerequisite.answer === question.values[0]);
+                }
+            });
+
+        }
+
+        function getPrerequisiteQuestion(questionID) {
+
+            //extract outer questions; if section type, get them from sections
+            var questions = vm.client.has_sections ?
+                _.reduce(vm.client.sections, function(m, q) {
+                    return m.concat(q.questions);
+                }, []) :
+                vm.client.questions;
+
+            //Get all subquestions
+            var subQuestions = _.reduce(questions, function(m, q) {
+                return m.concat(q.sub_questions);
+            }, []);
+
+            //merge questions with subquestions into a singl array
+            var mergedQuestions = _.uniq(_.union(questions, subQuestions), false, _.property('_id'));
+
+            //Search in mergedQuestions
+            var prQue = _.filter(mergedQuestions, function(obj) {
+                return _.some(obj.prerequisites, { question: questionID });
+            });
+
+            return prQue;
+        }
+
+    }
+
+
+})(window.angular);
 (function(angular) {
   "use strict";
 
@@ -7782,176 +7962,6 @@ function runBlock() {
   }
 })(window.angular);
 
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.loan_management")
-        .controller("ClientManagementController", ClientManagementController);
-
-    ClientManagementController.$inject = ['$state','$scope'];
-
-    function ClientManagementController($state,$scope) {
-        var vm = this;
-        callApi();
-
-        function callApi(){
-                console.log("ClientManagement Controller");
-        }
-
-
-    }
-
-
-})(window.angular);
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.loan_management")
-        .controller("LoanProcessingController", LoanProcessingController);
-
-    LoanProcessingController.$inject = ['$state','$scope'];
-
-    function LoanProcessingController($state,$scope) {
-        var vm = this;
-        callApi();
-
-        function callApi(){
-            console.log("LoanProcessing Controller");
-        }
-
-
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/30/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.loan_management").controller("ScreeningController", ScreeningController);
-
-    ScreeningController.$inject = ['LoanManagementService','AlertService'];
-
-    function ScreeningController(LoanManagementService,AlertService) {
-        var vm = this;
-        vm.screeningDetail = _screeningDetail;
-        vm.backToList = _backToList;
-        vm.saveScreeningForm = _saveScreeningForm;
-        vm.questionValueChanged = questionValueChanged;
-
-        vm.visibility = {
-            showScreeningDetail:false,
-            showClientDetail:false,
-            showLoanApplicationDetail:false,
-            showACATDetail:false
-        };
-
-        initialize();
-
-        function _screeningDetail(screening) {
-            vm.selectedScreening = screening;
-            console.log("screening detail");
-            var client = screening.client;
-            LoanManagementService.GetClientScreening(client._id).then(function (response) {
-                vm.client = response.data;
-                vm.visibility.showScreeningDetail = true;
-                console.log("vm.client",vm.client);
-            });
-        }
-        function _backToList(type) {
-            switch(type){
-                case 'SCREENING':
-                    vm.visibility.showScreeningDetail = false;
-                    break;
-            }
-
-        }
-        function _saveScreeningForm(client,screening_status) {
-
-            var status = _.find(SCREENING_STATUS,function (stat) {
-                return stat.code === screening_status;
-            });
-            var screening = {
-                status: status.code,
-                questions: client.questions
-            };
-
-            // console.log("save screening status ", screening);
-
-            LoanManagementService.SaveClientScreening(screening,client._id)
-                .then(function (response) {
-                    AlertService.showSuccess('Screening',"Successfully saved screening information  with status: " + status.name);
-                console.log("saved screening ", screening);
-            },function (error) {
-                    var message = error.data.error.message;
-                    AlertService.showError("Error when saving screening",message);
-                console.log("error on saving screening ", error);
-            });
-
-        }
-
-        function initialize() {
-            LoanManagementService.GetScreenings().then(function (response) {
-                console.log("client info",response);
-                vm.screenings = response.data.docs;
-            });
-            LoanManagementService.GetClientLoans().then(function (response) {
-                console.log("Loans client",response);
-            });
-        }
-
-
-        function questionValueChanged(question) {
-
-            var prQues = getPrerequisiteQuestion(question._id);
-
-            _.each(prQues, function(prQue) {
-                if (prQue) {
-                    var prerequisite = prQue.prerequisites[0];
-                    //Set question's show based by comparing current value with expected preq. value
-                    prQue.show = (prerequisite.answer === question.values[0]);
-                }
-            });
-
-        }
-
-        function getPrerequisiteQuestion(questionID) {
-
-            //extract outer questions; if section type, get them from sections
-            var questions = vm.client.has_sections ?
-                _.reduce(vm.client.sections, function(m, q) {
-                    return m.concat(q.questions);
-                }, []) :
-                vm.client.questions;
-
-            //Get all subquestions
-            var subQuestions = _.reduce(questions, function(m, q) {
-                return m.concat(q.sub_questions);
-            }, []);
-
-            //merge questions with subquestions into a singl array
-            var mergedQuestions = _.uniq(_.union(questions, subQuestions), false, _.property('_id'));
-
-            //Search in mergedQuestions
-            var prQue = _.filter(mergedQuestions, function(obj) {
-                return _.some(obj.prerequisites, { question: questionID });
-            });
-
-            return prQue;
-        }
-
-    }
-
-
-})(window.angular);
 (function(angular) {
   'use strict';
 

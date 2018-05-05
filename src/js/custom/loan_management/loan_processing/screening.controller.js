@@ -15,6 +15,11 @@
         vm.saveScreeningForm = _saveScreeningForm;
         vm.questionValueChanged = questionValueChanged;
 
+
+        vm.clientDetail = _clientDetail;
+
+
+
         vm.visibility = {
             showScreeningDetail:false,
             showClientDetail:false,
@@ -23,6 +28,9 @@
         };
 
         initialize();
+        function _clientDetail(client, ev) {
+            console.log("Client detail",client);
+        }
 
         function _screeningDetail(screening) {
             vm.selectedScreening = screening;
@@ -71,9 +79,11 @@
                 console.log("client info",response);
                 vm.screenings = response.data.docs;
             });
-            LoanManagementService.GetClientLoans().then(function (response) {
+
+            LoanManagementService.GetLoanApplications().then(function (response) {
                 console.log("Loans client",response);
             });
+
         }
 
 
