@@ -71,6 +71,9 @@
                 console.log("client info",response);
                 vm.screenings = response.data.docs;
             });
+            LoanManagementService.GetClientLoans().then(function (response) {
+                console.log("Loans client",response);
+            });
         }
 
 

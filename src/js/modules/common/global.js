@@ -8,6 +8,7 @@ var API = {
         Auth: 'auth',
         Users: 'users',
         SCREENING:'screenings',
+        LOANS:'loans',
         FORM:'forms',
         ACAT:'acat'
     },
@@ -67,6 +68,10 @@ var API = {
         },
         SCREENING:{
             Screening:'',
+            Clients:'clients'
+        },
+        LOANS:{
+            Loans:'',
             Clients:'clients'
         }
     }

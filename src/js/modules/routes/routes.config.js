@@ -146,7 +146,7 @@
                 url: "/loan_processing",
                 title: "Loan Processing",
                 templateUrl:helper.basepath('loan_management/loan_processing/screening.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select'),
+                resolve:helper.resolveFor('md.data.table','ui.select','moment'),
                 controller: "ScreeningController",
                 controllerAs: 'vm'
             })
