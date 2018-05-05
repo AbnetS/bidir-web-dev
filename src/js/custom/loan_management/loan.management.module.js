@@ -4,6 +4,8 @@
 (function() {
     'use strict';
 
-    angular.module('app.loan_management', []);
+    angular.module('app.loan_management', [
+        'angularMoment'
+    ]);
 
 })();
