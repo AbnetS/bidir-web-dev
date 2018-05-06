@@ -98,7 +98,7 @@ var ACAT_COST_LIST_TYPE = {
 };
 
 var SCREENING_STATUS = {
-    IN_PROGRESS:{code:'inprogress',name:'In Progress'},
+    IN_PROGRESS:{code:'screening_inprogress',name:'In Progress'},
     SUBMITTED:{code:'submitted',name:'Submitted'},
     APPROVED:{code:'approved',name:'Approved'},
     DECLINED_FINAL:{code:'declined_final',name:'Declined Final'},

@@ -4,7 +4,7 @@
 
 (function(angular) {
     'use strict';
-    angular.module('app.clients')
+    angular.module('app.loan_management')
         .service('ClientService', ClientService);
 
     ClientService.$inject = ['$http','CommonService'];

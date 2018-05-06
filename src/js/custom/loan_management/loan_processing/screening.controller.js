@@ -6,9 +6,9 @@
 
     angular.module("app.loan_management").controller("ScreeningController", ScreeningController);
 
-    ScreeningController.$inject = ['LoanManagementService','AlertService','$scope'];
+    ScreeningController.$inject = ['LoanManagementService','AlertService','$scope','ClientService'];
 
-    function ScreeningController(LoanManagementService,AlertService,$scope) {
+    function ScreeningController(LoanManagementService,AlertService,$scope,ClientService) {
         var vm = this;
         vm.screeningDetail = _screeningDetail;
         vm.backToList = _backToList;
@@ -67,6 +67,7 @@
         };
 
         initialize();
+
         function _clientDetail(client, ev) {
             console.log("Client detail",client);
         }
@@ -120,8 +121,9 @@
 
             });
 
-            LoanManagementService.GetLoanApplications().then(function (response) {
-                console.log("Loans client",response);
+            ClientService.GetClients().then(function (response) {
+                console.log("clients",response);
+                vm.clients = response.data.docs;
             });
 
         }
