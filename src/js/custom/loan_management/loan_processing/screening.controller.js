@@ -6,9 +6,9 @@
 
     angular.module("app.loan_management").controller("ScreeningController", ScreeningController);
 
-    ScreeningController.$inject = ['LoanManagementService','AlertService'];
+    ScreeningController.$inject = ['LoanManagementService','AlertService','$scope'];
 
-    function ScreeningController(LoanManagementService,AlertService) {
+    function ScreeningController(LoanManagementService,AlertService,$scope) {
         var vm = this;
         vm.screeningDetail = _screeningDetail;
         vm.backToList = _backToList;
@@ -18,7 +18,46 @@
 
         vm.clientDetail = _clientDetail;
 
+        vm.options = {
+            rowSelection: true,
+            multiSelect: true,
+            autoSelect: true,
+            decapitate: false,
+            largeEditDialog: false,
+            boundaryLinks: false,
+            limitSelect: true,
+            pageSelect: true
+        };
+        vm.filter = {show : false};
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
 
+        vm.query = {
+            limit: 10,
+            page: 1,
+            search:''
+        };
+
+        vm.logPagination = function(page, limit) {
+            console.log('Scope Page: ' + vm.query.page + ' Scope Limit: ' + vm.query.limit);
+            console.log('Page: ' + page + ' Limit: ' + limit);
+
+            vm.promise = LoanManagementService.GetScreenings();
+        };
+        vm.clearSearchText = function () {
+            vm.query.search = '';
+            vm.filter.show = false;
+        };
+        vm.searchScreening = function () {
+            console.log("search text",vm.query.search);
+        };
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("search for screening ",newValue);
+            }
+        });
 
         vm.visibility = {
             showScreeningDetail:false,
@@ -78,6 +117,7 @@
             LoanManagementService.GetScreenings().then(function (response) {
                 console.log("client info",response);
                 vm.screenings = response.data.docs;
+
             });
 
             LoanManagementService.GetLoanApplications().then(function (response) {

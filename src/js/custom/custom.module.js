@@ -17,8 +17,11 @@
 
     function customRun() {
         console.log("custom app run");
+
     }
-    function customConfig($mdAriaProvider) {
+    function customConfig($mdAriaProvider,$mdThemingProvider) {
         $mdAriaProvider.disableWarnings();
+        $mdThemingProvider.theme('default')
+            .primaryPalette('blue');
     }
 })();
