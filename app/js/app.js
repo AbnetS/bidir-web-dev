@@ -565,6 +565,12 @@
                                         break;
                                     }
                             }
+                            //Parse values
+                            if (questionData.validation_factor === 'NUMERIC' || questionData.validation_factor === 'ALPHANUMERIC') {
+                                questionData.values = _.map(questionData.values, function(val) {
+                                    return parseFloat(val);
+                                });
+                            }
 
                             $scope.dynamicTemplateUrl = 'app/views/common/directives/templates/' + questionType + '.tmpl.html';
                         }
@@ -4990,8 +4996,8 @@ function runBlock() {
             SaveClientScreening:_saveClientScreening
         };
 
-        function _getScreenings() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening));
+        function _getScreenings(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening,parameters));
         }
         function _saveClientScreening(screening,id) {
             return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,id),screening);
@@ -7292,6 +7298,37 @@ function runBlock() {
 
 })(window.angular);
 /**
+ * Created by Yonas on 5/7/2018.
+ */
+
+(function(angular) {
+    'use strict';
+
+    angular.module('app.loan_management')
+        .controller('ClientDialogController', ClientDialogController);
+
+    ClientDialogController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService','blockUI'];
+
+    function ClientDialogController($mdDialog, items,AlertService,CommonService,MainService,blockUI) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.isEdit = items !== null;
+
+        init();
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+
+        function init(){
+
+        }
+    }
+
+
+
+})(window.angular);
+/**
  * Created by Yonas on 4/27/2018.
  */
 (function(angular) {
@@ -7323,15 +7360,16 @@ function runBlock() {
 
     angular.module("app.loan_management").controller("ScreeningController", ScreeningController);
 
-    ScreeningController.$inject = ['LoanManagementService','AlertService','$scope','ClientService'];
+    ScreeningController.$inject = ['LoanManagementService','AlertService','$scope','ClientService','$mdDialog','RouteHelpers'];
 
-    function ScreeningController(LoanManagementService,AlertService,$scope,ClientService) {
+    function ScreeningController(LoanManagementService,AlertService,$scope,ClientService,$mdDialog,RouteHelpers ) {
         var vm = this;
         vm.screeningDetail = _screeningDetail;
         vm.backToList = _backToList;
         vm.saveScreeningForm = _saveScreeningForm;
         vm.questionValueChanged = questionValueChanged;
 
+        vm.addClient = _addClient;
 
         vm.clientDetail = _clientDetail;
 
@@ -7349,16 +7387,17 @@ function runBlock() {
         vm.pageSizes = [10, 25, 50, 100, 250, 500];
 
         vm.query = {
-            limit: 10,
-            page: 1,
-            search:''
+            search:'',
+            page:1,
+            per_page:10
         };
 
-        vm.logPagination = function(page, limit) {
-            console.log('Scope Page: ' + vm.query.page + ' Scope Limit: ' + vm.query.limit);
-            console.log('Page: ' + page + ' Limit: ' + limit);
+        vm.paginate = function(page, pageSize) {
+            console.log('Scope Page: ' + vm.query.page + ' Scope Limit: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callScreeningAPI();
 
-            vm.promise = LoanManagementService.GetScreenings();
         };
         vm.clearSearchText = function () {
             vm.query.search = '';
@@ -7387,6 +7426,24 @@ function runBlock() {
 
         function _clientDetail(client, ev) {
             console.log("Client detail",client);
+        }
+
+        function _addClient(ev) {
+            $mdDialog.show({
+                locals: {items: null},
+                templateUrl: RouteHelpers.basepath('loan_management/client_management/client.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'ClientDialogController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+
+            }, function () {
+            });
+
         }
 
         function _screeningDetail(screening) {
@@ -7432,17 +7489,22 @@ function runBlock() {
         }
 
         function initialize() {
-            LoanManagementService.GetScreenings().then(function (response) {
+            callScreeningAPI();
+
+            // ClientService.GetClients().then(function (response) {
+            //     console.log("clients",response);
+            //     vm.clients = response.data.docs;
+            // });
+
+        }
+        function callScreeningAPI() {
+            LoanManagementService.GetScreenings(vm.query).then(function (response) {
                 console.log("client info",response);
                 vm.screenings = response.data.docs;
-
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+                console.log("total_pages info",vm.query);
             });
-
-            ClientService.GetClients().then(function (response) {
-                console.log("clients",response);
-                vm.clients = response.data.docs;
-            });
-
         }
 
 

@@ -1,0 +1,31 @@
+<md-dialog flex="55">
+   <form role="form" name="vm.clientRegistrationForm" novalidate block-ui="ClientRegistrationFormBlockUI">
+      <md-toolbar class="small">
+         <div class="md-toolbar-tools small">
+            <h2>{{vm.isEdit?'Update':'Add'}} Client</h2>
+            <span flex></span>
+            <md-button aria-label="button" class="md-icon-button" ng-click="vm.cancel()">
+               <i class="icon-close"></i>
+            </md-button>
+         </div>
+      </md-toolbar>
+
+      <md-dialog-content>
+         <md-content class="md-padding">
+
+         </md-content>
+      </md-dialog-content>
+
+
+      <md-dialog-actions layout="row">
+         <div layout="row" layout-align="start" flex>
+            <md-button class="md-raised md-button-small md-ink-ripple" ng-click="vm.cancel()">
+               Cancel
+            </md-button>
+         </div>
+         <md-button class="md-raised md-primary md-button-small md-ink-ripple pull-right" ng-click="vm.save()">
+            <i class="fa fa-save"></i> {{vm.isEdit? 'Update':'Save'}}
+         </md-button>
+      </md-dialog-actions>
+   </form>
+</md-dialog>

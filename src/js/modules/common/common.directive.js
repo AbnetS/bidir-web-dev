@@ -138,6 +138,12 @@
                                         break;
                                     }
                             }
+                            //Parse values
+                            if (questionData.validation_factor === 'NUMERIC' || questionData.validation_factor === 'ALPHANUMERIC') {
+                                questionData.values = _.map(questionData.values, function(val) {
+                                    return parseFloat(val);
+                                });
+                            }
 
                             $scope.dynamicTemplateUrl = 'app/views/common/directives/templates/' + questionType + '.tmpl.html';
                         }

@@ -52,7 +52,7 @@
                            <td md-cell>{{client.status | ReplaceUnderscore}}</td>
 
                            <td md-cell>
-                              <a ng-click="vm.clientDetail(client,$event)">
+                              <a ng-click="vm.addClient(client,$event)">
                                  <i class="fa fa-eye"></i>
                               </a>
                            </td>
@@ -90,10 +90,6 @@
          </div>
          <!--LIST OF CLIENTS UNDER SCREENING-->
          <div class="row" ng-show="!vm.visibility.showScreeningDetail">
-            <!--<div class="col-md-2 bg-warning-dark text-left text-uppercase">-->
-            <!--<h5 class="">SCREENING</h5>-->
-            <!--</div>-->
-
             <div class="col-lg-12">
 
                <md-toolbar class="md-table-toolbar md-default" ng-show="vm.filter.show">
@@ -127,7 +123,7 @@
 
 
                <md-table-container>
-                  <table md-table md-progress="vm.promise" class="table-hover">
+                  <table md-table md-progress="vm.screenings" class="table-hover">
                      <thead md-head class="text-gray-dark">
                         <tr md-row>
                            <th md-column>
@@ -175,7 +171,7 @@
                   </table>
                </md-table-container>
 
-               <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.pageSizes" md-page="vm.query.page" md-total="{{vm.screenings.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" md-on-paginate="vm.logPagination"></md-table-pagination>
+               <md-table-pagination md-limit="vm.query.per_page" md-limit-options="vm.pageSizes" md-page="vm.query.page" md-total="vm.query.total_docs_count" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" md-on-paginate="vm.paginate"></md-table-pagination>
 
             </div>
          </div>

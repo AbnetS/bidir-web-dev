@@ -18,8 +18,8 @@
             SaveClientScreening:_saveClientScreening
         };
 
-        function _getScreenings() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening));
+        function _getScreenings(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening,parameters));
         }
         function _saveClientScreening(screening,id) {
             return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,id),screening);
