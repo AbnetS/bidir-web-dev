@@ -71,21 +71,6 @@
                 controller: "BranchController",
                 controllerAs: 'vm'
             })
-            .state("app.manage_clients", {
-                url: "/clients",
-                title: "clients",
-                templateUrl:helper.basepath('manage_clients/manage.clients.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "ClientsController",
-                controllerAs: 'vm'
-            })
-            .state("app.client_detail", {
-                url: "/clients/:id",
-                title: "clients detail",
-                templateUrl:helper.basepath('manage_clients/client.detail.html'),
-                controller: "ClientDetailController",
-                controllerAs: 'vm'
-            })
             .state("app.forms", {
                 url: "/forms",
                 title: "forms",
@@ -135,19 +120,27 @@
                 controllerAs: 'vm'
             })
             .state("app.clients", {
-                url: "/client_management",
+                url: "/clients",
                 title: "Client Management",
                 templateUrl:helper.basepath('loan_management/client_management/client.management.html'),
                 resolve:helper.resolveFor('md.data.table','ui.select'),
                 controller: "ClientManagementController",
                 controllerAs: 'vm'
             })
+            .state("app.client_detail", {
+                url: "/clients/:id",
+                title: "clients detail",
+                templateUrl:helper.basepath('loan_management/client_management/client.detail.html'),
+                controller: "ClientDetailController",
+                controllerAs: 'vm'
+            })
+
             .state("app.loan_processing", {
                 url: "/loan_processing",
                 title: "Loan Processing",
                 templateUrl:helper.basepath('loan_management/loan_processing/screening.html'),
                 resolve:helper.resolveFor('md.data.table','ui.select','moment'),
-                controller: "ScreeningController",
+                controller: "LoanProcessingController",
                 controllerAs: 'vm'
             })
 

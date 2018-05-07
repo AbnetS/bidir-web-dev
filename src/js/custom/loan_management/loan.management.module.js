@@ -5,7 +5,8 @@
     'use strict';
 
     angular.module('app.loan_management', [
-        'angularMoment'
+        'app.clients',
+        'app.processing'
     ]);
 
 })();

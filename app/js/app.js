@@ -80,19 +80,6 @@
     angular
         .module('app.colors', []);
 })();
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common", [])
-      .config(routeConfig)
-      .run(runBlock);
-
-  function runBlock() {}
-  function routeConfig() {}
-
-})(window.angular);
-
 (function() {
     'use strict';
 
@@ -111,9 +98,23 @@
             'ngResource',
             'ui.utils',
             'ngAria',
-            'ngMessages'
+            'ngMessages',
+            'angularMoment'
         ]);
 })();
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common", [])
+      .config(routeConfig)
+      .run(runBlock);
+
+  function runBlock() {}
+  function routeConfig() {}
+
+})(window.angular);
+
 (function() {
     'use strict';
 
@@ -189,14 +190,6 @@
     'use strict';
 
     angular
-        .module('app.routes', [
-            'app.lazyload'
-        ]);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.settings', []);
 })();
 (function() {
@@ -230,6 +223,14 @@
     angular
         .module('app.welcomePage', []);
 
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.routes', [
+            'app.lazyload'
+        ]);
 })();
 (function(angular) {
     'use strict';
@@ -395,6 +396,123 @@
     }
 
 })();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
+
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+      // Disables animation on items with class .ng-no-animation
+      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
+
+      // Improve performance disabling debugging features
+      // $compileProvider.debugInfoEnabled(false);
+
+    }
+
+})();
+/**=========================================================
+ * Module: constants.js
+ * Define constants to inject across the application
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .run(appRun);
+
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });*/
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
+    }
+
+})();
+
 
 (function(angular) {
   "use strict";
@@ -716,123 +834,6 @@ var SCREENING_STATUS = {
     DECLINED_FINAL:{code:'declined_final',name:'Declined Final'},
     DECLINED_UNDER_REVIEW:{code:'declined_under_review',name:'Declined Under Review'}
 };
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .config(coreConfig);
-
-    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
-    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
-
-      var core = angular.module('app.core');
-      // registering components after bootstrap
-      core.controller = $controllerProvider.register;
-      core.directive  = $compileProvider.directive;
-      core.filter     = $filterProvider.register;
-      core.factory    = $provide.factory;
-      core.service    = $provide.service;
-      core.constant   = $provide.constant;
-      core.value      = $provide.value;
-
-      // Disables animation on items with class .ng-no-animation
-      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
-
-      // Improve performance disabling debugging features
-      // $compileProvider.debugInfoEnabled(false);
-
-    }
-
-})();
-/**=========================================================
- * Module: constants.js
- * Define constants to inject across the application
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .constant('APP_MEDIAQUERY', {
-          'desktopLG':             1200,
-          'desktop':                992,
-          'tablet':                 768,
-          'mobile':                 480
-        })
-      ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .run(appRun);
-
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
-
-      // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });*/
-
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
-
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Hooks Example
-      // ----------------------------------- 
-
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
-
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
-
-    }
-
-})();
-
 
 (function() {
     'use strict';
@@ -2866,286 +2867,6 @@ var SCREENING_STATUS = {
     }
 
 })();
-/**=========================================================
- * Module: helpers.js
- * Provides helper functions for routes definition
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.routes')
-        .provider('RouteHelpers', RouteHelpersProvider)
-        ;
-
-    RouteHelpersProvider.$inject = ['APP_REQUIRES'];
-    function RouteHelpersProvider(APP_REQUIRES) {
-
-      /* jshint validthis:true */
-      return {
-        // provider access level
-        basepath: basepath,
-        resolveFor: resolveFor,
-        // controller access level
-        $get: function() {
-          return {
-            basepath: basepath,
-            resolveFor: resolveFor
-          };
-        }
-      };
-
-      // Set here the base of the relative path
-      // for all app views
-      function basepath(uri) {
-        return 'app/views/' + uri;
-      }
-
-      // Generates a resolve object by passing script names
-      // previously configured in constant.APP_REQUIRES
-      function resolveFor() {
-        var _args = arguments;
-        return {
-          deps: ['$ocLazyLoad','$q', function ($ocLL, $q) {
-            // Creates a promise chain for each argument
-            var promise = $q.when(1); // empty promise
-            for(var i=0, len=_args.length; i < len; i ++){
-              promise = andThen(_args[i]);
-            }
-            return promise;
-
-            // creates promise to chain dynamically
-            function andThen(_arg) {
-              // also support a function that returns a promise
-              if(typeof _arg === 'function')
-                  return promise.then(_arg);
-              else
-                  return promise.then(function() {
-                    // if is a module, pass the name. If not, pass the array
-                    var whatToLoad = getRequired(_arg);
-                    // simple error check
-                    if(!whatToLoad) return $.error('Route resolve: Bad resource name [' + _arg + ']');
-                    // finally, return a promise
-                    return $ocLL.load( whatToLoad );
-                  });
-            }
-            // check and returns required data
-            // analyze module items with the form [name: '', files: []]
-            // and also simple array of script files (for not angular js)
-            function getRequired(name) {
-              if (APP_REQUIRES.modules)
-                  for(var m in APP_REQUIRES.modules)
-                      if(APP_REQUIRES.modules[m].name && APP_REQUIRES.modules[m].name === name)
-                          return APP_REQUIRES.modules[m];
-              return APP_REQUIRES.scripts && APP_REQUIRES.scripts[name];
-            }
-
-          }]};
-      } // resolveFor
-
-    }
-
-
-})();
-
-
-/**=========================================================
- * Module: config.js
- * App routes and resources configuration
- =========================================================*/
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.routes')
-        .config(routesConfig);
-
-    routesConfig.$inject = ['$stateProvider', '$locationProvider', '$urlRouterProvider', 'RouteHelpersProvider'];
-    function routesConfig($stateProvider, $locationProvider, $urlRouterProvider, helper){
-        
-        // Set the following to true to enable the HTML5 Mode
-        // You may have to set <base> tag in index and a routing configuration in your server
-        $locationProvider.html5Mode(false);
-
-        // defaults to login
-        $urlRouterProvider.otherwise('/page/login');
-
-        // 
-        // Application Routes
-        // -----------------------------------   
-        $stateProvider
-          .state('app', {
-              url: '/app',
-              abstract: true,
-              templateUrl: helper.basepath('app.html'),
-              resolve: helper.resolveFor('fastclick','modernizr','sparklines', 'icons','animo','underscore',
-                        'sparklines','slimscroll','oitozero.ngSweetAlert','toaster','blockUI')
-          })
-          .state('app.welcome', {
-              url: '/welcome',
-              title: 'Welcome',
-              templateUrl: helper.basepath('welcome.html'),
-              controller: 'WelcomeController',
-              controllerAs: 'vm'
-          })
-           .state('app.manage_user', {
-                url: '/manage_user',
-                title: 'manage users',
-                templateUrl: helper.basepath('manageusers/manage.users.html'),
-               resolve: angular.extend(helper.resolveFor('datatables','ngDialog','ui.select'),{}),
-               controller: 'ManageUsersController',
-               controllerAs: 'vm'
-            })
-            .state('app.manage_role', {
-                url: '/manage_role',
-                title: 'manage roles',
-                templateUrl: helper.basepath('manageroles/manage.roles.html'),
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select'),
-                controller: 'ManageRoleController',
-                controllerAs: 'vm'
-            })
-            .state('app.mfi_setting', {
-                url: '/mfi_setup',
-                title: 'MFI Setting',
-                templateUrl:helper.basepath('mfisetup/mfi.html'),
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment','inputmask','ngFileUpload'),
-                controller: 'MFIController',
-                controllerAs: 'vm'
-            })
-
-            .state("app.manage_branch", {
-                url: "/branches",
-                title: "branches",
-                templateUrl:helper.basepath('mfisetup/branches/branches.html'),
-                controller: "BranchController",
-                controllerAs: 'vm'
-            })
-            .state("app.manage_clients", {
-                url: "/clients",
-                title: "clients",
-                templateUrl:helper.basepath('manage_clients/manage.clients.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "ClientsController",
-                controllerAs: 'vm'
-            })
-            .state("app.client_detail", {
-                url: "/clients/:id",
-                title: "clients detail",
-                templateUrl:helper.basepath('manage_clients/client.detail.html'),
-                controller: "ClientDetailController",
-                controllerAs: 'vm'
-            })
-            .state("app.forms", {
-                url: "/forms",
-                title: "forms",
-                templateUrl:helper.basepath('forms/forms.list.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "FormsController",
-                controllerAs: 'vm'
-            })
-            .state("app.builder", {
-                url: "/forms/builder/:id",
-                title: 'Form Builder',
-                templateUrl:helper.basepath('forms/builder.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select','ui.sortable'),
-                controller: 'FormBuilderController',
-                controllerAs: 'vm'
-            })
-            .state("app.acat", {
-                url: "/acat",
-                title: "acat",
-                templateUrl:helper.basepath('acat/builder/acat.list.html'),
-                resolve:helper.resolveFor('md.data.table'),
-                controller: "ACATListController",
-                controllerAs: 'vm'
-            })
-            .state("app.acatbuilder", {
-                url: "/acat/builder/:id",
-                title: 'ACAT Builder',
-                templateUrl:helper.basepath('acat/builder/acat.builder.html'),
-                controller: 'ACATController',
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controllerAs: 'vm'
-            })
-            .state("app.crop", {
-                url: "/crops",
-                title: "crops",
-                templateUrl:helper.basepath('acat/crop/crops.html'),
-                resolve:helper.resolveFor('md.data.table'),
-                controller: "CropsController",
-                controllerAs: 'vm'
-            })
-            .state("app.loanproduct", {
-                url: "/loanproducts",
-                title: "loan product",
-                templateUrl:helper.basepath('mfisetup/loanproduct/loan.products.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "LoanProductsController",
-                controllerAs: 'vm'
-            })
-            .state("app.clients", {
-                url: "/client_management",
-                title: "Client Management",
-                templateUrl:helper.basepath('loan_management/client_management/client.management.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "ClientManagementController",
-                controllerAs: 'vm'
-            })
-            .state("app.loan_processing", {
-                url: "/loan_processing",
-                title: "Loan Processing",
-                templateUrl:helper.basepath('loan_management/loan_processing/screening.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select','moment'),
-                controller: "ScreeningController",
-                controllerAs: 'vm'
-            })
-
-
-          // CUSTOM RESOLVES
-          //   Add your own resolves properties
-          //   following this object extend
-          //   method
-          // -----------------------------------
-            .state('page', {
-                url: '/page',
-                templateUrl: 'app/pages/page.html',
-                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert','toaster','blockUI'),
-                controller: ['$rootScope', function($rootScope) {
-                    $rootScope.app.layout.isBoxed = false;
-                }]
-            })
-            .state('page.login', {
-                url: '/login',
-                title: 'Login',
-                templateUrl: 'app/pages/login.html',
-                controller: 'LoginFormController',
-                controllerAs: 'login'
-            })
-            .state('page.404', {
-                url: '/404',
-                title: 'Not Found',
-                templateUrl: 'app/pages/404.html'
-            })
-            .state('page.500', {
-                url: '/500',
-                title: 'Server error',
-                templateUrl: 'app/pages/500.html'
-            })
-            .state('page.maintenance', {
-                url: '/maintenance',
-                title: 'Maintenance',
-                templateUrl: 'app/pages/maintenance.html'
-            })
-          ;
-
-    } // routesConfig
-
-})();
-
-
 (function() {
     'use strict';
 
@@ -4252,6 +3973,279 @@ var SCREENING_STATUS = {
     }
 
 })(window.angular);
+/**=========================================================
+ * Module: helpers.js
+ * Provides helper functions for routes definition
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.routes')
+        .provider('RouteHelpers', RouteHelpersProvider)
+        ;
+
+    RouteHelpersProvider.$inject = ['APP_REQUIRES'];
+    function RouteHelpersProvider(APP_REQUIRES) {
+
+      /* jshint validthis:true */
+      return {
+        // provider access level
+        basepath: basepath,
+        resolveFor: resolveFor,
+        // controller access level
+        $get: function() {
+          return {
+            basepath: basepath,
+            resolveFor: resolveFor
+          };
+        }
+      };
+
+      // Set here the base of the relative path
+      // for all app views
+      function basepath(uri) {
+        return 'app/views/' + uri;
+      }
+
+      // Generates a resolve object by passing script names
+      // previously configured in constant.APP_REQUIRES
+      function resolveFor() {
+        var _args = arguments;
+        return {
+          deps: ['$ocLazyLoad','$q', function ($ocLL, $q) {
+            // Creates a promise chain for each argument
+            var promise = $q.when(1); // empty promise
+            for(var i=0, len=_args.length; i < len; i ++){
+              promise = andThen(_args[i]);
+            }
+            return promise;
+
+            // creates promise to chain dynamically
+            function andThen(_arg) {
+              // also support a function that returns a promise
+              if(typeof _arg === 'function')
+                  return promise.then(_arg);
+              else
+                  return promise.then(function() {
+                    // if is a module, pass the name. If not, pass the array
+                    var whatToLoad = getRequired(_arg);
+                    // simple error check
+                    if(!whatToLoad) return $.error('Route resolve: Bad resource name [' + _arg + ']');
+                    // finally, return a promise
+                    return $ocLL.load( whatToLoad );
+                  });
+            }
+            // check and returns required data
+            // analyze module items with the form [name: '', files: []]
+            // and also simple array of script files (for not angular js)
+            function getRequired(name) {
+              if (APP_REQUIRES.modules)
+                  for(var m in APP_REQUIRES.modules)
+                      if(APP_REQUIRES.modules[m].name && APP_REQUIRES.modules[m].name === name)
+                          return APP_REQUIRES.modules[m];
+              return APP_REQUIRES.scripts && APP_REQUIRES.scripts[name];
+            }
+
+          }]};
+      } // resolveFor
+
+    }
+
+
+})();
+
+
+/**=========================================================
+ * Module: config.js
+ * App routes and resources configuration
+ =========================================================*/
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.routes')
+        .config(routesConfig);
+
+    routesConfig.$inject = ['$stateProvider', '$locationProvider', '$urlRouterProvider', 'RouteHelpersProvider'];
+    function routesConfig($stateProvider, $locationProvider, $urlRouterProvider, helper){
+        
+        // Set the following to true to enable the HTML5 Mode
+        // You may have to set <base> tag in index and a routing configuration in your server
+        $locationProvider.html5Mode(false);
+
+        // defaults to login
+        $urlRouterProvider.otherwise('/page/login');
+
+        // 
+        // Application Routes
+        // -----------------------------------   
+        $stateProvider
+          .state('app', {
+              url: '/app',
+              abstract: true,
+              templateUrl: helper.basepath('app.html'),
+              resolve: helper.resolveFor('fastclick','modernizr','sparklines', 'icons','animo','underscore',
+                        'sparklines','slimscroll','oitozero.ngSweetAlert','toaster','blockUI')
+          })
+          .state('app.welcome', {
+              url: '/welcome',
+              title: 'Welcome',
+              templateUrl: helper.basepath('welcome.html'),
+              controller: 'WelcomeController',
+              controllerAs: 'vm'
+          })
+           .state('app.manage_user', {
+                url: '/manage_user',
+                title: 'manage users',
+                templateUrl: helper.basepath('manageusers/manage.users.html'),
+               resolve: angular.extend(helper.resolveFor('datatables','ngDialog','ui.select'),{}),
+               controller: 'ManageUsersController',
+               controllerAs: 'vm'
+            })
+            .state('app.manage_role', {
+                url: '/manage_role',
+                title: 'manage roles',
+                templateUrl: helper.basepath('manageroles/manage.roles.html'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select'),
+                controller: 'ManageRoleController',
+                controllerAs: 'vm'
+            })
+            .state('app.mfi_setting', {
+                url: '/mfi_setup',
+                title: 'MFI Setting',
+                templateUrl:helper.basepath('mfisetup/mfi.html'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment','inputmask','ngFileUpload'),
+                controller: 'MFIController',
+                controllerAs: 'vm'
+            })
+
+            .state("app.manage_branch", {
+                url: "/branches",
+                title: "branches",
+                templateUrl:helper.basepath('mfisetup/branches/branches.html'),
+                controller: "BranchController",
+                controllerAs: 'vm'
+            })
+            .state("app.forms", {
+                url: "/forms",
+                title: "forms",
+                templateUrl:helper.basepath('forms/forms.list.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "FormsController",
+                controllerAs: 'vm'
+            })
+            .state("app.builder", {
+                url: "/forms/builder/:id",
+                title: 'Form Builder',
+                templateUrl:helper.basepath('forms/builder.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select','ui.sortable'),
+                controller: 'FormBuilderController',
+                controllerAs: 'vm'
+            })
+            .state("app.acat", {
+                url: "/acat",
+                title: "acat",
+                templateUrl:helper.basepath('acat/builder/acat.list.html'),
+                resolve:helper.resolveFor('md.data.table'),
+                controller: "ACATListController",
+                controllerAs: 'vm'
+            })
+            .state("app.acatbuilder", {
+                url: "/acat/builder/:id",
+                title: 'ACAT Builder',
+                templateUrl:helper.basepath('acat/builder/acat.builder.html'),
+                controller: 'ACATController',
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controllerAs: 'vm'
+            })
+            .state("app.crop", {
+                url: "/crops",
+                title: "crops",
+                templateUrl:helper.basepath('acat/crop/crops.html'),
+                resolve:helper.resolveFor('md.data.table'),
+                controller: "CropsController",
+                controllerAs: 'vm'
+            })
+            .state("app.loanproduct", {
+                url: "/loanproducts",
+                title: "loan product",
+                templateUrl:helper.basepath('mfisetup/loanproduct/loan.products.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "LoanProductsController",
+                controllerAs: 'vm'
+            })
+            .state("app.clients", {
+                url: "/clients",
+                title: "Client Management",
+                templateUrl:helper.basepath('loan_management/client_management/client.management.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "ClientManagementController",
+                controllerAs: 'vm'
+            })
+            .state("app.client_detail", {
+                url: "/clients/:id",
+                title: "clients detail",
+                templateUrl:helper.basepath('loan_management/client_management/client.detail.html'),
+                controller: "ClientDetailController",
+                controllerAs: 'vm'
+            })
+
+            .state("app.loan_processing", {
+                url: "/loan_processing",
+                title: "Loan Processing",
+                templateUrl:helper.basepath('loan_management/loan_processing/screening.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select','moment'),
+                controller: "LoanProcessingController",
+                controllerAs: 'vm'
+            })
+
+
+          // CUSTOM RESOLVES
+          //   Add your own resolves properties
+          //   following this object extend
+          //   method
+          // -----------------------------------
+            .state('page', {
+                url: '/page',
+                templateUrl: 'app/pages/page.html',
+                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert','toaster','blockUI'),
+                controller: ['$rootScope', function($rootScope) {
+                    $rootScope.app.layout.isBoxed = false;
+                }]
+            })
+            .state('page.login', {
+                url: '/login',
+                title: 'Login',
+                templateUrl: 'app/pages/login.html',
+                controller: 'LoginFormController',
+                controllerAs: 'login'
+            })
+            .state('page.404', {
+                url: '/404',
+                title: 'Not Found',
+                templateUrl: 'app/pages/404.html'
+            })
+            .state('page.500', {
+                url: '/500',
+                title: 'Server error',
+                templateUrl: 'app/pages/500.html'
+            })
+            .state('page.maintenance', {
+                url: '/maintenance',
+                title: 'Maintenance',
+                templateUrl: 'app/pages/maintenance.html'
+            })
+          ;
+
+    } // routesConfig
+
+})();
+
+
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -4669,10 +4663,22 @@ var SCREENING_STATUS = {
     'use strict';
 
     angular.module('app.loan_management', [
-        'angularMoment'
+        'app.clients',
+        'app.processing'
     ]);
 
 })();
+(function() {
+  "use strict";
+
+  angular.module("app.mfi", [
+  ]).run(runBlock);
+
+function runBlock() {
+}
+
+})();
+
 /**
  * Created by Yoni on 1/8/2018.
  */
@@ -4689,17 +4695,16 @@ var SCREENING_STATUS = {
 
 })();
 
+/**
+ * Created by Yonas on 5/7/2018.
+ */
 (function() {
-  "use strict";
+    'use strict';
 
-  angular.module("app.mfi", [
-  ]).run(runBlock);
-
-function runBlock() {
-}
+    angular.module('app.processing', [
+    ]);
 
 })();
-
 
 // To run this code, edit file index.html or index.jade and change
 // html data-ng-app attribute from angle to myAppName
@@ -5368,144 +5373,6 @@ function runBlock() {
 
 
 })(window.angular);
-/**
- * Created by Yoni on 1/9/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.clients").controller("ClientDetailController", ClientDetailController);
-
-    ClientDetailController.$inject = ['ClientService','$stateParams','blockUI'];
-
-    function ClientDetailController(ClientService,$stateParams,blockUI) {
-        var vm = this;
-        vm.clientId =  $stateParams.id;
-
-        var myBlockUI = blockUI.instances.get('ClientBlockUI');
-        myBlockUI.start();
-        ClientService.GetClientDetail(vm.clientId)
-            .then(function(response){
-                myBlockUI.stop();
-                vm.client = response.data;
-                console.log("client detail",response);
-            },function(error){
-                myBlockUI.stop();
-                console.log("error getting client detail",error);
-            })
-
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 1/8/2018.
- */
-
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.clients").controller("ClientsController", ClientsController);
-
-    ClientsController.$inject = ['ClientService','$state','$scope','AuthService'];
-
-    function ClientsController(ClientService,$state,$scope,AuthService) {
-        var vm = this;
-        vm.currentUser = {
-            selected_access_branch:undefined
-        };
-        vm.pageSizes = [10, 25, 50, 100, 250, 500];
-        vm.filter = {show : true};
-        vm.request = {
-            Start: 1,
-            limit:100,
-            PageSize: 10,
-            Search:''
-        };
-
-        vm.clientDetail = _clientDetail;
-        vm.onSelectedBranch = _onSelectedBranch;
-
-        vm.clearSearch = function(){
-            vm.request.Search = "";
-            vm.filter.show = false;
-            callApi();
-        };
-
-
-
-        callApi();
-        GetBranchFilter();
-
-
-        function GetBranchFilter() {
-            if(AuthService.IsSuperuser()){
-                ClientService.GetBranches().then(function(response){
-                    vm.currentUser.user_access_branches = response.data.docs;
-                },function(error){
-                    vm.currentUser.user_access_branches = [];
-                });
-            }
-            else {
-                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
-            }
-        }
-
-        function callApi(){
-            $scope.promise = ClientService.GetClients().then(function(response){
-                vm.clients = response.data.docs;
-                vm.clientsCopy = angular.copy(vm.clients);
-            },function (error) {
-                console.log("error",error);
-            });
-
-        }
-
-        function SearchApi(SearchText){
-            $scope.promise = ClientService.SearchClient(SearchText)
-                .then(function(response){
-                vm.clients = response.data.docs;
-                vm.clientsCount = response.data.total_docs_count;
-                console.log(response);
-            },function (error) {
-                vm.clients = vm.clientsCopy;
-                console.log("error",error);
-            });
-        }
-
-        function _clientDetail(client,ev) {
-            $state.go('app.client_detail',{id:client._id});
-        }
-
-        function _onSelectedBranch(){
-            vm.clients = vm.clientsCopy;
-
-            vm.clients = _.filter(vm.clients,function(client){
-                if(!_.isUndefined(client.branch)){
-                        return client.branch._id === vm.currentUser.selected_access_branch._id;
-                }
-            });
-
-        }
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.request.Search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                if(newValue.length > 2){
-                    SearchApi(newValue);
-                }else{
-                    vm.clients = vm.clientsCopy;
-                }
-
-            }
-        });
-    }
-
-
-})(window.angular);
-
 (function(angular) {
   'use strict';
   angular.module('app.mfi')
@@ -7239,12 +7106,148 @@ function runBlock() {
 
 })(window.angular);
 /**
+ * Created by Yoni on 1/9/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.clients").controller("ClientDetailController", ClientDetailController);
+
+    ClientDetailController.$inject = ['ClientService','$stateParams','blockUI'];
+
+    function ClientDetailController(ClientService,$stateParams,blockUI) {
+        var vm = this;
+        vm.clientId =  $stateParams.id;
+
+        var myBlockUI = blockUI.instances.get('ClientBlockUI');
+        myBlockUI.start();
+        ClientService.GetClientDetail(vm.clientId)
+            .then(function(response){
+                myBlockUI.stop();
+                vm.client = response.data;
+                console.log("client detail",response);
+            },function(error){
+                myBlockUI.stop();
+                console.log("error getting client detail",error);
+            })
+
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.loan_management")
+        .controller("ClientManagementController", ClientManagementController);
+
+    ClientManagementController.$inject = ['ClientService','$state','$scope','AuthService'];
+
+    function ClientManagementController(ClientService,$state,$scope,AuthService) {
+        var vm = this;
+        vm.currentUser = {
+            selected_access_branch:undefined
+        };
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
+        vm.filter = {show : true};
+        vm.request = {
+            Start: 1,
+            limit:100,
+            PageSize: 10,
+            Search:''
+        };
+
+        vm.clientDetail = _clientDetail;
+        vm.onSelectedBranch = _onSelectedBranch;
+
+        vm.clearSearch = function(){
+            vm.request.Search = "";
+            vm.filter.show = false;
+            callApi();
+        };
+
+
+
+        callApi();
+        GetBranchFilter();
+
+
+        function GetBranchFilter() {
+            if(AuthService.IsSuperuser()){
+                ClientService.GetBranches().then(function(response){
+                    vm.currentUser.user_access_branches = response.data.docs;
+                },function(error){
+                    vm.currentUser.user_access_branches = [];
+                });
+            }
+            else {
+                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
+            }
+        }
+
+        function callApi(){
+            $scope.promise = ClientService.GetClients().then(function(response){
+                vm.clients = response.data.docs;
+                vm.clientsCopy = angular.copy(vm.clients);
+            },function (error) {
+                console.log("error",error);
+            });
+
+        }
+
+        function SearchApi(SearchText){
+            $scope.promise = ClientService.SearchClient(SearchText)
+                .then(function(response){
+                    vm.clients = response.data.docs;
+                    vm.clientsCount = response.data.total_docs_count;
+                    console.log(response);
+                },function (error) {
+                    vm.clients = vm.clientsCopy;
+                    console.log("error",error);
+                });
+        }
+
+        function _clientDetail(client,ev) {
+            $state.go('app.client_detail',{id:client._id});
+        }
+
+        function _onSelectedBranch(){
+            vm.clients = vm.clientsCopy;
+
+            vm.clients = _.filter(vm.clients,function(client){
+                if(!_.isUndefined(client.branch)){
+                    return client.branch._id === vm.currentUser.selected_access_branch._id;
+                }
+            });
+
+        }
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.request.Search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                if(newValue.length > 2){
+                    SearchApi(newValue);
+                }else{
+                    vm.clients = vm.clientsCopy;
+                }
+
+            }
+        });
+    }
+
+
+})(window.angular);
+/**
  * Created by Yoni on 1/8/2018.
  */
 
 (function(angular) {
     'use strict';
-    angular.module('app.loan_management')
+    angular.module('app.clients')
         .service('ClientService', ClientService);
 
     ClientService.$inject = ['$http','CommonService'];
@@ -7269,284 +7272,6 @@ function runBlock() {
         function _getClients(){
             return $http.get(CommonService.buildPaginatedUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients));
         }
-    }
-
-
-})(window.angular);
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.loan_management")
-        .controller("ClientManagementController", ClientManagementController);
-
-    ClientManagementController.$inject = ['$state','$scope'];
-
-    function ClientManagementController($state,$scope) {
-        var vm = this;
-        callApi();
-
-        function callApi(){
-                console.log("ClientManagement Controller");
-        }
-
-
-    }
-
-
-})(window.angular);
-/**
- * Created by Yonas on 5/7/2018.
- */
-
-(function(angular) {
-    'use strict';
-
-    angular.module('app.loan_management')
-        .controller('ClientDialogController', ClientDialogController);
-
-    ClientDialogController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService','blockUI'];
-
-    function ClientDialogController($mdDialog, items,AlertService,CommonService,MainService,blockUI) {
-        var vm = this;
-        vm.cancel = _cancel;
-        vm.isEdit = items !== null;
-
-        init();
-
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-
-        function init(){
-
-        }
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.loan_management")
-        .controller("LoanProcessingController", LoanProcessingController);
-
-    LoanProcessingController.$inject = ['$state','$scope'];
-
-    function LoanProcessingController($state,$scope) {
-        var vm = this;
-        callApi();
-
-        function callApi(){
-            console.log("LoanProcessing Controller");
-        }
-
-
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/30/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.loan_management").controller("ScreeningController", ScreeningController);
-
-    ScreeningController.$inject = ['LoanManagementService','AlertService','$scope','ClientService','$mdDialog','RouteHelpers'];
-
-    function ScreeningController(LoanManagementService,AlertService,$scope,ClientService,$mdDialog,RouteHelpers ) {
-        var vm = this;
-        vm.screeningDetail = _screeningDetail;
-        vm.backToList = _backToList;
-        vm.saveScreeningForm = _saveScreeningForm;
-        vm.questionValueChanged = questionValueChanged;
-
-        vm.addClient = _addClient;
-
-        vm.clientDetail = _clientDetail;
-
-        vm.options = {
-            rowSelection: true,
-            multiSelect: true,
-            autoSelect: true,
-            decapitate: false,
-            largeEditDialog: false,
-            boundaryLinks: false,
-            limitSelect: true,
-            pageSelect: true
-        };
-        vm.filter = {show : false};
-        vm.pageSizes = [10, 25, 50, 100, 250, 500];
-
-        vm.query = {
-            search:'',
-            page:1,
-            per_page:10
-        };
-
-        vm.paginate = function(page, pageSize) {
-            console.log('Scope Page: ' + vm.query.page + ' Scope Limit: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callScreeningAPI();
-
-        };
-        vm.clearSearchText = function () {
-            vm.query.search = '';
-            vm.filter.show = false;
-        };
-        vm.searchScreening = function () {
-            console.log("search text",vm.query.search);
-        };
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("search for screening ",newValue);
-            }
-        });
-
-        vm.visibility = {
-            showScreeningDetail:false,
-            showClientDetail:false,
-            showLoanApplicationDetail:false,
-            showACATDetail:false
-        };
-
-        initialize();
-
-        function _clientDetail(client, ev) {
-            console.log("Client detail",client);
-        }
-
-        function _addClient(ev) {
-            $mdDialog.show({
-                locals: {items: null},
-                templateUrl: RouteHelpers.basepath('loan_management/client_management/client.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'ClientDialogController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-
-            }, function () {
-            });
-
-        }
-
-        function _screeningDetail(screening) {
-            vm.selectedScreening = screening;
-            console.log("screening detail");
-            var client = screening.client;
-            LoanManagementService.GetClientScreening(client._id).then(function (response) {
-                vm.client = response.data;
-                vm.visibility.showScreeningDetail = true;
-                console.log("vm.client",vm.client);
-            });
-        }
-        function _backToList(type) {
-            switch(type){
-                case 'SCREENING':
-                    vm.visibility.showScreeningDetail = false;
-                    break;
-            }
-
-        }
-        function _saveScreeningForm(client,screening_status) {
-
-            var status = _.find(SCREENING_STATUS,function (stat) {
-                return stat.code === screening_status;
-            });
-            var screening = {
-                status: status.code,
-                questions: client.questions
-            };
-
-            // console.log("save screening status ", screening);
-
-            LoanManagementService.SaveClientScreening(screening,client._id)
-                .then(function (response) {
-                    AlertService.showSuccess('Screening',"Successfully saved screening information  with status: " + status.name);
-                console.log("saved screening ", screening);
-            },function (error) {
-                    var message = error.data.error.message;
-                    AlertService.showError("Error when saving screening",message);
-                console.log("error on saving screening ", error);
-            });
-
-        }
-
-        function initialize() {
-            callScreeningAPI();
-
-            // ClientService.GetClients().then(function (response) {
-            //     console.log("clients",response);
-            //     vm.clients = response.data.docs;
-            // });
-
-        }
-        function callScreeningAPI() {
-            LoanManagementService.GetScreenings(vm.query).then(function (response) {
-                console.log("client info",response);
-                vm.screenings = response.data.docs;
-                vm.query.total_pages = response.data.total_pages;
-                vm.query.total_docs_count = response.data.total_docs_count;
-                console.log("total_pages info",vm.query);
-            });
-        }
-
-
-        function questionValueChanged(question) {
-
-            var prQues = getPrerequisiteQuestion(question._id);
-
-            _.each(prQues, function(prQue) {
-                if (prQue) {
-                    var prerequisite = prQue.prerequisites[0];
-                    //Set question's show based by comparing current value with expected preq. value
-                    prQue.show = (prerequisite.answer === question.values[0]);
-                }
-            });
-
-        }
-
-        function getPrerequisiteQuestion(questionID) {
-
-            //extract outer questions; if section type, get them from sections
-            var questions = vm.client.has_sections ?
-                _.reduce(vm.client.sections, function(m, q) {
-                    return m.concat(q.questions);
-                }, []) :
-                vm.client.questions;
-
-            //Get all subquestions
-            var subQuestions = _.reduce(questions, function(m, q) {
-                return m.concat(q.sub_questions);
-            }, []);
-
-            //merge questions with subquestions into a singl array
-            var mergedQuestions = _.uniq(_.union(questions, subQuestions), false, _.property('_id'));
-
-            //Search in mergedQuestions
-            var prQue = _.filter(mergedQuestions, function(obj) {
-                return _.some(obj.prerequisites, { question: questionID });
-            });
-
-            return prQue;
-        }
-
     }
 
 
@@ -8071,6 +7796,238 @@ function runBlock() {
   }
 })(window.angular);
 
+/**
+ * Created by Yonas on 5/7/2018.
+ */
+
+(function(angular) {
+    'use strict';
+
+    angular.module('app.processing')
+        .controller('ClientDialogController', ClientDialogController);
+
+    ClientDialogController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService','blockUI'];
+
+    function ClientDialogController($mdDialog, items,AlertService,CommonService,MainService,blockUI) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.isEdit = items !== null;
+
+        init();
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+
+        function init(){
+
+        }
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("LoanProcessingController", LoanProcessingController);
+
+    LoanProcessingController.$inject = ['LoanManagementService','AlertService','$scope','ClientService','$mdDialog','RouteHelpers'];
+
+    function LoanProcessingController(LoanManagementService,AlertService,$scope,ClientService,$mdDialog,RouteHelpers ) {
+        var vm = this;
+        vm.screeningDetail = _screeningDetail;
+        vm.backToList = _backToList;
+        vm.saveScreeningForm = _saveScreeningForm;
+        vm.questionValueChanged = questionValueChanged;
+
+        vm.addClient = _addClient;
+
+        vm.clientDetail = _clientDetail;
+
+        vm.options = {
+            rowSelection: true,
+            multiSelect: true,
+            autoSelect: true,
+            decapitate: false,
+            largeEditDialog: false,
+            boundaryLinks: false,
+            limitSelect: true,
+            pageSelect: true
+        };
+        vm.filter = {show : false};
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
+
+        vm.query = {
+            search:'',
+            page:1,
+            per_page:10
+        };
+
+        vm.paginate = function(page, pageSize) {
+            console.log('Scope Page: ' + vm.query.page + ' Scope Limit: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callScreeningAPI();
+
+        };
+        vm.clearSearchText = function () {
+            vm.query.search = '';
+            vm.filter.show = false;
+        };
+        vm.searchScreening = function () {
+            console.log("search text",vm.query.search);
+        };
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("search for screening ",newValue);
+            }
+        });
+
+        vm.visibility = {
+            showScreeningDetail:false,
+            showClientDetail:false,
+            showLoanApplicationDetail:false,
+            showACATDetail:false
+        };
+
+        initialize();
+
+        function _clientDetail(client, ev) {
+            console.log("Client detail",client);
+        }
+
+        function _addClient(ev) {
+            $mdDialog.show({
+                locals: {items: null},
+                templateUrl: RouteHelpers.basepath('loan_management/client_management/client.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'ClientDialogController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+
+            }, function () {
+            });
+
+        }
+
+        function _screeningDetail(screening) {
+            vm.selectedScreening = screening;
+            console.log("screening detail");
+            var client = screening.client;
+            LoanManagementService.GetClientScreening(client._id).then(function (response) {
+                vm.client = response.data;
+                vm.visibility.showScreeningDetail = true;
+                console.log("vm.client",vm.client);
+            });
+        }
+        function _backToList(type) {
+            switch(type){
+                case 'SCREENING':
+                    vm.visibility.showScreeningDetail = false;
+                    break;
+            }
+
+        }
+        function _saveScreeningForm(client,screening_status) {
+
+            var status = _.find(SCREENING_STATUS,function (stat) {
+                return stat.code === screening_status;
+            });
+            var screening = {
+                status: status.code,
+                questions: client.questions
+            };
+
+            // console.log("save screening status ", screening);
+
+            LoanManagementService.SaveClientScreening(screening,client._id)
+                .then(function (response) {
+                    AlertService.showSuccess('Screening',"Successfully saved screening information  with status: " + status.name);
+                    console.log("saved screening ", screening);
+                },function (error) {
+                    var message = error.data.error.message;
+                    AlertService.showError("Error when saving screening",message);
+                    console.log("error on saving screening ", error);
+                });
+
+        }
+
+        function initialize() {
+            callScreeningAPI();
+
+            // ClientService.GetClients().then(function (response) {
+            //     console.log("clients",response);
+            //     vm.clients = response.data.docs;
+            // });
+
+        }
+        function callScreeningAPI() {
+            LoanManagementService.GetScreenings(vm.query).then(function (response) {
+                console.log("client info",response);
+                vm.screenings = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+                console.log("total_pages info",vm.query);
+            });
+        }
+
+
+        function questionValueChanged(question) {
+
+            var prQues = getPrerequisiteQuestion(question._id);
+
+            _.each(prQues, function(prQue) {
+                if (prQue) {
+                    var prerequisite = prQue.prerequisites[0];
+                    //Set question's show based by comparing current value with expected preq. value
+                    prQue.show = (prerequisite.answer === question.values[0]);
+                }
+            });
+
+        }
+
+        function getPrerequisiteQuestion(questionID) {
+
+            //extract outer questions; if section type, get them from sections
+            var questions = vm.client.has_sections ?
+                _.reduce(vm.client.sections, function(m, q) {
+                    return m.concat(q.questions);
+                }, []) :
+                vm.client.questions;
+
+            //Get all subquestions
+            var subQuestions = _.reduce(questions, function(m, q) {
+                return m.concat(q.sub_questions);
+            }, []);
+
+            //merge questions with subquestions into a singl array
+            var mergedQuestions = _.uniq(_.union(questions, subQuestions), false, _.property('_id'));
+
+            //Search in mergedQuestions
+            var prQue = _.filter(mergedQuestions, function(obj) {
+                return _.some(obj.prerequisites, { question: questionID });
+            });
+
+            return prQue;
+        }
+
+    }
+
+
+
+})(window.angular);
 (function(angular) {
   'use strict';
 

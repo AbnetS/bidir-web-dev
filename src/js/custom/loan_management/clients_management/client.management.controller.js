@@ -1,16 +1,15 @@
 /**
- * Created by Yoni on 1/8/2018.
+ * Created by Yonas on 4/27/2018.
  */
-
-
 (function(angular) {
     "use strict";
 
-    angular.module("app.clients").controller("ClientsController", ClientsController);
+    angular.module("app.loan_management")
+        .controller("ClientManagementController", ClientManagementController);
 
-    ClientsController.$inject = ['ClientService','$state','$scope','AuthService'];
+    ClientManagementController.$inject = ['ClientService','$state','$scope','AuthService'];
 
-    function ClientsController(ClientService,$state,$scope,AuthService) {
+    function ClientManagementController(ClientService,$state,$scope,AuthService) {
         var vm = this;
         vm.currentUser = {
             selected_access_branch:undefined
@@ -65,13 +64,13 @@
         function SearchApi(SearchText){
             $scope.promise = ClientService.SearchClient(SearchText)
                 .then(function(response){
-                vm.clients = response.data.docs;
-                vm.clientsCount = response.data.total_docs_count;
-                console.log(response);
-            },function (error) {
-                vm.clients = vm.clientsCopy;
-                console.log("error",error);
-            });
+                    vm.clients = response.data.docs;
+                    vm.clientsCount = response.data.total_docs_count;
+                    console.log(response);
+                },function (error) {
+                    vm.clients = vm.clientsCopy;
+                    console.log("error",error);
+                });
         }
 
         function _clientDetail(client,ev) {
@@ -83,7 +82,7 @@
 
             vm.clients = _.filter(vm.clients,function(client){
                 if(!_.isUndefined(client.branch)){
-                        return client.branch._id === vm.currentUser.selected_access_branch._id;
+                    return client.branch._id === vm.currentUser.selected_access_branch._id;
                 }
             });
 

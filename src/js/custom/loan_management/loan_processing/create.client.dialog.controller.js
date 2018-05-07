@@ -5,7 +5,7 @@
 (function(angular) {
     'use strict';
 
-    angular.module('app.loan_management')
+    angular.module('app.processing')
         .controller('ClientDialogController', ClientDialogController);
 
     ClientDialogController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService','blockUI'];

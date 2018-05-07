@@ -16,6 +16,7 @@
             'ngResource',
             'ui.utils',
             'ngAria',
-            'ngMessages'
+            'ngMessages',
+            'angularMoment'
         ]);
 })();
