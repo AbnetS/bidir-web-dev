@@ -6,19 +6,27 @@
 
     angular.module("app.clients").controller("ClientDetailController", ClientDetailController);
 
-    ClientDetailController.$inject = ['ClientService','$stateParams','blockUI'];
+    ClientDetailController.$inject = ['LoanManagementService','$stateParams','blockUI'];
 
-    function ClientDetailController(ClientService,$stateParams,blockUI) {
+    function ClientDetailController(LoanManagementService,$stateParams,blockUI) {
         var vm = this;
         vm.clientId =  $stateParams.id;
 
         var myBlockUI = blockUI.instances.get('ClientBlockUI');
         myBlockUI.start();
-        ClientService.GetClientDetail(vm.clientId)
+        LoanManagementService.GetClientDetail(vm.clientId)
             .then(function(response){
-                myBlockUI.stop();
+
                 vm.client = response.data;
                 console.log("client detail",response);
+                LoanManagementService.GetClientScreening(client._id).then(function (response) {
+                    myBlockUI.stop();
+                    vm.client = response.data;
+                    vm.visibility.showScreeningDetail = true;
+                    console.log("vm.client",vm.client);
+                },function (error) {
+                    myBlockUI.stop();
+                });
             },function(error){
                 myBlockUI.stop();
                 console.log("error getting client detail",error);

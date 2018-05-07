@@ -7,9 +7,9 @@
     angular.module("app.loan_management")
         .controller("ClientManagementController", ClientManagementController);
 
-    ClientManagementController.$inject = ['ClientService','$state','$scope','AuthService'];
+    ClientManagementController.$inject = ['LoanManagementService','$state','$scope','AuthService'];
 
-    function ClientManagementController(ClientService,$state,$scope,AuthService) {
+    function ClientManagementController(LoanManagementService,$state,$scope,AuthService) {
         var vm = this;
         vm.currentUser = {
             selected_access_branch:undefined
@@ -40,7 +40,7 @@
 
         function GetBranchFilter() {
             if(AuthService.IsSuperuser()){
-                ClientService.GetBranches().then(function(response){
+                LoanManagementService.GetBranches().then(function(response){
                     vm.currentUser.user_access_branches = response.data.docs;
                 },function(error){
                     vm.currentUser.user_access_branches = [];
@@ -52,7 +52,7 @@
         }
 
         function callApi(){
-            $scope.promise = ClientService.GetClients().then(function(response){
+            $scope.promise = LoanManagementService.GetClients().then(function(response){
                 vm.clients = response.data.docs;
                 vm.clientsCopy = angular.copy(vm.clients);
             },function (error) {
@@ -62,7 +62,7 @@
         }
 
         function SearchApi(SearchText){
-            $scope.promise = ClientService.SearchClient(SearchText)
+            $scope.promise = LoanManagementService.SearchClient(SearchText)
                 .then(function(response){
                     vm.clients = response.data.docs;
                     vm.clientsCount = response.data.total_docs_count;

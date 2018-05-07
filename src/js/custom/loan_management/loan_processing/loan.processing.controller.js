@@ -78,7 +78,7 @@
         function _addClient(ev) {
             $mdDialog.show({
                 locals: {items: null},
-                templateUrl: RouteHelpers.basepath('loan_management/client_management/client.dialog.html'),
+                templateUrl: RouteHelpers.basepath('loan_management/loan_processing/create.client.dialog.html'),
                 parent: angular.element(document.body),
                 targetEvent: ev,
                 clickOutsideToClose: false,
