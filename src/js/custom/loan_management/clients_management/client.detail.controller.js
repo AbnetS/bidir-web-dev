@@ -23,9 +23,16 @@
                     myBlockUI.stop();
                     vm.client.screening = response.data;
                     console.log("vm.client",vm.client);
+
                 },function (error) {
                     myBlockUI.stop();
                 });
+
+                LoanManagementService.GetClientLoanApplications(vm.client._id).then(function (response) {
+                    vm.client.loan_application = response.data;
+                    console.log("vm.client",vm.client);
+                });
+
             },function(error){
                 myBlockUI.stop();
                 console.log("error getting client detail",error);

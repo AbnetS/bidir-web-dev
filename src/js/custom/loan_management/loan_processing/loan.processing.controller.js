@@ -137,6 +137,10 @@
 
         function initialize() {
             callScreeningAPI();
+
+            LoanManagementService.GetLoanApplications().then(function (response) {
+                console.log("GetLoanApplications",response);
+            });
         }
         function callScreeningAPI() {
             LoanManagementService.GetScreenings(vm.query).then(function (response) {
