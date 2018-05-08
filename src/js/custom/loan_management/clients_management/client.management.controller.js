@@ -32,8 +32,6 @@
             callApi();
         };
 
-
-
         callApi();
         GetBranchFilter();
 
@@ -44,6 +42,7 @@
                     vm.currentUser.user_access_branches = response.data.docs;
                 },function(error){
                     vm.currentUser.user_access_branches = [];
+                    console.log("error on GetBranchFilter",error);
                 });
             }
             else {
@@ -56,7 +55,7 @@
                 vm.clients = response.data.docs;
                 vm.clientsCopy = angular.copy(vm.clients);
             },function (error) {
-                console.log("error",error);
+                console.log("error callApi vm.clients",error);
             });
 
         }

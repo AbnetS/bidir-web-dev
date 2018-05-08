@@ -19,10 +19,9 @@
 
                 vm.client = response.data;
                 console.log("client detail",response);
-                LoanManagementService.GetClientScreening(client._id).then(function (response) {
+                LoanManagementService.GetClientScreening(vm.client._id).then(function (response) {
                     myBlockUI.stop();
-                    vm.client = response.data;
-                    vm.visibility.showScreeningDetail = true;
+                    vm.client.screening = response.data;
                     console.log("vm.client",vm.client);
                 },function (error) {
                     myBlockUI.stop();

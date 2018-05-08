@@ -2,7 +2,7 @@
    <small>Manage clients information.</small>
    <br/>
    <small>
-      <a ui-sref="app.manage_clients"><i class="fa fa-arrow-left"></i> Back </a>
+      <a ui-sref="app.clients"><i class="fa fa-arrow-left"></i> Back </a>
    </small>
 </h3>
 
@@ -176,48 +176,83 @@
       <div class="row">
          <uib-tabset justified="true">
             <uib-tab>
-               <!--QUESTION HEADER-->
-               <div class="col-lg-12">
-                  <br/>
-                  <div class="col-md-1">
-                     <b>No</b>
-                  </div>
-                  <div ng-class="{'THREE_COLUMNS' : 'col-md-6', 'TWO_COLUMNS': 'col-md-7'}[vm.client.layout]">
-                     <b>Question</b>
-                  </div>
-                  <div ng-class="{'THREE_COLUMNS' : 'col-md-3', 'TWO_COLUMNS': 'col-md-4'}[vm.client.layout]">
-                     <b>Answer</b>
-                  </div>
-                  <div ng-if="vm.client.layout == 'THREE_COLUMNS'" class="col-md-2">
-                     <b>Remark</b>
-                  </div>
-               </div>
-
-               <hr>
-               <!--QUESTIOSN LIST-->
-               <div class="col-lg-12" ng-switch on="vm.client.has_sections">
-                  <div ng-switch-when="true">
-                     <div ng-repeat="section in vm.client.sections">
-                        <div class="bg-success text-center text-uppercase">
-                           <h5 class="">{{section.title}}</h5>
-                        </div>
-                        <question-row ng-repeat="question in section.questions | filter:{show: true}" question-row-data="question" layout-data="vm.client.layout" row-no="$index + 1" value-changed="vm.questionValueChanged"></question-row>
+               <uib-tab-heading>Screening</uib-tab-heading>
+               <div class="row">
+                  <!--QUESTION HEADER-->
+                  <div class="col-lg-12">
+                     <br/>
+                     <div class="col-md-1">
+                        <b>No</b>
+                     </div>
+                     <div ng-class="{'THREE_COLUMNS' : 'col-md-6', 'TWO_COLUMNS': 'col-md-7'}[vm.client.screening.layout]">
+                        <b>Question</b>
+                     </div>
+                     <div ng-class="{'THREE_COLUMNS' : 'col-md-3', 'TWO_COLUMNS': 'col-md-4'}[vm.client.screening.layout]">
+                        <b>Answer</b>
+                     </div>
+                     <div ng-if="vm.client.screening.layout == 'THREE_COLUMNS'" class="col-md-2">
+                        <b>Remark</b>
                      </div>
                   </div>
-                  <div ng-switch-default>
-                     <question-row ng-repeat="question in vm.client.questions | filter:{show: true}" question-row-data="question" layout-data="vm.client.layout" row-no="$index + 1" value-changed="vm.questionValueChanged">
-                     </question-row>
-                  </div>
-                  <br/>
+                  <hr>
+                  <!--QUESTIOSN LIST-->
+                  <div class="col-lg-12" ng-switch on="vm.client.has_sections">
+                     <div ng-switch-when="true">
+                        <div ng-repeat="section in vm.client.screening.sections">
+                           <div class="bg-success text-center text-uppercase">
+                              <h5 class="">{{section.title}}</h5>
+                           </div>
+                           <question-row ng-repeat="question in section.questions" question-row-data="question" layout-data="vm.client.layout" row-no="$index + 1" value-changed="vm.questionValueChanged"></question-row>
+                        </div>
+                     </div>
+                     <div ng-switch-default>
+                        <question-row ng-repeat="question in vm.client.screening.questions" question-row-data="question" layout-data="vm.client.screening.layout" row-no="$index + 1" value-changed="vm.questionValueChanged">
+                        </question-row>
+                     </div>
+                     <br/>
 
+                  </div>
                </div>
             </uib-tab>
             <uib-tab>
                <uib-tab-heading>Loan Application</uib-tab-heading>
-               <div>
-                  <h1>LOAN APPLICATION</h1>
+               <div class="row">
+                  <!--QUESTION HEADER-->
+                  <div class="col-lg-12">
+                     <br/>
+                     <div class="col-md-1">
+                        <b>No</b>
+                     </div>
+                     <div ng-class="{'THREE_COLUMNS' : 'col-md-6', 'TWO_COLUMNS': 'col-md-7'}[vm.client.screening.layout]">
+                        <b>Question</b>
+                     </div>
+                     <div ng-class="{'THREE_COLUMNS' : 'col-md-3', 'TWO_COLUMNS': 'col-md-4'}[vm.client.screening.layout]">
+                        <b>Answer</b>
+                     </div>
+                     <div ng-if="vm.client.screening.layout == 'THREE_COLUMNS'" class="col-md-2">
+                        <b>Remark</b>
+                     </div>
+                  </div>
+                  <hr>
+                  <!--QUESTIOSN LIST-->
+                  <div class="col-lg-12" ng-switch on="vm.client.has_sections">
+                     <div ng-switch-when="true">
+                        <div ng-repeat="section in vm.client.screening.sections">
+                           <div class="bg-success text-center text-uppercase">
+                              <h5 class="">{{section.title}}</h5>
+                           </div>
+                           <question-row ng-repeat="question in section.questions" question-row-data="question" layout-data="vm.client.layout" row-no="$index + 1" value-changed="vm.questionValueChanged"></question-row>
+                        </div>
+                     </div>
+                     <div ng-switch-default>
+                        <question-row ng-repeat="question in vm.client.screening.questions" question-row-data="question" layout-data="vm.client.screening.layout" row-no="$index + 1" value-changed="vm.questionValueChanged">
+                        </question-row>
+                     </div>
+                     <br/>
+                  </div>
                </div>
             </uib-tab>
+
             <uib-tab>
                <uib-tab-heading>ACAT</uib-tab-heading>
                <div class="row">
