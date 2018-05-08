@@ -202,11 +202,12 @@
                            <div class="bg-success text-center text-uppercase">
                               <h5 class="">{{section.title}}</h5>
                            </div>
-                           <question-row ng-repeat="question in section.questions" question-row-data="question" layout-data="vm.client.layout" row-no="$index + 1" value-changed="vm.questionValueChanged"></question-row>
+                           <question-row ng-repeat="question in section.questions" question-row-data="question" layout-data="vm.client.layout" row-no="$index + 1">
+                           </question-row>
                         </div>
                      </div>
                      <div ng-switch-default>
-                        <question-row ng-repeat="question in vm.client.screening.questions" question-row-data="question" layout-data="vm.client.screening.layout" row-no="$index + 1" value-changed="vm.questionValueChanged">
+                        <question-row ng-repeat="question in vm.client.screening.questions" question-row-data="question" layout-data="vm.client.screening.layout" row-no="$index + 1">
                         </question-row>
                      </div>
                      <br/>

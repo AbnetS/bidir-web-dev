@@ -7,9 +7,9 @@
     angular.module("app.processing")
         .controller("LoanProcessingController", LoanProcessingController);
 
-    LoanProcessingController.$inject = ['LoanManagementService','AlertService','$scope','ClientService','$mdDialog','RouteHelpers'];
+    LoanProcessingController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers'];
 
-    function LoanProcessingController(LoanManagementService,AlertService,$scope,ClientService,$mdDialog,RouteHelpers ) {
+    function LoanProcessingController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers ) {
         var vm = this;
         vm.screeningDetail = _screeningDetail;
         vm.backToList = _backToList;
@@ -137,12 +137,6 @@
 
         function initialize() {
             callScreeningAPI();
-
-            // ClientService.GetClients().then(function (response) {
-            //     console.log("clients",response);
-            //     vm.clients = response.data.docs;
-            // });
-
         }
         function callScreeningAPI() {
             LoanManagementService.GetScreenings(vm.query).then(function (response) {
