@@ -75,6 +75,10 @@
             console.log("Client detail",client);
         }
 
+        vm.onTabSelected = function (type) {
+            console.log("tab name clicked",type)
+        }
+
         function _addClient(ev) {
             $mdDialog.show({
                 locals: {items: null},
@@ -143,7 +147,7 @@
             });
         }
         function callScreeningAPI() {
-            LoanManagementService.GetScreenings(vm.query).then(function (response) {
+            vm.promise = LoanManagementService.GetScreenings(vm.query).then(function (response) {
                 console.log("client info",response);
                 vm.screenings = response.data.docs;
                 vm.query.total_pages = response.data.total_pages;
