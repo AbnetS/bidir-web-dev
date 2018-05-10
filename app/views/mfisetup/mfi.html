@@ -20,7 +20,7 @@
                      <div class="form-group" ng-class="{false:'has-error'}[vm.MFISetupForm.IslogoValid]">
                         <label>Logo *</label>
                         <!--<input class="form-control" type="file" data-button-text="Single" data-class-button="btn btn-default" data-classinput="form-control inline" nv-file-select="" uploader="form.uploader" />-->
-                        <input class="form-control inline" type="file" ngf-select ng-model="vm.picFile" name="logo" accept="image/*" ngf-max-size="1MB" ngf-model-invalid="errorFile" required>
+                        <input class="form-control inline" type="file" ngf-select ng-model="vm.picFile" name="logo" accept="image/*" ngf-max-size="1MB" ngf-model-invalid="errorFile">
 
                         <i ng-show="MFIForm.file.$error.maxSize">File too large {{errorFile.size / 1000000|number:1}}MB: max 2M</i>
                      </div>
