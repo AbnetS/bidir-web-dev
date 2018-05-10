@@ -50,7 +50,7 @@
         var mfiData = setAttribute(data,logo);
 
         return $http({
-          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFIUpdate),
+          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFI),
           method: 'POST',
           data: mfiData,
           //assigning content-type as undefined,let the browser handle it

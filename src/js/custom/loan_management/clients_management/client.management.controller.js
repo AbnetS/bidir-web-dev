@@ -78,7 +78,7 @@
         }
 
         function callApi(){
-            vm.clientPromise = LoanManagementService.GetClients().then(function(response){
+            vm.clientPromise = LoanManagementService.GetClients(vm.query).then(function(response){
                 vm.clients = response.data.docs;
                 vm.clientsCopy = angular.copy(vm.clients);
             },function (error) {

@@ -115,7 +115,7 @@
                </table>
             </md-table-container>
 
-            <!--<md-table-pagination   md-total="{{vm.clientsCount}}"></md-table-pagination>-->
+            <md-table-pagination md-limit="vm.query.per_page" md-limit-options="vm.pageSizes" md-page="vm.query.page" md-total="{{vm.query.total_docs_count}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" md-on-paginate="vm.paginate"></md-table-pagination>
          </div>
       </div>
    </div>
