@@ -48,9 +48,8 @@
 
       function _createMFI(data,logo){
         var mfiData = setAttribute(data,logo);
-
         return $http({
-          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFI),
+          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.MFI),
           method: 'POST',
           data: mfiData,
           //assigning content-type as undefined,let the browser handle it
