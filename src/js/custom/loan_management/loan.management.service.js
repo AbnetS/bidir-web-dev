@@ -12,7 +12,7 @@
     function LoanManagementService($http, CommonService) {
         return {
             GetLoanApplications: _getLoanApplications,
-            GetClientLoanApplications:_getClientLoanApplications,
+            GetClientLoanApplication:_getClientLoanApplication,
             GetScreenings: _getScreenings,
             GetStaticClientInfo: _getStaticClientInfo,
             GetClientScreening:_getClientScreening,
@@ -391,7 +391,7 @@
         function _getLoanApplications() {
             return $http.get(CommonService.buildPaginatedUrl(API.Service.LOANS,API.Methods.LOANS.Loans));
         }
-        function _getClientLoanApplications(clientId) {
+        function _getClientLoanApplication(clientId) {
             return $http.get(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Clients,clientId));
         }
 

@@ -15,19 +15,46 @@
             selected_access_branch:undefined
         };
         vm.pageSizes = [10, 25, 50, 100, 250, 500];
-        vm.filter = {show : true};
-        vm.request = {
-            Start: 1,
-            limit:100,
-            PageSize: 10,
-            Search:''
+        vm.filter = {show : false};
+
+        vm.options = {
+            rowSelection: true,
+            multiSelect: true,
+            autoSelect: true,
+            decapitate: false,
+            largeEditDialog: false,
+            boundaryLinks: false,
+            limitSelect: true,
+            pageSelect: true
         };
+
+        vm.query = {
+            search:'',
+            page:1,
+            per_page:10
+        };
+
+        vm.paginate = function(page, pageSize) {
+            console.log('Scope Page: ' + vm.query.page + ' Scope Limit: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        };
+        vm.clearSearchText = function () {
+            vm.query.search = '';
+            vm.filter.show = false;
+        };
+        vm.searchScreening = function () {
+            console.log("search text",vm.query.search);
+        };
+
 
         vm.clientDetail = _clientDetail;
         vm.onSelectedBranch = _onSelectedBranch;
 
         vm.clearSearch = function(){
-            vm.request.Search = "";
+            vm.query.search = "";
             vm.filter.show = false;
             callApi();
         };
@@ -51,13 +78,12 @@
         }
 
         function callApi(){
-            $scope.promise = LoanManagementService.GetClients().then(function(response){
+            vm.clientPromise = LoanManagementService.GetClients().then(function(response){
                 vm.clients = response.data.docs;
                 vm.clientsCopy = angular.copy(vm.clients);
             },function (error) {
                 console.log("error callApi vm.clients",error);
             });
-
         }
 
         function SearchApi(SearchText){
@@ -88,7 +114,7 @@
         }
 
         $scope.$watch(angular.bind(vm, function () {
-            return vm.request.Search;
+            return vm.query.search;
         }), function (newValue, oldValue) {
             if (newValue !== oldValue) {
                 if(newValue.length > 2){

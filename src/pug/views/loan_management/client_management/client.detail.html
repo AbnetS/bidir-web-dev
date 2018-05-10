@@ -95,16 +95,16 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="col-sm-4">Geo Location:</div>
-                    <div class="col-sm-8">
-                        <strong>Latitude: {{vm.client.geolocation.latitude}}</strong>
-                        <strong>Longitude: {{vm.client.geolocation.longitude}}</strong>
+                    <div class="col-sm-4">
+                        <a ng-show="!vm.visibility.showMoreClientDetail" ng-click="vm.visibility.showMoreClientDetail = !vm.visibility.showMoreClientDetail">
+                            {{vm.visibility.showMoreClientDetail?'Hide':'Show'}} More Detail
+                        </a>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-    <div class="row">
+    <div ng-if="vm.visibility.showMoreClientDetail" class="row">
         <div class="col-md-6">
             <p class="lead bb">Address</p>
             <form class="form-horizontal p-20">
@@ -173,9 +173,18 @@
                         <strong>{{vm.client.spouse.national_id_no}}</strong>
                     </div>
                 </div>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        <a ng-show="vm.visibility.showMoreClientDetail" ng-click="vm.visibility.showMoreClientDetail = !vm.visibility.showMoreClientDetail">
+                            {{vm.visibility.showMoreClientDetail?'Hide':'Show'}} Detail
+                        </a>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
+
+    <!--TAB STARTED-->
     <div class="row">
         <uib-tabset justified="true">
             <uib-tab>

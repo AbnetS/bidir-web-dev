@@ -11,6 +11,7 @@
     function ClientDetailController(LoanManagementService,$stateParams,blockUI) {
         var vm = this;
         vm.clientId =  $stateParams.id;
+        vm.visibility = {showMoreClientDetail: false};
 
         var myBlockUI = blockUI.instances.get('ClientBlockUI');
         myBlockUI.start();
@@ -19,19 +20,22 @@
 
                 vm.client = response.data;
                 console.log("client detail",response);
-                LoanManagementService.GetClientScreening(vm.client._id).then(function (response) {
+                LoanManagementService.GetClientScreening(vm.clientId).then(function (response) {
                     myBlockUI.stop();
                     vm.client.screening = response.data;
-                    console.log("vm.client",vm.client);
+                    console.log("vm.client.screening",vm.client);
 
                 },function (error) {
                     myBlockUI.stop();
                 });
 
-                LoanManagementService.GetClientLoanApplications(vm.client._id).then(function (response) {
+                LoanManagementService.GetClientLoanApplication(vm.clientId)
+                    .then(function (response) {
                     vm.client.loan_application = response.data;
-                    console.log("vm.client",vm.client);
-                });
+                    console.log("vm.client.loan_application",vm.client);
+                },function (error) {
+                        console.log(" error .loan_application",error);
+                    });
 
             },function(error){
                 myBlockUI.stop();
