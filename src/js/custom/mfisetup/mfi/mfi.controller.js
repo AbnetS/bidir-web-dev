@@ -14,7 +14,6 @@
     vm.MFISetupForm = {
       IsnameValid: true,
       IslocationValid: true,
-      IslogoValid: true,
       Isestablishment_yearValid: true
   };
 
