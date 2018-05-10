@@ -112,7 +112,7 @@
 
 
                     <md-table-container>
-                        <table md-table md-progress="vm.promise"
+                        <table md-table md-progress="vm.screeningPromise"
                                class="table-hover">
                             <thead md-head class="text-gray-dark">
                             <tr md-row>
@@ -124,7 +124,13 @@
                                 <th md-column><span>Status</span></th>
                                 <th md-column>Action</th>
                             </tr>
-                                    {{ screening.client.first_name }} {{ screening.client.last_name }} {{screening.client.grandfather_name}}
+
+                            <tbody md-body>
+                            <tr md-row ng-repeat="screening in vm.screenings">
+
+                                <td md-cell>{{$index + 1}}</td>
+                                <td md-cell>
+                                {{ screening.client.first_name }} {{ screening.client.last_name }} {{screening.client.grandfather_name}}
                                 </td>
                                 <td md-cell >{{screening.client.gender}}</td>
                                 <td md-cell >

@@ -121,7 +121,7 @@
 
 
                <md-table-container>
-                  <table md-table md-progress="vm.promise" class="table-hover">
+                  <table md-table md-progress="vm.screeningPromise" class="table-hover">
                      <thead md-head class="text-gray-dark">
                         <tr md-row>
                            <th md-column>
@@ -144,20 +144,26 @@
                            </th>
                            <th md-column>Action</th>
                         </tr>
-                        {{ screening.client.first_name }} {{ screening.client.last_name }} {{screening.client.grandfather_name}}
-                        </td>
-                        <td md-cell>{{screening.client.gender}}</td>
-                        <td md-cell>
-                           <span am-time-ago="screening.date_created"></span>
-                        </td>
-                        <td md-cell>{{screening.client.civil_status}}</td>
-                        <td md-cell>{{screening.client.status | ReplaceUnderscore}}</td>
-                        <td md-cell>
-                           <a ng-click="vm.screeningDetail(screening,$event)">
-                              <i class="fa fa-eye"></i>
-                           </a>
-                        </td>
-                        </tr>
+
+                        <tbody md-body>
+                           <tr md-row ng-repeat="screening in vm.screenings">
+
+                              <td md-cell>{{$index + 1}}</td>
+                              <td md-cell>
+                                 {{ screening.client.first_name }} {{ screening.client.last_name }} {{screening.client.grandfather_name}}
+                              </td>
+                              <td md-cell>{{screening.client.gender}}</td>
+                              <td md-cell>
+                                 <span am-time-ago="screening.date_created"></span>
+                              </td>
+                              <td md-cell>{{screening.client.civil_status}}</td>
+                              <td md-cell>{{screening.client.status | ReplaceUnderscore}}</td>
+                              <td md-cell>
+                                 <a ng-click="vm.screeningDetail(screening,$event)">
+                                    <i class="fa fa-eye"></i>
+                                 </a>
+                              </td>
+                           </tr>
                         </tbody>
                   </table>
                </md-table-container>

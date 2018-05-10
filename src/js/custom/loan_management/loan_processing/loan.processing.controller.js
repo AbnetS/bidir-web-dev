@@ -76,8 +76,27 @@
         }
 
         vm.onTabSelected = function (type) {
-            console.log("tab name clicked",type)
-        }
+            console.log("tab name clicked",type);
+            switch (type){
+                case 'CLIENT':
+                    console.log("tab name clicked",type);
+                    break;
+                case 'SCREENING':
+                    callScreeningAPI();
+                    console.log("tab name clicked",type);
+                    break;
+                case 'LOAN_APPLICATION':
+                    LoanManagementService.GetLoanApplications().then(function (response) {
+                        console.log("GetLoanApplications",response);
+                    });
+                    break;
+                case 'ACAT':
+                    console.log("tab name clicked",type);
+                    break;
+                default:
+                    console.log("tab name clicked",type);
+            }
+        };
 
         function _addClient(ev) {
             $mdDialog.show({
@@ -101,6 +120,7 @@
             vm.selectedScreening = screening;
             console.log("screening detail");
             var client = screening.client;
+
             LoanManagementService.GetClientScreening(client._id).then(function (response) {
                 vm.client = response.data;
                 vm.visibility.showScreeningDetail = true;
@@ -141,18 +161,13 @@
 
         function initialize() {
             callScreeningAPI();
-
-            LoanManagementService.GetLoanApplications().then(function (response) {
-                console.log("GetLoanApplications",response);
-            });
         }
         function callScreeningAPI() {
-            vm.promise = LoanManagementService.GetScreenings(vm.query).then(function (response) {
-                console.log("client info",response);
+            vm.screeningPromise = LoanManagementService.GetScreenings(vm.query).then(function (response) {
                 vm.screenings = response.data.docs;
                 vm.query.total_pages = response.data.total_pages;
                 vm.query.total_docs_count = response.data.total_docs_count;
-                console.log("total_pages info",vm.query);
+                console.log("screenings info",vm.screenings);
             });
         }
 
@@ -170,7 +185,6 @@
             });
 
         }
-
         function getPrerequisiteQuestion(questionID) {
 
             //extract outer questions; if section type, get them from sections
