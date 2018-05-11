@@ -1,35 +1,120 @@
-<div class="md-welcome">
-    <div class="md-welcome-msg">
-        <div class="container container-sm">
-            <h2 class="animated fadeInLeft anim-delay-15">BIDIR Web App Welcome page</h2>
+<div class="unwrap">
+    <div class="bg-cover">
+        <div class="container container-md pv-lg">
+            <div class="text-center mb-lg pb-lg">
+                <div class="h1 text-bold">BIDIR Web App</div>
+                <p>Quickly Navigate to modules</p>
+            </div>
         </div>
     </div>
 </div>
 <div class="container container-md">
-        <div >
-                <h1> No Tasks found enjoy your day.</h1>
-        </div>
-
-    <div ng-if="false" class="panel">
-        <h4 class="layout-padding-sm">
-            <em class="fa fa-clock-o fa-fw"></em>Tasks List</h4>
-        <div>
-            <div ng-hide="vm.taskList">
-                <h1> No Tasks found enjoy your day.</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel b">
+                <div class="panel-body text-center">
+                    <a class="link-unstyled text-primary" ui-sref="app.acat">
+                        <em class="fa fa-5x fa-television mb-lg"></em>
+                        <br/>
+                        <span class="h4">ACAT Builder</span>
+                        <br/>
+                        <small class="text-muted">View &rarr;</small>
+                    </a>
+                </div>
             </div>
-            <!-- START list group-->
-            <!-- <div ng-show="vm.taskList" class="list-group mb0">
-         <a ng-click="vm.viewTaskDetail(tsk,$event)" class="list-group-item" ng-repeat="tsk in vm.taskList">
-            <button class="btn btn-default pull-right">View Detail</button>
-
-            <h5><em class="fa fa-fw fa-calendar mr"></em>{{tsk.task}}</h5>
-            <span class="label label-inverse">{{tsk.status}}</span>
-            <span class="label label-info">{{tsk.last_modified | date:'medium'}}</span>
-         </a>
-      </div> -->
-            <!-- END list group-->
-            <div class="panel-footer text-right">
-                <a class="btn btn-default btn-sm" ng-click="">View All</a>
+        </div>
+        <div class="col-md-4">
+            <div class="panel b">
+                <div class="panel-body text-center">
+                    <a class="link-unstyled text-info" ui-sref="app.forms">
+                        <em class="fa fa-5x fa-object-group mb-lg"></em>
+                        <br/>
+                        <span class="h4">Form Builder</span>
+                        <br/>
+                        <small class="text-muted">View &rarr;</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel b">
+                <div class="panel-body text-center">
+                    <a class="link-unstyled text-purple" ui-sref="app.clients">
+                        <em class="fa fa-5x fa-users mb-lg"></em>
+                        <br/>
+                        <span class="h4">Client Management</span>
+                        <br/>
+                        <small class="text-muted">View &rarr;</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel b">
+                <div class="panel-body text-center">
+                    <a class="link-unstyled text-warning" ui-sref="app.loan_processing">
+                        <em class="fa fa-5x fa-recycle mb-lg"></em>
+                        <br/>
+                        <span class="h4">Loan Processing</span>
+                        <br/>
+                        <small class="text-muted">View &rarr;</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel b">
+                <div class="panel-body text-center">
+                    <a class="link-unstyled text-danger" ui-sref="app.manage_branch">
+                        <em class="fa fa-5x fa-building-o mb-lg"></em>
+                        <br/>
+                        <span class="h4">Branch Management</span>
+                        <br/>
+                        <small class="text-muted">View &rarr;</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel b">
+                <div class="panel-body text-center">
+                    <a class="link-unstyled text-success" ui-sref="app.loanproduct">
+                        <em class="fa fa-5x fa-calendar-check-o mb-lg"></em>
+                        <br/>
+                        <span class="h4">Loan Product Management</span>
+                        <br/>
+                        <small class="text-muted">View all &rarr;</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-4">
+            <div class="panel b">
+                <div class="panel-body text-center">
+                    <a class="link-unstyled text-dark" ui-sref="app.manage_role">
+                        <em class="fa fa-5x fa-tasks mb-lg"></em>
+                        <br/>
+                        <span class="h4">Role Management</span>
+                        <br/>
+                        <small class="text-muted">View all &rarr;</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel b">
+                <div class="panel-body text-center">
+                    <a class="link-unstyled text-dark" ui-sref="app.manage_user">
+                        <em class="fa fa-5x fa-street-view mb-lg"></em>
+                        <br/>
+                        <span class="h4">User Management</span>
+                        <br/>
+                        <small class="text-muted">View all &rarr;</small>
+                    </a>
+                </div>
             </div>
         </div>
     </div>

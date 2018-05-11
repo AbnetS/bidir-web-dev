@@ -81,6 +81,7 @@
             vm.clientPromise = LoanManagementService.GetClients(vm.query).then(function(response){
                 vm.clients = response.data.docs;
                 vm.clientsCopy = angular.copy(vm.clients);
+                vm.query.total_docs_count =  response.data.total_docs_count;
             },function (error) {
                 console.log("error callApi vm.clients",error);
             });
@@ -106,7 +107,7 @@
             vm.clients = vm.clientsCopy;
 
             vm.clients = _.filter(vm.clients,function(client){
-                if(!_.isUndefined(client.branch)){
+                if(!_.isUndefined(client.branch) && client.branch !== null){
                     return client.branch._id === vm.currentUser.selected_access_branch._id;
                 }
             });
