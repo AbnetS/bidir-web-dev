@@ -128,7 +128,7 @@
                             <tbody md-body>
                             <tr md-row ng-repeat="screening in vm.screenings">
 
-                                <td md-cell>{{$index + 1}}</td>
+                                <td md-cell>{{vm.query.per_page* (vm.query.page - 1) +  $index + 1}}</td>
                                 <td md-cell>
                                 {{ screening.client.first_name }} {{ screening.client.last_name }} {{screening.client.grandfather_name}}
                                 </td>
@@ -151,7 +151,7 @@
                     <md-table-pagination md-limit="vm.query.per_page"
                                          md-limit-options="vm.pageSizes"
                                          md-page="vm.query.page"
-                                         md-total="vm.query.total_docs_count"
+                                         md-total="{{vm.query.total_docs_count}}"
                                          md-page-select="vm.options.pageSelect"
                                          md-boundary-links="vm.options.boundaryLinks"
                                          md-on-paginate="vm.paginate"></md-table-pagination>
