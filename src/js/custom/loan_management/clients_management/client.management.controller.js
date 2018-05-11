@@ -21,11 +21,11 @@
             rowSelection: true,
             multiSelect: true,
             autoSelect: true,
-            decapitate: false,
+            decapitate: true,
             largeEditDialog: false,
-            boundaryLinks: false,
+            boundaryLinks: true,
             limitSelect: true,
-            pageSelect: true
+            pageSelect: false
         };
 
         vm.query = {
@@ -35,7 +35,7 @@
         };
 
         vm.paginate = function(page, pageSize) {
-            console.log('Scope Page: ' + vm.query.page + ' Scope Limit: ' + vm.query.per_page);
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
             vm.query.page = page;
             vm.query.per_page = pageSize;
             callApi();
@@ -118,6 +118,7 @@
             return vm.query.search;
         }), function (newValue, oldValue) {
             if (newValue !== oldValue) {
+                //make sure at least two characters are entered
                 if(newValue.length > 2){
                     SearchApi(newValue);
                 }else{

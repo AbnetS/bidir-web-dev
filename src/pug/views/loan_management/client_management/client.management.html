@@ -77,9 +77,9 @@
                         </thead>
 
                         <tbody md-body>
-                        <tr md-row ng-repeat="client in vm.clients | filter: filter.search  | limitTo: query.per_page : (query.page -1) * query.per_page">
+                        <tr md-row ng-repeat="client in vm.clients">
 
-                            <td md-cell>{{$index + 1}}</td>
+                            <td md-cell>{{vm.query.per_page* (vm.query.page - 1) +  $index + 1}}</td>
                             <td>
                                 <div class="media">
                                     <img class="img-responsive img-circle thumb32"
@@ -110,7 +110,7 @@
                 <md-table-pagination md-limit="vm.query.per_page"
                                      md-limit-options="vm.pageSizes"
                                      md-page="vm.query.page"
-                                     md-total="vm.query.total_docs_count"
+                                     md-total="{{vm.query.total_docs_count}}"
                                      md-page-select="vm.options.pageSelect"
                                      md-boundary-links="vm.options.boundaryLinks"
                                      md-on-paginate="vm.paginate">

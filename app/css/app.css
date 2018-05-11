@@ -7874,22 +7874,6 @@ md-tabs.md-default-theme,
 md-tabs .md-tab.md-focused md-icon {
   color: #3f51b5 !important;
 }
-.green {
-  background: #4CAF50;
-}
-.bidir-bg {
-  color: #fff;
-  background-color: #039661;
-}
-.bidir-color {
-  color: #4CAF50;
-  background: #000;
-}
-.img-preview {
-  max-width: 315px;
-  max-height: 160px;
-  overflow: hidden;
-}
 md-toolbar {
   box-sizing: border-box;
   display: -webkit-flex;
@@ -7979,6 +7963,32 @@ md-dialog {
 .md-button.md-default-theme.md-primary.md-raised:not([disabled]),
 .md-button.md-primary.md-raised:not([disabled]) {
   background-color: #039661;
+}
+.md-table-pagination > .buttons > .label {
+  margin-left: 20px;
+  color: rgba(0, 0, 0, 0.54);
+}
+.page-select > .label {
+  color: rgba(0, 0, 0, 0.54);
+}
+.limit-select > .label {
+  color: rgba(0, 0, 0, 0.54);
+}
+.green {
+  background: #4CAF50;
+}
+.bidir-bg {
+  color: #fff;
+  background-color: #039661;
+}
+.bidir-color {
+  color: #4CAF50;
+  background: #000;
+}
+.img-preview {
+  max-width: 315px;
+  max-height: 160px;
+  overflow: hidden;
 }
 .line {
   min-height: 25px;
