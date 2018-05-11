@@ -133,9 +133,7 @@
                                 {{ screening.client.first_name }} {{ screening.client.last_name }} {{screening.client.grandfather_name}}
                                 </td>
                                 <td md-cell >{{screening.client.gender}}</td>
-                                <td md-cell >
-                                    <span am-time-ago="screening.date_created"></span>
-                                </td>
+                                <td md-cell > {{screening.client.date_of_birth | date}}</td>
                                 <td md-cell>{{screening.client.civil_status}}</td>
                                 <td md-cell>{{screening.client.status | ReplaceUnderscore}}</td>
                                 <td md-cell>

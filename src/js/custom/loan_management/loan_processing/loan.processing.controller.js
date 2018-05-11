@@ -160,7 +160,7 @@
         }
 
         function initialize() {
-            callScreeningAPI();
+            // callScreeningAPI();
         }
         function callScreeningAPI() {
             vm.screeningPromise = LoanManagementService.GetScreenings(vm.query).then(function (response) {
