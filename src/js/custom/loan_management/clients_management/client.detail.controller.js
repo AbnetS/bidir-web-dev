@@ -25,6 +25,7 @@
                 .then(function(response){
                     myBlockUI.stop();
                     vm.client = response.data;
+                    CallClientScreeningAPI();
                     console.log("client detail",response);
                 },function(error){
                     myBlockUI.stop();
