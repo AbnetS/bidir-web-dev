@@ -12,36 +12,74 @@
         var vm = this;
         vm.clientId =  $stateParams.id;
         vm.visibility = {showMoreClientDetail: false};
+        vm.onTabSelected = _onTabSelected;
 
-        var myBlockUI = blockUI.instances.get('ClientBlockUI');
-        myBlockUI.start();
-        LoanManagementService.GetClientDetail(vm.clientId)
-            .then(function(response){
+        initialize();
 
-                vm.client = response.data;
-                console.log("client detail",response);
-                LoanManagementService.GetClientScreening(vm.clientId).then(function (response) {
+
+
+        function initialize() {
+            var myBlockUI = blockUI.instances.get('ClientBlockUI');
+            myBlockUI.start();
+            LoanManagementService.GetClientDetail(vm.clientId)
+                .then(function(response){
                     myBlockUI.stop();
-                    vm.client.screening = response.data;
-                    console.log("vm.client.screening",vm.client);
-
-                },function (error) {
+                    vm.client = response.data;
+                    console.log("client detail",response);
+                },function(error){
                     myBlockUI.stop();
+                    console.log("error getting client detail",error);
                 });
+        }
 
-                LoanManagementService.GetClientLoanApplication(vm.clientId)
-                    .then(function (response) {
+        function CallClientScreeningAPI() {
+            var myBlockUI = blockUI.instances.get('ClientScreeningBlockUI');
+            myBlockUI.start();
+            LoanManagementService.GetClientScreening(vm.clientId).then(function (response) {
+                myBlockUI.stop();
+                vm.client.screening = response.data;
+                console.log("vm.client.screening",vm.client);
+
+            },function (error) {
+                myBlockUI.stop();
+                console.log("error fetching screening",error);
+            });
+        }
+
+        function CallClientLoanApplicationAPI() {
+            var myBlockUI = blockUI.instances.get('ClientLoanApplicationBlockUI');
+            myBlockUI.start();
+            LoanManagementService.GetClientLoanApplication(vm.clientId)
+                .then(function (response) {
+                    myBlockUI.stop();
                     vm.client.loan_application = response.data;
                     console.log("vm.client.loan_application",vm.client);
                 },function (error) {
-                        console.log(" error .loan_application",error);
-                    });
+                    myBlockUI.stop();
+                    console.log(" error .loan_application",error);
+                });
+        }
 
-            },function(error){
-                myBlockUI.stop();
-                console.log("error getting client detail",error);
-            })
-
+        function _onTabSelected(type) {
+            console.log("tab name clicked",type);
+            switch (type){
+                case 'CLIENT':
+                    console.log("tab name clicked",type);
+                    break;
+                case 'SCREENING':
+                    CallClientScreeningAPI();
+                    console.log("tab name clicked",type);
+                    break;
+                case 'LOAN_APPLICATION':
+                    CallClientLoanApplicationAPI();
+                    break;
+                case 'ACAT':
+                    console.log("tab name clicked",type);
+                    break;
+                default:
+                    console.log("tab name clicked",type);
+            }
+        }
     }
 
 

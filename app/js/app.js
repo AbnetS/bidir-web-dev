@@ -204,13 +204,13 @@
     'use strict';
 
     angular
-        .module('app.translate', []);
+        .module('app.sidebar', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.sidebar', []);
+        .module('app.translate', []);
 })();
 (function() {
     'use strict';
@@ -3216,70 +3216,6 @@ var SCREENING_STATUS = {
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .config(translateConfig)
-        ;
-    translateConfig.$inject = ['$translateProvider'];
-    function translateConfig($translateProvider){
-
-      $translateProvider.useStaticFilesLoader({
-          prefix : 'app/i18n/',
-          suffix : '.json'
-      });
-
-      $translateProvider.preferredLanguage('en');
-      $translateProvider.useLocalStorage();
-      $translateProvider.usePostCompiling(true);
-      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
-
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .run(translateRun)
-        ;
-    translateRun.$inject = ['$rootScope', '$translate'];
-    
-    function translateRun($rootScope, $translate){
-
-      // Internationalization
-      // ----------------------
-
-      $rootScope.language = {
-        // Handles language dropdown
-        listIsOpen: false,
-        // list of available languages
-        available: {
-          'en':       'English',
-          'es_AR':    'Español'
-        },
-        // display always the current ui language
-        init: function () {
-          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
-          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
-          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
-        },
-        set: function (localeId) {
-          // Set the new idiom
-          $translate.use(localeId);
-          // save a reference for the current language
-          $rootScope.language.selected = $rootScope.language.available[localeId];
-          // finally toggle dropdown
-          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
-        }
-      };
-
-      $rootScope.language.init();
-
-    }
-})();
 /**=========================================================
  * Module: sidebar-menu.js
  * Handle sidebar collapsible elements
@@ -3683,6 +3619,70 @@ var SCREENING_STATUS = {
     }
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .config(translateConfig)
+        ;
+    translateConfig.$inject = ['$translateProvider'];
+    function translateConfig($translateProvider){
+
+      $translateProvider.useStaticFilesLoader({
+          prefix : 'app/i18n/',
+          suffix : '.json'
+      });
+
+      $translateProvider.preferredLanguage('en');
+      $translateProvider.useLocalStorage();
+      $translateProvider.usePostCompiling(true);
+      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
+
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .run(translateRun)
+        ;
+    translateRun.$inject = ['$rootScope', '$translate'];
+    
+    function translateRun($rootScope, $translate){
+
+      // Internationalization
+      // ----------------------
+
+      $rootScope.language = {
+        // Handles language dropdown
+        listIsOpen: false,
+        // list of available languages
+        available: {
+          'en':       'English',
+          'es_AR':    'Español'
+        },
+        // display always the current ui language
+        init: function () {
+          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
+          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
+          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
+        },
+        set: function (localeId) {
+          // Set the new idiom
+          $translate.use(localeId);
+          // save a reference for the current language
+          $rootScope.language.selected = $rootScope.language.available[localeId];
+          // finally toggle dropdown
+          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
+        }
+      };
+
+      $rootScope.language.init();
+
+    }
+})();
 /**=========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
@@ -4656,17 +4656,6 @@ var SCREENING_STATUS = {
     };
 
 })();
-(function() {
-  "use strict";
-
-  angular.module("app.mfi", [
-  ]).run(runBlock);
-
-function runBlock() {
-}
-
-})();
-
 /**
  * Created by Yonas on 4/27/2018.
  */
@@ -4679,6 +4668,17 @@ function runBlock() {
     ]);
 
 })();
+(function() {
+  "use strict";
+
+  angular.module("app.mfi", [
+  ]).run(runBlock);
+
+function runBlock() {
+}
+
+})();
+
 /**
  * Created by Yoni on 1/8/2018.
  */
@@ -4981,89 +4981,6 @@ function runBlock() {
 
 
 })(window.angular);
-(function(angular) {
-  'use strict';
-  angular.module('app.mfi')
-
-  .service('MainService', MainService);
-
-  MainService.$inject = ['$http','CommonService','AuthService'];
-
-  function MainService($http, CommonService,AuthService) {
-
-      return {
-        GetMFI: _getMFI,
-        UpdateMFI: _updateMFI,
-        CreateMFI:_createMFI,
-        UpdateBranch: _updateBranch,
-        GetBranches: _getBranches,
-        CreateBranch:_createBranch
-      };
-
-      function _getBranches(){
-          return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
-      }
-      function _createBranch(branch){
-        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch), branch);
-      }
-      function _updateBranch(updated_branch){
-          return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.Branches,updated_branch._id), updated_branch);
-      }
-
-      function _getMFI(){
-        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll));
-      }
-      function _updateMFI(data,logo){
-        var updatedMFI = setAttribute(data,logo);
-
-        return $http({
-          url: CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.MFIUpdate,data._id),
-          method: 'PUT',
-          data: updatedMFI,
-          //assigning content-type as undefined,let the browser
-          //assign the correct boundary for us
-          headers: {
-                  'Content-Type': undefined},
-          //prevents serializing payload.  don't do it.
-          transformRequest: angular.identity
-      });
-      }
-
-      function _createMFI(data,logo){
-        var mfiData = setAttribute(data,logo);
-        return $http({
-          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.MFI),
-          method: 'POST',
-          data: mfiData,
-          //assigning content-type as undefined,let the browser handle it
-          headers: {
-            'Authorization': 'Bearer ' + AuthService.GetToken(),
-            'Content-Type': undefined},
-          //prevents serializing data.  don't do it.
-          transformRequest: angular.identity
-      });
-
-      }
-
-      function setAttribute(mfi,picFile){
-          var mfiData = new FormData();
-          mfiData.append("name", mfi.name);
-          mfiData.append("location", mfi.location);
-          mfiData.append("establishment_year", mfi.establishment_year);
-          mfiData.append("contact_person", _.isUndefined(mfi.contact_person)?'':mfi.contact_person);
-          mfiData.append("phone", _.isUndefined(mfi.phone)?'':mfi.phone);
-          mfiData.append("email", _.isUndefined(mfi.email)?'':mfi.email);
-          mfiData.append("website_link", _.isUndefined(mfi.website_link)?'':mfi.website_link);
-          if(!_.isUndefined(picFile)){
-              mfiData.append("logo", picFile);
-          }
-
-          return mfiData;
-      }
-  }
-
-})(window.angular);
-
 /**
  * Created by Yonas on 4/27/2018.
  */
@@ -5481,6 +5398,89 @@ function runBlock() {
 
 
 })(window.angular);
+(function(angular) {
+  'use strict';
+  angular.module('app.mfi')
+
+  .service('MainService', MainService);
+
+  MainService.$inject = ['$http','CommonService','AuthService'];
+
+  function MainService($http, CommonService,AuthService) {
+
+      return {
+        GetMFI: _getMFI,
+        UpdateMFI: _updateMFI,
+        CreateMFI:_createMFI,
+        UpdateBranch: _updateBranch,
+        GetBranches: _getBranches,
+        CreateBranch:_createBranch
+      };
+
+      function _getBranches(){
+          return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+      }
+      function _createBranch(branch){
+        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch), branch);
+      }
+      function _updateBranch(updated_branch){
+          return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.Branches,updated_branch._id), updated_branch);
+      }
+
+      function _getMFI(){
+        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll));
+      }
+      function _updateMFI(data,logo){
+        var updatedMFI = setAttribute(data,logo);
+
+        return $http({
+          url: CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.MFIUpdate,data._id),
+          method: 'PUT',
+          data: updatedMFI,
+          //assigning content-type as undefined,let the browser
+          //assign the correct boundary for us
+          headers: {
+                  'Content-Type': undefined},
+          //prevents serializing payload.  don't do it.
+          transformRequest: angular.identity
+      });
+      }
+
+      function _createMFI(data,logo){
+        var mfiData = setAttribute(data,logo);
+        return $http({
+          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.MFI),
+          method: 'POST',
+          data: mfiData,
+          //assigning content-type as undefined,let the browser handle it
+          headers: {
+            'Authorization': 'Bearer ' + AuthService.GetToken(),
+            'Content-Type': undefined},
+          //prevents serializing data.  don't do it.
+          transformRequest: angular.identity
+      });
+
+      }
+
+      function setAttribute(mfi,picFile){
+          var mfiData = new FormData();
+          mfiData.append("name", mfi.name);
+          mfiData.append("location", mfi.location);
+          mfiData.append("establishment_year", mfi.establishment_year);
+          mfiData.append("contact_person", _.isUndefined(mfi.contact_person)?'':mfi.contact_person);
+          mfiData.append("phone", _.isUndefined(mfi.phone)?'':mfi.phone);
+          mfiData.append("email", _.isUndefined(mfi.email)?'':mfi.email);
+          mfiData.append("website_link", _.isUndefined(mfi.website_link)?'':mfi.website_link);
+          if(!_.isUndefined(picFile)){
+              mfiData.append("logo", picFile);
+          }
+
+          return mfiData;
+      }
+  }
+
+})(window.angular);
+
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -7129,6 +7129,473 @@ function runBlock() {
 
 
 })(window.angular);
+/**
+ * Created by Yoni on 1/9/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.clients").controller("ClientDetailController", ClientDetailController);
+
+    ClientDetailController.$inject = ['LoanManagementService','$stateParams','blockUI'];
+
+    function ClientDetailController(LoanManagementService,$stateParams,blockUI) {
+        var vm = this;
+        vm.clientId =  $stateParams.id;
+        vm.visibility = {showMoreClientDetail: false};
+        vm.onTabSelected = _onTabSelected;
+
+        initialize();
+
+
+
+        function initialize() {
+            var myBlockUI = blockUI.instances.get('ClientBlockUI');
+            myBlockUI.start();
+            LoanManagementService.GetClientDetail(vm.clientId)
+                .then(function(response){
+                    myBlockUI.stop();
+                    vm.client = response.data;
+                    console.log("client detail",response);
+                },function(error){
+                    myBlockUI.stop();
+                    console.log("error getting client detail",error);
+                });
+        }
+
+        function CallClientScreeningAPI() {
+            var myBlockUI = blockUI.instances.get('ClientScreeningBlockUI');
+            myBlockUI.start();
+            LoanManagementService.GetClientScreening(vm.clientId).then(function (response) {
+                myBlockUI.stop();
+                vm.client.screening = response.data;
+                console.log("vm.client.screening",vm.client);
+
+            },function (error) {
+                myBlockUI.stop();
+                console.log("error fetching screening",error);
+            });
+        }
+
+        function CallClientLoanApplicationAPI() {
+            var myBlockUI = blockUI.instances.get('ClientLoanApplicationBlockUI');
+            myBlockUI.start();
+            LoanManagementService.GetClientLoanApplication(vm.clientId)
+                .then(function (response) {
+                    myBlockUI.stop();
+                    vm.client.loan_application = response.data;
+                    console.log("vm.client.loan_application",vm.client);
+                },function (error) {
+                    myBlockUI.stop();
+                    console.log(" error .loan_application",error);
+                });
+        }
+
+        function _onTabSelected(type) {
+            console.log("tab name clicked",type);
+            switch (type){
+                case 'CLIENT':
+                    console.log("tab name clicked",type);
+                    break;
+                case 'SCREENING':
+                    CallClientScreeningAPI();
+                    console.log("tab name clicked",type);
+                    break;
+                case 'LOAN_APPLICATION':
+                    CallClientLoanApplicationAPI();
+                    break;
+                case 'ACAT':
+                    console.log("tab name clicked",type);
+                    break;
+                default:
+                    console.log("tab name clicked",type);
+            }
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.loan_management")
+        .controller("ClientManagementController", ClientManagementController);
+
+    ClientManagementController.$inject = ['LoanManagementService','$state','$scope','AuthService'];
+
+    function ClientManagementController(LoanManagementService,$state,$scope,AuthService) {
+        var vm = this;
+        vm.currentUser = {
+            selected_access_branch:undefined
+        };
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
+        vm.filter = {show : false};
+
+        vm.options = {
+            rowSelection: true,
+            multiSelect: true,
+            autoSelect: true,
+            decapitate: true,
+            largeEditDialog: false,
+            boundaryLinks: true,
+            limitSelect: true,
+            pageSelect: false
+        };
+
+        vm.query = {
+            search:'',
+            page:1,
+            per_page:10
+        };
+
+        vm.paginate = function(page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        };
+        vm.clearSearchText = function () {
+            vm.query.search = '';
+            vm.filter.show = false;
+        };
+        vm.searchScreening = function () {
+            console.log("search text",vm.query.search);
+        };
+
+
+        vm.clientDetail = _clientDetail;
+        vm.onSelectedBranch = _onSelectedBranch;
+
+        vm.clearSearch = function(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        };
+
+        callApi();
+        GetBranchFilter();
+
+
+        function GetBranchFilter() {
+            if(AuthService.IsSuperuser()){
+                LoanManagementService.GetBranches().then(function(response){
+                    vm.currentUser.user_access_branches = response.data.docs;
+                },function(error){
+                    vm.currentUser.user_access_branches = [];
+                    console.log("error on GetBranchFilter",error);
+                });
+            }
+            else {
+                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
+            }
+        }
+
+        function callApi(){
+            vm.clientPromise = LoanManagementService.GetClients(vm.query).then(function(response){
+                vm.clients = response.data.docs;
+                vm.clientsCopy = angular.copy(vm.clients);
+                vm.query.total_docs_count =  response.data.total_docs_count;
+            },function (error) {
+                console.log("error callApi vm.clients",error);
+            });
+        }
+
+        function SearchApi(SearchText){
+            $scope.promise = LoanManagementService.SearchClient(SearchText)
+                .then(function(response){
+                    vm.clients = response.data.docs;
+                    vm.clientsCount = response.data.total_docs_count;
+                    console.log(response);
+                },function (error) {
+                    vm.clients = vm.clientsCopy;
+                    console.log("error",error);
+                });
+        }
+
+        function _clientDetail(client,ev) {
+            $state.go('app.client_detail',{id:client._id});
+        }
+
+        function _onSelectedBranch(){
+            vm.clients = vm.clientsCopy;
+
+            vm.clients = _.filter(vm.clients,function(client){
+                if(!_.isUndefined(client.branch) && client.branch !== null){
+                    return client.branch._id === vm.currentUser.selected_access_branch._id;
+                }
+            });
+
+        }
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                //make sure at least two characters are entered
+                if(newValue.length > 2){
+                    SearchApi(newValue);
+                }else{
+                    vm.clients = vm.clientsCopy;
+                }
+
+            }
+        });
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 5/7/2018.
+ */
+
+(function(angular) {
+    'use strict';
+
+    angular.module('app.processing')
+        .controller('ClientDialogController', ClientDialogController);
+
+    ClientDialogController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService','blockUI'];
+
+    function ClientDialogController($mdDialog, items,AlertService,CommonService,MainService,blockUI) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.isEdit = items !== null;
+
+        init();
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+
+        function init(){
+
+        }
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("LoanProcessingController", LoanProcessingController);
+
+    LoanProcessingController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers'];
+
+    function LoanProcessingController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers ) {
+        var vm = this;
+        vm.screeningDetail = _screeningDetail;
+        vm.backToList = _backToList;
+        vm.saveScreeningForm = _saveScreeningForm;
+        vm.questionValueChanged = questionValueChanged;
+
+        vm.addClient = _addClient;
+
+        vm.clientDetail = _clientDetail;
+
+        vm.options = {
+            rowSelection: true,
+            multiSelect: true,
+            autoSelect: true,
+            decapitate: false,
+            largeEditDialog: false,
+            boundaryLinks: false,
+            limitSelect: true,
+            pageSelect: true
+        };
+        vm.filter = {show : false};
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
+
+        vm.query = {
+            search:'',
+            page:1,
+            per_page:10
+        };
+
+        vm.paginate = function(page, pageSize) {
+            console.log('Scope Page: ' + vm.query.page + ' Scope Limit: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callScreeningAPI();
+
+        };
+        vm.clearSearchText = function () {
+            vm.query.search = '';
+            vm.filter.show = false;
+        };
+        vm.searchScreening = function () {
+            console.log("search text",vm.query.search);
+        };
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("search for screening ",newValue);
+            }
+        });
+
+        vm.visibility = {
+            showScreeningDetail:false,
+            showClientDetail:false,
+            showLoanApplicationDetail:false,
+            showACATDetail:false
+        };
+
+        initialize();
+
+        function _clientDetail(client, ev) {
+            console.log("Client detail",client);
+        }
+
+        vm.onTabSelected = function (type) {
+            console.log("tab name clicked",type);
+            switch (type){
+                case 'CLIENT':
+                    console.log("tab name clicked",type);
+                    break;
+                case 'SCREENING':
+                    callScreeningAPI();
+                    console.log("tab name clicked",type);
+                    break;
+                case 'LOAN_APPLICATION':
+                    LoanManagementService.GetLoanApplications().then(function (response) {
+                        console.log("GetLoanApplications",response);
+                    });
+                    break;
+                case 'ACAT':
+                    console.log("tab name clicked",type);
+                    break;
+                default:
+                    console.log("tab name clicked",type);
+            }
+        };
+
+        function _addClient(ev) {
+            $mdDialog.show({
+                locals: {items: null},
+                templateUrl: RouteHelpers.basepath('loan_management/loan_processing/create.client.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'ClientDialogController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+
+            }, function () {
+            });
+
+        }
+
+        function _screeningDetail(screening) {
+            vm.selectedScreening = screening;
+            console.log("screening detail");
+            var client = screening.client;
+
+            LoanManagementService.GetClientScreening(client._id).then(function (response) {
+                vm.client = response.data;
+                vm.visibility.showScreeningDetail = true;
+                console.log("vm.client",vm.client);
+            });
+        }
+        function _backToList(type) {
+            switch(type){
+                case 'SCREENING':
+                    vm.visibility.showScreeningDetail = false;
+                    break;
+            }
+
+        }
+        function _saveScreeningForm(client,screening_status) {
+
+            var status = _.find(SCREENING_STATUS,function (stat) {
+                return stat.code === screening_status;
+            });
+            var screening = {
+                status: status.code,
+                questions: client.questions
+            };
+
+            // console.log("save screening status ", screening);
+
+            LoanManagementService.SaveClientScreening(screening,client._id)
+                .then(function (response) {
+                    AlertService.showSuccess('Screening',"Successfully saved screening information  with status: " + status.name);
+                    console.log("saved screening ", screening);
+                },function (error) {
+                    var message = error.data.error.message;
+                    AlertService.showError("Error when saving screening",message);
+                    console.log("error on saving screening ", error);
+                });
+
+        }
+
+        function initialize() {
+            // callScreeningAPI();
+        }
+        function callScreeningAPI() {
+            vm.screeningPromise = LoanManagementService.GetScreenings(vm.query).then(function (response) {
+                vm.screenings = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+                console.log("screenings info",vm.screenings);
+            });
+        }
+
+
+        function questionValueChanged(question) {
+
+            var prQues = getPrerequisiteQuestion(question._id);
+
+            _.each(prQues, function(prQue) {
+                if (prQue) {
+                    var prerequisite = prQue.prerequisites[0];
+                    //Set question's show based by comparing current value with expected preq. value
+                    prQue.show = (prerequisite.answer === question.values[0]);
+                }
+            });
+
+        }
+        function getPrerequisiteQuestion(questionID) {
+
+            //extract outer questions; if section type, get them from sections
+            var questions = vm.client.has_sections ?
+                _.reduce(vm.client.sections, function(m, q) {
+                    return m.concat(q.questions);
+                }, []) :
+                vm.client.questions;
+
+            //Get all subquestions
+            var subQuestions = _.reduce(questions, function(m, q) {
+                return m.concat(q.sub_questions);
+            }, []);
+
+            //merge questions with subquestions into a singl array
+            var mergedQuestions = _.uniq(_.union(questions, subQuestions), false, _.property('_id'));
+
+            //Search in mergedQuestions
+            var prQue = _.filter(mergedQuestions, function(obj) {
+                return _.some(obj.prerequisites, { question: questionID });
+            });
+
+            return prQue;
+        }
+
+    }
+
+
+
+})(window.angular);
 (function(angular) {
   "use strict";
 
@@ -7648,435 +8115,6 @@ function runBlock() {
   }
 })(window.angular);
 
-/**
- * Created by Yoni on 1/9/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.clients").controller("ClientDetailController", ClientDetailController);
-
-    ClientDetailController.$inject = ['LoanManagementService','$stateParams','blockUI'];
-
-    function ClientDetailController(LoanManagementService,$stateParams,blockUI) {
-        var vm = this;
-        vm.clientId =  $stateParams.id;
-        vm.visibility = {showMoreClientDetail: false};
-
-        var myBlockUI = blockUI.instances.get('ClientBlockUI');
-        myBlockUI.start();
-        LoanManagementService.GetClientDetail(vm.clientId)
-            .then(function(response){
-
-                vm.client = response.data;
-                console.log("client detail",response);
-                LoanManagementService.GetClientScreening(vm.clientId).then(function (response) {
-                    myBlockUI.stop();
-                    vm.client.screening = response.data;
-                    console.log("vm.client.screening",vm.client);
-
-                },function (error) {
-                    myBlockUI.stop();
-                });
-
-                LoanManagementService.GetClientLoanApplication(vm.clientId)
-                    .then(function (response) {
-                    vm.client.loan_application = response.data;
-                    console.log("vm.client.loan_application",vm.client);
-                },function (error) {
-                        console.log(" error .loan_application",error);
-                    });
-
-            },function(error){
-                myBlockUI.stop();
-                console.log("error getting client detail",error);
-            })
-
-    }
-
-
-})(window.angular);
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.loan_management")
-        .controller("ClientManagementController", ClientManagementController);
-
-    ClientManagementController.$inject = ['LoanManagementService','$state','$scope','AuthService'];
-
-    function ClientManagementController(LoanManagementService,$state,$scope,AuthService) {
-        var vm = this;
-        vm.currentUser = {
-            selected_access_branch:undefined
-        };
-        vm.pageSizes = [10, 25, 50, 100, 250, 500];
-        vm.filter = {show : false};
-
-        vm.options = {
-            rowSelection: true,
-            multiSelect: true,
-            autoSelect: true,
-            decapitate: true,
-            largeEditDialog: false,
-            boundaryLinks: true,
-            limitSelect: true,
-            pageSelect: false
-        };
-
-        vm.query = {
-            search:'',
-            page:1,
-            per_page:10
-        };
-
-        vm.paginate = function(page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        };
-        vm.clearSearchText = function () {
-            vm.query.search = '';
-            vm.filter.show = false;
-        };
-        vm.searchScreening = function () {
-            console.log("search text",vm.query.search);
-        };
-
-
-        vm.clientDetail = _clientDetail;
-        vm.onSelectedBranch = _onSelectedBranch;
-
-        vm.clearSearch = function(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        };
-
-        callApi();
-        GetBranchFilter();
-
-
-        function GetBranchFilter() {
-            if(AuthService.IsSuperuser()){
-                LoanManagementService.GetBranches().then(function(response){
-                    vm.currentUser.user_access_branches = response.data.docs;
-                },function(error){
-                    vm.currentUser.user_access_branches = [];
-                    console.log("error on GetBranchFilter",error);
-                });
-            }
-            else {
-                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
-            }
-        }
-
-        function callApi(){
-            vm.clientPromise = LoanManagementService.GetClients(vm.query).then(function(response){
-                vm.clients = response.data.docs;
-                vm.clientsCopy = angular.copy(vm.clients);
-                vm.query.total_docs_count =  response.data.total_docs_count;
-            },function (error) {
-                console.log("error callApi vm.clients",error);
-            });
-        }
-
-        function SearchApi(SearchText){
-            $scope.promise = LoanManagementService.SearchClient(SearchText)
-                .then(function(response){
-                    vm.clients = response.data.docs;
-                    vm.clientsCount = response.data.total_docs_count;
-                    console.log(response);
-                },function (error) {
-                    vm.clients = vm.clientsCopy;
-                    console.log("error",error);
-                });
-        }
-
-        function _clientDetail(client,ev) {
-            $state.go('app.client_detail',{id:client._id});
-        }
-
-        function _onSelectedBranch(){
-            vm.clients = vm.clientsCopy;
-
-            vm.clients = _.filter(vm.clients,function(client){
-                if(!_.isUndefined(client.branch) && client.branch !== null){
-                    return client.branch._id === vm.currentUser.selected_access_branch._id;
-                }
-            });
-
-        }
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                //make sure at least two characters are entered
-                if(newValue.length > 2){
-                    SearchApi(newValue);
-                }else{
-                    vm.clients = vm.clientsCopy;
-                }
-
-            }
-        });
-    }
-
-
-})(window.angular);
-/**
- * Created by Yonas on 5/7/2018.
- */
-
-(function(angular) {
-    'use strict';
-
-    angular.module('app.processing')
-        .controller('ClientDialogController', ClientDialogController);
-
-    ClientDialogController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService','blockUI'];
-
-    function ClientDialogController($mdDialog, items,AlertService,CommonService,MainService,blockUI) {
-        var vm = this;
-        vm.cancel = _cancel;
-        vm.isEdit = items !== null;
-
-        init();
-
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-
-        function init(){
-
-        }
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("LoanProcessingController", LoanProcessingController);
-
-    LoanProcessingController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers'];
-
-    function LoanProcessingController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers ) {
-        var vm = this;
-        vm.screeningDetail = _screeningDetail;
-        vm.backToList = _backToList;
-        vm.saveScreeningForm = _saveScreeningForm;
-        vm.questionValueChanged = questionValueChanged;
-
-        vm.addClient = _addClient;
-
-        vm.clientDetail = _clientDetail;
-
-        vm.options = {
-            rowSelection: true,
-            multiSelect: true,
-            autoSelect: true,
-            decapitate: false,
-            largeEditDialog: false,
-            boundaryLinks: false,
-            limitSelect: true,
-            pageSelect: true
-        };
-        vm.filter = {show : false};
-        vm.pageSizes = [10, 25, 50, 100, 250, 500];
-
-        vm.query = {
-            search:'',
-            page:1,
-            per_page:10
-        };
-
-        vm.paginate = function(page, pageSize) {
-            console.log('Scope Page: ' + vm.query.page + ' Scope Limit: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callScreeningAPI();
-
-        };
-        vm.clearSearchText = function () {
-            vm.query.search = '';
-            vm.filter.show = false;
-        };
-        vm.searchScreening = function () {
-            console.log("search text",vm.query.search);
-        };
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("search for screening ",newValue);
-            }
-        });
-
-        vm.visibility = {
-            showScreeningDetail:false,
-            showClientDetail:false,
-            showLoanApplicationDetail:false,
-            showACATDetail:false
-        };
-
-        initialize();
-
-        function _clientDetail(client, ev) {
-            console.log("Client detail",client);
-        }
-
-        vm.onTabSelected = function (type) {
-            console.log("tab name clicked",type);
-            switch (type){
-                case 'CLIENT':
-                    console.log("tab name clicked",type);
-                    break;
-                case 'SCREENING':
-                    callScreeningAPI();
-                    console.log("tab name clicked",type);
-                    break;
-                case 'LOAN_APPLICATION':
-                    LoanManagementService.GetLoanApplications().then(function (response) {
-                        console.log("GetLoanApplications",response);
-                    });
-                    break;
-                case 'ACAT':
-                    console.log("tab name clicked",type);
-                    break;
-                default:
-                    console.log("tab name clicked",type);
-            }
-        };
-
-        function _addClient(ev) {
-            $mdDialog.show({
-                locals: {items: null},
-                templateUrl: RouteHelpers.basepath('loan_management/loan_processing/create.client.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'ClientDialogController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-
-            }, function () {
-            });
-
-        }
-
-        function _screeningDetail(screening) {
-            vm.selectedScreening = screening;
-            console.log("screening detail");
-            var client = screening.client;
-
-            LoanManagementService.GetClientScreening(client._id).then(function (response) {
-                vm.client = response.data;
-                vm.visibility.showScreeningDetail = true;
-                console.log("vm.client",vm.client);
-            });
-        }
-        function _backToList(type) {
-            switch(type){
-                case 'SCREENING':
-                    vm.visibility.showScreeningDetail = false;
-                    break;
-            }
-
-        }
-        function _saveScreeningForm(client,screening_status) {
-
-            var status = _.find(SCREENING_STATUS,function (stat) {
-                return stat.code === screening_status;
-            });
-            var screening = {
-                status: status.code,
-                questions: client.questions
-            };
-
-            // console.log("save screening status ", screening);
-
-            LoanManagementService.SaveClientScreening(screening,client._id)
-                .then(function (response) {
-                    AlertService.showSuccess('Screening',"Successfully saved screening information  with status: " + status.name);
-                    console.log("saved screening ", screening);
-                },function (error) {
-                    var message = error.data.error.message;
-                    AlertService.showError("Error when saving screening",message);
-                    console.log("error on saving screening ", error);
-                });
-
-        }
-
-        function initialize() {
-            // callScreeningAPI();
-        }
-        function callScreeningAPI() {
-            vm.screeningPromise = LoanManagementService.GetScreenings(vm.query).then(function (response) {
-                vm.screenings = response.data.docs;
-                vm.query.total_pages = response.data.total_pages;
-                vm.query.total_docs_count = response.data.total_docs_count;
-                console.log("screenings info",vm.screenings);
-            });
-        }
-
-
-        function questionValueChanged(question) {
-
-            var prQues = getPrerequisiteQuestion(question._id);
-
-            _.each(prQues, function(prQue) {
-                if (prQue) {
-                    var prerequisite = prQue.prerequisites[0];
-                    //Set question's show based by comparing current value with expected preq. value
-                    prQue.show = (prerequisite.answer === question.values[0]);
-                }
-            });
-
-        }
-        function getPrerequisiteQuestion(questionID) {
-
-            //extract outer questions; if section type, get them from sections
-            var questions = vm.client.has_sections ?
-                _.reduce(vm.client.sections, function(m, q) {
-                    return m.concat(q.questions);
-                }, []) :
-                vm.client.questions;
-
-            //Get all subquestions
-            var subQuestions = _.reduce(questions, function(m, q) {
-                return m.concat(q.sub_questions);
-            }, []);
-
-            //merge questions with subquestions into a singl array
-            var mergedQuestions = _.uniq(_.union(questions, subQuestions), false, _.property('_id'));
-
-            //Search in mergedQuestions
-            var prQue = _.filter(mergedQuestions, function(obj) {
-                return _.some(obj.prerequisites, { question: questionID });
-            });
-
-            return prQue;
-        }
-
-    }
-
-
-
-})(window.angular);
 (function(angular) {
   'use strict';
 
