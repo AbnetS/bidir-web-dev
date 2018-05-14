@@ -17,8 +17,9 @@
         vm.questionValueChanged = questionValueChanged;
 
         vm.addClient = _addClient;
-
         vm.clientDetail = _clientDetail;
+
+        vm.onTabSelected = _onTabSelected;
 
         vm.options = {
             rowSelection: true,
@@ -75,7 +76,7 @@
             console.log("Client detail",client);
         }
 
-        vm.onTabSelected = function (type) {
+        function _onTabSelected(type) {
             console.log("tab name clicked",type);
             switch (type){
                 case 'CLIENT':
@@ -86,9 +87,8 @@
                     console.log("tab name clicked",type);
                     break;
                 case 'LOAN_APPLICATION':
-                    LoanManagementService.GetLoanApplications().then(function (response) {
-                        console.log("GetLoanApplications",response);
-                    });
+
+                    callLoanApplicationAPI();
                     break;
                 case 'ACAT':
                     console.log("tab name clicked",type);
@@ -162,6 +162,20 @@
         function initialize() {
             // callScreeningAPI();
         }
+        function callLoanApplicationAPI() {
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+            vm.loanApplicationPromise = LoanManagementService.GetLoanApplications(vm.query).then(function (response) {
+                console.log("loan applications",response);
+                vm.loan_applications = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+            });
+        }
+
         function callScreeningAPI() {
             vm.screeningPromise = LoanManagementService.GetScreenings(vm.query).then(function (response) {
                 vm.screenings = response.data.docs;

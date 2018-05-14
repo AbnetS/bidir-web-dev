@@ -258,14 +258,15 @@
                      </div>
                   </div>
                   <hr>
-                  <!--QUESTIOSN LIST-->
+                  <!--QUESTIONS LIST-->
                   <div class="col-lg-12" ng-switch on="vm.client.loan_application.has_sections">
                      <div ng-switch-when="true">
                         <div ng-repeat="section in vm.client.loan_application.sections">
                            <div class="bg-success text-center text-uppercase">
                               <h5>{{section.title}}</h5>
                            </div>
-                           <question-row ng-repeat="question in section.questions" question-row-data="question" layout-data="vm.client.loan_application.layout" row-no="$index + 1"></question-row>
+                           <question-row ng-repeat="question in section.questions" question-row-data="question" layout-data="vm.client.loan_application.layout" row-no="$index + 1">
+                           </question-row>
                         </div>
                      </div>
                      <div ng-switch-default>

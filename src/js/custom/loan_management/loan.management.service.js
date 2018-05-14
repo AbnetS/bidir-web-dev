@@ -388,8 +388,8 @@
         function _getClientScreening(clientId) {
             return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
         }
-        function _getLoanApplications() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.LOANS,API.Methods.LOANS.Loans));
+        function _getLoanApplications(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.LOANS,API.Methods.LOANS.Loans,parameters));
         }
         function _getClientLoanApplication(clientId) {
             return $http.get(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Clients,clientId));
