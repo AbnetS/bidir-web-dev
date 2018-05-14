@@ -415,12 +415,15 @@
 
         function _styleLabelByStatus(clientStatus) {
             var style = '';
-            switch (clientStatus){
+            switch (clientStatus.toLowerCase()){
                 case  'new':
                     style =  'label bg-gray';
                     break;
                 case  'submitted':
                     style =  'label bg-primary-dark';
+                    break;
+                case  'approved':
+                    style =  'label bg-green-dark';
                     break;
                 case  'screening_inprogress':
                     style =  'label bg-yellow-dark';
