@@ -103,7 +103,7 @@
             </form>
         </div>
     </div>
-    <!--show More ClientDetail-->
+    <!--Show More ClientDetail-->
     <div ng-if="vm.visibility.showMoreClientDetail" class="row">
         <div class="col-md-6">
             <p class="lead bb">Address</p>
@@ -187,6 +187,7 @@
     <!--TAB STARTED-->
     <div class="row">
         <uib-tabset justified="true">
+            <!--SCREENING-->
             <uib-tab ng-click="vm.onTabSelected('SCREENING')"  heading="Screening">
 
                 <div class="row" block-ui="ClientScreeningBlockUI">
@@ -241,6 +242,7 @@
                     </div>
                 </div>
             </uib-tab>
+            <!--LOAN_APPLICATION-->
             <uib-tab ng-click="vm.onTabSelected('LOAN_APPLICATION')"  heading="Loan Application">
 
                 <div class="row" block-ui="ClientLoanApplicationBlockUI">
@@ -286,6 +288,7 @@
                     </div>
                 </div>
             </uib-tab>
+            <!--ACAT-->
             <uib-tab ng-click="vm.onTabSelected('ACAT')"  heading="ACAT">
 
                 <div class="row" block-ui="ClientACATBlockUI">

@@ -425,7 +425,8 @@
                 case  'approved':
                     style =  'label bg-green-dark';
                     break;
-                case  'screening_inprogress':
+                case 'screening_inprogress':
+                case 'declined_under_review':
                     style =  'label bg-yellow-dark';
                     break;
                 case 'loan_application_accepted':
@@ -435,6 +436,7 @@
                     style =  'label label-success';
                     break;
                 case 'ineligible':
+                case 'declined_final':
                     style =  'label label-danger';
                     break;
                 case 'loan_application_new':
