@@ -63,7 +63,7 @@
         // Put focus on element when event is triggered.
         // https://coderwall.com/p/a41lwa/angularjs-auto-focus-into-input-field-when-ng-show-event-is-triggered
 
-    .directive('eventFocus', function(focus) {
+        .directive('eventFocus', function(focus) {
             return function(scope, elem, attr) {
                 elem.on(attr.eventFocus, function() {
                     focus(attr.eventFocusId);
@@ -92,7 +92,23 @@
             };
         }])
 
-    .directive('questionRow', function($timeout, $compile, $filter) {
+        .directive('questionRowWithAnswer', function($timeout, $compile, $filter) {
+            return {
+                restrict: 'E',
+                replace: true,
+                scope: {
+                    questionRowData: '=questionRowData',
+                    layoutData: '=layoutData',
+                    parentRowNo: '=parentRowNo',
+                    rowNo: '=rowNo',
+                    isSubquestion: '=isSubquestion'
+                },
+                link: function($scope, element, attrs) {},
+                templateUrl: 'app/views/common/directives/templates/question_row_with_answer.tmpl.html'
+            };
+        })
+
+        .directive('questionRow', function($timeout, $compile, $filter) {
             return {
                 restrict: 'E',
                 replace: true,
@@ -101,11 +117,12 @@
                     layoutData: '=layoutData',
                     rowNo: '=rowNo',
                     isSubquestion: '=isSubquestion',
+                    isReadonly: '=isReadonly',
                     valueChanged: '='
                 },
                 link: function($scope, element, attrs) {
                     $scope.$watch('questionRowData.values', function(newValue) {
-                        if (!_.isEmpty(newValue) && $scope.questionRowData.type !== QUESTION_TYPE.FILL_IN_BLANK  ) {
+                        if (!_.isEmpty(newValue) && $scope.questionRowData.type != 'FILL_IN_BLANK' && !_.isUndefined($scope.valueChanged)) {
                             $scope.valueChanged($scope.questionRowData);
                         }
                     }, true);
