@@ -74,6 +74,12 @@
 
 
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
+})();
 (function(angular) {
   "use strict";
 
@@ -87,12 +93,6 @@
 
 })(window.angular);
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
-})();
 (function() {
     'use strict';
 
@@ -168,15 +168,15 @@
     'use strict';
 
     angular
-        .module('app.navsearch', []);
+        .module('app.material', [
+            'ngMaterial'
+          ]);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.material', [
-            'ngMaterial'
-          ]);
+        .module('app.navsearch', []);
 })();
 (function() {
     'use strict';
@@ -204,14 +204,23 @@
     'use strict';
 
     angular
+        .module('app.sidebar', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.translate', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.sidebar', []);
+        .module('app.utils', [
+          'app.colors'
+          ]);
 })();
+
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -223,15 +232,6 @@
         .module('app.welcomePage', []);
 
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.utils', [
-          'app.colors'
-          ]);
-})();
-
 (function(angular) {
     'use strict';
     angular.module('app.auth')
@@ -346,6 +346,56 @@
     }
 })(window.angular);
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
 
 (function(angular) {
   "use strict";
@@ -470,22 +520,6 @@
             };
         }])
 
-        .directive('questionRowWithAnswer', ["$timeout", "$compile", "$filter", function($timeout, $compile, $filter) {
-            return {
-                restrict: 'E',
-                replace: true,
-                scope: {
-                    questionRowData: '=questionRowData',
-                    layoutData: '=layoutData',
-                    parentRowNo: '=parentRowNo',
-                    rowNo: '=rowNo',
-                    isSubquestion: '=isSubquestion'
-                },
-                link: function($scope, element, attrs) {},
-                templateUrl: 'app/views/common/directives/templates/question_row_with_answer.tmpl.html'
-            };
-        }])
-
         .directive('questionRow', ["$timeout", "$compile", "$filter", function($timeout, $compile, $filter) {
             return {
                 restrict: 'E',
@@ -508,12 +542,28 @@
                 templateUrl: 'app/views/common/directives/templates/question_row.tmpl.html'
             };
         }])
+        .directive('questionRowWithAnswer', ["$timeout", "$compile", "$filter", function($timeout, $compile, $filter) {
+            return {
+                restrict: 'E',
+                replace: true,
+                scope: {
+                    questionRowData: '=questionRowData',
+                    layoutData: '=layoutData',
+                    parentRowNo: '=parentRowNo',
+                    rowNo: '=rowNo',
+                    isSubquestion: '=isSubquestion'
+                },
+                link: function($scope, element, attrs) {},
+                templateUrl: 'app/views/common/directives/templates/question_row_with_answer.tmpl.html'
+            };
+        }])
         .directive('question', ["$timeout", "$compile", "$filter", function($timeout, $compile, $filter) {
             return {
                 restrict: 'E',
                 replace: true,
                 scope: {
-                    questionData: '=questionData'
+                    questionData: '=questionData',
+                    isReadonly: '=isReadonly'
                 },
                 link: function($scope, element, attrs) {
 
@@ -524,15 +574,16 @@
 
                             switch (questionType) {
                                 case "fill_in_blank":
-                                    {
-                                        break;
-                                    }
+                                {
+                                    break;
+                                }
                                 case "yes_no":
-                                    {
-                                        questionType = "single_choice";
-                                        break;
-                                    }
+                                {
+                                    questionType = "single_choice";
+                                    break;
+                                }
                             }
+
                             //Parse values
                             if (questionData.validation_factor === 'NUMERIC' || questionData.validation_factor === 'ALPHANUMERIC') {
                                 questionData.values = _.map(questionData.values, function(val) {
@@ -571,10 +622,11 @@
  */
 (function(angular) {
     'use strict';
-    angular.module('app.common').filter('ReplaceUnderscore', function () {
-    return function (input) {
-        return input.replace(/_/g, ' ');
-    };
+    angular.module('app.common')
+        .filter('ReplaceUnderscore', function () {
+        return function (input) {
+            return typeof input === "string" ? input.replace(/_/g, ' '):input;
+        };
 });
 
 })(window.angular);
@@ -684,56 +736,6 @@ var SCREENING_STATUS = {
     DECLINED_FINAL:{code:'declined_final',name:'Declined Final'},
     DECLINED_UNDER_REVIEW:{code:'declined_under_review',name:'Declined Under Review'}
 };
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
 
 (function() {
     'use strict';
@@ -1948,115 +1950,6 @@ var SCREENING_STATUS = {
     }
 })();
 
-/**=========================================================
- * Module: navbar-search.js
- * Navbar search toggler * Auto dismiss on ESC key
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .directive('searchOpen', searchOpen)
-        .directive('searchDismiss', searchDismiss);
-
-    //
-    // directives definition
-    // 
-    
-    function searchOpen () {
-        var directive = {
-            controller: searchOpenController,
-            restrict: 'A'
-        };
-        return directive;
-
-    }
-
-    function searchDismiss () {
-        var directive = {
-            controller: searchDismissController,
-            restrict: 'A'
-        };
-        return directive;
-        
-    }
-
-    //
-    // Contrller definition
-    // 
-    
-    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchOpenController ($scope, $element, NavSearch) {
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.toggle);
-    }
-
-    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchDismissController ($scope, $element, NavSearch) {
-      
-      var inputSelector = '.navbar-form input[type="text"]';
-
-      $(inputSelector)
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('keyup', function(e) {
-          if (e.keyCode === 27) // ESC
-            NavSearch.dismiss();
-        });
-        
-      // click anywhere closes the search
-      $(document).on('click', NavSearch.dismiss);
-      // dismissable options
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.dismiss);
-    }
-
-})();
-
-
-/**=========================================================
- * Module: nav-search.js
- * Services to share navbar search functions
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .service('NavSearch', NavSearch);
-
-    function NavSearch() {
-        this.toggle = toggle;
-        this.dismiss = dismiss;
-
-        ////////////////
-
-        var navbarFormSelector = 'form.navbar-form';
-
-        function toggle() {
-          var navbarForm = $(navbarFormSelector);
-
-          navbarForm.toggleClass('open');
-
-          var isOpen = navbarForm.hasClass('open');
-
-          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
-        }
-
-        function dismiss() {
-          $(navbarFormSelector)
-            .removeClass('open') // Close control
-            .find('input[type="text"]').blur() // remove focus
-            // .val('') // Empty input
-            ;
-        }
-    }
-})();
-
 
 (function() {
     'use strict';
@@ -2791,6 +2684,115 @@ var SCREENING_STATUS = {
         }
     }
 })();
+/**=========================================================
+ * Module: navbar-search.js
+ * Navbar search toggler * Auto dismiss on ESC key
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .directive('searchOpen', searchOpen)
+        .directive('searchDismiss', searchDismiss);
+
+    //
+    // directives definition
+    // 
+    
+    function searchOpen () {
+        var directive = {
+            controller: searchOpenController,
+            restrict: 'A'
+        };
+        return directive;
+
+    }
+
+    function searchDismiss () {
+        var directive = {
+            controller: searchDismissController,
+            restrict: 'A'
+        };
+        return directive;
+        
+    }
+
+    //
+    // Contrller definition
+    // 
+    
+    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchOpenController ($scope, $element, NavSearch) {
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.toggle);
+    }
+
+    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchDismissController ($scope, $element, NavSearch) {
+      
+      var inputSelector = '.navbar-form input[type="text"]';
+
+      $(inputSelector)
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('keyup', function(e) {
+          if (e.keyCode === 27) // ESC
+            NavSearch.dismiss();
+        });
+        
+      // click anywhere closes the search
+      $(document).on('click', NavSearch.dismiss);
+      // dismissable options
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.dismiss);
+    }
+
+})();
+
+
+/**=========================================================
+ * Module: nav-search.js
+ * Services to share navbar search functions
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .service('NavSearch', NavSearch);
+
+    function NavSearch() {
+        this.toggle = toggle;
+        this.dismiss = dismiss;
+
+        ////////////////
+
+        var navbarFormSelector = 'form.navbar-form';
+
+        function toggle() {
+          var navbarForm = $(navbarFormSelector);
+
+          navbarForm.toggleClass('open');
+
+          var isOpen = navbarForm.hasClass('open');
+
+          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
+        }
+
+        function dismiss() {
+          $(navbarFormSelector)
+            .removeClass('open') // Close control
+            .find('input[type="text"]').blur() // remove focus
+            // .val('') // Empty input
+            ;
+        }
+    }
+})();
+
 (function() {
     'use strict';
 
@@ -3233,70 +3235,6 @@ var SCREENING_STATUS = {
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .config(translateConfig)
-        ;
-    translateConfig.$inject = ['$translateProvider'];
-    function translateConfig($translateProvider){
-
-      $translateProvider.useStaticFilesLoader({
-          prefix : 'app/i18n/',
-          suffix : '.json'
-      });
-
-      $translateProvider.preferredLanguage('en');
-      $translateProvider.useLocalStorage();
-      $translateProvider.usePostCompiling(true);
-      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
-
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .run(translateRun)
-        ;
-    translateRun.$inject = ['$rootScope', '$translate'];
-    
-    function translateRun($rootScope, $translate){
-
-      // Internationalization
-      // ----------------------
-
-      $rootScope.language = {
-        // Handles language dropdown
-        listIsOpen: false,
-        // list of available languages
-        available: {
-          'en':       'English',
-          'es_AR':    'Español'
-        },
-        // display always the current ui language
-        init: function () {
-          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
-          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
-          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
-        },
-        set: function (localeId) {
-          // Set the new idiom
-          $translate.use(localeId);
-          // save a reference for the current language
-          $rootScope.language.selected = $rootScope.language.available[localeId];
-          // finally toggle dropdown
-          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
-        }
-      };
-
-      $rootScope.language.init();
-
-    }
-})();
 /**=========================================================
  * Module: sidebar-menu.js
  * Handle sidebar collapsible elements
@@ -3700,139 +3638,70 @@ var SCREENING_STATUS = {
     }
 })();
 
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.welcomePage')
-        .controller('TaskDetailController', TaskDetailController);
-
-    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items','SweetAlert'];
-
-    function TaskDetailController($mdDialog, WelcomeService ,items,SweetAlert) {
-        var vm = this
-        vm.cancel = _cancel;
-        vm.approveUser = _approveUser;
-        vm.declineUser = _declineUser;
-        vm.task = items.taskInfo;
-        console.log("task ",vm.task);
-        WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
-            // console.log("task related user",response);
-            vm.userInfo = response.data;
-
-        },function(error){
-            console.log("error",error);
-        });
-
-        function _approveUser() {
-            var task = {
-                taskId:vm.task._id ,
-                status: "approved",
-                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
-            };
-            updateStatus(task);
-        }
-
-        function _declineUser() {
-            var task = {
-                taskId:vm.task._id ,
-                status: "declined",
-                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
-            };
-            updateStatus(task);
-        }
-
-        function updateStatus(task){
-            WelcomeService.ChangeTaskStatus(task).then(
-                function(response) {
-                    SweetAlert.swal('Task Status Changed!',
-                        'Task '+ task.status + ' Successfully!',
-                        'success');
-                    console.log("task updated",response);
-                    $mdDialog.hide();
-                },
-                function(error) {
-                    SweetAlert.swal( 'Oops...',
-                        'Something went wrong!',
-                        'error');
-                    console.log("could not be updated", error);
-                }
-            );
-        }
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-    }
-
-}(window.angular));
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.welcomePage')
-        .controller('WelcomeController', WelcomeController);
-
-    WelcomeController.$inject = ['$mdDialog', 'WelcomeService','AuthService'];
-
-    function WelcomeController($mdDialog, WelcomeService ,AuthService) {
-        var vm = this;
-
-    }
-
-}(window.angular));
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
+(function() {
     'use strict';
-    angular.module('app.welcomePage')
 
-        .service('WelcomeService', WelcomeService);
-    WelcomeService.$inject = ['$http', 'CommonService','AuthService'];
+    angular
+        .module('app.translate')
+        .config(translateConfig)
+        ;
+    translateConfig.$inject = ['$translateProvider'];
+    function translateConfig($translateProvider){
 
-    function WelcomeService($http, CommonService,AuthService) {
-        return {
-            GetTasks: _getTasks,
-            GetUserAccount:_getUserAccount,
-            ChangeTaskStatus:_changeTaskStatus
-        };
+      $translateProvider.useStaticFilesLoader({
+          prefix : 'app/i18n/',
+          suffix : '.json'
+      });
 
-        function _getUserAccount(id){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
-        }
-        function _getTasks(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Tasks.GetAll),httpConfig);
-        }
-        function _changeTaskStatus(taskObj) {
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
-        }
+      $translateProvider.preferredLanguage('en');
+      $translateProvider.useLocalStorage();
+      $translateProvider.usePostCompiling(true);
+      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
+
     }
+})();
+(function() {
+    'use strict';
 
-})(window.angular);
+    angular
+        .module('app.translate')
+        .run(translateRun)
+        ;
+    translateRun.$inject = ['$rootScope', '$translate'];
+    
+    function translateRun($rootScope, $translate){
+
+      // Internationalization
+      // ----------------------
+
+      $rootScope.language = {
+        // Handles language dropdown
+        listIsOpen: false,
+        // list of available languages
+        available: {
+          'en':       'English',
+          'es_AR':    'Español'
+        },
+        // display always the current ui language
+        init: function () {
+          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
+          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
+          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
+        },
+        set: function (localeId) {
+          // Set the new idiom
+          $translate.use(localeId);
+          // save a reference for the current language
+          $rootScope.language.selected = $rootScope.language.available[localeId];
+          // finally toggle dropdown
+          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
+        }
+      };
+
+      $rootScope.language.init();
+
+    }
+})();
 /**=========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
@@ -4266,6 +4135,139 @@ var SCREENING_STATUS = {
 /**
  * Created by Yoni on 12/3/2017.
  */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.welcomePage')
+        .controller('TaskDetailController', TaskDetailController);
+
+    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items','SweetAlert'];
+
+    function TaskDetailController($mdDialog, WelcomeService ,items,SweetAlert) {
+        var vm = this
+        vm.cancel = _cancel;
+        vm.approveUser = _approveUser;
+        vm.declineUser = _declineUser;
+        vm.task = items.taskInfo;
+        console.log("task ",vm.task);
+        WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
+            // console.log("task related user",response);
+            vm.userInfo = response.data;
+
+        },function(error){
+            console.log("error",error);
+        });
+
+        function _approveUser() {
+            var task = {
+                taskId:vm.task._id ,
+                status: "approved",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
+        }
+
+        function _declineUser() {
+            var task = {
+                taskId:vm.task._id ,
+                status: "declined",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
+        }
+
+        function updateStatus(task){
+            WelcomeService.ChangeTaskStatus(task).then(
+                function(response) {
+                    SweetAlert.swal('Task Status Changed!',
+                        'Task '+ task.status + ' Successfully!',
+                        'success');
+                    console.log("task updated",response);
+                    $mdDialog.hide();
+                },
+                function(error) {
+                    SweetAlert.swal( 'Oops...',
+                        'Something went wrong!',
+                        'error');
+                    console.log("could not be updated", error);
+                }
+            );
+        }
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.welcomePage')
+        .controller('WelcomeController', WelcomeController);
+
+    WelcomeController.$inject = ['$mdDialog', 'WelcomeService','AuthService'];
+
+    function WelcomeController($mdDialog, WelcomeService ,AuthService) {
+        var vm = this;
+
+    }
+
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.welcomePage')
+
+        .service('WelcomeService', WelcomeService);
+    WelcomeService.$inject = ['$http', 'CommonService','AuthService'];
+
+    function WelcomeService($http, CommonService,AuthService) {
+        return {
+            GetTasks: _getTasks,
+            GetUserAccount:_getUserAccount,
+            ChangeTaskStatus:_changeTaskStatus
+        };
+
+        function _getUserAccount(id){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
+        }
+        function _getTasks(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Tasks.GetAll),httpConfig);
+        }
+        function _changeTaskStatus(taskObj) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
+        }
+    }
+
+})(window.angular);
+/**
+ * Created by Yoni on 12/3/2017.
+ */
 (function () {
     'use strict';
     angular.module('app.core').factory('AlertService', AlertService);
@@ -4572,7 +4574,8 @@ var SCREENING_STATUS = {
 
 })(window.angular);
 (function() {
-    angular.module("app.common").factory("PrintPreviewService", printPreviewService);
+    angular.module("app.common")
+        .factory("PrintPreviewService", printPreviewService);
 
     printPreviewService.$inject = ["$mdDialog", "$mdMedia", "PrintService", "$rootScope"];
 
@@ -5524,7 +5527,7 @@ function runBlock() {
                     break;
                 case 'screening_inprogress':
                 case 'declined_under_review':
-                    style =  'label bg-yellow-dark';
+                    style =  'label label-warning';
                     break;
                 case 'loan_application_accepted':
                     style =  'label bg-info-dark';
@@ -7288,16 +7291,31 @@ function runBlock() {
 
     angular.module("app.clients").controller("ClientDetailController", ClientDetailController);
 
-    ClientDetailController.$inject = ['LoanManagementService','$stateParams','blockUI'];
+    ClientDetailController.$inject = ['LoanManagementService','$stateParams','blockUI','PrintPreviewService'];
 
-    function ClientDetailController(LoanManagementService,$stateParams,blockUI) {
+    function ClientDetailController(LoanManagementService,$stateParams,blockUI,PrintPreviewService) {
         var vm = this;
         vm.clientId =  $stateParams.id;
         vm.visibility = {showMoreClientDetail: false};
+        vm.labelBasedOnStatusStyle = LoanManagementService.StyleLabelByStatus;
+
         vm.onTabSelected = _onTabSelected;
+        vm.print = _print;
+        vm.questionValueChanged = _questionValueChanged;
 
         initialize();
 
+
+        function _print() {
+            var preview = [{
+                Name: "Screening",
+                TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
+                IsCommon: false,
+                IsSelected: false,
+                Data: angular.extend({ Title: "Screening" }, vm.client)
+            }];
+            PrintPreviewService.show(preview);
+        }
 
 
         function initialize() {
@@ -7320,8 +7338,8 @@ function runBlock() {
             myBlockUI.start();
             LoanManagementService.GetClientScreening(vm.clientId).then(function (response) {
                 myBlockUI.stop();
-                vm.client.screening = response.data;
-                console.log("vm.client.screening",vm.client);
+                vm.clientScreening = response.data;
+                console.log("screening",vm.clientScreening);
 
             },function (error) {
                 myBlockUI.stop();
@@ -7362,6 +7380,43 @@ function runBlock() {
                 default:
                     console.log("tab name clicked",type);
             }
+        }
+
+        function _questionValueChanged(question) {
+
+            var prQues = getPrerequisiteQuestion(question._id);
+            _.each(prQues, function(prQue) {
+                if (prQue) {
+                    var prerequisite = prQue.prerequisites[0];
+                    //Set question's show based by comparing current value with expected preq. value
+                    prQue.show = (prerequisite.answer === question.values[0]);
+                }
+            });
+
+        }
+
+        function getPrerequisiteQuestion(questionID) {
+            //extract outer questions; if section type, get them from sections
+            var questions = vm.clientScreening.has_sections ?
+                _.reduce(vm.clientScreening.sections, function(m, q) {
+                    return m.concat(q.questions);
+                }, []) :
+                vm.clientScreening.questions;
+
+            //Get all subquestions
+            var subQuestions = _.reduce(questions, function(m, q) {
+                return m.concat(q.sub_questions);
+            }, []);
+
+            //merge questions with subquestions into a singl array
+            var mergedQuestions = _.uniq(_.union(questions, subQuestions), false, _.property('_id'));
+
+            //Search in mergedQuestions
+            var prQue = _.filter(mergedQuestions, function(obj) {
+                return _.some(obj.prerequisites, { question: questionID });
+            });
+
+            return prQue;
         }
     }
 
@@ -7758,6 +7813,95 @@ function runBlock() {
 
 
 })(window.angular);
+(function(angular) {
+  "use strict";
+
+    angular.module("app.mfi").controller("BranchController", BranchController);
+
+    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
+
+  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
+    var vm = this;
+
+    vm.addBranch = addBranch;
+    vm.editBranch = _editBranch;
+    vm.changeStatus = _changeStatus;
+
+     getBranches();
+
+    function getBranches() {
+      MainService.GetBranches().then(
+        function(response) {
+          vm.branches = response.data.docs;
+        },
+        function(error) {
+          console.log("error", error);
+        }
+      );
+
+    }
+
+    function addBranch(ev) {
+        $mdDialog.show({
+            locals: {items: null},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+
+    }
+
+    function _editBranch(selectedBranch,ev) {
+        $mdDialog.show({
+            locals: {items: selectedBranch},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+    }
+
+    function _changeStatus(ChangeStatus) {
+      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
+      MainService.UpdateBranch(ChangeStatus).then(
+        function(response) {
+
+          AlertService.showSuccess(
+              "Updated branch status",
+              "Updated Status successfully."
+          );
+          // console.log("updated successfully", response);
+
+        },
+        function(error) {
+          // console.log("could not be updated", error);
+          AlertService.showError(
+            "Status not changed. Please try again.",
+            "ERROR"
+          );
+        }
+      );
+
+    }
+
+  }
+})(window.angular);
+
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -8086,95 +8230,6 @@ function runBlock() {
 
 
 })(window.angular);
-(function(angular) {
-  "use strict";
-
-    angular.module("app.mfi").controller("BranchController", BranchController);
-
-    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
-
-  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
-    var vm = this;
-
-    vm.addBranch = addBranch;
-    vm.editBranch = _editBranch;
-    vm.changeStatus = _changeStatus;
-
-     getBranches();
-
-    function getBranches() {
-      MainService.GetBranches().then(
-        function(response) {
-          vm.branches = response.data.docs;
-        },
-        function(error) {
-          console.log("error", error);
-        }
-      );
-
-    }
-
-    function addBranch(ev) {
-        $mdDialog.show({
-            locals: {items: null},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-
-    }
-
-    function _editBranch(selectedBranch,ev) {
-        $mdDialog.show({
-            locals: {items: selectedBranch},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-    }
-
-    function _changeStatus(ChangeStatus) {
-      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
-      MainService.UpdateBranch(ChangeStatus).then(
-        function(response) {
-
-          AlertService.showSuccess(
-              "Updated branch status",
-              "Updated Status successfully."
-          );
-          // console.log("updated successfully", response);
-
-        },
-        function(error) {
-          // console.log("could not be updated", error);
-          AlertService.showError(
-            "Status not changed. Please try again.",
-            "ERROR"
-          );
-        }
-      );
-
-    }
-
-  }
-})(window.angular);
-
 (function(angular) {
   "use strict";
 

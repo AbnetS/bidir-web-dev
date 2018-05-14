@@ -1,31 +1,3 @@
-<!-- <div class="row">
-    <div class="col-xs-1">
-        <b>No</b>
-    </div>
-    <div ng-class="{'THREE_COLUMNS' : 'col-xs-6', 'TWO_COLUMNS': 'col-xs-7'}[vm.layout]">
-        <b>Question</b>
-    </div>
-    <div ng-class="{'THREE_COLUMNS' : 'col-xs-3', 'TWO_COLUMNS': 'col-xs-4'}[vm.layout]">
-        <b>Answer</b>
-    </div>
-    <div ng-if="vm.layout == 'THREE_COLUMNS'" class="col-xs-2">
-        <b>Remark</b>
-    </div>
-</div>
-<hr>
-<div ng-switch on="vm.has_sections">
-    <div ng-switch-when="true">
-        <div ng-repeat="section in vm.sections">
-            <div class="bg-success text-center text-uppercase">
-                <h5 class="">{{section.title}}</h5>
-            </div>
-            <question-row ng-repeat="question in section.questions | filter:{show: true}" question-row-data="question" layout-data="vm.layout" row-no="$index + 1" is-readonly="true"></question-row>
-        </div>
-    </div>
-    <div ng-switch-default>
-        <question-row ng-repeat="question in vm.questions | filter:{show: true}" question-row-data="question" layout-data="vm.layout" row-no="$index + 1" is-readonly="true"></question-row>
-    </div> -->
-
 <div class="table-content">
    <div class="table">
       <div class="row header-row uppercase">
@@ -45,27 +17,12 @@
                <div class="row header-row text-center text-uppercase">
                   <h5>{{section.title}}</h5>
                </div>
-               <!-- <div class="row no-stripe" ng-repeat="question in section.questions | filter:{show: true}">
-                        <div class="col-xs-1">
-                            {{$index + 1}}
-                        </div>
-                        <div ng-class="{'THREE_COLUMNS' : 'col-xs-5', 'TWO_COLUMNS': 'col-xs-6'}[vm.layout]">
-                            {{question.question_text}}
-                        </div>
-                        <div ng-class="{'THREE_COLUMNS' : 'col-xs-4', 'TWO_COLUMNS': 'col-xs-5'}[vm.layout]">
-                            <small ng-repeat="value in question.values">{{value}}</small>
-                        </div>
-                        <div ng-if="vm.layout == 'THREE_COLUMNS'" class="col-xs-2">
-                            <small>{{question.remark}}</small>
-                        </div>
 
-
-                    </div> -->
-               <question-row-with-answer ng-repeat="question in section.questions | filter:{show: true}" question-row-data="question" layout-data="vm.layout" parent-row-no="null" row-no="$index + 1"></question-row-with-answer>
+               <question-row-with-answer ng-repeat="question in section.questions" question-row-data="question" layout-data="vm.layout" parent-row-no="null" row-no="$index + 1"></question-row-with-answer>
             </div>
          </div>
          <div ng-switch-default>
-            <question-row-with-answer ng-repeat="question in vm.questions | filter:{show: true}" question-row-data="question" layout-data="vm.layout" parent-row-no="null" row-no="$index + 1"></question-row-with-answer>
+            <question-row-with-answer ng-repeat="question in vm.questions" question-row-data="question" layout-data="vm.layout" parent-row-no="null" row-no="$index + 1"></question-row-with-answer>
          </div>
       </div>
    </div>

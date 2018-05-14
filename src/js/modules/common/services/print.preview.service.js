@@ -1,5 +1,6 @@
 (function() {
-    angular.module("app.common").factory("PrintPreviewService", printPreviewService);
+    angular.module("app.common")
+        .factory("PrintPreviewService", printPreviewService);
 
     printPreviewService.$inject = ["$mdDialog", "$mdMedia", "PrintService", "$rootScope"];
 

@@ -8,7 +8,9 @@
             <div class="col-md-10">
                 <span>{{questionRowData.question_text}}</span>
                 <br>
-                <question-row-with-answer ng-repeat="question in questionRowData.sub_questions" question-row-data="question" layout-data="'TWO_COLUMNS'" parent-row-no="rowNo" row-no="$index + 1" is-subquestion="true"></question-row-with-answer>
+                <question-row-with-answer ng-repeat="question in questionRowData.sub_questions"
+                                          question-row-data="question" layout-data="'TWO_COLUMNS'"
+                                          parent-row-no="rowNo" row-no="$index + 1" is-subquestion="true"></question-row-with-answer>
             </div>
 
         </div>

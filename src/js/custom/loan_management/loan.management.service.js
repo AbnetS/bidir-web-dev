@@ -427,7 +427,7 @@
                     break;
                 case 'screening_inprogress':
                 case 'declined_under_review':
-                    style =  'label bg-yellow-dark';
+                    style =  'label label-warning';
                     break;
                 case 'loan_application_accepted':
                     style =  'label bg-info-dark';

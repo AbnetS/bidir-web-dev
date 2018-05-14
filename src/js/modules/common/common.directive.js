@@ -92,22 +92,6 @@
             };
         }])
 
-        .directive('questionRowWithAnswer', function($timeout, $compile, $filter) {
-            return {
-                restrict: 'E',
-                replace: true,
-                scope: {
-                    questionRowData: '=questionRowData',
-                    layoutData: '=layoutData',
-                    parentRowNo: '=parentRowNo',
-                    rowNo: '=rowNo',
-                    isSubquestion: '=isSubquestion'
-                },
-                link: function($scope, element, attrs) {},
-                templateUrl: 'app/views/common/directives/templates/question_row_with_answer.tmpl.html'
-            };
-        })
-
         .directive('questionRow', function($timeout, $compile, $filter) {
             return {
                 restrict: 'E',
@@ -130,12 +114,28 @@
                 templateUrl: 'app/views/common/directives/templates/question_row.tmpl.html'
             };
         })
+        .directive('questionRowWithAnswer', function($timeout, $compile, $filter) {
+            return {
+                restrict: 'E',
+                replace: true,
+                scope: {
+                    questionRowData: '=questionRowData',
+                    layoutData: '=layoutData',
+                    parentRowNo: '=parentRowNo',
+                    rowNo: '=rowNo',
+                    isSubquestion: '=isSubquestion'
+                },
+                link: function($scope, element, attrs) {},
+                templateUrl: 'app/views/common/directives/templates/question_row_with_answer.tmpl.html'
+            };
+        })
         .directive('question', function($timeout, $compile, $filter) {
             return {
                 restrict: 'E',
                 replace: true,
                 scope: {
-                    questionData: '=questionData'
+                    questionData: '=questionData',
+                    isReadonly: '=isReadonly'
                 },
                 link: function($scope, element, attrs) {
 
@@ -146,15 +146,16 @@
 
                             switch (questionType) {
                                 case "fill_in_blank":
-                                    {
-                                        break;
-                                    }
+                                {
+                                    break;
+                                }
                                 case "yes_no":
-                                    {
-                                        questionType = "single_choice";
-                                        break;
-                                    }
+                                {
+                                    questionType = "single_choice";
+                                    break;
+                                }
                             }
+
                             //Parse values
                             if (questionData.validation_factor === 'NUMERIC' || questionData.validation_factor === 'ALPHANUMERIC') {
                                 questionData.values = _.map(questionData.values, function(val) {
