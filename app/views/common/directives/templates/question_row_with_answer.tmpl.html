@@ -1,0 +1,28 @@
+<div ng-switch on="questionRowData.type">
+   <div ng-switch-when="GROUPED">
+      <!-- code to render grouped type questions-->
+      <div class="row">
+         <div class="col-xs-2">
+            <span ng-if="parentRowNo != null">{{parentRowNo}}.</span>{{rowNo}}
+         </div>
+         <div class="col-md-10">
+            <span>{{questionRowData.question_text}}</span>
+            <br>
+            <question-row-with-answer ng-repeat="question in questionRowData.sub_questions" question-row-data="question" layout-data="'TWO_COLUMNS'" parent-row-no="rowNo" row-no="$index + 1" is-subquestion="true"></question-row-with-answer>
+         </div>
+
+      </div>
+   </div>
+   <div ng-switch-default>
+      <!-- code to render other type questions-->
+      <div class="row" ng-class="{'true' : 'italic-font'}[isSubquestion]">
+         <div class="col-xs-2">
+            <span ng-if="parentRowNo != null">{{parentRowNo}}.</span>{{rowNo}}
+         </div>
+         <div class="col-md-10">
+            <span>{{questionRowData.question_text}}</span>
+            <span class="label label-success pull-right" ng-repeat="value in questionRowData.values">{{value}} &nbsp;</span>
+         </div>
+      </div>
+   </div>
+</div>
