@@ -157,14 +157,6 @@
             </div>
         </uib-tab>
         <uib-tab ng-click="vm.onTabSelected('LOAN_APPLICATION')" heading="Loan Applications">
-            <div class="row">
-                <div class="col-md-2 bg-green text-left text-uppercase">
-                    <h5 class="">LOAN APPLICATION</h5>
-                </div>
-               <div class="col-lg-12">
-                   <h1> loan application</h1>
-               </div>
-            </div>
             <div class="row" ng-show="!vm.visibility.showLoanApplicationDetail">
                 <div class="col-lg-12">
 
@@ -187,7 +179,7 @@
 
                     <md-toolbar class="md-table-toolbar md-default" ng-hide="vm.filter.show">
                         <div class="md-toolbar-tools">
-                            <h2 class="md-title">Clients under screening</h2>
+                            <h2 class="md-title">Clients under loan application</h2>
 
                             <div flex="" class="flex"></div>
                             <button class="md-icon-button md-button md-ink-ripple" type="button"
@@ -200,7 +192,7 @@
 
 
                     <md-table-container>
-                        <table md-table md-progress="vm.screeningPromise"
+                        <table md-table md-progress="vm.loanApplicationPromise"
                                class="table-hover">
                             <thead md-head class="text-gray-dark">
                             <tr md-row>
@@ -214,18 +206,18 @@
                             </tr>
 
                             <tbody md-body>
-                            <tr md-row ng-repeat="screening in vm.screenings">
+                            <tr md-row ng-repeat="loanApplication in vm.loan_applications">
 
                                 <td md-cell>{{vm.query.per_page* (vm.query.page - 1) +  $index + 1}}</td>
                                 <td md-cell>
-                                    {{ screening.client.first_name }} {{ screening.client.last_name }} {{screening.client.grandfather_name}}
+                                    {{ loanApplication.client.first_name }} {{ loanApplication.client.last_name }} {{loanApplication.client.grandfather_name}}
                                 </td>
-                                <td md-cell >{{screening.client.gender}}</td>
-                                <td md-cell > {{screening.client.date_of_birth | date}}</td>
-                                <td md-cell>{{screening.client.civil_status}}</td>
-                                <td md-cell>{{screening.client.status | ReplaceUnderscore}}</td>
+                                <td md-cell >{{loanApplication.client.gender}}</td>
+                                <td md-cell > {{loanApplication.client.date_of_birth | date}}</td>
+                                <td md-cell>{{loanApplication.client.civil_status}}</td>
+                                <td md-cell>{{loanApplication.client.status | ReplaceUnderscore}}</td>
                                 <td md-cell>
-                                    <a ng-click="vm.screeningDetail(screening,$event)">
+                                    <a ng-click="vm.loanApplicationDetail(loanApplication,$event)">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </td>
