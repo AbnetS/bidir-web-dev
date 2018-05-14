@@ -21,7 +21,9 @@
             GetClients: _getClients,
             GetClientDetail:_getClientDetail,
             SearchClient:_searchClient,
-            GetBranches: _getBranches
+            GetBranches: _getBranches,
+
+            StyleLabelByStatus: _styleLabelByStatus
         };
 
         function _getScreenings(parameters) {
@@ -409,6 +411,36 @@
         }
         function _getClients(parameters){
             return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,parameters));
+        }
+
+        function _styleLabelByStatus(clientStatus) {
+            var style = '';
+            switch (clientStatus){
+                case  'new':
+                    style =  'label bg-gray';
+                    break;
+                case  'submitted':
+                    style =  'label bg-primary-dark';
+                    break;
+                case  'screening_inprogress':
+                    style =  'label bg-yellow-dark';
+                    break;
+                case 'loan_application_accepted':
+                    style =  'label bg-info-dark';
+                    break;
+                case 'eligible':
+                    style =  'label label-success';
+                    break;
+                case 'ineligible':
+                    style =  'label label-danger';
+                    break;
+                case 'loan_application_new':
+                    style =  'label bg-purple-dark';
+                    break;
+                default:
+                    style =  'label label-inverse';
+            }
+            return style;
         }
 
     }

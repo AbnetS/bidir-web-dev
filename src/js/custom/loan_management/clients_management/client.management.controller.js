@@ -14,9 +14,9 @@
         vm.currentUser = {
             selected_access_branch:undefined
         };
+
         vm.pageSizes = [10, 25, 50, 100, 250, 500];
         vm.filter = {show : false};
-
         vm.options = {
             rowSelection: true,
             multiSelect: true,
@@ -27,7 +27,6 @@
             limitSelect: true,
             pageSelect: false
         };
-
         vm.query = {
             search:'',
             page:1,
@@ -49,9 +48,10 @@
             console.log("search text",vm.query.search);
         };
 
-
+        vm.labelBasedOnStatus = LoanManagementService.StyleLabelByStatus;
         vm.clientDetail = _clientDetail;
         vm.onSelectedBranch = _onSelectedBranch;
+
 
         vm.clearSearch = function(){
             vm.query.search = "";
@@ -127,6 +127,7 @@
 
             }
         });
+
     }
 
 

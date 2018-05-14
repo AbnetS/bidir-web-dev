@@ -95,7 +95,9 @@
                             <td md-cell >{{client.date_of_birth | date }}</td>
                             <td md-cell>{{client.civil_status}}</td>
                             <td md-cell>{{client.branch.name }}</td>
-                            <td md-cell>{{client.status | ReplaceUnderscore}}</td>
+                            <td md-cell>
+                                <span ng-class="vm.labelBasedOnStatus(client.status)">{{client.status | ReplaceUnderscore}}</span>
+                            </td>
 
                             <td md-cell>
                                 <a ng-click="vm.clientDetail(client,$event)">
