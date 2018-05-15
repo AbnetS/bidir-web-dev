@@ -14,6 +14,14 @@
                         $scope.removeItem = removeItem;
 
                         $scope.printables = model;
+                        $scope.preparedBy = 'super admin';
+                        $scope.Name = 'Bidir mfi';
+                        $scope.ShowLogoOnPrintOut = true;
+                        $scope.CurrentDate = '30-Mar-2018';
+                        $scope.Address = {
+                            FullAddress:'Addis Ababa,Ethiopia',
+                            DisplayPhonenumber:'251 - 111-123-456'
+                        };
 
                         $scope.cancel = function() {
                             $mdDialog.cancel();

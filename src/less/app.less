@@ -67,6 +67,7 @@
 
 
 @import "custom/material-custom";
+@import "custom/custom.print";
 
 .green{
   background: #4CAF50;
@@ -226,4 +227,14 @@ legend {
 
 .alternate-div{
   background-color: whitesmoke;
+}
+.print-modal {
+  height: auto;
+  width: 210mm;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 10000;
+  position: absolute;
+  padding: 5px;
+  background-color: #fff;
 }

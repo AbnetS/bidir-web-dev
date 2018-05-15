@@ -98,9 +98,55 @@
     </style>
     <md-dialog-content>
         <div class="container-fluid print-container" id="printableDiv">
+            <hr>
+            <div>
+                <div ng-if="ShowLogoOnPrintOut" class="pull-left">
+                    <img id="Logo"
+                         src="http://bidir-api-bucket.storage.googleapis.com/assets/BUUSAA_GONOFAA_MICROFINANCE_SHARE_COMPANY_28713d14d76c.png"
+                         class="img-thumbnail"
+                         alt="logo" width="100" height="120">
+                </div>
+
+                <div class="receipt-header">
+                    <h1>{{Name}}</h1>
+                    <h4>{{Address.FullAddress}}</h4>
+                    <h4>Phone: {{Address.DisplayPhonenumber}}</h4>
+                </div>
+            </div>
+            <hr>
+
+
+
             <div ng-repeat="printable in printables" ng-include="printable.TemplateUrl">
                 <div ng-include src="printable.TemplateUrl" onLoad="vm=printable.Data"></div>
             </div>
+
+            <div class="pull-left">
+                <strong>Printed By :</strong>
+                <em> {{preparedBy}}</em>
+            </div>
+            <div class="pull-right">
+                <strong>DISCLAIMER: </strong>
+                <em>
+                    Survey Disclaimers regarding physical or mental health frequently include a provision that data is not associated with the answers provided on the survey.
+                </em>
+            </div>
+            <div class="pull-left" >
+                Signature: ____________________________________________
+            </div>
+            <div class="pull-right" >
+                Date: {{CurrentDate}}
+            </div>
+
+            <!--<div class="page-logo pull-right">-->
+
+                <!--<a href="#">-->
+                    <!--&lt;!&ndash;<img src="app/img/oh_logo.png" alt="logo" class="logo-default">&ndash;&gt;-->
+                <!--</a>-->
+                <!--&lt;!&ndash;<h4>{{application.name}}</h4>&ndash;&gt;-->
+            <!--</div>-->
+
+
         </div>
     </md-dialog-content>
     <md-dialog-actions layout="row">

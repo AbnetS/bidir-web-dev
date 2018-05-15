@@ -52,7 +52,7 @@
                 <div class="form-group">
                     <div class="col-sm-4">Status:</div>
                     <div class="col-sm-8">
-                        <div ng-class="vm.labelBasedOnStatusStyle(vm.client.status)"> {{vm.client.status | ReplaceUnderscore }}</div>
+                        <!--<div ng-class="vm.labelBasedOnStatusStyle(vm.client.status)"> {{vm.client.status | ReplaceUnderscore }}</div>-->
                     </div>
                 </div>
             </form>
@@ -214,7 +214,7 @@
                         <div ng-class="{'THREE_COLUMNS' : 'col-md-3', 'TWO_COLUMNS': 'col-md-4'}[vm.clientScreening.layout]">
                             <b>Answer</b>
                         </div>
-                        <div ng-if="vm.client.layout == 'THREE_COLUMNS'" class="col-md-2">
+                        <div ng-if="vm.clientScreening.layout == 'THREE_COLUMNS'" class="col-md-2">
                             <b>Remark</b>
                         </div>
                     </div>
@@ -224,8 +224,8 @@
                         <question-row ng-repeat="question in vm.clientScreening.questions"
                                       question-row-data="question"
                                       layout-data="vm.clientScreening.layout"
-                                      row-no="$index + 1" is-readonly="true"
-                                      value-changed="vm.questionValueChanged"></question-row>
+                                      row-no="$index + 1" is-readonly="true">
+                        </question-row>
 
 
                     </div>
@@ -263,7 +263,7 @@
                                           question-row-data="question"
                                           layout-data="vm.client.loan_application.layout"
                                           row-no="$index + 1"
-                                          is-readonly="true" value-changed="vm.questionValueChanged"></question-row>
+                                          is-readonly="true"></question-row>
                         </div>
 
                         <br/>

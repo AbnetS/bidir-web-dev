@@ -3,13 +3,13 @@
       <!-- code to render grouped type questions-->
       <div class="row question-row" ng-class="{'alternate-div': rowNo % 2 != 0 && !isSubquestion}">
          <div class="col-xs-1">
-            {{rowNo}}
+            <span ng-if="parentRowNo != null">{{parentRowNo}}.</span>{{rowNo}}
             <span ng-if="questionRowData.required">*</span>
          </div>
          <div ng-class="{'THREE_COLUMNS' : 'col-md-9', 'TWO_COLUMNS': 'col-md-11'}[layoutData]">
             {{questionRowData.question_text}}
             <br>
-            <question-row ng-repeat="question in questionRowData.sub_questions" question-row-data="question" layout-data="'TWO_COLUMNS'" row-no="$index + 1" is-subquestion="true" value-changed="callValueChanged(question)"></question-row>
+            <question-row ng-repeat="question in questionRowData.sub_questions" question-row-data="question" layout-data="'TWO_COLUMNS'" parent-row-no="rowNo" row-no="$index + 1" is-subquestion="true" is-readonly="isReadonly" value-changed="callValueChanged(question)"></question-row>
          </div>
          <div ng-if="layoutData == 'THREE_COLUMNS'" class="col-xs-2">
             <small>
@@ -22,14 +22,14 @@
       <!-- code to render other type questions-->
       <div class="row question-row" ng-class="{'alternate-div': rowNo % 2 != 0 && !isSubquestion}">
          <div class="col-xs-1">
-            {{rowNo}}
+            <span ng-if="parentRowNo != null">{{parentRowNo}}.</span>{{rowNo}}
             <span ng-if="questionRowData.required">*</span>
          </div>
          <div ng-class="{'THREE_COLUMNS' : 'col-md-6', 'TWO_COLUMNS': 'col-md-7'}[layoutData]">
             {{questionRowData.question_text}}
          </div>
          <div ng-class="{'THREE_COLUMNS' : 'col-md-3', 'TWO_COLUMNS': 'col-md-4'}[layoutData]">
-            <question question-data="questionRowData"></question>
+            <question question-data="questionRowData" is-readonly="isReadonly"></question>
          </div>
          <div ng-if="layoutData == 'THREE_COLUMNS'" class="col-xs-2">
             <small>

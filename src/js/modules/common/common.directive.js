@@ -99,6 +99,7 @@
                 scope: {
                     questionRowData: '=questionRowData',
                     layoutData: '=layoutData',
+                    parentRowNo: '=parentRowNo',
                     rowNo: '=rowNo',
                     isSubquestion: '=isSubquestion',
                     isReadonly: '=isReadonly',
