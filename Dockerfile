@@ -1,4 +1,4 @@
-# Dockerfile for bidir dev env't web admin service
+# Dockerfile for bidir taging/dev env't web admin service
 FROM nginx
 
 WORKDIR /usr/share/nginx/html

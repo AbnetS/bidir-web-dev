@@ -7,7 +7,6 @@ EXPOSE_PORT=18080
 CONT_PORT=80
 HOST_IP=`ifconfig ens4 | awk '/inet addr/{print substr($2,6)}'`
 MONGODB_URL=mongodb://$HOST_IP:27017/bidir
-sed -i "s+BaseUrl.*+BaseUrl: 'http://api.staging.bidir.gebeya.io/' //REMOTE API+g" src/js/modules/common/global.js
 NPM=$(which npm)
 sudo $NPM install
 cd src
