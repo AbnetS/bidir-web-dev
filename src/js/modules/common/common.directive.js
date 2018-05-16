@@ -107,7 +107,7 @@
                 },
                 link: function($scope, element, attrs) {
                     $scope.$watch('questionRowData.values', function(newValue) {
-                        if (!_.isEmpty(newValue) && $scope.questionRowData.type != 'FILL_IN_BLANK' && !_.isUndefined($scope.valueChanged)) {
+                        if (!_.isEmpty(newValue) && $scope.questionRowData.type !== QUESTION_TYPE.FILL_IN_BLANK && !_.isUndefined($scope.valueChanged)) {
                             $scope.valueChanged($scope.questionRowData);
                         }
                     }, true);

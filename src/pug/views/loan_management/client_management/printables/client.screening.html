@@ -1,7 +1,18 @@
 <div class="table-content">
+    <div class="header-title text-uppercase">
+        <h2>
+            {{vm.status}}
+        </h2>
+        <h2 class="pull-right">
+            {{vm.last_modified | date}}
+        </h2>
+    </div>
+
+
+
     <div class="table">
-        <div class="row header-row uppercase">
-            <div class="col-xs-2">
+        <div class="row header-row uppercase no-padding no-margin">
+            <div class="col-xs-2 ">
                 <strong>No</strong>
             </div>
             <div class="col-xs-8">
@@ -27,6 +38,21 @@
                 <question-row-with-answer ng-repeat="question in vm.questions"
                                           question-row-data="question" layout-data="vm.layout" parent-row-no="null" row-no="$index + 1"></question-row-with-answer>
             </div>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-xs-12 pull-left">
+            <address ng-repeat="sig in vm.signatures">
+                <strong>{{sig}}:</strong>&nbsp; ____________________________________________
+            </address>
+        </div>
+
+        <div class="col-xs-12">
+            <strong>DISCLAIMER: </strong>
+            <em>
+                Survey Disclaimers regarding physical or mental health frequently include a provision that data is not associated with the answers provided on the survey.
+            </em>
         </div>
     </div>
 

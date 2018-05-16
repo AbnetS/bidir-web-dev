@@ -80,6 +80,19 @@
     angular
         .module('app.colors', []);
 })();
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common", [])
+      .config(routeConfig)
+      .run(runBlock);
+
+  function runBlock() {}
+  function routeConfig() {}
+
+})(window.angular);
+
 (function() {
     'use strict';
 
@@ -102,19 +115,6 @@
             'angularMoment'
         ]);
 })();
-(function(angular) {
-  "use strict";
-
-  angular
-    .module("app.common", [])
-      .config(routeConfig)
-      .run(runBlock);
-
-  function runBlock() {}
-  function routeConfig() {}
-
-})(window.angular);
-
 (function() {
     'use strict';
 
@@ -397,123 +397,6 @@
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .config(coreConfig);
-
-    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
-    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
-
-      var core = angular.module('app.core');
-      // registering components after bootstrap
-      core.controller = $controllerProvider.register;
-      core.directive  = $compileProvider.directive;
-      core.filter     = $filterProvider.register;
-      core.factory    = $provide.factory;
-      core.service    = $provide.service;
-      core.constant   = $provide.constant;
-      core.value      = $provide.value;
-
-      // Disables animation on items with class .ng-no-animation
-      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
-
-      // Improve performance disabling debugging features
-      // $compileProvider.debugInfoEnabled(false);
-
-    }
-
-})();
-/**=========================================================
- * Module: constants.js
- * Define constants to inject across the application
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .constant('APP_MEDIAQUERY', {
-          'desktopLG':             1200,
-          'desktop':                992,
-          'tablet':                 768,
-          'mobile':                 480
-        })
-      ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .run(appRun);
-
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
-
-      // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });*/
-
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
-
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Hooks Example
-      // ----------------------------------- 
-
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
-
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
-
-    }
-
-})();
-
-
 (function(angular) {
   "use strict";
 
@@ -652,7 +535,7 @@
                 },
                 link: function($scope, element, attrs) {
                     $scope.$watch('questionRowData.values', function(newValue) {
-                        if (!_.isEmpty(newValue) && $scope.questionRowData.type != 'FILL_IN_BLANK' && !_.isUndefined($scope.valueChanged)) {
+                        if (!_.isEmpty(newValue) && $scope.questionRowData.type !== QUESTION_TYPE.FILL_IN_BLANK && !_.isUndefined($scope.valueChanged)) {
                             $scope.valueChanged($scope.questionRowData);
                         }
                     }, true);
@@ -854,6 +737,123 @@ var SCREENING_STATUS = {
     DECLINED_FINAL:{code:'declined_final',name:'Declined Final'},
     DECLINED_UNDER_REVIEW:{code:'declined_under_review',name:'Declined Under Review'}
 };
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
+
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+      // Disables animation on items with class .ng-no-animation
+      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
+
+      // Improve performance disabling debugging features
+      // $compileProvider.debugInfoEnabled(false);
+
+    }
+
+})();
+/**=========================================================
+ * Module: constants.js
+ * Define constants to inject across the application
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .run(appRun);
+
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });*/
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
+    }
+
+})();
+
 
 (function() {
     'use strict';
@@ -4591,12 +4591,12 @@ var SCREENING_STATUS = {
 
                         $scope.printables = model;
                         $scope.preparedBy = 'super admin';
-                        $scope.Name = 'Bidir mfi';
+                        $scope.Name = 'Buusaa Gonofaa Microfinance Share Company';
                         $scope.ShowLogoOnPrintOut = true;
                         $scope.CurrentDate = '30-Mar-2018';
                         $scope.Address = {
-                            FullAddress:'Addis Ababa,Ethiopia',
-                            DisplayPhonenumber:'251 - 111-123-456'
+                            Location:'Addis Ababa, Ethiopia',
+                            Phonenumber:'(255) 555-555555'
                         };
 
                         $scope.cancel = function() {
@@ -7309,20 +7309,38 @@ function runBlock() {
         vm.labelBasedOnStatusStyle = LoanManagementService.StyleLabelByStatus;
 
         vm.onTabSelected = _onTabSelected;
-        vm.print = _print;
+        vm.printLaonProcess = _print;
 
         initialize();
 
 
-        function _print() {
-            var preview = [{
-                Name: "Screening",
-                TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
-                IsCommon: false,
-                IsSelected: false,
-                Data: angular.extend({ Title: "Screening"}, vm.clientScreening)
-            }];
-            PrintPreviewService.show(preview);
+        function _print(type) {
+            console.log("type",vm.clientScreening)
+            var preview = [];
+            if(type === 'SCREENING'){
+                preview = [{
+                    Name: "Screening",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "Screening Result For " +
+                                                    vm.clientScreening.client.first_name + " " +
+                                                    vm.clientScreening.client.last_name + " " +
+                                                    vm.clientScreening.client.grandfather_name}, vm.clientScreening)
+                }];
+                PrintPreviewService.show(preview);
+            }else{
+                preview = [{
+                    Name: "Loan Application",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "Loan Application"}, vm.client.loan_application)
+                }];
+                PrintPreviewService.show(preview);
+            }
+
+
         }
 
 
@@ -7784,6 +7802,95 @@ function runBlock() {
 
 
 })(window.angular);
+(function(angular) {
+  "use strict";
+
+    angular.module("app.mfi").controller("BranchController", BranchController);
+
+    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
+
+  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
+    var vm = this;
+
+    vm.addBranch = addBranch;
+    vm.editBranch = _editBranch;
+    vm.changeStatus = _changeStatus;
+
+     getBranches();
+
+    function getBranches() {
+      MainService.GetBranches().then(
+        function(response) {
+          vm.branches = response.data.docs;
+        },
+        function(error) {
+          console.log("error", error);
+        }
+      );
+
+    }
+
+    function addBranch(ev) {
+        $mdDialog.show({
+            locals: {items: null},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+
+    }
+
+    function _editBranch(selectedBranch,ev) {
+        $mdDialog.show({
+            locals: {items: selectedBranch},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+    }
+
+    function _changeStatus(ChangeStatus) {
+      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
+      MainService.UpdateBranch(ChangeStatus).then(
+        function(response) {
+
+          AlertService.showSuccess(
+              "Updated branch status",
+              "Updated Status successfully."
+          );
+          // console.log("updated successfully", response);
+
+        },
+        function(error) {
+          // console.log("could not be updated", error);
+          AlertService.showError(
+            "Status not changed. Please try again.",
+            "ERROR"
+          );
+        }
+      );
+
+    }
+
+  }
+})(window.angular);
+
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -8112,95 +8219,6 @@ function runBlock() {
 
 
 })(window.angular);
-(function(angular) {
-  "use strict";
-
-    angular.module("app.mfi").controller("BranchController", BranchController);
-
-    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
-
-  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
-    var vm = this;
-
-    vm.addBranch = addBranch;
-    vm.editBranch = _editBranch;
-    vm.changeStatus = _changeStatus;
-
-     getBranches();
-
-    function getBranches() {
-      MainService.GetBranches().then(
-        function(response) {
-          vm.branches = response.data.docs;
-        },
-        function(error) {
-          console.log("error", error);
-        }
-      );
-
-    }
-
-    function addBranch(ev) {
-        $mdDialog.show({
-            locals: {items: null},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-
-    }
-
-    function _editBranch(selectedBranch,ev) {
-        $mdDialog.show({
-            locals: {items: selectedBranch},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-    }
-
-    function _changeStatus(ChangeStatus) {
-      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
-      MainService.UpdateBranch(ChangeStatus).then(
-        function(response) {
-
-          AlertService.showSuccess(
-              "Updated branch status",
-              "Updated Status successfully."
-          );
-          // console.log("updated successfully", response);
-
-        },
-        function(error) {
-          // console.log("could not be updated", error);
-          AlertService.showError(
-            "Status not changed. Please try again.",
-            "ERROR"
-          );
-        }
-      );
-
-    }
-
-  }
-})(window.angular);
-
 (function(angular) {
   "use strict";
 

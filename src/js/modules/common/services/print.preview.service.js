@@ -15,12 +15,12 @@
 
                         $scope.printables = model;
                         $scope.preparedBy = 'super admin';
-                        $scope.Name = 'Bidir mfi';
+                        $scope.Name = 'Buusaa Gonofaa Microfinance Share Company';
                         $scope.ShowLogoOnPrintOut = true;
                         $scope.CurrentDate = '30-Mar-2018';
                         $scope.Address = {
-                            FullAddress:'Addis Ababa,Ethiopia',
-                            DisplayPhonenumber:'251 - 111-123-456'
+                            Location:'Addis Ababa, Ethiopia',
+                            Phonenumber:'(255) 555-555555'
                         };
 
                         $scope.cancel = function() {

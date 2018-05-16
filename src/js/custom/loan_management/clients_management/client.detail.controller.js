@@ -15,20 +15,38 @@
         vm.labelBasedOnStatusStyle = LoanManagementService.StyleLabelByStatus;
 
         vm.onTabSelected = _onTabSelected;
-        vm.print = _print;
+        vm.printLaonProcess = _print;
 
         initialize();
 
 
-        function _print() {
-            var preview = [{
-                Name: "Screening",
-                TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
-                IsCommon: false,
-                IsSelected: false,
-                Data: angular.extend({ Title: "Screening"}, vm.clientScreening)
-            }];
-            PrintPreviewService.show(preview);
+        function _print(type) {
+            console.log("type",vm.clientScreening)
+            var preview = [];
+            if(type === 'SCREENING'){
+                preview = [{
+                    Name: "Screening",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "Screening Result For " +
+                                                    vm.clientScreening.client.first_name + " " +
+                                                    vm.clientScreening.client.last_name + " " +
+                                                    vm.clientScreening.client.grandfather_name}, vm.clientScreening)
+                }];
+                PrintPreviewService.show(preview);
+            }else{
+                preview = [{
+                    Name: "Loan Application",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "Loan Application"}, vm.client.loan_application)
+                }];
+                PrintPreviewService.show(preview);
+            }
+
+
         }
 
 
