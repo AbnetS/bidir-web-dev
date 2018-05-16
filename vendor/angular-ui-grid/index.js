@@ -1,2 +1,1 @@
-require('./ui-grid');
-module.exports = 'ui.grid';
+require("./ui-grid"),module.exports="ui.grid";
