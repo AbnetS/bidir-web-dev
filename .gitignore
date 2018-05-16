@@ -1,6 +1,6 @@
 .idea/
 node_modules/
-.vendor/bower
+..vendor
 bower_components/
 .tmp/
 .vscode/
@@ -8,3 +8,4 @@ build/
 dist/
 node_modules/
 src/debug.log
+vendor/

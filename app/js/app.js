@@ -8,8 +8,8448 @@
  * License: https://wrapbootstrap.com/help/licenses
  * 
  */
-!function(){"use strict";function e(e,t,o,n){console.log("angle app run"),e.currentUser=t.GetCurrentUser(),e.$on("$stateChangeStart",function(i,r,a,s){null!==e.currentUser?o.defaults.headers.common.Authorization="Bearer "+t.GetToken():n.path("/page/login")})}e.$inject=["$rootScope","AuthService","$http","$location"],angular.module("angle",["app.core","app.routes","app.sidebar","app.navsearch","app.preloader","app.loadingbar","app.translate","app.settings","app.maps","app.utils","app.material","app.common","app.auth","app.manage_users","app.manage_roles","app.welcomePage","app.mfi"]).run(e)}(),function(){"use strict";function e(){}function t(){}angular.module("app.auth",[]).run(e).config(t)}(),function(e){"use strict";function t(){}function o(){}e.module("app.common",[]).config(o).run(t)}(window.angular),function(){"use strict";angular.module("app.colors",[])}(),function(){"use strict";angular.module("app.core",["ngRoute","ngAnimate","ngStorage","ngCookies","pascalprecht.translate","ui.bootstrap","ngSanitize","ui.router","oc.lazyLoad","cfp.loadingBar","ngResource","ui.utils","ngAria","ngMessages","angularMoment"])}(),function(){"use strict";angular.module("app.lazyload",[])}(),function(){"use strict";angular.module("app.loadingbar",[])}(),function(){"use strict";function e(){}function t(){}angular.module("app.manage_roles",[]).run(e).config(t)}(),function(){"use strict";function e(){}function t(){}angular.module("app.manage_users",[]).config(t).run(e)}(),function(){"use strict";angular.module("app.maps",[])}(),function(){"use strict";angular.module("app.material",["ngMaterial"])}(),function(){"use strict";angular.module("app.navsearch",[])}(),function(){"use strict";angular.module("app.preloader",[])}(),function(){"use strict";angular.module("app.routes",["app.lazyload"])}(),function(){"use strict";angular.module("app.settings",[])}(),function(){"use strict";angular.module("app.sidebar",[])}(),function(){"use strict";angular.module("app.translate",[])}(),function(){"use strict";angular.module("app.utils",["app.colors"])}(),function(){"use strict";angular.module("app.welcomePage",[])}(),function(e){"use strict";function t(t,o,n,i,r,a){function s(){return e.isUndefined(o.Get(i.StorageKey.SESSION))?null:o.Get(i.StorageKey.SESSION)}function c(e){o.Set(i.StorageKey.SESSION,e)}function l(){return o.Get(i.StorageKey.SESSION).token}function u(){var e=s();return null!==e?e.user:null}function d(){var e=s();return null!==e?p()?[]:e.user.account.access_branches:null}function p(){return"super@bidir.com"===s().user.username}function m(e){return t.post(n.buildUrl(API.Service.Auth,API.Methods.Auth.Login),e)}function f(){o.Reset(),r.currentUser=null,r.$broadcast(i.AUTH_EVENTS.logoutSuccess),a.go("page.login")}return{login:m,Logout:f,GetCredentials:s,SetCredentials:c,GetToken:l,GetCurrentUser:u,GetAccessBranches:d,IsSuperuser:p}}e.module("app.auth").service("AuthService",t),t.$inject=["$http","StorageService","CommonService","APP_CONSTANTS","$rootScope","$state"]}(window.angular),function(e){"use strict";function t(e,t,o,n,i,r){var a=this;a.userValidator={usernameMin:4,usernameMax:20,passwordMin:6},a.login=function(){var s=i.instances.get("loginFormBlockUI");s.start("Logging in"),e.login(a.user).then(function(i){var r=i.data;a.user=r.user,o.currentUser=a.user,o.$broadcast(n.AUTH_EVENTS.loginSuccess),e.SetCredentials(r),s.stop(),t.go("app.welcome")},function(e){s.stop(),console.log("error",e),r.showError("Error on Login","The username or password is incorrect! Please try again."),o.$broadcast(n.AUTH_EVENTS.loginFailed)})}}e.module("app.auth").controller("LoginFormController",t),t.$inject=["AuthService","$state","$rootScope","APP_CONSTANTS","blockUI","AlertService"]}(window.angular),function(e){"use strict";e.module("app.common").constant("_",window._).constant("APP_CONSTANTS",{USER_ROLES:{ALL:"*",ADMIN:"admin"},StorageKey:{TOKEN:"token",SESSION:"SESSION",PERMISSIONS:"PERMISSIONS",ACCESS_BRANCHES:"ACCESS_BRANCHES"},AUTH_EVENTS:{loginSuccess:"auth-login-success",loginFailed:"auth-login-failed",logoutSuccess:"auth-logout-success",logoutUser:"auth-logout-user",sessionTimeout:"auth-session-timeout",notAuthenticated:"auth-not-authenticated",notAuthorized:"auth-not-authorized"}})}(window.angular),function(e){"use strict";e.module("app.common").directive("userpermission",["PermissionService",function(e){return{restrict:"A",link:function(t,o,n){function i(e){e?o.show():o.hide()}t.$watch(n.userpermission,function(t){var o=t,n=!1;_.isString(o)?n=e.hasThisPermission(o):_.isArray(o)&&(n=e.hasThesePermissions(o)),i(n)})}}}]).directive("editor",function(){return{restrict:"E",template:"<div ng-show='vm.editorEnabledForElement === (radioOption);'><input class='editableTextInput' type='text' ng-model='vm.text' ng-required='true' show-focus='vm.editorEnabledForElement === (radioOption);' keypress-enter='vm.saveOption(radioOption, vm.text)' ng-blur='vm.saveOption(radioOption, vm.text)' show-focus select-on-click ></div>"}}).directive("keypressEnter",function(){return function(e,t,o){t.bind("keydown keypress",function(t){13===t.which&&(e.$apply(function(){e.$eval(o.keypressEnter)}),console.log("Pressed enter."),t.preventDefault())})}}).directive("eventFocus",["focus",function(e){return function(t,o,n){o.on(n.eventFocus,function(){e(n.eventFocusId)})}}]).directive("selectOnClick",["$window",function(e){return{restrict:"A",link:function(t,o,n){o.on("focus",function(){e.getSelection().toString()||this.setSelectionRange(0,this.value.length)})}}}]).directive("questionRow",["$timeout","$compile","$filter",function(e,t,o){return{restrict:"E",replace:!0,scope:{questionRowData:"=questionRowData",layoutData:"=layoutData",parentRowNo:"=parentRowNo",rowNo:"=rowNo",isSubquestion:"=isSubquestion",isReadonly:"=isReadonly",valueChanged:"="},link:function(e,t,o){e.$watch("questionRowData.values",function(t){_.isEmpty(t)||e.questionRowData.type===QUESTION_TYPE.FILL_IN_BLANK||_.isUndefined(e.valueChanged)||e.valueChanged(e.questionRowData)},!0)},templateUrl:"app/views/common/directives/templates/question_row.tmpl.html"}}]).directive("questionRowWithAnswer",["$timeout","$compile","$filter",function(e,t,o){return{restrict:"E",replace:!0,scope:{questionRowData:"=questionRowData",layoutData:"=layoutData",parentRowNo:"=parentRowNo",rowNo:"=rowNo",isSubquestion:"=isSubquestion"},link:function(e,t,o){},templateUrl:"app/views/common/directives/templates/question_row_with_answer.tmpl.html"}}]).directive("question",["$timeout","$compile","$filter",function(e,t,o){return{restrict:"E",replace:!0,scope:{questionData:"=questionData",isReadonly:"=isReadonly"},link:function(e,t,o){e.$watch("questionData",function(t){if(t){var o=t.type.toLowerCase();switch(o){case"fill_in_blank":break;case"yes_no":o="single_choice"}"NUMERIC"!==t.validation_factor&&"ALPHANUMERIC"!==t.validation_factor||(t.values=_.map(t.values,function(e){return parseFloat(e)})),e.dynamicTemplateUrl="app/views/common/directives/templates/"+o+".tmpl.html"}}),e.toggle=function(e,t){var o=t.indexOf(e);o>-1?t.splice(o,1):t.push(e)},e.exists=function(e,t){return t.indexOf(e)>-1}},template:'<ng-include src="dynamicTemplateUrl"></ng-include>'}}])}(window.angular),function(e){"use strict";e.module("app.common").filter("ReplaceUnderscore",function(){return function(e){return"string"==typeof e?e.replace(/_/g," "):e}})}(window.angular);var API={Config:{BaseUrl:"http://api.dev.bidir.gebeya.io/"},Service:{NONE:"",MFI:"MFI",Auth:"auth",Users:"users",SCREENING:"screenings",LOANS:"loans",FORM:"forms",ACAT:"acat"},Methods:{Auth:{Login:"login"},MFI:{MFIUpdate:"",MFI:"create",GetAll:"all",Branches:"branches",CreateBranch:"branches/create"},Users:{Account:"accounts",UserUpdate:"",User:"create",GetAll:"",Roles:"roles",Role:"roles/create"},Roles:{GetAll:"roles",Create:"roles/create",Permissions:"permissions",PermissionByGroup:"permissions/groups"},Tasks:{Task:"tasks",GetAll:"tasks/paginate?page=1&per_page=100"},Clients:{All:"clients/paginate?source=web",Client:"clients",SearchClient:""},Form:{All:"",Create:"create",Question:"questions",Create_Question:"questions/create",Section:"sections",Create_Section:"sections/create"},ACAT:{ACAT:"forms",Crop:"crops",CreateCrop:"crops/create",LoanProducts:"loanProducts",CreateLoanProducts:"loanProducts/create",CostListUpdate:"costLists",CostListGroups:"costLists/groups",CostList:"costLists/add",CreateACAT:"forms/initialize"},SCREENING:{Screening:"",Clients:"clients"},LOANS:{Loans:"",Clients:"clients"}}},QUESTION_TYPE={FILL_IN_BLANK:"FILL_IN_BLANK",YES_NO:"YES_NO",MULTIPLE_CHOICE:"MULTIPLE_CHOICE",SINGLE_CHOICE:"SINGLE_CHOICE",GROUPED:"GROUPED"},ACAT_GROUP_CONSTANT={SEED:"SEED",FERTILIZER:"FERTILIZER",CHEMICALS:"CHEMICALS",LABOUR_COST:"LABOUR_COST",OTHER_COST:"OTHER_COST"},ACAT_COST_LIST_TYPE={LINEAR:"linear",GROUPED:"grouped"},SCREENING_STATUS={IN_PROGRESS:{code:"screening_inprogress",name:"In Progress"},SUBMITTED:{code:"submitted",name:"Submitted"},APPROVED:{code:"approved",name:"Approved"},DECLINED_FINAL:{code:"declined_final",name:"Declined Final"},DECLINED_UNDER_REVIEW:{code:"declined_under_review",name:"Declined Under Review"}};!function(){"use strict";angular.module("app.colors").constant("APP_COLORS",{primary:"#3F51B5",success:"#4CAF50",info:"#2196F3",warning:"#FF9800",danger:"#F44336",inverse:"#607D8B",green:"#009688",pink:"#E91E63",purple:"#673AB7",dark:"#263238",yellow:"#FFEB3B","gray-darker":"#232735","gray-dark":"#3a3f51",gray:"#dde6e9","gray-light":"#e4eaec","gray-lighter":"#edf1f2"})}(),function(){"use strict";function e(e){function t(t){return e[t]||"#fff"}this.byName=t}angular.module("app.colors").service("Colors",e),e.$inject=["APP_COLORS"]}(),function(){"use strict";function e(e,t,o,n,i){var r=angular.module("app.core");r.controller=e.register,r.directive=t.directive,r.filter=o.register,r.factory=n.factory,r.service=n.service,r.constant=n.constant,r.value=n.value,i.classNameFilter(/^((?!(ng-no-animation)).)*$/)}angular.module("app.core").config(e),e.$inject=["$controllerProvider","$compileProvider","$filterProvider","$provide","$animateProvider"]}(),function(){"use strict";angular.module("app.core").constant("APP_MEDIAQUERY",{desktopLG:1200,desktop:992,tablet:768,mobile:480})}(),function(){"use strict";function e(e,t,o,n,i,r){e.$state=t,e.$stateParams=o,e.$storage=n.localStorage,e.colorByName=r.byName,e.cancel=function(e){e.stopPropagation()},e.$on("$stateNotFound",function(e,t){console.log(t.to),console.log(t.toParams),console.log(t.options)}),e.$on("$stateChangeError",function(e,t,o,n,i,r){console.log(r)}),e.$on("$stateChangeSuccess",function(){n.scrollTo(0,0),e.currTitle=t.current.title}),e.currTitle=t.current.title,e.pageTitle=function(){var t=e.app.name+" - "+(e.currTitle||e.app.description);return document.title=t,t}}angular.module("app.core").run(e),e.$inject=["$rootScope","$state","$stateParams","$window","$templateCache","Colors"]}(),function(){"use strict";function e(e,t){e.config({debug:!1,events:!0,modules:t.modules})}angular.module("app.lazyload").config(e),e.$inject=["$ocLazyLoadProvider","APP_REQUIRES"]}(),function(){"use strict";angular.module("app.lazyload").constant("APP_REQUIRES",{scripts:{whirl:["vendor/whirl/dist/whirl.css"],animo:["vendor/animo.js/animo.js"],fastclick:["vendor/fastclick/lib/fastclick.js"],modernizr:["vendor/modernizr/modernizr.custom.js"],animate:["vendor/animate.css/animate.min.css"],skycons:["vendor/skycons/skycons.js"],icons:["vendor/fontawesome/css/font-awesome.min.css","vendor/simple-line-icons/css/simple-line-icons.css"],"weather-icons":["vendor/weather-icons/css/weather-icons.min.css","vendor/weather-icons/css/weather-icons-wind.min.css"],sparklines:["vendor/sparkline/index.js"],wysiwyg:["vendor/bootstrap-wysiwyg/bootstrap-wysiwyg.js","vendor/bootstrap-wysiwyg/external/jquery.hotkeys.js"],slimscroll:["vendor/slimScroll/jquery.slimscroll.min.js"],screenfull:["vendor/screenfull/dist/screenfull.js"],"vector-map":["vendor/ika.jvectormap/jquery-jvectormap-1.2.2.min.js","vendor/ika.jvectormap/jquery-jvectormap-1.2.2.css"],"vector-map-maps":["vendor/ika.jvectormap/jquery-jvectormap-world-mill-en.js","vendor/ika.jvectormap/jquery-jvectormap-us-mill-en.js"],loadGoogleMapsJS:["vendor/load-google-maps/load-google-maps.js"],"flot-chart":["vendor/flot/jquery.flot.js"],"flot-chart-plugins":["vendor/flot.tooltip/js/jquery.flot.tooltip.min.js","vendor/flot/jquery.flot.resize.js","vendor/flot/jquery.flot.pie.js","vendor/flot/jquery.flot.time.js","vendor/flot/jquery.flot.categories.js","vendor/flot-spline/js/jquery.flot.spline.min.js"],moment:["vendor/moment/min/moment-with-locales.min.js","vendor/angular-moment/angular-moment.min.js"],inputmask:["vendor/jquery.inputmask/dist/jquery.inputmask.bundle.js"],flatdoc:["vendor/flatdoc/flatdoc.js"],codemirror:["vendor/codemirror/lib/codemirror.js","vendor/codemirror/lib/codemirror.css"],"codemirror-modes-web":["vendor/codemirror/mode/javascript/javascript.js","vendor/codemirror/mode/xml/xml.js","vendor/codemirror/mode/htmlmixed/htmlmixed.js","vendor/codemirror/mode/css/css.js"],taginput:["vendor/bootstrap-tagsinput/dist/bootstrap-tagsinput.css","vendor/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"],filestyle:["vendor/bootstrap-filestyle/src/bootstrap-filestyle.js"],morris:["vendor/raphael/raphael.js","vendor/morris.js/morris.js","vendor/morris.js/morris.css"],"loaders.css":["vendor/loaders.css/loaders.css"],spinkit:["vendor/spinkit/css/spinkit.css"],underscore:["vendor/underscore/underscore.js"],selectize:["vendor/selectize/dist/css/selectize.default.css"]},modules:[{name:"md.data.table",files:["vendor/angular-material-data-table/dist/md-data-table.min.css","vendor/angular-material-data-table/dist/md-data-table.min.js"]},{name:"blockUI",files:["vendor/angular-block-ui/dist/angular-block-ui.css","vendor/angular-block-ui/dist/angular-block-ui.js"]},{name:"ngFileUpload",files:["vendor/ng-file-upload-shim/ng-file-upload-shim.min.js"]},{name:"toaster",files:["vendor/ng-file-upload/ng-file-upload.min.js","vendor/angularjs-toaster/toaster.css"]},{name:"localytics.directives",files:["vendor/chosen_v1.2.0/chosen.jquery.min.js","vendor/chosen_v1.2.0/chosen.min.css","vendor/angular-chosen-localytics/dist/angular-chosen.js"],serie:!0},{name:"ngDialog",files:["vendor/ngDialog/js/ngDialog.min.js","vendor/ngDialog/css/ngDialog.min.css","vendor/ngDialog/css/ngDialog-theme-default.min.css"]},{name:"ngWig",files:["vendor/ngWig/dist/ng-wig.min.js"]},{name:"ngTable",files:["vendor/ng-table/dist/ng-table.min.js","vendor/ng-table/dist/ng-table.min.css"]},{name:"ngTableExport",files:["vendor/ng-table-export/ng-table-export.js"]},{name:"angularBootstrapNavTree",files:["vendor/angular-bootstrap-nav-tree/dist/abn_tree_directive.js","vendor/angular-bootstrap-nav-tree/dist/abn_tree.css"]},{name:"xeditable",files:["vendor/angular-xeditable/dist/js/xeditable.js","vendor/angular-xeditable/dist/css/xeditable.css"]},{name:"angularFileUpload",files:["vendor/angular-file-upload/dist/angular-file-upload.js"]},{name:"ngImgCrop",files:["vendor/ng-img-crop/compile/unminified/ng-img-crop.js","vendor/ng-img-crop/compile/unminified/ng-img-crop.css"]},{name:"ui.select",files:["vendor/angular-ui-select/dist/select.js","vendor/angular-ui-select/dist/select.css"]},{name:"ui.codemirror",files:["vendor/angular-ui-codemirror/ui-codemirror.js"]},{name:"angular-carousel",files:["vendor/angular-carousel/dist/angular-carousel.css","vendor/angular-carousel/dist/angular-carousel.js"]},{name:"infinite-scroll",files:["vendor/ngInfiniteScroll/build/ng-infinite-scroll.js"]},{name:"ui.bootstrap-slider",files:["vendor/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js","vendor/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css","vendor/angular-bootstrap-slider/slider.js"],serie:!0},{name:"ui.grid",files:["vendor/angular-ui-grid/ui-grid.min.css","vendor/angular-ui-grid/ui-grid.min.js"]},{name:"summernote",files:["vendor/bootstrap/js/modal.js","vendor/bootstrap/js/dropdown.js","vendor/bootstrap/js/tooltip.js","vendor/summernote/dist/summernote.css","vendor/summernote/dist/summernote.js","vendor/angular-summernote/dist/angular-summernote.js"],serie:!0},{name:"angular-rickshaw",files:["vendor/d3/d3.min.js","vendor/rickshaw/rickshaw.js","vendor/rickshaw/rickshaw.min.css","vendor/angular-rickshaw/rickshaw.js"],serie:!0},{name:"angular-chartist",files:["vendor/chartist/dist/chartist.min.css","vendor/chartist/dist/chartist.js","vendor/angular-chartist.js/dist/angular-chartist.js"],serie:!0},{name:"ui.map",files:["vendor/angular-ui-map/ui-map.js"]},{name:"datatables",files:["vendor/datatables/media/css/jquery.dataTables.css","vendor/datatables/media/js/jquery.dataTables.js","vendor/datatables-buttons/js/dataTables.buttons.js","vendor/datatables-buttons/js/buttons.bootstrap.js","vendor/datatables-buttons/js/buttons.colVis.js","vendor/datatables-buttons/js/buttons.flash.js","vendor/datatables-buttons/js/buttons.html5.js","vendor/datatables-buttons/js/buttons.print.js","vendor/angular-datatables/dist/angular-datatables.js","vendor/angular-datatables/dist/plugins/buttons/angular-datatables.buttons.js"],serie:!0},{name:"angular-jqcloud",files:["vendor/jqcloud2/dist/jqcloud.css","vendor/jqcloud2/dist/jqcloud.js","vendor/angular-jqcloud/angular-jqcloud.js"]},{name:"angularGrid",files:["vendor/ag-grid/dist/styles/ag-grid.css","vendor/ag-grid/dist/ag-grid.js","vendor/ag-grid/dist/styles/theme-dark.css","vendor/ag-grid/dist/styles/theme-fresh.css"]},{name:"ng-nestable",files:["vendor/ng-nestable/src/angular-nestable.js","vendor/nestable/jquery.nestable.js"]},{name:"akoenig.deckgrid",files:["vendor/angular-deckgrid/angular-deckgrid.js"]},{name:"oitozero.ngSweetAlert",files:["vendor/sweetalert/dist/sweetalert.css","vendor/sweetalert/dist/sweetalert.min.js","vendor/angular-sweetalert/SweetAlert.js"],serie:!0},{name:"bm.bsTour",files:["vendor/bootstrap-tour/build/css/bootstrap-tour.css","vendor/bootstrap-tour/build/js/bootstrap-tour-standalone.js","vendor/angular-bootstrap-tour/dist/angular-bootstrap-tour.js"],serie:!0},{name:"ui.knob",files:["vendor/angular-knob/src/angular-knob.js","vendor/jquery-knob/dist/jquery.knob.min.js"]},{name:"easypiechart",files:["vendor/jquery.easy-pie-chart/dist/angular.easypiechart.min.js"]},{name:"colorpicker.module",files:["vendor/angular-bootstrap-colorpicker/css/colorpicker.css","vendor/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js"]},{name:"ui.sortable",files:["vendor/jquery-ui/jquery-ui.min.js","vendor/angular-ui-sortable/sortable.js"],serie:!0},{name:"ui.calendar",files:["vendor/jquery-ui/jquery-ui.min.js","vendor/jqueryui-touch-punch/jquery.ui.touch-punch.min.js","vendor/fullcalendar/dist/fullcalendar.min.js","vendor/fullcalendar/dist/gcal.js","vendor/fullcalendar/dist/fullcalendar.css","vendor/angular-ui-calendar/src/calendar.js"],serie:!0},{name:"chart.js",files:["vendor/chart.js/dist/Chart.js","vendor/angular-chart.js/dist/angular-chart.js"],serie:!0}]})}(),function(){"use strict";function e(e){e.includeBar=!0,e.includeSpinner=!1,e.latencyThreshold=500,e.parentSelector=".wrapper > section"}angular.module("app.loadingbar").config(e),e.$inject=["cfpLoadingBarProvider"]}(),function(){"use strict";function e(e,t,o){var n;e.$on("$stateChangeStart",function(){$(".wrapper > section").length&&(n=t(function(){o.start()},0))}),e.$on("$stateChangeSuccess",function(e){e.targetScope.$watch("$viewContentLoaded",function(){t.cancel(n),o.complete()})})}angular.module("app.loadingbar").run(e),e.$inject=["$rootScope","$timeout","cfpLoadingBar"]}(),function(e){"use strict";function t(e,t,o,n,i,r){function a(){_.each(p.role.permissions,function(e){_.each(p.permissions,function(t){t.name!==e.name||t.checked||(t.checked=t.name===e.name)})})}function s(){p.role.permissions=_.filter(p.permissions,function(e){return e.checked?e._id:null})}function c(){var o=i.instances.get("RoleBlockUI");o.start(),s(),p.isEdit?t.UpdateRole(p.role).then(function(t){o.stop(),e.hide(),n.showSuccess("updated successfully","Role and Permissions updated successfully")},function(e){o.stop();var t=e.data.error.message;n.showError("Failed to update Role",t),console.log("could not be saved",e)}):t.SaveRole(p.role).then(function(t){o.stop(),n.showSuccess("Saved successfully","Role and Permissions saved successfully"),e.hide()},function(e){o.stop();var t=e.data.error.message;n.showError("Failed to Save Role",t),console.log("could not be saved",e)})}function l(e){}function u(e){var t="";switch(e){case"SCREENING":case"SCREENING_MODULE":t="label label-primary";break;case"FORM_BUILDER":t="label label-danger";break;case"USER_MANAGEMENT":t="label label-green";break;case"CLIENT_MANAGEMENT":t="label label-warning";break;case"LOAN_MODULE":t="label label-purple";break;default:t="label label-default"}return t}function d(){e.cancel()}var p=this;p.cancel=d,p.saveRole=c,p.changeModuleStyle=u,p.showFilterDialog=l,p.showFilter=!1,p.isEdit=null!==o,p.role=null!==o?o:null,function(){if(p.isEdit){var e=i.instances.get("RoleLoadingBlockUI");e.start("Loading Role and Permissions")}var o=t.GetPermissionsFromStore();null!==o?(p.permissions=o,p.isEdit&&(a(),e.stop())):t.GetPermissions().then(function(o){p.permissions=o.data.docs,t.StorePermissions(p.permissions),console.log("permissions from api",p.permissions),p.isEdit&&(a(),e.stop())},function(t){p.isEdit&&e.stop(),console.log("error permissions",t)})}()}e.module("app.manage_roles").controller("CreateRoleController",t),t.$inject=["$mdDialog","ManageRoleService","items","AlertService","blockUI","$mdPanel"]}(window.angular),function(e){"use strict";function t(t,o,n){function i(){t.GetRoles().then(function(e){s.roles=e.data.docs},function(e){console.log("error role",e)})}function r(t){o.show({locals:{items:null},templateUrl:n.basepath("manageroles/create.role.dialog.html"),parent:e.element(document.body),targetEvent:t,clickOutsideToClose:!1,hasBackdrop:!1,escapeToClose:!0,controller:"CreateRoleController",controllerAs:"vm"}).then(function(e){i()},function(){})}function a(t,r){o.show({locals:{items:t},templateUrl:n.basepath("manageroles/create.role.dialog.html"),parent:e.element(document.body),targetEvent:r,clickOutsideToClose:!1,hasBackdrop:!1,escapeToClose:!0,controller:"CreateRoleController",controllerAs:"vm"}).then(function(e){i()},function(){})}var s=this;s.addRole=r,s.editRole=a,i()}e.module("app.manage_roles").controller("ManageRoleController",t),t.$inject=["ManageRoleService","$mdDialog","RouteHelpers"]}(window.angular),function(e){"use strict";function t(e,t,o,n,i){function r(){return e.get(t.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles))}function a(){return e.get(t.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions))}function s(){return e.get(t.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup))}function c(o){return e.post(t.buildUrl(API.Service.Users,API.Methods.Roles.Create),o)}function l(o){return e.put(t.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,o._id),o)}function u(e){return n.Set(i.StorageKey.PERMISSIONS,e)}function d(){return _.isUndefined(n.Get(i.StorageKey.PERMISSIONS))?null:n.Get(i.StorageKey.PERMISSIONS)}return{GetRoles:r,GetPermissions:a,GetPermissionsbyGroup:s,SaveRole:c,UpdateRole:l,StorePermissions:u,GetPermissionsFromStore:d}}e.module("app.manage_roles").service("ManageRoleService",t),t.$inject=["$http","CommonService","AuthService","StorageService","APP_CONSTANTS"]}(window.angular),function(e){"use strict";function t(t,o,n,i,r,a,s,c){function l(){if(f.IsValidData=c.Validation.ValidateForm(f.UserValidationForm,f.user),f.IsValidData){var e=a.instances.get("CreateUserForm");e.start("Storing User");var n={first_name:f.user.first_name,last_name:f.user.last_name,grandfather_name:f.user.grandfather_name,title:f.user.title,role:f.user.selected_role._id,hired_date:f.user.hired_date,default_branch:f.user.selected_default_branch._id,access_branches:[],multi_branches:f.user.multi_branches};_.forEach(f.user.selected_access_branches,function(e){n.access_branches.some(function(t){return t._id===e._id})||n.multi_branches||n.access_branches.push(e._id)}),f.isEdit?(n._id=f.user.account._id,o.UpdateUser(n).then(function(o){e.stop(),console.log("updated successfully",o),t.hide(),i.showSuccess("Updated Successfully!","User Information is Updated")},function(t){e.stop();var o=t.data.error.message;i.showError("Oops... Something went wrong",o),console.log("could not be saved",t)})):(n.username=f.user.username,n.password=f.user.password,o.CreateUser(n).then(function(o){e.stop(),i.showSuccess("Saved Successfully!","User Information is saved successfully"),console.log("saved successfully",o),t.hide()},function(t){e.stop();var o=t.data.error.message;i.showError("Oops... Something went wrong",o),console.log("could not be saved",t)}))}else i.showError("Oops... Something went wrong","You haven't provided all required fields.")}function u(){o.GetRoles().then(function(t){f.roles=t.data.docs,f.isEdit&&e.forEach(f.roles,function(e){_.isUndefined(f.user.account)||e._id===f.user.account.role._id&&(f.user.selected_role=e)})},function(e){console.log("error",e)})}function d(t){e.forEach(t,function(e){if(_.isUndefined(f.user.default_branch._id)||e._id===f.user.default_branch._id&&(f.user.selected_default_branch=e),f.user.access_branches.length>0&&!f.user.multi_branches){f.user.access_branches.some(function(t){return t._id===e._id})&&f.user.selected_access_branches.push(e)}})}function p(){-1!==f.user.selected_access_branches.indexOf(f.user.selected_default_branch)||f.user.multi_branches||f.user.selected_access_branches.push(f.user.selected_default_branch)}function m(){t.cancel()}var f=this;f.cancel=m,f.saveUser=l,f.onSelectedDefaultBranch=p,f.isEdit=null!==n,f.user=null!==n?n:{},f.user.selected_access_branches=[],f.UserValidationForm={Isfirst_nameValid:!0,Islast_nameValid:!0,Isselected_default_branchValid:!0,Isselected_roleValid:!0,IsusernameValid:!0},function(){if(f.isEdit){var t=a.instances.get("UserFormLoader");t.start("Loading User Information"),e.extend(f.user,f.user.account);var n=new Date(f.user.hired_date);f.user.hired_date=n}u(),r.IsSuperuser()?o.GetBranches().then(function(e){f.branches=e.data.docs,f.isEdit&&(d(f.branches),t.stop())},function(e){console.log("error",e)}):(f.branches=r.GetAccessBranches(),f.isEdit&&(d(f.branches),t.stop()))}(),s.$watch(function(){return f.user.multi_branches},function(e,t){e&&(f.user.selected_access_branches=[])}),f.clear=function(){f.dt=null},f.dateOptions={dateDisabled:!1,formatYear:"yy",maxDate:new Date(2020,5,22),startingDay:1},f.openDatePicker=function(){f.popup1.opened=!0},f.format="dd-MMMM-yyyy",f.altInputFormats=["d!/M!/yyyy"],f.popup1={opened:!1}}e.module("app.manage_users").controller("CreateUserController",t),t.$inject=["$mdDialog","ManageUserService","items","AlertService","AuthService","blockUI","$scope","CommonService"]}(window.angular),function(e,t){"use strict";function o(o,n,i,r,a,s){function c(){i.GetUsers().then(function(t){g.users=t.data.docs,g.usersCopy=e.copy(g.users)},function(e){console.log("error",e)})}function l(){s.IsSuperuser()?i.GetBranches().then(function(e){g.currentUser.user_access_branches=e.data.docs},function(e){g.currentUser.user_access_branches=[]}):g.currentUser.user_access_branches=s.GetAccessBranches()}function u(e){g.toaster={type:"success",title:"Title",text:"Message"};var t={};t._id=e._id,"active"===e.status?(t.status="suspended",e.status="suspended"):(t.status="active",e.status="active"),i.UpdateUserStatus(t).then(function(e){console.log("updated user",e);var o="active"===t.status?"activated":t.status;a.showSuccess("Updated User Status!","User is "+o+".")},function(e){console.log("error",e);var t=e.data.error.message;a.showError("Oops... Something went wrong",t)})}function d(n){r.show({locals:{items:null},templateUrl:o.basepath("manageusers/create.user.dialog.html"),parent:e.element(t.body),targetEvent:n,clickOutsideToClose:!1,hasBackdrop:!1,escapeToClose:!0,controller:"CreateUserController",controllerAs:"vm"}).then(function(e){c()},function(){})}function p(n,i){r.show({locals:{items:n},templateUrl:o.basepath("manageusers/create.user.dialog.html"),parent:e.element(t.body),targetEvent:i,clickOutsideToClose:!1,hasBackdrop:!1,escapeToClose:!0,controller:"CreateUserController",controllerAs:"vm"}).then(function(e){c()},function(){})}function m(){g.users=g.usersCopy,g.users=_.filter(g.users,function(e){if(!_.isUndefined(e.account)&&null!==e.account.default_branch)return e.account.default_branch._id===g.currentUser.selected_access_branch._id})}function f(e){var t="";switch(e){case"active":t="label label-success";break;case"inactive":t="label label-default";break;case"suspended":t="label label-danger";break;default:t="label label-default"}return t}var g=this;g.currentUser={selected_access_branch:void 0},g.addUser=d,g.editUser=p,g.changeStatus=u,g.statusStyle=f,g.onSelectedBranch=m,function(){c(),l(),g.dtOptions=n.newOptions().withPaginationType("full_numbers").withDOM('<"html5buttons"B>lTfgitp').withOption("processing",!0).withOption("scrollY",430)}()}e.module("app.manage_users").controller("ManageUsersController",o),o.$inject=["RouteHelpers","DTOptionsBuilder","ManageUserService","$mdDialog","AlertService","AuthService"]}(window.angular,window.document),function(e){"use strict";function t(e,t){function o(o){return e.get(t.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll,o))}function n(){return e.get(t.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles))}function i(){return e.get(t.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches))}function r(o){return e.post(t.buildUrl(API.Service.Users,API.Methods.Users.User),o)}function a(o){return e.put(t.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,o._id),o)}function s(o){return e.put(t.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,o._id),o)}return{GetUsers:o,GetRoles:n,GetBranches:i,CreateUser:r,UpdateUser:a,UpdateUserStatus:s}}e.module("app.manage_users").service("ManageUserService",t),t.$inject=["$http","CommonService"]}(window.angular),function(){"use strict";function e(e){var t=this;!function(){function o(e,t,o){t.opened.then(function(){var t=new google.maps.LatLng(33.790807,-117.835734);e.mapOptionsModal={zoom:14,center:t,mapTypeId:google.maps.MapTypeId.ROADMAP},o(function(){new google.maps.Marker({map:e.myMapModal,position:t}),google.maps.event.trigger(e.myMapModal,"resize"),e.myMapModal.panTo(t)})}),e.ok=function(){t.close("closed")},e.cancel=function(){t.dismiss("cancel")}}t.open=function(t){e.open({templateUrl:"/myModalContent.html",controller:o,size:t})},o.$inject=["$scope","$uibModalInstance","$timeout"]}()}angular.module("app.maps").controller("ModalGmapController",e),e.$inject=["$uibModal"]}(),function(){"use strict";function e(e){var t=this;!function(){function o(e,t){return new google.maps.Marker({map:e,position:t})}var n=[new google.maps.LatLng(33.790807,-117.835734),new google.maps.LatLng(33.790807,-117.835734),new google.maps.LatLng(33.790807,-117.835734),new google.maps.LatLng(33.790807,-117.835734),new google.maps.LatLng(33.787453,-117.835858)];t.addMarker=o,e(function(){o(t.myMap1,n[0]),o(t.myMap2,n[1]),o(t.myMap3,n[2]),o(t.myMap5,n[3])}),t.mapOptions1={zoom:14,center:n[0],mapTypeId:google.maps.MapTypeId.ROADMAP,scrollwheel:!1},t.mapOptions2={zoom:19,center:n[1],mapTypeId:google.maps.MapTypeId.ROADMAP},t.mapOptions3={zoom:14,center:n[2],mapTypeId:google.maps.MapTypeId.SATELLITE},t.mapOptions4={zoom:14,center:n[3],mapTypeId:google.maps.MapTypeId.ROADMAP},e(function(){o(t.myMap4,n[3]),o(t.myMap4,n[4])});var i=[{featureType:"water",stylers:[{visibility:"on"},{color:"#bdd1f9"}]},{featureType:"all",elementType:"labels.text.fill",stylers:[{color:"#334165"}]},{featureType:"landscape",stylers:[{color:"#e9ebf1"}]},{featureType:"road.highway",elementType:"geometry",stylers:[{color:"#c5c6c6"}]},{featureType:"road.arterial",elementType:"geometry",stylers:[{color:"#fff"}]},{featureType:"road.local",elementType:"geometry",stylers:[{color:"#fff"}]},{featureType:"transit",
-elementType:"geometry",stylers:[{color:"#d8dbe0"}]},{featureType:"poi",elementType:"geometry",stylers:[{color:"#cfd5e0"}]},{featureType:"administrative",stylers:[{visibility:"on"},{lightness:33}]},{featureType:"poi.park",elementType:"labels",stylers:[{visibility:"on"},{lightness:20}]},{featureType:"road",stylers:[{color:"#d8dbe0",lightness:20}]}];t.mapOptions5={zoom:14,center:n[3],styles:i,mapTypeId:google.maps.MapTypeId.ROADMAP,scrollwheel:!1}}()}angular.module("app.maps").controller("GMapController",e),e.$inject=["$timeout"]}(),function(){"use strict";function e(e){e.icon("share-arrow","app/img/icons/share-arrow.svg",24).icon("upload","app/img/icons/upload.svg",24).icon("copy","app/img/icons/copy.svg",24).icon("print","app/img/icons/print.svg",24).icon("hangout","app/img/icons/hangout.svg",24).icon("mail","app/img/icons/mail.svg",24).icon("message","app/img/icons/message.svg",24).icon("copy2","app/img/icons/copy2.svg",24).icon("facebook","app/img/icons/facebook.svg",24).icon("twitter","app/img/icons/twitter.svg",24)}angular.module("app.material").config(e),e.$inject=["$mdIconProvider"]}(),function(){"use strict";function e(e,t,o){function n(e){var n,a=e?r.states.filter(i(e)):[];return r.simulateQuery?(n=o.defer(),t(function(){n.resolve(a)},1e3*Math.random(),!1),n.promise):a}function i(e){var t=angular.lowercase(e);return function(e){return 0===e.value.indexOf(t)}}var r=this;r.states=function(){return"Alabama, Alaska, Arizona, Arkansas, California, Colorado, Connecticut, Delaware, Florida, Georgia, Hawaii, Idaho, Illinois, Indiana, Iowa, Kansas, Kentucky, Louisiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, Mississippi, Missouri, Montana, Nebraska, Nevada, New Hampshire, New Jersey, New Mexico, New York, North Carolina, North Dakota, Ohio, Oklahoma, Oregon, Pennsylvania, Rhode Island, South Carolina, South Dakota, Tennessee, Texas, Utah, Vermont, Virginia, Washington, West Virginia, Wisconsin, Wyoming".split(/, +/g).map(function(e){return{value:e.toLowerCase(),display:e}})}(),r.selectedItem=null,r.searchText=null,r.querySearch=n,r.simulateQuery=!1,r.isDisabled=!1}function t(e,t,o){e.alert="",e.showListBottomSheet=function(t){e.alert="",o.show({templateUrl:"bottom-sheet-list-template.html",controller:"ListBottomSheetCtrl",targetEvent:t,disableParentScroll:!1}).then(function(t){e.alert=t.name+" clicked!"})},e.showGridBottomSheet=function(t){e.alert="",o.show({templateUrl:"bottom-sheet-grid-template.html",controller:"GridBottomSheetCtrl",targetEvent:t,disableParentScroll:!1}).then(function(t){e.alert=t.name+" clicked!"})}}function o(e,t){e.items=[{name:"Share",icon:"share"},{name:"Upload",icon:"upload"},{name:"Copy",icon:"copy"},{name:"Print this page",icon:"print"}],e.listItemClick=function(o){var n=e.items[o];t.hide(n)}}function n(e,t){e.items=[{name:"Hangout",icon:"hangout"},{name:"Mail",icon:"mail"},{name:"Message",icon:"message"},{name:"Copy",icon:"copy"},{name:"Facebook",icon:"facebook"},{name:"Twitter",icon:"twitter"}],e.listItemClick=function(o){var n=e.items[o];t.hide(n)}}function i(e){e.data={},e.data.cb1=!0,e.data.cb2=!1,e.data.cb3=!1,e.data.cb4=!1,e.data.cb5=!1}function r(e){e.data={group1:"Banana",group2:"2",group3:"avatar-1"},e.avatarData=[{id:"svg-1",title:"avatar 1",value:"avatar-1"},{id:"svg-2",title:"avatar 2",value:"avatar-2"},{id:"svg-3",title:"avatar 3",value:"avatar-3"}],e.radioData=[{label:"Apple",value:1},{label:"Banana",value:2},{label:"Mango",value:"3",isDisabled:!0}],e.submit=function(){alert("submit")};var t=["Apple","Banana","Mango","Grape","Melon","Strawberry","Kiwi"];e.addItem=function(){var o=t[Math.floor(Math.random()*t.length)];e.radioData.push({label:o,value:o})},e.removeItem=function(){e.radioData.pop()}}function a(e){e.data={cb1:!0,cb4:!0},e.onChange=function(t){e.message="The switch is now: "+t}}function s(e,t){function o(e,t){e.hide=function(){t.hide()},e.cancel=function(){t.cancel()},e.answer=function(e){t.hide(e)}}e.alert="",e.showAlert=function(e){t.show(t.alert().title("This is an alert title").content("You can specify some description text in here.").ariaLabel("Password notification").ok("Got it!").targetEvent(e))},e.showConfirm=function(o){var n=t.confirm().title("Would you like to delete your debt?").content("All of the banks have agreed to forgive you your debts.").ariaLabel("Lucky day").ok("Please do it!").cancel("Sounds like a scam").targetEvent(o);t.show(n).then(function(){e.alert="You decided to get rid of your debt."},function(){e.alert="You decided to keep your debt."})},e.showAdvanced=function(n){t.show({controller:o,templateUrl:"dialog1.tmpl.html",targetEvent:n}).then(function(t){e.alert="You said the information was '"+t+"'."},function(){e.alert="You cancelled the dialog."})},o.$inject=["$scope","$mdDialog"]}function c(e){e.color={red:Math.floor(255*Math.random()),green:Math.floor(255*Math.random()),blue:Math.floor(255*Math.random())},e.rating1=3,e.rating2=2,e.rating3=4,e.disabled1=0,e.disabled2=70}function l(){var e=this;e.userState="",e.states="AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY".split(" ").map(function(e){return{abbrev:e}}),e.sizes=["small (12-inch)","medium (14-inch)","large (16-inch)","insane (42-inch)"],e.toppings=[{category:"meat",name:"Pepperoni"},{category:"meat",name:"Sausage"},{category:"meat",name:"Ground Beef"},{category:"meat",name:"Bacon"},{category:"veg",name:"Mushrooms"},{category:"veg",name:"Onion"},{category:"veg",name:"Green Pepper"},{category:"veg",name:"Green Olives"}]}function u(e){e.user={title:"Developer",email:"ipsum@lorem.com",firstName:"",lastName:"",company:"Google",address:"1600 Amphitheatre Pkwy",city:"Mountain View",state:"CA",biography:"Loves kittens, snowboarding, and can type at 130 WPM.\n\nAnd rumor has it she bouldered up Castle Craig!",postalCode:"94043"},e.project={description:"Nuclear Missile Defense System",clientName:"Bill Clinton",rate:500}}function d(e,t){e.mode="query",e.determinateValue=30,e.determinateValue2=30,t(function(){e.determinateValue+=1,e.determinateValue2+=1.5,e.determinateValue>100&&(e.determinateValue=30,e.determinateValue2=30)},100,0,!0),t(function(){e.mode="query"===e.mode?"determinate":"query"},7200,0,!0)}function p(e,t,o,n){e.toggleLeft=function(){o("left").toggle().then(function(){n.debug("toggle left is done")})},e.toggleRight=function(){o("right").toggle().then(function(){n.debug("toggle RIGHT is done")})},e.closeLeft=function(){o("left").close().then(function(){n.debug("close LEFT is done")})},e.closeRight=function(){o("right").close().then(function(){n.debug("close RIGHT is done")})}}function m(e){e.messages=[{face:"app/img/user/10.jpg",what:"Brunch this weekend?",who:"Min Li Chan",when:"3:08PM",notes:"I'll be in your neighborhood doing errands"},{face:"app/img/user/01.jpg",what:"Brunch this weekend?",who:"Min Li Chan",when:"3:08PM",notes:"I'll be in your neighborhood doing errands"},{face:"app/img/user/02.jpg",what:"Brunch this weekend?",who:"Min Li Chan",when:"3:08PM",notes:"I'll be in your neighborhood doing errands"},{face:"app/img/user/03.jpg",what:"Brunch this weekend?",who:"Min Li Chan",when:"3:08PM",notes:"I'll be in your neighborhood doing errands"},{face:"app/img/user/04.jpg",what:"Brunch this weekend?",who:"Min Li Chan",when:"3:08PM",notes:"I'll be in your neighborhood doing errands"},{face:"app/img/user/05.jpg",what:"Brunch this weekend?",who:"Min Li Chan",when:"3:08PM",notes:"I'll be in your neighborhood doing errands"},{face:"app/img/user/06.jpg",what:"Brunch this weekend?",who:"Min Li Chan",when:"3:08PM",notes:"I'll be in your neighborhood doing errands"},{face:"app/img/user/07.jpg",what:"Brunch this weekend?",who:"Min Li Chan",when:"3:08PM",notes:"I'll be in your neighborhood doing errands"},{face:"app/img/user/08.jpg",what:"Brunch this weekend?",who:"Min Li Chan",when:"3:08PM",notes:"I'll be in your neighborhood doing errands"},{face:"app/img/user/09.jpg",what:"Brunch this weekend?",who:"Min Li Chan",when:"3:08PM",notes:"I'll be in your neighborhood doing errands"},{face:"app/img/user/11.jpg",what:"Brunch this weekend?",who:"Min Li Chan",when:"3:08PM",notes:"I'll be in your neighborhood doing errands"}]}function f(e,t){e.toastPosition={bottom:!1,top:!0,left:!1,right:!0},e.getToastPosition=function(){return Object.keys(e.toastPosition).filter(function(t){return e.toastPosition[t]}).join(" ")},e.showCustomToast=function(){t.show({controller:"ToastCtrl",templateUrl:"toast-template.html",hideDelay:6e4,parent:"#toastcontainer",position:e.getToastPosition()})},e.showSimpleToast=function(){t.show(t.simple().content("Simple Toast!").position(e.getToastPosition()).hideDelay(3e4))},e.showActionToast=function(){var o=t.simple().content("Action Toast!").action("OK").highlightAction(!1).position(e.getToastPosition());t.show(o).then(function(){alert("You clicked 'OK'.")})}}function g(e,t){e.closeToast=function(){t.hide()}}function h(e){e.demo={}}function _(e,t,o){e.alert="",e.showListBottomSheet=function(t){e.alert="",o.show({templateUrl:"bottom-sheet-list-template.html",controller:"ListBottomSheetCtrl",targetEvent:t,parent:"#bottomsheetcontainer",disableParentScroll:!1}).then(function(t){e.alert=t.name+" clicked!"})},e.showGridBottomSheet=function(t){e.alert="",o.show({templateUrl:"bottom-sheet-grid-template.html",controller:"GridBottomSheetCtrl",targetEvent:t,parent:"#bottomsheetcontainer",disableParentScroll:!1}).then(function(t){e.alert=t.name+" clicked!"})}}function b(e,t){e.items=[{name:"Share",icon:"share-arrow"},{name:"Upload",icon:"upload"},{name:"Copy",icon:"copy"},{name:"Print this page",icon:"print"}],e.listItemClick=function(o){var n=e.items[o];t.hide(n)}}function v(e,t){e.items=[{name:"Hangout",icon:"hangout"},{name:"Mail",icon:"mail"},{name:"Message",icon:"message"},{name:"Copy",icon:"copy2"},{name:"Facebook",icon:"facebook"},{name:"Twitter",icon:"twitter"}],e.listItemClick=function(o){var n=e.items[o];t.hide(n)}}angular.module("app.material").controller("MDAutocompleteCtrl",e).controller("MDBottomSheetCtrl",t).controller("MDListBottomSheetCtrl",o).controller("MDGridBottomSheetCtrl",n).controller("MDCheckboxCtrl",i).controller("MDRadioCtrl",r).controller("MDSwitchCtrl",a).controller("MDDialogCtrl",s).controller("MDSliderCtrl",c).controller("MDSelectCtrl",l).controller("MDInputCtrl",u).controller("MDProgressCtrl",d).controller("MDSidenavCtrl",p).controller("MDSubheaderCtrl",m).controller("MDToastCtrl",f).controller("ToastCtrl",g).controller("MDTooltipCtrl",h).controller("BottomSheetExample",_).controller("ListBottomSheetCtrl",b).controller("GridBottomSheetCtrl",v),e.$inject=["$scope","$timeout","$q"],t.$inject=["$scope","$timeout","$mdBottomSheet"],o.$inject=["$scope","$mdBottomSheet"],n.$inject=["$scope","$mdBottomSheet"],i.$inject=["$scope"],r.$inject=["$scope"],a.$inject=["$scope"],s.$inject=["$scope","$mdDialog"],c.$inject=["$scope"],u.$inject=["$scope"],d.$inject=["$scope","$interval"],p.$inject=["$scope","$timeout","$mdSidenav","$log"],m.$inject=["$scope"],f.$inject=["$scope","$mdToast"],g.$inject=["$scope","$mdToast"],h.$inject=["$scope"],_.$inject=["$scope","$timeout","$mdBottomSheet"],b.$inject=["$scope","$mdBottomSheet"],v.$inject=["$scope","$mdBottomSheet"]}(),function(){"use strict";function e(e,t){var o=["app/img/icons/share-arrow.svg","app/img/icons/upload.svg","app/img/icons/copy.svg","app/img/icons/print.svg","app/img/icons/hangout.svg","app/img/icons/mail.svg","app/img/icons/message.svg","app/img/icons/copy2.svg","app/img/icons/facebook.svg","app/img/icons/twitter.svg"];angular.forEach(o,function(o){e.get(o,{cache:t})})}angular.module("app.material").run(e),e.$inject=["$http","$templateCache"]}(),function(){"use strict";function e(e){var t=this;!function(){t.sparkOption1={type:"line",width:"100%",height:"140px",tooltipOffsetX:-20,tooltipOffsetY:20,lineColor:e.byName("success"),fillColor:e.byName("success"),spotColor:"rgba(0,0,0,.26)",minSpotColor:"rgba(0,0,0,.26)",maxSpotColor:"rgba(0,0,0,.26)",highlightSpotColor:"rgba(0,0,0,.26)",highlightLineColor:"rgba(0,0,0,.26)",spotRadius:2,tooltipPrefix:"",tooltipSuffix:" Visits",tooltipFormat:"{{prefix}}{{y}}{{suffix}}",chartRangeMin:0,resize:!0},t.sparkOptionPie={type:"pie",width:"2em",height:"2em",sliceColors:[e.byName("success"),e.byName("gray-light")]}}()}angular.module("app.material").controller("MaterialWidgetsController",e),e.$inject=["Colors"]}(),function(){"use strict";function e(){return{controller:o,restrict:"A"}}function t(){return{controller:n,restrict:"A"}}function o(e,t,o){t.on("click",function(e){e.stopPropagation()}).on("click",o.toggle)}function n(e,t,o){$('.navbar-form input[type="text"]').on("click",function(e){e.stopPropagation()}).on("keyup",function(e){27===e.keyCode&&o.dismiss()}),$(document).on("click",o.dismiss),t.on("click",function(e){e.stopPropagation()}).on("click",o.dismiss)}angular.module("app.navsearch").directive("searchOpen",e).directive("searchDismiss",t),o.$inject=["$scope","$element","NavSearch"],n.$inject=["$scope","$element","NavSearch"]}(),function(){"use strict";function e(){function e(){var e=$(o);e.toggleClass("open");var t=e.hasClass("open");e.find("input")[t?"focus":"blur"]()}function t(){$(o).removeClass("open").find('input[type="text"]').blur()}this.toggle=e,this.dismiss=t;var o="form.navbar-form"}angular.module("app.navsearch").service("NavSearch",e)}(),function(){"use strict";function e(e,t,o){function n(n,i){function r(){var e=100-c;c+=.015*Math.pow(1-Math.sqrt(e),2),n.loadCounter=parseInt(c,10),s=t(r,20)}function a(){t.cancel(s),n.loadCounter=100,t(function(){e.addClass(i,"preloader-hidden"),angular.element("body").css("overflow","")},300)}n.loadCounter=0;var s,c=0;angular.element("body").css("overflow","hidden"),i.addClass("preloader"),function(){var e=o.defer(),i=0,r=n.$on("$viewContentLoaded",function(){2===++i&&(t(function(){e.resolve()},3e3),r())});return e.promise}().then(a),s=t(r)}return{restrict:"EAC",template:'<div class="preloader-progress"><div class="preloader-progress-bar" ng-style="{width: loadCounter + \'%\'}"></div></div>',link:n}}angular.module("app.preloader").directive("preloader",e),e.$inject=["$animate","$timeout","$q"]}(),function(){"use strict";function e(e){function t(e){return"app/views/"+e}function o(){var t=arguments;return{deps:["$ocLazyLoad","$q",function(o,n){function i(t){if(e.modules)for(var o in e.modules)if(e.modules[o].name&&e.modules[o].name===t)return e.modules[o];return e.scripts&&e.scripts[t]}for(var r=n.when(1),a=0,s=t.length;a<s;a++)r=function(e){return"function"==typeof e?r.then(e):r.then(function(){var t=i(e);return t?o.load(t):$.error("Route resolve: Bad resource name ["+e+"]")})}(t[a]);return r}]}}return{basepath:t,resolveFor:o,$get:function(){return{basepath:t,resolveFor:o}}}}angular.module("app.routes").provider("RouteHelpers",e),e.$inject=["APP_REQUIRES"]}(),function(){"use strict";function e(e,t,o,n){t.html5Mode(!1),o.otherwise("/page/login"),e.state("app",{url:"/app",abstract:!0,templateUrl:n.basepath("app.html"),resolve:n.resolveFor("fastclick","modernizr","sparklines","icons","animo","underscore","sparklines","slimscroll","oitozero.ngSweetAlert","toaster","blockUI")}).state("app.welcome",{url:"/welcome",title:"Welcome",templateUrl:n.basepath("welcome.html"),controller:"WelcomeController",controllerAs:"vm"}).state("app.manage_user",{url:"/manage_user",title:"manage users",templateUrl:n.basepath("manageusers/manage.users.html"),resolve:angular.extend(n.resolveFor("datatables","ngDialog","ui.select"),{}),controller:"ManageUsersController",controllerAs:"vm"}).state("app.manage_role",{url:"/manage_role",title:"manage roles",templateUrl:n.basepath("manageroles/manage.roles.html"),resolve:n.resolveFor("datatables","ngDialog","ui.select"),controller:"ManageRoleController",controllerAs:"vm"}).state("app.mfi_setting",{url:"/mfi_setup",title:"MFI Setting",templateUrl:n.basepath("mfisetup/mfi.html"),resolve:n.resolveFor("datatables","ngDialog","ui.select","moment","inputmask","ngFileUpload"),controller:"MFIController",controllerAs:"vm"}).state("app.manage_branch",{url:"/branches",title:"branches",templateUrl:n.basepath("mfisetup/branches/branches.html"),controller:"BranchController",controllerAs:"vm"}).state("app.forms",{url:"/forms",title:"forms",templateUrl:n.basepath("forms/forms.list.html"),resolve:n.resolveFor("md.data.table","ui.select"),controller:"FormsController",controllerAs:"vm"}).state("app.builder",{url:"/forms/builder/:id",title:"Form Builder",templateUrl:n.basepath("forms/builder.html"),resolve:n.resolveFor("md.data.table","ui.select","ui.sortable"),controller:"FormBuilderController",controllerAs:"vm"}).state("app.acat",{url:"/acat",title:"acat",templateUrl:n.basepath("acat/builder/acat.list.html"),resolve:n.resolveFor("md.data.table"),controller:"ACATListController",controllerAs:"vm"}).state("app.acatbuilder",{url:"/acat/builder/:id",title:"ACAT Builder",templateUrl:n.basepath("acat/builder/acat.builder.html"),controller:"ACATController",resolve:n.resolveFor("md.data.table","ui.select"),controllerAs:"vm"}).state("app.crop",{url:"/crops",title:"crops",templateUrl:n.basepath("acat/crop/crops.html"),resolve:n.resolveFor("md.data.table"),controller:"CropsController",controllerAs:"vm"}).state("app.loanproduct",{url:"/loanproducts",title:"loan product",templateUrl:n.basepath("mfisetup/loanproduct/loan.products.html"),resolve:n.resolveFor("md.data.table","ui.select"),controller:"LoanProductsController",controllerAs:"vm"}).state("app.clients",{url:"/clients",title:"Client Management",templateUrl:n.basepath("loan_management/client_management/client.management.html"),resolve:n.resolveFor("md.data.table","ui.select"),controller:"ClientManagementController",controllerAs:"vm"}).state("app.client_detail",{url:"/clients/:id",title:"clients detail",templateUrl:n.basepath("loan_management/client_management/client.detail.html"),controller:"ClientDetailController",controllerAs:"vm"}).state("app.loan_processing",{url:"/loan_processing",title:"Loan Processing",templateUrl:n.basepath("loan_management/loan_processing/loan.processing.html"),resolve:n.resolveFor("md.data.table","ui.select","moment"),controller:"LoanProcessingController",controllerAs:"vm"}).state("page",{url:"/page",templateUrl:"app/pages/page.html",resolve:n.resolveFor("modernizr","icons","oitozero.ngSweetAlert","toaster","blockUI"),controller:["$rootScope",function(e){e.app.layout.isBoxed=!1}]}).state("page.login",{url:"/login",title:"Login",templateUrl:"app/pages/login.html",controller:"LoginFormController",controllerAs:"login"}).state("page.404",{url:"/404",title:"Not Found",templateUrl:"app/pages/404.html"}).state("page.500",{url:"/500",title:"Server error",templateUrl:"app/pages/500.html"}).state("page.maintenance",{url:"/maintenance",title:"Maintenance",templateUrl:"app/pages/maintenance.html"})}angular.module("app.routes").config(e),e.$inject=["$stateProvider","$locationProvider","$urlRouterProvider","RouteHelpersProvider"]}(),function(){"use strict";function e(e,t){e.user={name:"Yonas",job:"System Admin",picture:"app/img/user/02.jpg"},e.toggleUserBlock=function(){e.$broadcast("toggleUserBlock")},e.logoutUser=function(){t.Logout()},e.app={name:"Bidir Web",description:"Bidir Web App",year:(new Date).getFullYear(),layout:{isFixed:!0,isCollapsed:!1,isBoxed:!1,isRTL:!1,horizontal:!1,isFloat:!1,asideHover:!1,theme:"app/css/theme-d.css",asideScrollbar:!1,isCollapsedText:!1},useFullLayout:!1,hiddenFooter:!1,offsidebarOpen:!1,asideToggled:!1,viewAnimation:"ng-fadeInUp"},e.app.layout.horizontal="app-h"===e.$stateParams.layout,e.$watch("app.layout.isCollapsed",function(t){!1===t&&e.$broadcast("closeSidebarMenu")})}angular.module("app.settings").run(e),e.$inject=["$rootScope","AuthService"]}(),function(){"use strict";function e(e,t,o,n,i,r){!function(){function a(e){t.menuItems=e.data,s(t.menuItems)}function s(t){var o=!1;_.isUndefined(e.currentUser)||(o="super@bidir.com"===e.currentUser.username),_.each(t,function(e){o?(e.showMenuItem=!0,c(e)):(e.showMenuItem=r.hasThisModule(e.module),c(e))})}function c(t){var o=r.validateSubModules();_.isUndefined(t.submenu)||_.each(t.submenu,function(t){var n=!1;_.isUndefined(e.currentUser)?t.showsubmenu=!1:(n="super@bidir.com"===e.currentUser.username,n?t.showsubmenu=!0:_.isUndefined(t.permission)?t.showsubmenu=!1:t.showsubmenu=_.contains(o,t.permission))})}function l(e){if(e){if(e.sref&&"#"!==e.sref)return o.is(e.sref)||o.includes(e.sref);var t=!1;return angular.forEach(e.submenu,function(e){l(e)&&(t=!0)}),t}}function u(e){e+="";for(var t in p)(e<0||e.indexOf(t)<0)&&(p[t]=!0)}function d(e){return"string"==typeof e&&!(e.indexOf("-")<0)}var p=[],m=e.$watch("app.layout.asideHover",function(e,t){!1===t&&!0===e&&u(-1)});n.getMenu(a),t.getMenuItemPropClasses=function(e){return(e.heading?"nav-heading":"")+(l(e)?" active":"")},t.addCollapse=function(t,o){p[t]=!!e.app.layout.asideHover||!l(o)},t.isCollapse=function(e){return p[e]},t.toggleCollapse=function(o,n){return!(!i.isSidebarCollapsed()&&!e.app.layout.asideHover&&(angular.isDefined(p[o])?t.lastEventFromChild||(p[o]=!p[o],u(o)):n&&u(-1),t.lastEventFromChild=d(o),0))},t.$on("$destroy",function(){m()})}()}angular.module("app.sidebar").controller("SidebarController",e),e.$inject=["$rootScope","$scope","$state","SidebarLoader","Utils","PermissionService"]}(),function(){"use strict";function e(e,t,o,n){function i(o,i,a){function u(e){!0===e?t(function(){b.on(v,function(e){$(e.target).parents(".aside").length||d()})}):b.off(v)}function d(){e.app.asideToggled=!1,o.$$phase||o.$apply()}var p=e.$state.current.name,m=i,f=n.isTouch()?"click":"mouseenter",g=$();m.on(f,".nav > li",function(){(n.isSidebarCollapsed()||e.app.layout.asideHover)&&(g.trigger("mouseleave"),g=s($(this),m),r())});var h=o.$on("closeSidebarMenu",function(){c()});l.on("resize.sidebar",function(){n.isMobile()||d()});var _=e.$on("$stateChangeStart",function(t,o){p=o.name,d(),e.$broadcast("closeSidebarMenu")});if(angular.isDefined(a.sidebarAnyclickClose))var b=$(".wrapper"),v="click.sidebar",C=e.$watch("app.asideToggled",u);o.$on("$destroy",function(){h(),_(),C(),m.off(f),l.off("resize.sidebar"),b.off(v)})}function r(){$("<div/>",{class:"dropdown-backdrop"}).insertAfter(".aside-inner").on("click mouseenter",function(){c()})}function a(e){e.siblings("li").removeClass("open").end().toggleClass("open")}function s(t,o){c();var n=t.children("ul");if(!n.length)return $();if(t.hasClass("open"))return a(t),$();var i=$(".aside"),r=$(".aside-inner"),s=parseInt(r.css("padding-top"),0)+parseInt(i.css("padding-top"),0),u=n.clone().appendTo(i);a(t);var d=t.position().top+s-o.scrollTop(),p=l.height();return u.addClass("nav-floating").css({position:e.app.layout.isFixed?"fixed":"absolute",top:d,bottom:u.outerHeight(!0)+d>p?0:"auto"}),u.on("mouseleave",function(){a(t),u.remove()}),u}function c(){$(".dropdown-backdrop").remove(),$(".sidebar-subnav.nav-floating").remove(),$(".sidebar li.open").removeClass("open")}var l=angular.element(o);return{link:i,restrict:"EA",template:'<nav class="sidebar" ng-transclude></nav>',transclude:!0,replace:!0}}angular.module("app.sidebar").directive("sidebar",e),e.$inject=["$rootScope","$timeout","$window","Utils"]}(),function(){"use strict";function e(e){function t(t,o){var n="server/sidebar-menu.json?v="+(new Date).getTime();o=o||function(){alert("Failure loading menu")},e.get(n).then(t,o)}this.getMenu=t}angular.module("app.sidebar").service("SidebarLoader",e),e.$inject=["$http"]}(),function(){"use strict";function e(e,t){var o=this;!function(){e.userBlockVisible=!1;var t=e.$on("toggleUserBlock",function(){e.userBlockVisible=!e.userBlockVisible});e.$on("$destroy",t)}(),o.user=t.GetCurrentUser()}angular.module("app.sidebar").controller("UserBlockController",e),e.$inject=["$scope","AuthService"]}(),function(){"use strict";function e(e){e.useStaticFilesLoader({prefix:"app/i18n/",suffix:".json"}),e.preferredLanguage("en"),e.useLocalStorage(),e.usePostCompiling(!0),e.useSanitizeValueStrategy("sanitizeParameters")}angular.module("app.translate").config(e),e.$inject=["$translateProvider"]}(),function(){"use strict";function e(e,t){e.language={listIsOpen:!1,available:{en:"English",es_AR:"Español"},init:function(){var o=t.proposedLanguage()||t.use(),n=t.preferredLanguage();e.language.selected=e.language.available[o||n]},set:function(o){t.use(o),e.language.selected=e.language.available[o],e.language.listIsOpen=!e.language.listIsOpen}},e.language.init()}angular.module("app.translate").run(e),e.$inject=["$rootScope","$translate"]}(),function(){"use strict";function e(e){function t(t,o,n){t.$watch(function(){return t.$eval(n.animateEnabled,t)},function(t){e.enabled(!!t,o)})}return{link:t,restrict:"A"}}angular.module("app.utils").directive("animateEnabled",e),e.$inject=["$animate"]}(),function(){"use strict";function e(e){return e.jQBrowser}angular.module("app.utils").service("Browser",e),e.$inject=["$window"]}(),function(){"use strict";function e(e,t){function o(o,n){n.on("click",function(n){n.preventDefault(),o.resetKey?(delete t[o.resetKey],e.go(e.current,{},{reload:!0})):$.error("No storage key specified for reset.")})}return{link:o,restrict:"A",scope:{resetKey:"@"}}}angular.module("app.utils").directive("resetKey",e),e.$inject=["$state","$localStorage"]}(),function(){"use strict";function e(e){function t(t,o){e.msie?o.addClass("hide"):o.on("click",function(e){e.preventDefault(),screenfull.enabled?(screenfull.toggle(),screenfull.isFullscreen?$(this).children("em").removeClass("fa-expand").addClass("fa-compress"):$(this).children("em").removeClass("fa-compress").addClass("fa-expand")):$.error("Fullscreen not enabled")})}return{link:t,restrict:"A"}}angular.module("app.utils").directive("toggleFullscreen",e),e.$inject=["Browser"]}(),function(){"use strict";function e(){function e(e,o,n){o.on("click",function(e){o.is("a")&&e.preventDefault();var i=n.loadCss;i?t(i)||$.error("Error creating stylesheet link element."):$.error("No stylesheet location defined.")})}function t(e){var t="autoloaded-stylesheet",o=$("#"+t).attr("id",t+"-old");return $("head").append($("<link/>").attr({id:t,rel:"stylesheet",href:e})),o.length&&o.remove(),$("#"+t)}return{link:e,restrict:"A"}}angular.module("app.utils").directive("loadCss",e)}(),function(){"use strict";function e(e,t){function o(o,n,i){function r(){var t=e(new Date,a);n.text(t)}var a=i.format;r();var s=t(r,1e3);o.$on("$destroy",function(){t.cancel(s)})}return{link:o,restrict:"EA"}}angular.module("app.utils").directive("now",e),e.$inject=["dateFilter","$interval"]}(),function(){"use strict";function e(){function e(e,t){t.on("change",function(){var e=$(this),t=e.index()+1,o=e.find('input[type="checkbox"]');e.parents("table").find("tbody > tr > td:nth-child("+t+') input[type="checkbox"]').prop("checked",o[0].checked)})}return{link:e,restrict:"A"}}angular.module("app.utils").directive("checkAll",e)}(),function(){"use strict";function e(e,t){function o(o,n,i){n.on("click",function(){t(function(){var t=document.createEvent("UIEvents");t.initUIEvent("resize",!0,!1,e,0),e.dispatchEvent(t)},i.triggerResize||300)})}return{link:o,restrict:"A"}}angular.module("app.utils").directive("triggerResize",e),e.$inject=["$window","$timeout"]}(),function(){"use strict";function e(e,t){var o=angular.element("html"),n=angular.element(e),i=angular.element("body");return{support:{transition:function(){var e=function(){var e,t=document.body||document.documentElement,o={WebkitTransition:"webkitTransitionEnd",MozTransition:"transitionend",OTransition:"oTransitionEnd otransitionend",transition:"transitionend"};for(e in o)if(void 0!==t.style[e])return o[e]}();return e&&{end:e}}(),animation:function(){var e=function(){var e,t=document.body||document.documentElement,o={WebkitAnimation:"webkitAnimationEnd",MozAnimation:"animationend",OAnimation:"oAnimationEnd oanimationend",animation:"animationend"};for(e in o)if(void 0!==t.style[e])return o[e]}();return e&&{end:e}}(),requestAnimationFrame:window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||window.msRequestAnimationFrame||window.oRequestAnimationFrame||function(e){window.setTimeout(e,1e3/60)},touch:"ontouchstart"in window&&navigator.userAgent.toLowerCase().match(/mobile|tablet/)||window.DocumentTouch&&document instanceof window.DocumentTouch||window.navigator.msPointerEnabled&&window.navigator.msMaxTouchPoints>0||window.navigator.pointerEnabled&&window.navigator.maxTouchPoints>0||!1,mutationobserver:window.MutationObserver||window.WebKitMutationObserver||window.MozMutationObserver||null},isInView:function(e,t){var o=$(e);if(!o.is(":visible"))return!1;var i=n.scrollLeft(),r=n.scrollTop(),a=o.offset(),s=a.left,c=a.top;return t=$.extend({topoffset:0,leftoffset:0},t),c+o.height()>=r&&c-t.topoffset<=r+n.height()&&s+o.width()>=i&&s-t.leftoffset<=i+n.width()},langdirection:"rtl"===o.attr("dir")?"right":"left",isTouch:function(){return o.hasClass("touch")},isSidebarCollapsed:function(){return i.hasClass("aside-collapsed")||i.hasClass("aside-collapsed-text")},isSidebarToggled:function(){return i.hasClass("aside-toggled")},isMobile:function(){return n.width()<t.tablet}}}angular.module("app.utils").service("Utils",e),e.$inject=["$window","APP_MEDIAQUERY"]}(),function(e){"use strict";function t(t,o,n,i){function r(){s({taskId:l.task._id,status:"approved",comment:e.isUndefined(l.task.comment)?"no comment":l.task.comment})}function a(){s({taskId:l.task._id,status:"declined",comment:e.isUndefined(l.task.comment)?"no comment":l.task.comment})}function s(e){o.ChangeTaskStatus(e).then(function(o){i.swal("Task Status Changed!","Task "+e.status+" Successfully!","success"),console.log("task updated",o),t.hide()},function(e){i.swal("Oops...","Something went wrong!","error"),console.log("could not be updated",e)})}function c(){t.cancel()}var l=this;l.cancel=c,l.approveUser=r,l.declineUser=a,l.task=n.taskInfo,console.log("task ",l.task),o.GetUserAccount(l.task.entity_ref).then(function(e){l.userInfo=e.data},function(e){console.log("error",e)})}e.module("app.welcomePage").controller("TaskDetailController",t),t.$inject=["$mdDialog","WelcomeService","items","SweetAlert"]}(window.angular),function(e){"use strict";function t(e,t,o){}e.module("app.welcomePage").controller("WelcomeController",t),t.$inject=["$mdDialog","WelcomeService","AuthService"]}(window.angular),function(e){"use strict";function t(e,t,o){function n(n){var i={headers:{Authorization:"Bearer "+o.GetToken(),Accept:"application/json"}};return e.get(t.buildUrl(API.Service.Users,API.Methods.Users.Account)+"/"+n,i)}function i(){var n={headers:{Authorization:"Bearer "+o.GetToken(),Accept:"application/json"}};return e.get(t.buildUrl(API.Service.Users,API.Methods.Tasks.GetAll),n)}function r(n){var i={headers:{Authorization:"Bearer "+o.GetToken(),Accept:"application/json"}};return e.put(t.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,n.taskId)+"/status",n,i)}return{GetTasks:i,GetUserAccount:n,ChangeTaskStatus:r}}e.module("app.welcomePage").service("WelcomeService",t),t.$inject=["$http","CommonService","AuthService"]}(window.angular),function(){"use strict";function e(e){function t(t,o){e.swal(t,o,"error")}function o(t,o){e.swal(t,o,"info")}function n(t,o){e.swal({title:t,text:o,type:"warning",confirmButtonText:"Ok"})}function i(t,o,n,i,r){return r=void 0===r||"boolean"!=typeof r||r,i=void 0===i||"string"!=typeof i?"warning":i,e.swal({title:o,text:t,type:i,showCancelButton:!0,confirmButtonColor:"#009688",confirmButtonText:n,closeOnConfirm:r,showLoaderOnConfirm:!0})}function r(t,o,n,i,r,a){return r=void 0===r||"boolean"!=typeof r||r,i=void 0===i||"string"!=typeof i?"warning":i,e.swal({title:o,text:t,type:i,showCancelButton:!0,confirmButtonColor:"#DD6B55",confirmButtonText:n,closeOnConfirm:r,showLoaderOnConfirm:!0},a)}function a(t,o){e.swal(t,o,"success")}function s(e){var o="Server was unable to process the request",n="";e.data&&e.data.Message&&(o=e.data.Message),e.ExceptionMessage&&(o=e.ExceptionMessage),
-e.data&&e.data.ExceptionMessage&&(n=e.data.ExceptionMessage),t(o+" "+n,"Error")}return{showError:t,showInfo:o,showWarning:n,showSuccess:a,errorHandler:s,showConfirm:i,showConfirmForDelete:r}}angular.module("app.core").factory("AlertService",e),e.$inject=["SweetAlert"]}(),function(e){"use strict";function t(){function e(e,t){return API.Config.BaseUrl+e+"/"+t}function t(e,t){var o={start:1,limit:200};return""===t?API.Config.BaseUrl+e+"/paginate?page="+o.start+"&per_page="+o.limit:API.Config.BaseUrl+e+"/"+t+"/paginate?page="+o.start+"&per_page="+o.limit}function o(e,t,o){return""===t?API.Config.BaseUrl+e+"/paginate?page="+o.page+"&per_page="+o.per_page:API.Config.BaseUrl+e+"/"+t+"/paginate?page="+o.page+"&per_page="+o.per_page}function n(e,t,o){return""===t?API.Config.BaseUrl+e+"/"+o:API.Config.BaseUrl+e+"/"+t+"/"+o}function i(e,t,o){return API.Config.BaseUrl+e+"/"+t+"/search?search="+o}return{buildUrl:e,buildPaginatedUrl:t,buildPerPageUrl:o,buildUrlWithParam:n,buildUrlForSearch:i,Validation:{ComputeValidation:function(e){var t=!0,o=_.allKeys(e);return _.each(o,function(o){t=t&&e[o]}),t},ResetValidationObject:function(e){var t=_.allKeys(e);_.each(t,function(t){e[t]=!0})},ValidateForm:function(e,t){var o=!0,n=_.allKeys(e),i=function(e){return _.isString(e)?!_.isUndefined(e)&&!_.isNull(e)&&e.length>0:_.isNumber(e)?!_.isUndefined(e)&&!_.isNull(e)&&!_.isNaN(e):_.isDate(e)?!_.isUndefined(e)&&!_.isNull(e):_.isObject(e)?!_.isUndefined(e)&&!_.isNull(e)&&!_.isEmpty(e):!_.isUndefined(e)&&!_.isNull(e)};return _.each(n,function(n){var r=n.indexOf("Valid");if(-1!=r)var a=n.substring(2,r);if(_.has(t,a)){var s=t[a];e[n]=i(s)}else e[n]=!1,o=!1;o=o&&e[n]}),o}}}}e.module("app.common").factory("CommonService",t)}(window.angular),function(e){"use strict";function t(e,t){return function(o){e(function(){var e=t.document.getElementById(o);e&&e.focus()})}}t.$inject=["$timeout","$window"],e.module("app.common").factory("focus",t)}(window.angular),function(e){"use strict";function t(e,t,o){function n(){var e=o.GetCurrentUser(),t={isSuper:!1,permissions:[]};return _.isUndefined(e)||null===e?null:_.isUndefined(e.account)?_.isUndefined(e.admin)?t:t={isSuper:!0,permissions:[]}:(t.isSuper=!1,t.permissions=e.account.role.permissions,t)}function i(){var e=n().permissions,t=_.uniq(e,function(e){return e.module});return _.pluck(t,"module")}function r(){var e=n().permissions,t=_.uniq(e,function(e){return e.entityPermission=_.isUndefined(e.entity)?"":e.module+"_"+e.entity,e.entityPermission});return _.pluck(t,"entityPermission")}function a(e){var t=n(),o=!1;if(t.isSuper)o=!0;else{var i=_.map(t.permissions,function(e){return e.module+"_"+e.entity+"_"+e.operation});o=_.contains(i,e)}return o}function s(e){var t=i();return"all"===e||_.contains(t,e)}function c(e){var t=!1;return _.each(e,function(e){t=t||a(e)}),t}return{hasThisPermission:a,hasThesePermissions:c,permissions:n,permittedModules:i,hasThisModule:s,validateSubModules:r}}e.module("app.auth").factory("PermissionService",t),t.$inject=["StorageService","$rootScope","AuthService"]}(window.angular),function(){function e(e,t,o,n){var i=t("sm")||t("xs");return{show:function(t){e.show({controller:["$scope","$mdDialog","$rootScope",function(e,n,i){function r(e,t){t.HideRow=!0}e.removeItem=r,e.printables=t,e.preparedBy="super admin",e.Name="Buusaa Gonofaa Microfinance Share Company",e.ShowLogoOnPrintOut=!0,e.CurrentDate="30-Mar-2018",e.Address={Location:"Addis Ababa, Ethiopia",Phonenumber:"(255) 555-555555"},e.cancel=function(){n.cancel()},e.print=function(e){o.print(e),n.hide(e)}}],skipHide:!0,templateUrl:"app/views/common/templates/print.preview.tmpl.html",parent:angular.element(document.body),fullscreen:i})},close:function(e){},getPreviewContent:function(e){}}}angular.module("app.common").factory("PrintPreviewService",e),e.$inject=["$mdDialog","$mdMedia","PrintService","$rootScope"]}(),function(){function e(e){function t(){document.body.removeChild(this.__container__)}function o(){this.contentWindow.__container__=this,this.contentWindow.onbeforeunload=t,this.contentWindow.onafterprint=t,this.contentWindow.focus(),this.contentWindow.print()}return{print:function(e){var t=document.getElementById(e).innerHTML,n=document.createElement("iframe");n.style.visibility="hidden",n.style.position="fixed",n.style.right="0",n.style.bottom="0",document.body.appendChild(n),n.onload=o;var i=n.document;n.contentWindow&&(i=n.contentWindow.document),$.ajax({url:"app/views/common/templates/print.container.tmpl.html",success:function(e){if(!_.isNull(e)||!_.isUndefined(e)){var o=e.replace("@PrintContent",t);i.open(),i.writeln(o),i.close()}}})}}}angular.module("app.common").factory("PrintService",e),e.$inject=["$rootScope"]}(),function(e){"use strict";function t(t){function o(o){var n=t[o];return e.isUndefined(n)?null:JSON.parse(n)}function n(e,o){t[e]=JSON.stringify(o)}function i(e){delete t[e]}function r(){t.$reset()}return{Get:o,Set:n,Remove:i,Reset:r}}e.module("app.common").service("StorageService",t),t.$inject=["$localStorage"]}(window.angular),function(){"use strict";function e(){console.log("custom app run")}function t(e,t){e.disableWarnings(),t.theme("default").primaryPalette("blue")}t.$inject=["$mdAriaProvider","$mdThemingProvider"],angular.module("custom",["angle","app.mfi","app.clients","app.forms","app.acat","app.loan_management"]).config(t).run(e)}(),function(){"use strict";function e(){}function t(){}angular.module("app.acat",[]).run(e).config(t)}(),function(){"use strict";function e(){}function t(e){e.iconSet("avatars","app/img/icons/avatar-icons.svg",128)}t.$inject=["$mdIconProvider"],angular.module("app.forms",[]).run(e).config(t)}(),function(){"use strict";angular.module("app.loan_management",["app.clients","app.processing"])}(),function(){"use strict";function e(){}angular.module("app.mfi",[]).run(e)}(),function(){"use strict";function e(){}angular.module("app.clients",[]).run(e)}(),function(){"use strict";angular.module("app.processing",[])}(),function(){"use strict";function e(e){!function(){e.log("I'm a line from custom.js")}()}angular.module("custom").controller("Controller",e),e.$inject=["$log"]}(),function(e){"use strict";function t(e,t){function o(){return e.get(t.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop))}function n(o){return e.post(t.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateCrop),o)}function i(o){return e.put(t.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Crop,o._id),o)}function r(o){return e.get(t.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,o))}function a(){return e.get(t.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT))}function s(o){return e.post(t.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),o)}function c(o){return e.put(t.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,o._id),o)}function l(o){return e.post(t.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),o)}function u(o){return e.put(t.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,o._id),o)}function d(o){var n={item_id:o.item_id};return e.put(t.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,o._id)+"/"+ACAT_COST_LIST_TYPE.LINEAR,n)}function p(o){var n={item_id:o.item_id};return e.put(t.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,o._id)+"/items",n)}function m(o){var n={item_id:o.item_id};return e.put(t.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,o._id)+"/group",n)}function f(o){return e.put(t.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,"grouped")+"/"+o._id,o)}function g(o){return e.put(t.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,o._id)+"/reset",{})}return{GetCrops:o,SaveCrop:n,UpdateCrop:i,GetAllACATList:a,GetACATById:r,CreateACAT:l,UpdateACAT:u,AddCostList:s,UpdateCostList:c,RemoveCostListLinear:d,RemoveCostListGroup:p,RemoveCostGroup:m,UpdateCostGroup:f,ResetCostList:g}}e.module("app.forms").service("ACATService",t),t.$inject=["$http","CommonService"]}(window.angular),function(e){"use strict";e.module("app.forms").constant("MW_QUESTION_TYPES",[{name:"Fill In Blank",url:"fib",code:"FILL_IN_BLANK",type:"text"},{name:"Yes/No Question",code:"YES_NO",url:"yn",type:"yn",options:["Yes","No"]},{name:"Multiple Choice",url:"mc",code:"MULTIPLE_CHOICE",options:[],type:"checkbox"},{name:"Single Choice",url:"sc",code:"SINGLE_CHOICE",options:[],type:"select"},{name:"Grouped Question",url:"GROUPED",code:"GROUPED",type:"grouped"}]).constant("MW_FORM_TYPES",[{name:"ACAT",code:"ACAT"},{name:"Loan Application",code:"LOAN_APPLICATION"},{name:"Screening",code:"SCREENING"},{name:"Group Application",code:"GROUP_APPLICATION"},{name:"Test",code:"TEST"}])}(window.angular),function(e){"use strict";function t(e,t){function o(e,t){r.request.page=e,r.request.per_page=t,r.request.Start=e-1,n()}function n(){e.GetFormsPerPage(r.request).then(function(e){r.forms=e.data.docs,_.forEach(r.forms,function(e){if(e.has_sections){e.sectionCount=e.sections.length;var t=0;_.forEach(e.sections,function(e){t+=e.questions.length}),e.questionCount=t}else e.questionCount=e.questions.length})},function(e){console.log(e)})}function i(e,o){t.go("app.builder",{id:e._id}),console.log("edit Form",e)}var r=this;r.forms=[],r.logPagination=o,r.editForm=i,r.pageSizes=[10,25,50,100,250,500],r.options={rowSelection:!0,multiSelect:!0,autoSelect:!0,decapitate:!1,largeEditDialog:!1,boundaryLinks:!0,limitSelect:!0,pageSelect:!1},r.request={page:1,per_page:10,Search:""},function(){n()}()}e.module("app.forms").controller("FormsController",t),t.$inject=["FormService","$state"]}(window.angular),function(e){"use strict";function t(e,t,o,n){function i(o){return e.get(t.buildPerPageUrl(API.Service.FORM,API.Methods.Form.All,o))}function r(o){return e.get(t.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,o))}function a(o){return e.put(t.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,o._id),o)}function s(o){return e.post(t.buildUrl(API.Service.FORM,API.Methods.Form.Create),o)}function c(o){return e.get(t.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,o))}function l(o,n){return e.post(t.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question)+"/"+n,o)}function u(o){return e.put(t.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,o._id),o)}function d(o){return e.delete(t.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,o._id+"?form="+o.form))}function p(o){return e.post(t.buildUrl(API.Service.FORM,API.Methods.Form.Create_Section),o)}function m(o){return e.put(t.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,o._id),o)}function f(o){return e.delete(t.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,o._id+"?form="+o.form))}return{GetFormsPerPage:i,CreateForm:s,GetForm:r,UpdateForm:a,GetQuestion:c,CreateQuestion:l,UpdateQuestion:u,DeleteQuestion:d,CreateSection:p,UpdateSection:m,RemoveSection:f,QuestionTypes:o,FormTypes:n}}e.module("app.forms").service("FormService",t),t.$inject=["$http","CommonService","MW_QUESTION_TYPES","MW_FORM_TYPES"]}(window.angular),function(e){"use strict";function t(e,t){function o(o){return e.get(t.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening,o))}function n(o,n){return e.put(t.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,n),o)}function i(){return{_id:"5ad880fba11a250001e480b7",last_modified:"2018-04-19T11:43:55.803Z",date_created:"2018-04-19T11:43:55.803Z",client:{_id:"5acfb1d581862f000115b97c",last_modified:"2018-04-19T11:43:55.816Z",date_created:"2018-04-12T19:21:57.639Z",branch:"5a632fd37ccc72000172fe80",created_by:"5a4a62677d996f0001525df9",status:"loan_application_new",household_members_count:"5",phone:"01014974009",email:"",geolocation:{longitude:0,latitude:0},spouse:{national_id_no:"",grandfather_name:"",last_name:"",first_name:""},house_no:"34",kebele:"Kebele",woreda:"Woreda",civil_status:"single",date_of_birth:"1980-11-05T00:00:00.000Z",national_id_card:"",national_id_no:"0016793019",grandfather_name:"Smith Mutai",last_name:"Tony",first_name:"Mutai",gender:"Male",picture:""},created_by:"5a4a62677d996f0001525df9",branch:"5a632fd37ccc72000172fe80",comment:"",status:"new",questions:[],disclaimer:"",signatures:["Filled By","Checked By"],sections:[{_id:"5ad880fba11a250001e480b5",last_modified:"2018-04-19T11:43:55.785Z",date_created:"2018-04-19T11:43:55.785Z",questions:[{_id:"5ac87cdbc0b33b0001d2f1b9",question_text:"Agriculture:",prerequisites:[],show:!0,values:[],sub_questions:[{_id:"5ac87cdcc0b33b0001d2f1ba",question_text:"Which crops?",prerequisites:[],show:!0,values:[],sub_questions:[],options:[],measurement_unit:null,validation_factor:"NONE",required:!1,type:"FILL_IN_BLANK",remark:"",number:0},{_id:"5ac87cdcc0b33b0001d2f1bb",question_text:"Which agriculture crops?",prerequisites:[],show:!0,values:[],sub_questions:[],options:[],measurement_unit:null,validation_factor:"NONE",required:!1,type:"FILL_IN_BLANK",remark:"",number:0}],options:[],measurement_unit:null,validation_factor:"NONE",required:!1,type:"GROUPED",remark:"",number:0},{_id:"5ac87cf3c0b33b0001d2f1bd",question_text:"Livestock: Which animals?",prerequisites:[],show:!0,values:[],sub_questions:[],options:[],measurement_unit:null,validation_factor:"NONE",required:!1,type:"FILL_IN_BLANK",remark:"",number:1},{_id:"5ac87d1ac0b33b0001d2f1bf",question_text:"Other Income:",prerequisites:[],show:!0,values:[],sub_questions:[{_id:"5ac87d1bc0b33b0001d2f1c0",question_text:"Regular:",prerequisites:[],show:!0,values:[],sub_questions:[],options:[],measurement_unit:"ETB",validation_factor:"NONE",required:!1,type:"FILL_IN_BLANK",remark:"",number:0},{_id:"5ac87d61c0b33b0001d2f1c5",question_text:"Individual responsible for this income:",prerequisites:[],show:!0,values:[],sub_questions:[],options:[],measurement_unit:null,validation_factor:"NONE",required:!1,type:"FILL_IN_BLANK",remark:"",number:1},{_id:"5ac87d61c0b33b0001d2f1c6",question_text:"Irregular",prerequisites:[],show:!0,values:[],sub_questions:[],options:[],measurement_unit:"ETB",validation_factor:"NUMERIC",required:!1,type:"FILL_IN_BLANK",remark:"",number:2},{_id:"5ac87d61c0b33b0001d2f1c7",question_text:"Individual for the irregular income:",prerequisites:[],show:!0,values:[],sub_questions:[],options:[],measurement_unit:null,validation_factor:"NONE",required:!1,type:"FILL_IN_BLANK",remark:"",number:3}],options:[],measurement_unit:null,validation_factor:"NONE",required:!1,type:"GROUPED",remark:"",number:2}],number:1,title:"Economic Activities"},{_id:"5ad880fba11a250001e480b6",last_modified:"2018-04-19T11:43:55.796Z",date_created:"2018-04-19T11:43:55.796Z",questions:[{_id:"5ac87e03c0b33b0001d2f1dc",question_text:"Borrowed in the past:",prerequisites:[],show:!0,values:[],sub_questions:[],options:["Yes","No"],measurement_unit:null,validation_factor:"NONE",required:!1,type:"YES_NO",remark:"",number:1},{_id:"5ac87e8ec0b33b0001d2f1de",question_text:"If borrowed in the past:",prerequisites:[{answer:"Yes",question:"5ac87e03c0b33b0001d2f1dc",_id:"5ac87ea1c0b33b0001d2f1e4"}],show:!1,values:[],sub_questions:[{_id:"5ac87e8ec0b33b0001d2f1df",question_text:"Where",prerequisites:[],show:!0,values:[],sub_questions:[],options:[],measurement_unit:null,validation_factor:"NONE",required:!1,type:"FILL_IN_BLANK",remark:"",number:0},{_id:"5ac87e90c0b33b0001d2f1e0",question_text:"Amount of last loan",prerequisites:[],show:!0,values:[],sub_questions:[],options:[],measurement_unit:"ETB",validation_factor:"NONE",required:!1,type:"FILL_IN_BLANK",remark:"",number:1},{_id:"5ac87e90c0b33b0001d2f1e1",question_text:"Monthly Repayment:",prerequisites:[],show:!0,values:[],sub_questions:[],options:[],measurement_unit:"ETB",validation_factor:"NONE",required:!1,type:"FILL_IN_BLANK",remark:"",number:2},{_id:"5ac87e90c0b33b0001d2f1e2",question_text:"Number of loans in the past:",prerequisites:[],show:!0,values:[],sub_questions:[],options:[],measurement_unit:null,validation_factor:"NUMERIC",required:!1,type:"FILL_IN_BLANK",remark:"",number:3}],options:[],measurement_unit:null,validation_factor:"NONE",required:!1,type:"GROUPED",remark:"",number:2},{_id:"5ac87e8ec0b33b0001d2e1de",question_text:"If xxxx in the past:",prerequisites:[{answer:"Yes",question:"5ac87e03c0b33b0001d2f1dc",_id:"5ac87ea1c0b33b0001d2f1e4"}],show:!1,values:[],sub_questions:[{_id:"5ac87e8ec0b33b0001d2f1df",question_text:"Where",prerequisites:[],show:!0,values:[],sub_questions:[],options:[],measurement_unit:null,validation_factor:"NONE",required:!1,type:"FILL_IN_BLANK",remark:"",number:0},{_id:"5ac87e90c0b33b0001d2f1e0",question_text:"Amount of last loan",prerequisites:[],show:!0,values:[],sub_questions:[],options:[],measurement_unit:"ETB",validation_factor:"NONE",required:!1,type:"FILL_IN_BLANK",remark:"",number:1}],options:[],measurement_unit:null,validation_factor:"NONE",required:!1,type:"GROUPED",remark:"",number:2}],number:1,title:"Previous and Current Loans"}],has_sections:!0,layout:"TWO_COLUMNS",purpose:"Loan Application For Mutai Tony",subtitle:"sub title.",title:"Loan Form"}}function r(o){return e.get(t.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,o)+"/screenings")}function a(o){return e.get(t.buildPerPageUrl(API.Service.LOANS,API.Methods.LOANS.Loans,o))}function s(o){return e.get(t.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Clients,o))}function c(o){return e.get(t.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,o))}function l(o){return e.get(t.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,o))}function u(){return e.get(t.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches))}function d(o){return e.get(t.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,o))}function p(e){var t="";switch(e.toLowerCase()){case"new":t="label bg-gray";break;case"submitted":t="label bg-primary-dark";break;case"approved":t="label bg-green-dark";break;case"screening_inprogress":case"declined_under_review":t="label label-warning";break;case"loan_application_accepted":t="label bg-info-dark";break;case"eligible":t="label label-success";break;case"ineligible":case"declined_final":t="label label-danger";break;case"loan_application_new":t="label bg-purple-dark";break;default:t="label label-inverse"}return t}return{GetLoanApplications:a,GetClientLoanApplication:s,GetScreenings:o,GetStaticClientInfo:i,GetClientScreening:r,SaveClientScreening:n,GetClients:d,GetClientDetail:l,SearchClient:c,GetBranches:u,StyleLabelByStatus:p}}e.module("app.loan_management").service("LoanManagementService",t),t.$inject=["$http","CommonService"]}(window.angular),function(e){"use strict";function t(t,o,n){function i(){return t.get(o.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches))}function r(e){return t.post(o.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch),e)}function a(e){return t.put(o.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.Branches,e._id),e)}function s(){return t.get(o.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll))}function c(n,i){var r=u(n,i);return t({url:o.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.MFIUpdate,n._id),method:"PUT",data:r,headers:{"Content-Type":void 0},transformRequest:e.identity})}function l(i,r){var a=u(i,r);return t({url:o.buildUrl(API.Service.MFI,API.Methods.MFI.MFI),method:"POST",data:a,headers:{Authorization:"Bearer "+n.GetToken(),"Content-Type":void 0},transformRequest:e.identity})}function u(e,t){var o=new FormData;return o.append("name",e.name),o.append("location",e.location),o.append("establishment_year",e.establishment_year),o.append("contact_person",_.isUndefined(e.contact_person)?"":e.contact_person),o.append("phone",_.isUndefined(e.phone)?"":e.phone),o.append("email",_.isUndefined(e.email)?"":e.email),o.append("website_link",_.isUndefined(e.website_link)?"":e.website_link),_.isUndefined(t)||o.append("logo",t),o}return{GetMFI:s,UpdateMFI:c,CreateMFI:l,UpdateBranch:a,GetBranches:i,CreateBranch:r}}e.module("app.mfi").service("MainService",t),t.$inject=["$http","CommonService","AuthService"]}(window.angular),function(e){"use strict";function t(t,o,n,i,r){function a(){var e=n.instances.get("ACATBuilderBlockUI");e.start(),t.GetACATById(L.ACATId).then(function(t){L.acat.selected_crop=t.data.crop,s(t.data.sections[0].sub_sections),e.stop()},function(t){e.stop(),console.log("error",t)})}function s(e){L.acat.input=e[0],L.acat.labour_costs=e[1].cost_list,L.acat.other_costs=e[2].cost_list,L.acat.seed_costs=L.acat.input.sub_sections[0].cost_list,L.acat.fertilizer_costs=L.acat.input.sub_sections[1].cost_list,L.acat.chemicals_costs=L.acat.input.sub_sections[2].cost_list,c()}function c(){L.acat.fertilizer.list_type=L.acat.fertilizer_costs.grouped.length>0?ACAT_COST_LIST_TYPE.GROUPED:L.acat.fertilizer_costs.linear.length>=0?ACAT_COST_LIST_TYPE.LINEAR:"NA",L.acat.chemicals.list_type=L.acat.chemicals_costs.grouped.length>0?ACAT_COST_LIST_TYPE.GROUPED:L.acat.chemicals_costs.linear.length>=0?ACAT_COST_LIST_TYPE.LINEAR:"NA",L.acat.labour_cost.list_type=L.acat.labour_costs.grouped.length>0?ACAT_COST_LIST_TYPE.GROUPED:L.acat.labour_costs.grouped.length>=0?ACAT_COST_LIST_TYPE.LINEAR:"NA",L.acat.other_cost.list_type=L.acat.other_costs.grouped.length>0?ACAT_COST_LIST_TYPE.GROUPED:L.acat.other_costs.grouped.length>=0?ACAT_COST_LIST_TYPE.LINEAR:"NA"}function l(){t.GetCrops().then(function(e){L.crops=_.filter(e.data.docs,function(e){return!e.has_acat})})}function u(e,t){if(_.isUndefined(e)||_.isUndefined(e.item))console.log("Cost is undefined",!_.isUndefined(e)&&!_.isUndefined(e.item)),r.showWarning("Cost List on "+t,"Item is not filled, Please fill all required fields");else{var o=[];switch(t){case ACAT_GROUP_CONSTANT.SEED:o=L.acat.seed_costs.linear;var n={type:ACAT_COST_LIST_TYPE.LINEAR,parent_cost_list:L.acat.input.sub_sections[0].cost_list._id,item:e.item,unit:e.unit};L.isEditSeedCost?(n._id=e._id,h(n,t)):f(e,o)||g(n,t),L.acat.input.seed={};break;case ACAT_GROUP_CONSTANT.FERTILIZER:if(o=L.acat.fertilizer.list_type===ACAT_COST_LIST_TYPE.GROUPED?L.acat.fertilizer_costs.grouped:L.acat.fertilizer_costs.linear,e.type=L.acat.fertilizer.list_type,L.isEditFertilizerCost)h(e,t);else if(!f(e,o)){var i={parent_cost_list:L.acat.fertilizer_costs._id,item:e.item,unit:e.unit,type:L.acat.fertilizer.list_type};g(i,t)}var a=_.pick(L.acat.fertilizer,"list_type");L.acat.fertilizer=a;break;case ACAT_GROUP_CONSTANT.CHEMICALS:if(o=L.acat.chemicals.list_type===ACAT_COST_LIST_TYPE.GROUPED?L.acat.chemicals_costs.grouped:L.acat.chemicals_costs.linear,L.isEditFertilizerCost)h(e,t);else if(!f(e,o)){var i={parent_cost_list:L.acat.chemicals_costs._id,item:e.item,unit:e.unit,type:L.acat.chemicals.list_type};g(i,t)}var a=_.pick(L.acat.chemicals,"list_type");L.acat.chemicals=a;break;case ACAT_GROUP_CONSTANT.LABOUR_COST:if(o=L.acat.labour_cost.list_type===ACAT_COST_LIST_TYPE.GROUPED?L.acat.labour_costs.grouped:L.acat.labour_costs.linear,L.isEditLabourCost)h(e,t);else if(!f(e,o)){var i={parent_cost_list:L.acat.labour_costs._id,item:e.item,unit:e.unit,type:L.acat.labour_cost.list_type};g(i,t)}var a=_.pick(L.acat.labour_cost,"list_type");L.acat.labour_cost=a;break;case ACAT_GROUP_CONSTANT.OTHER_COST:if(o=L.acat.other_cost.list_type===ACAT_COST_LIST_TYPE.GROUPED?L.acat.other_costs.grouped:L.acat.other_costs.linear,L.isEditOtherCost)h(e,t);else if(!f(e,o)){var i={parent_cost_list:L.acat.other_costs._id,item:e.item,unit:e.unit,type:L.acat.other_cost.list_type};g(i,t)}var a=_.pick(L.acat.other_cost,"list_type");L.acat.other_cost=a;break;default:o=[]}}}function d(e,t){if(!_.isUndefined(e)&&e.existing_group)if(_.isUndefined(e._id))m({parent_grouped_list:e.selected_group._id,item:e.item,unit:e.unit},t);else{var o={parent_grouped_list:e.selected_group._id,item:e.item,unit:e.unit,_id:e._id};h(o,t)}}function p(e,t){switch(t){case ACAT_GROUP_CONSTANT.FERTILIZER:return{_id:L.acat.fertilizer_costs._id,type:"grouped",parent_cost_list:L.acat.fertilizer_costs._id,title:e.title};case ACAT_GROUP_CONSTANT.CHEMICALS:return{_id:L.acat.chemicals_costs._id,type:"grouped",parent_cost_list:L.acat.chemicals_costs._id,title:e.title};case ACAT_GROUP_CONSTANT.LABOUR_COST:return{_id:L.acat.labour_costs._id,type:"grouped",parent_cost_list:L.acat.labour_costs._id,title:e.title};case ACAT_GROUP_CONSTANT.OTHER_COST:return{_id:L.acat.other_costs._id,type:"grouped",parent_cost_list:L.acat.other_costs._id,title:e.title}}}function m(e,o){t.AddCostList(e).then(function(e){console.log("adding cost item on group",e),C(o),a()},function(e){var t=e.data.error.message;r.showError("Error on adding cost item",t),console.log("error while adding cost item on group",e)})}function f(e,t){return _.some(t,function(t){return t.item===e.item&&t.unit===e.unit})}function g(e,o){var i=n.instances.get("ACATBuilderBlockUI");i.start(),t.AddCostList(e).then(function(e){i.stop(),console.log("COST LIST ADDED FOR "+o,e),a()},function(e){i.stop(),console.log("error while adding cost item for "+o,e);var t=e.data.error.message;r.showError("Error when adding cost item on "+o,t)})}function h(e,o){var i=n.instances.get("ACATBuilderBlockUI");i.start();var s={_id:e._id,item:e.item,unit:e.unit};t.UpdateCostList(s).then(function(e){console.log("UPDATED COST ITEM",e.data),i.stop(),a(),C(o)},function(e){i.stop();var t=e.data.error.message;r.showError("error when updating cost list",t),console.log("error updating cost list",e)})}function b(t,o){switch(o){case ACAT_GROUP_CONSTANT.SEED:L.isEditSeedCost=!0,L.acat.input.seed=t,L.acat.input.seedCopy=e.copy(t);break;case ACAT_GROUP_CONSTANT.FERTILIZER:L.isEditFertilizerCost=!0,e.extend(L.acat.fertilizer,t),L.acat.input.fertilizerCopy=e.copy(t);break;case ACAT_GROUP_CONSTANT.CHEMICALS:L.isEditChemicalsCost=!0,e.extend(L.acat.chemicals,t),L.acat.input.chemicalsCopy=e.copy(t);break;case ACAT_GROUP_CONSTANT.LABOUR_COST:L.isEditLabourCost=!0,e.extend(L.acat.labour_cost,t),L.acat.input.labour_costCopy=e.copy(t);break;case ACAT_GROUP_CONSTANT.OTHER_COST:L.isEditOtherCost=!0,e.extend(L.acat.other_cost,t),L.acat.input.other_costCopy=e.copy(t)}}function v(t,o,n){switch(o){case ACAT_GROUP_CONSTANT.FERTILIZER:L.isEditFertilizerCost=!0,L.acat.fertilizer.selected_group=n,L.acat.fertilizer.existing_group=!0,e.extend(L.acat.fertilizer,t);break;case ACAT_GROUP_CONSTANT.CHEMICALS:L.isEditChemicalsCost=!0,L.acat.chemicals.selected_group=n,L.acat.chemicals.existing_group=!0,e.extend(L.acat.chemicals,t);break;case ACAT_GROUP_CONSTANT.LABOUR_COST:L.isEditLabourCost=!0,L.acat.labour_cost.selected_group=n,L.acat.labour_cost.existing_group=!0,e.extend(L.acat.labour_cost,t);break;case ACAT_GROUP_CONSTANT.OTHER_COST:L.isEditOtherCost=!0,L.acat.other_cost.selected_group=n,L.acat.other_cost.existing_group=!0,e.extend(L.acat.other_cost,t)}}function C(e){switch(e){case ACAT_GROUP_CONSTANT.SEED:L.isEditSeedCost=!1,L.acat.input.seed=void 0;break;case ACAT_GROUP_CONSTANT.FERTILIZER:L.isEditFertilizerCost=!1,L.acat.fertilizer.item=void 0,L.acat.fertilizer.unit=void 0;break;case ACAT_GROUP_CONSTANT.CHEMICALS:L.isEditChemicalsCost=!1,L.acat.chemicals.item=void 0,L.acat.chemicals.unit=void 0;break;case ACAT_GROUP_CONSTANT.LABOUR_COST:L.isEditLabourCost=!1,L.acat.labour_cost.item=void 0,L.acat.labour_cost.unit=void 0;break;case ACAT_GROUP_CONSTANT.OTHER_COST:L.isEditOtherCost=!1,L.acat.other_cost.item=void 0,L.acat.other_cost.unit=void 0}}function A(e,t){switch(t){case ACAT_GROUP_CONSTANT.FERTILIZER:L.acat.fertilizer.selected_group=void 0,L.acat.fertilizer.title=void 0;break;case ACAT_GROUP_CONSTANT.CHEMICALS:L.acat.chemicals.selected_group=void 0,L.acat.chemicals.title=void 0;break;case ACAT_GROUP_CONSTANT.LABOUR_COST:L.acat.labour_cost.selected_group=void 0,L.acat.labour_cost.title=void 0;break;case ACAT_GROUP_CONSTANT.OTHER_COST:L.acat.other_cost.selected_group=void 0,L.acat.other_cost.title=void 0}}function S(e){C(e),a()}function T(e,t){switch(t){case ACAT_GROUP_CONSTANT.SEED:return{_id:L.acat.seed_costs._id,list_type:ACAT_COST_LIST_TYPE.LINEAR,item_id:e._id};case ACAT_GROUP_CONSTANT.FERTILIZER:return{_id:L.acat.fertilizer_costs._id,list_type:L.acat.fertilizer.list_type,item_id:e._id};case ACAT_GROUP_CONSTANT.CHEMICALS:return{_id:L.acat.chemicals_costs._id,list_type:L.acat.chemicals.list_type,item_id:e._id};case ACAT_GROUP_CONSTANT.LABOUR_COST:return{_id:L.acat.labour_costs._id,list_type:L.acat.labour_cost.list_type,item_id:e._id};case ACAT_GROUP_CONSTANT.OTHER_COST:return{_id:L.acat.other_costs._id,list_type:L.acat.other_cost.list_type,item_id:e._id}}}function w(e,o){r.showConfirmForDelete("You are about to DELETE COST LIST","Are you sure?","Yes, Remove It!","warning",!0,function(n){if(n){var i=T(e,o);t.RemoveCostListLinear(i,i.list_type).then(function(e){console.log("Removed Cost Item.........",e),a()},function(e){var t=e.data.error.message;r.showError("error when removing cost list",t),console.log("error when removing cost list",e)})}})}function y(e,o,n){r.showConfirmForDelete("You are about to DELETE Cost List From Group","Are you sure?","Yes, Remove It!","warning",!0,function(o){if(o){var i={_id:n._id,group:n,list_type:L.acat.fertilizer.list_type,item_id:e._id};t.RemoveCostListGroup(i).then(function(e){console.log("Removed Cost group item Item.........",e),a()},function(e){console.log("error when removing cost list",e)})}})}function I(){if(L.isEdit)r.showConfirmForDelete("You are about to change CROP for the ACAT","Are you sure?","Yes, Change It!","warning",!0,function(e){if(e){var n={_id:o.id,title:L.acat.selected_crop.name+"-CAT",crop:L.acat.selected_crop._id};t.UpdateACAT(n).then(function(e){console.log("Updated acat ",e);var t=e.data;i.go("app.acatbuilder",{id:t._id},{inherit:!0})},function(e){console.log("error on updating acat",e)})}else a()});else{var e={title:L.acat.selected_crop.name+"-CAT",description:L.acat.selected_crop.name+"-CAT desc",crop:L.acat.selected_crop._id};t.CreateACAT(e).then(function(e){console.log("ACAT ",e);var t=e.data;i.go("app.acatbuilder",{id:t._id},{inherit:!0})},function(e){console.log("error on initializeing acat",e)})}}function E(e,o){0===o.linear.length&&0===o.grouped.length?console.log("cost_list is empty",o):r.showConfirmForDelete("You are about to change Cost List type Which will clear the previous type data","Are you sure?","Yes, Change It!","warning",!0,function(n){if(n)t.ResetCostList(o).then(function(t){switch(e){case ACAT_GROUP_CONSTANT.FERTILIZER:L.acat.fertilizer_costs.linear=[],L.acat.fertilizer_costs.grouped=[];break;case ACAT_GROUP_CONSTANT.CHEMICALS:L.acat.chemicals_costs.linear=[],L.acat.chemicals_costs.grouped=[];break;case ACAT_GROUP_CONSTANT.LABOUR_COST:L.acat.labour_costs.linear=[],L.acat.labour_costs.grouped=[];break;case ACAT_GROUP_CONSTANT.OTHER_COST:L.acat.other_costs.linear=[],L.acat.other_costs.grouped=[]}},function(e){console.log("error",e)});else switch(e){case ACAT_GROUP_CONSTANT.FERTILIZER:L.acat.fertilizer.list_type===ACAT_COST_LIST_TYPE.GROUPED?L.acat.fertilizer.list_type=ACAT_COST_LIST_TYPE.LINEAR:L.acat.fertilizer.list_type=ACAT_COST_LIST_TYPE.GROUPED;break;case ACAT_GROUP_CONSTANT.CHEMICALS:L.acat.chemicals.list_type===ACAT_COST_LIST_TYPE.GROUPED?L.acat.chemicals.list_type=ACAT_COST_LIST_TYPE.LINEAR:L.acat.chemicals.list_type=ACAT_COST_LIST_TYPE.GROUPED;break;case ACAT_GROUP_CONSTANT.LABOUR_COST:L.acat.labour_cost.list_type===ACAT_COST_LIST_TYPE.GROUPED?L.acat.labour_cost.list_type=ACAT_COST_LIST_TYPE.LINEAR:L.acat.labour_cost.list_type=ACAT_COST_LIST_TYPE.GROUPED;break;case ACAT_GROUP_CONSTANT.OTHER_COST:L.acat.other_cost.list_type===ACAT_COST_LIST_TYPE.GROUPED?L.acat.other_cost.list_type=ACAT_COST_LIST_TYPE.LINEAR:L.acat.other_cost.list_type=ACAT_COST_LIST_TYPE.GROUPED}})}function P(e,o){if(L.isEditCostGroup)t.UpdateCostGroup(e).then(function(t){console.log("group updated successfully",t.data);var o=t.data;a(),e.existing_group=!1,e.selected_group=o,e.title="",L.isEditCostGroup=!1},function(e){console.log("error on group update",e);var t=e.data.error.message;r.showError("Error on updating group title",t),a()});else{var n=p(e,o);n._id=void 0,t.AddCostList(n).then(function(t){console.log("group created",t.data);var o=t.data
-;a(),e.existing_group=!0,e.selected_group=o},function(e){console.log("error on group creation",e);var t=e.data.error.message;r.showError("Error on creating group",t)})}}function U(e,o){r.showConfirmForDelete("Group: "+e.title+" including "+e.items.length+" cost items","Are you sure? You are about to DELETE group","Yes, Change It!","warning",!0,function(n){if(n){var i=p(e,o);i.item_id=e._id,t.RemoveCostGroup(i).then(function(e){console.log("group removed successfully",e.data),a()},function(e){console.log("error on group remove",e);var t=e.data.error.message;r.showError("Error on removing group",t)})}})}function O(e,t){switch(t){case ACAT_GROUP_CONSTANT.FERTILIZER:L.isEditCostGroup=!0,L.acat.fertilizer.title=e.title,L.acat.fertilizer._id=e._id,L.acat.fertilizer.existing_group=!0;break;case ACAT_GROUP_CONSTANT.CHEMICALS:L.isEditCostGroup=!0,L.acat.chemicals.title=e.title,L.acat.chemicals._id=e._id,L.acat.chemicals.existing_group=!0;break;case ACAT_GROUP_CONSTANT.LABOUR_COST:L.isEditCostGroup=!0,L.acat.labour_cost.title=e.title,L.acat.labour_cost._id=e._id,L.acat.labour_cost.existing_group=!0;break;case ACAT_GROUP_CONSTANT.OTHER_COST:L.isEditCostGroup=!0,L.acat.other_cost.title=e.title,L.acat.other_cost._id=e._id,L.acat.other_cost.existing_group=!0;break;default:L.isEditCostGroup=!1}}var L=this;L.isEdit="0"!==o.id,L.ACATId=o.id,L.addToCostList=u,L.addGroupedCostList=d,L.editCostItem=b,L.editGroupCostItem=v,L.removeCostItem=w,L.removeCostItemGrouped=y,L.cancelCostItem=S,L.cropSelectChanged=I,L.onCostListTypeChange=E,L.addGroupOnSection=P,L.editGroupSection=O,L.removeGroupSection=U,L.onToggleExistingGroup=A,function(){l(),L.acat={fertilizer:{list_type:"linear"},chemicals:{list_type:"linear"},input:{seedCostList:[]},labour_cost:{list_type:"linear"},other_cost:{list_type:"linear"}},L.isEditCostGroup=!1,L.isEditSeedCost=!1,L.isEdit&&a()}()}e.module("app.acat").controller("ACATController",t),t.$inject=["ACATService","$stateParams","blockUI","$state","AlertService"]}(window.angular),function(e){"use strict";function t(e,t){function o(){t.go("app.acatbuilder",{id:0})}function n(e){t.go("app.acatbuilder",{id:e._id})}var i=this;i.addACAT=o,i.editACAT=n,function(){e.GetAllACATList().then(function(e){i.acat_list=e.data.docs,console.log("vm.acat_list",e)})}()}e.module("app.acat").controller("ACATListController",t),t.$inject=["ACATService","$state"]}(window.angular),function(e){"use strict";function t(t,o,n){function i(){t.GetCrops().then(function(e){s.crops=e.data.docs})}function r(t,r){o.show({locals:{data:{crop:t}},templateUrl:n.basepath("acat/crop/crop.dialog.html"),parent:e.element(document.body),targetEvent:r,clickOutsideToClose:!1,hasBackdrop:!1,escapeToClose:!0,controller:a,controllerAs:"vm"}).then(function(e){i()},function(e){console.log("refresh on response")})}function a(e,o,n,i,r){function a(){if(c.IsValidData=n.Validation.ValidateForm(c.cropForm,c.crop),c.IsValidData){var o=r.instances.get("CropBlockUI");o.start(),c.isEdit?t.UpdateCrop(c.crop).then(function(t){e.hide(),i.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!"),o.stop()},function(e){console.log("error",e);var t=e.data.error.message;i.showError("FAILED TO UPDATE CROP",t),o.stop()}):t.SaveCrop(c.crop).then(function(t){e.hide(),i.showSuccess("CROP","CROP CREATED SUCCESSFULLY!"),o.stop()},function(e){console.log("error on crop create",e);var t=e.data.error.message;i.showError("FAILED TO CREATE CROP",t),o.stop()})}else i.showWarning("Warning","Please fill the required fields and try again.")}function s(){e.cancel()}var c=this;c.cancel=s,c.saveCrop=a,c.isEdit=null!==o.crop,c.cropForm={IsnameValid:!0,IscategoryValid:!0},c.isEdit&&(c.crop=o.crop)}a.$inject=["$mdDialog","data","CommonService","AlertService","blockUI"];var s=this;s.addCrop=r,s.editCrop=r,i()}e.module("app.acat").controller("CropsController",t),t.$inject=["ACATService","$mdDialog","RouteHelpers"]}(window.angular),function(e){"use strict";function t(t,o,n,i,r,a,s,c){function l(e){t.UpdateQuestion(e).then(function(e){},function(t){console.log("error saving order question ["+e.question_text+"] ",t)})}function u(){var e=a.instances.get("formBuilderBlockUI");if(e.start(),w.isEdit){var o={_id:w.formData._id,title:w.formData.title,subtitle:w.formData.subtitle,purpose:w.formData.purpose,layout:w.formData.layout,has_sections:w.formData.has_sections};t.UpdateForm(o).then(function(t){e.stop(),w.formData=t.data,w.formData.selected_formType=g(w.formData.type),r.showSuccess("FORM UPDATED","Form updated successfully"),c.go("app.builder",{id:w.formData._id},{inherit:!0})},function(t){e.stop();var o=t.data.error.message;r.showError("Failed to Save Form",o),console.log("error",t)})}else{var n={title:w.formData.title,subtitle:w.formData.subtitle,purpose:w.formData.purpose,layout:w.formData.layout,has_sections:w.formData.has_sections,type:w.formData.selected_formType.code,questions:[]};t.CreateForm(n).then(function(t){e.stop(),w.formData=t.data,w.formData.selected_formType=g(w.formData.type),r.showSuccess("FORM CREATED","Form created successfully"),c.go("app.builder",{id:w.formData._id},{inherit:!0})},function(t){e.stop();var o=t.data.error.message;r.showError("Failed to Save Form",o),console.log("error",t)})}}function d(t,i){o.show({locals:{data:{question:null,form:{_id:w.formData._id,questions:w.formData.has_sections?w.selected_section.questions:w.formData.questions},section:t,number:w.maxOrderNumber}},templateUrl:n.basepath("forms/question.builder.html"),parent:e.element(document.body),targetEvent:i,clickOutsideToClose:!1,hasBackdrop:!1,escapeToClose:!0,controller:"QuestionBuilderController",controllerAs:"vm"}).then(function(e){console.log("call api to refresh"),m()},function(e){console.log("refresh on response")})}function p(t,i){o.show({locals:{data:{question:t,form:{_id:w.formData._id,questions:w.formData.has_sections?w.selected_section.questions:w.formData.questions},number:w.maxOrderNumber}},templateUrl:n.basepath("forms/question.builder.html"),parent:e.element(document.body),targetEvent:i,clickOutsideToClose:!1,hasBackdrop:!1,escapeToClose:!0,controller:"QuestionBuilderController",controllerAs:"vm"}).then(function(e){m()},function(){})}function m(){var e=a.instances.get("formBuilderBlockUI");e.start(),t.GetForm(w.formId).then(function(t){w.formData=t.data,w.formData.sections.length>0&&!_.isUndefined(w.selected_section)&&(w.selected_section=_.first(_.filter(w.formData.sections,function(e){return e._id===w.selected_section._id}))),w.formData.has_sections?f():(w.formData.questions.length>0?w.maxOrderNumber=_.max(w.formData.questions,function(e){return e.number}).number:w.maxOrderNumber=0,console.log("max number for question without section",w.maxOrderNumber)),w.formData.selected_formType=g(w.formData.type),e.stop()},function(t){e.stop(),console.log("error",t)})}function f(){_.isUndefined(w.selected_section)?w.maxOrderNumber=0:w.selected_section.questions.length>0?w.maxOrderNumber=_.max(w.selected_section.questions,function(e){return e.number}).number:w.maxOrderNumber=0}function g(e){return _.first(_.filter(w.formTypes,function(t){return t.code===e}))}function h(e){var t="";switch(e.trim()){case"Fill In Blank":case"FILL_IN_BLANK":t="label bg-green-dark";break;case"Yes/No":case"YES_NO":t="label bg-info";break;case"GROUPED":t="label bg-warning-dark";break;case"SINGLE_CHOICE":t="label bg-primary";break;case"MULTIPLE_CHOICE":t="label bg-pink-dark";break;default:t="label bg-inverse"}return t}function b(){w.selected_section={},w.showSectionForm=!0}function v(e){w.showSectionForm=!1,w.selected_section=e,w.selected_section.form=w.formId,f(),console.log("max number for question with section on select",w.maxOrderNumber)}function C(e){e.form=w.formId,_.isUndefined(e._id)?t.CreateSection(e).then(function(e){w.selected_section=e.data,w.selected_section.form=w.formId,w.showSectionForm=!1,r.showSuccess("SECTION","Section Created successfully"),m()},function(e){console.log("error when saving section",e)}):t.UpdateSection(e).then(function(e){w.selected_section=e.data,w.selected_section.form=w.formId,w.showSectionForm=!1,m(),r.showSuccess("SECTION","Section Updated successfully"),console.log("saved section",e)},function(e){console.log("error when saving section",e)})}function A(e){w.selected_section=e,w.selected_section.form=w.formId,w.showSectionForm=!0}function S(){w.showSectionForm=!1}function T(e){r.showConfirmForDelete("You are about to DELETE SECTION, All Questions under this section will be removed","Are you sure?","Yes, Delete it!","warning",!0,function(o){o&&(w.selected_section.form=w.formId,t.RemoveSection(e).then(function(e){w.showSectionForm=!1,m(),r.showSuccess("SECTION","Section Deleted successfully"),w.selected_section=void 0},function(e){console.log("Section deleting error",e);var t=e.data.error.message;r.showError("Failed to DELETE Section",t)}))})}var w=this;w.isEdit="0"!==i.id,w.formId=i.id,w.formTypes=t.FormTypes,w.addQuestion=d,w.editQuestion=p,w.saveForm=u,w.typeStyle=h,w.selectSection=v,w.addSection=b,w.saveSection=C,w.editSection=A,w.removeSection=T,w.cancelSection=S,s.sortableOptions={placeholder:"ui-state-highlight",update:function(e,t){},stop:function(e,t){w.selected_section.questions.map(function(e,t){e.number=t,l(e)})}},s.sectionSortableOptions={placeholder:"ui-state-highlight",stop:function(e,t){console.log("stop ordering questions"),w.formData.questions.map(function(e,t){e.number=t,l(e)})}},function(){w.isEdit?m():w.formData={has_sections:0,layout:"TWO_COLUMNS"}}()}e.module("app.forms").controller("FormBuilderController",t),t.$inject=["FormService","$mdDialog","RouteHelpers","$stateParams","AlertService","blockUI","$scope","$state"]}(window.angular),function(e){"use strict";function t(e,t,o,n,i){function r(){var o={question_text:E.question.question_text,remark:E.question.remark,required:E.question.required,show:E.question.show,measurement_unit:_.isUndefined(E.question.measurement_unit)?null:E.question.measurement_unit,form:E.form._id};if(E.question.selected_type.code===QUESTION_TYPE.FILL_IN_BLANK?o.validation_factor=E.question.selected_validation.name:E.question.selected_type.code===QUESTION_TYPE.YES_NO&&(o.options=E.question.selected_type.options),!_.isUndefined(E.question.options)&&E.question.options.length>0&&(o.options=E.question.options),"0"!==E.question.show&&E.question.show)o.prerequisites=[];else if(!_.isUndefined(E.selected_question)&&!_.isUndefined(E.selected_question.selected_value)){var i={question:E.selected_question._id,answer:E.selected_question.selected_value};o.prerequisites=[],o.prerequisites.push(i)}E.isEdit?(o._id=E.question._id,e.UpdateQuestion(o).then(function(e){E.question.selected_type.code===QUESTION_TYPE.GROUPED&&m(),t.hide(),n.showSuccess("Question Updated","Question Updated successfully")},function(e){console.log("qn update error",e);var t=e.data.error.message;n.showError("Failed to Update Question",t)})):(o.section=E.question.section,o.number=I(),e.CreateQuestion(o,E.question.selected_type.url).then(function(e){console.log("Question created",e),E.maxOrderNumber=o.number,E.question=e.data,E.showSubQuestion=!0,E.question.type===QUESTION_TYPE.GROUPED&&m(),t.hide(),n.showSuccess("Question Created","Question Created successfully")},function(e){console.log("Question create error",e);var t=e.data.error.message;n.showError("Failed to Save Question",t)}))}function a(o,i){n.showConfirmForDelete("You are about to DELETE this Question?","Are you sure?","Yes, Delete it!","warning",!0,function(i){o.form=E.form._id,i&&e.DeleteQuestion(o).then(function(e){n.showSuccess("Question","Question Deleted successfully"),t.hide()},function(e){console.log("qn deleting error",e);var t=e.data.error.message;n.showError("Failed to DELETE Question",t)})})}function s(e){if(void 0!==e&&""!==e){if(!_.isUndefined(E.oldOption)){var t=E.question.options.indexOf(E.oldOption);-1!==t&&E.question.options.splice(t,1),E.isOptionEdit=!1}-1===E.question.options.indexOf(e)&&E.question.options.push(e),console.log("question",E.question.options),E.newRadioValue=""}}function c(e){var t=E.question.options.indexOf(e);-1!==t&&E.question.options.splice(t,1)}function l(e){E.isOptionEdit=!0,E.newRadioValue=e,E.oldOption=e}function u(){E.showSubQuestion=!0,E.isSubEdit&&(E.sub_question={},E.isSubEdit=!1)}function d(){var e={question_text:E.sub_question.question_text,parent_question:E.question._id,required:E.question.required,show:!0,measurement_unit:_.isUndefined(E.sub_question.measurement_unit)?null:E.sub_question.measurement_unit,validation_factor:E.sub_question.selected_validation.name,sub_question_type:"fib",form:E.form._id};E.sub_question_list.push(e),E.vallidationCopy=E.sub_question.selected_validation,E.sub_question={},E.sub_question.selected_validation=E.vallidationCopy,E.showSubQuestion=!1}function p(){E.sub_question={},E.sub_question.selected_validation=_.first(_.filter(E.fibvalidation,function(e){return"NONE"===e.name})),E.showSubQuestion=!1}function m(){_.forEach(E.sub_question_list,function(t){_.isUndefined(t._id)?(t.number=y(),t.parent_question=E.question._id,E.maxSubOrderNumber=t.number,e.CreateQuestion(t,t.sub_question_type).then(function(e){},function(e){console.log("sub question error create",e)})):e.UpdateQuestion(t).then(function(e){},function(e){var t=e.data.error.message;n.showError("Failed to Save Sub Question",t)})})}function f(e,t){E.isSubEdit=!0,E.showSubQuestion=!0,E.sub_question=e,w(!0),console.log("vm.sub_question.selected_validation",E.sub_question)}function g(e){var t=E.sub_question_list.indexOf(e);-1!==t&&E.sub_question_list.splice(t,1)}function h(t,o){n.showConfirmForDelete("You are about to REMOVE this Question?","Are you sure?","Yes, REMOVE it!","warning",!0,function(o){if(o)if(_.isUndefined(t._id))if(_.isUndefined(E.question.sub_questions))g(t);else{var i=E.question.sub_questions.indexOf(t);-1!==i&&E.question.sub_questions.splice(i,1)}else t.form=E.form._id,e.DeleteQuestion(t).then(function(e){g(t),n.showSuccess("SUB QUESTION","Sub Question Deleted successfully")},function(e){console.log("qn deleting error",e);var t=e.data.error.message;n.showError("Failed to DELETE Question",t)})})}function b(){console.log("vm.sub_question.selected_validation",E.sub_question.selected_validation)}function v(){console.log("question",E.question)}function C(){console.log("Question show",E.question.show)}function A(){t.cancel()}function S(){}function T(e){return _.first(_.filter(E.questionTypes,function(t){return t.name===e||t.code===e}))}function w(e){e?E.sub_question.selected_validation=_.first(_.filter(E.fibvalidation,function(e){return e.name===E.sub_question.validation_factor})):E.question.selected_type.code===QUESTION_TYPE.FILL_IN_BLANK&&(E.question.selected_validation=_.first(_.filter(E.fibvalidation,function(e){return e.name===E.question.validation_factor})))}function y(){var e=_.max(E.question.sub_questions,function(e){return e.number});E.maxSubOrderNumber=_.isUndefined(E.maxSubOrderNumber)?e.number:E.maxSubOrderNumber;var t=_.isEmpty(E.maxSubOrderNumber)?0:parseInt(E.maxSubOrderNumber)+1;return _.isUndefined(t)?0:t}function I(){return E.maxOrderNumber+1}var E=this;E.questionTypes=e.QuestionTypes,E.readOnly=!1,E.saveQuestion=r,E.cancel=A,E.addAnother=v,E.showQuestionOn=C,E.removeQuestion=a,E.questionTypeChanged=S,E.showSubQuestion=!1,E.toggleAddSubQuestion=u,E.addToSubQuestion=d,E.editSubQuestion=f,E.removeSubQuestion=h,E.cancelSubQuestion=p,E.subQuestionValidationSelected=b,E.addRadio=s,E.removeOption=c,E.editOption=l,i.sortableSubQuestions={placeholder:"ui-state-highlight",update:function(e,t){console.log("update")},stop:function(t,o){E.sub_question_list.map(function(t,o){t.number=o,e.UpdateQuestion(t).then(function(e){},function(e){console.log("error saving order question ["+t.question_text+"] ",e)})})}},function(){if(E.sub_question_list=[],E.fibvalidation=[{name:"NONE",code:"text"},{name:"ALPHANUMERIC",code:"text"},{name:"NUMERIC",code:"number"},{name:"ALPHABETIC",code:"text"}],E.isEdit=null!==o.question,E.form=o.form,E.maxOrderNumber=o.number,E.isSubEdit=!1,E.sub_question={},E.sub_question.selected_validation=_.first(_.filter(E.fibvalidation,function(e){return"NONE"===e.name})),E.questionList=_.filter(o.form.questions,function(e){return e.options.length>0&&(e.type===QUESTION_TYPE.YES_NO||e.type===QUESTION_TYPE.SINGLE_CHOICE)}),E.isEdit){if(E.question=o.question,_.isUndefined(E.question.sub_questions)||(E.sub_question_list=E.question.sub_questions),1===E.question.prerequisites.length){var t=E.question.prerequisites[0];e.GetQuestion(t.question).then(function(e){E.selected_question=e.data,E.selected_question.selected_value=t.answer})}E.question.form=o.form._id,E.question.selected_type=T(E.question.type),w(!1)}else E.question={show:1,required:0,options:[]},E.question.selected_validation=_.first(_.filter(E.fibvalidation,function(e){return"NONE"===e.name})),o.section.has_section&&(E.question.section=o.section.sectionId)}()}e.module("app.forms").controller("QuestionBuilderController",t),t.$inject=["FormService","$mdDialog","data","AlertService","$scope"]}(window.angular),function(e){"use strict";function t(t,o,n,i){function r(t){console.log("type",l.clientScreening);var o=[];"SCREENING"===t?(o=[{Name:"Screening",TemplateUrl:"app/views/loan_management/client_management/printables/client.screening.html",IsCommon:!1,IsSelected:!1,Data:e.extend({Title:"Screening Result For "+l.clientScreening.client.first_name+" "+l.clientScreening.client.last_name+" "+l.clientScreening.client.grandfather_name},l.clientScreening)}],i.show(o)):(o=[{Name:"Loan Application",TemplateUrl:"app/views/loan_management/client_management/printables/client.screening.html",IsCommon:!1,IsSelected:!1,Data:e.extend({Title:"Loan Application"},l.client.loan_application)}],i.show(o))}function a(){var e=n.instances.get("ClientScreeningBlockUI");e.start(),t.GetClientScreening(l.clientId).then(function(t){e.stop(),l.clientScreening=t.data,console.log("screening",l.clientScreening)},function(t){e.stop(),console.log("error fetching screening",t)})}function s(){var e=n.instances.get("ClientLoanApplicationBlockUI");e.start(),t.GetClientLoanApplication(l.clientId).then(function(t){e.stop(),l.client.loan_application=t.data,console.log("vm.client.loan_application",l.client)},function(t){e.stop(),console.log(" error .loan_application",t)})}function c(e){switch(console.log("tab name clicked",e),e){case"CLIENT":console.log("tab name clicked",e);break;case"SCREENING":a(),console.log("tab name clicked",e);break;case"LOAN_APPLICATION":s();break;case"ACAT":console.log("tab name clicked",e);break;default:console.log("tab name clicked",e)}}var l=this;l.clientId=o.id,l.visibility={showMoreClientDetail:!1},l.labelBasedOnStatusStyle=t.StyleLabelByStatus,l.onTabSelected=c,l.printLaonProcess=r,function(){var e=n.instances.get("ClientBlockUI");e.start(),t.GetClientDetail(l.clientId).then(function(t){e.stop(),l.client=t.data,a(),console.log("client detail",t)},function(t){e.stop(),console.log("error getting client detail",t)})}()}e.module("app.clients").controller("ClientDetailController",t),t.$inject=["LoanManagementService","$stateParams","blockUI","PrintPreviewService"]}(window.angular),function(e){"use strict";function t(t,o,n,i){function r(){p.query.search="",p.filter.show=!1,c()}function a(e,t){console.log("current Page: "+p.query.page+" page size: "+p.query.per_page),p.query.page=e,p.query.per_page=t,c()}function s(){i.IsSuperuser()?t.GetBranches().then(function(e){p.currentUser.user_access_branches=e.data.docs},function(e){p.currentUser.user_access_branches=[],console.log("error on GetBranchFilter",e)}):p.currentUser.user_access_branches=i.GetAccessBranches()}function c(){p.clientPromise=t.GetClients(p.query).then(function(t){p.clients=t.data.docs,p.clientsCopy=e.copy(p.clients),p.query.total_docs_count=t.data.total_docs_count},function(e){console.log("error callApi vm.clients",e)})}function l(e){n.promise=t.SearchClient(e).then(function(e){p.clients=e.data.docs,p.clientsCount=e.data.total_docs_count,console.log(e)},function(e){p.clients=p.clientsCopy,console.log("error",e)})}function u(e,t){o.go("app.client_detail",{id:e._id})}function d(){p.clients=p.clientsCopy,p.clients=_.filter(p.clients,function(e){if(!_.isUndefined(e.branch)&&null!==e.branch)return e.branch._id===p.currentUser.selected_access_branch._id})}var p=this;p.currentUser={selected_access_branch:void 0},p.labelBasedOnStatus=t.StyleLabelByStatus,p.paginate=a,p.clearSearchText=r,p.clientDetail=u,p.onSelectedBranch=d,function(){p.pageSizes=[10,25,50,100,250,500],p.filter={show:!1},p.options={rowSelection:!0,multiSelect:!0,autoSelect:!0,decapitate:!0,largeEditDialog:!1,boundaryLinks:!0,limitSelect:!0,pageSelect:!1},p.query={search:"",page:1,per_page:10},c(),s()}(),n.$watch(e.bind(p,function(){return p.query.search}),function(e,t){e!==t&&(e.length>2?l(e):p.clients=p.clientsCopy)})}e.module("app.loan_management").controller("ClientManagementController",t),t.$inject=["LoanManagementService","$state","$scope","AuthService"]}(window.angular),function(e){"use strict";function t(e,t,o,n,i,r){function a(){e.cancel()}var s=this;s.cancel=a,s.isEdit=null!==t}e.module("app.processing").controller("ClientDialogController",t),t.$inject=["$mdDialog","items","AlertService","CommonService","MainService","blockUI"]}(window.angular),function(e){"use strict";function t(t,o,n,i,r){function a(e,t){console.log("Client detail",e)}function s(e){switch(console.log("tab name clicked",e),e){case"CLIENT":console.log("tab name clicked",e);break;case"SCREENING":m(),console.log("tab name clicked",e);break;case"LOAN_APPLICATION":p();break;case"ACAT":console.log("tab name clicked",e);break;default:console.log("tab name clicked",e)}}function c(t){i.show({locals:{items:null},templateUrl:r.basepath("loan_management/loan_processing/create.client.dialog.html"),parent:e.element(document.body),targetEvent:t,clickOutsideToClose:!1,hasBackdrop:!1,escapeToClose:!0,controller:"ClientDialogController",controllerAs:"vm"}).then(function(e){},function(){})}function l(e){h.selectedScreening=e,console.log("screening detail");var o=e.client;t.GetClientScreening(o._id).then(function(e){h.client=e.data,h.visibility.showScreeningDetail=!0,console.log("vm.client",h.client)})}function u(e){switch(e){case"SCREENING":h.visibility.showScreeningDetail=!1}}function d(e,n){var i=_.find(SCREENING_STATUS,function(e){return e.code===n}),r={status:i.code,questions:e.questions};t.SaveClientScreening(r,e._id).then(function(e){o.showSuccess("Screening","Successfully saved screening information  with status: "+i.name),console.log("saved screening ",r)},function(e){var t=e.data.error.message;o.showError("Error when saving screening",t),console.log("error on saving screening ",e)})}function p(){h.query={search:"",page:1,per_page:10},h.loanApplicationPromise=t.GetLoanApplications(h.query).then(function(e){console.log("loan applications",e),h.loan_applications=e.data.docs,h.query.total_pages=e.data.total_pages,h.query.total_docs_count=e.data.total_docs_count})}function m(){h.screeningPromise=t.GetScreenings(h.query).then(function(e){h.screenings=e.data.docs,h.query.total_pages=e.data.total_pages,h.query.total_docs_count=e.data.total_docs_count,console.log("screenings info",h.screenings)})}function f(e){var t=g(e._id);_.each(t,function(t){if(t){var o=t.prerequisites[0];t.show=o.answer===e.values[0]}})}function g(e){var t=h.client.has_sections?_.reduce(h.client.sections,function(e,t){return e.concat(t.questions)},[]):h.client.questions,o=_.reduce(t,function(e,t){return e.concat(t.sub_questions)},[]),n=_.uniq(_.union(t,o),!1,_.property("_id"));return _.filter(n,function(t){return _.some(t.prerequisites,{question:e})})}var h=this;h.screeningDetail=l,h.backToList=u,h.saveScreeningForm=d,h.questionValueChanged=f,h.addClient=c,h.clientDetail=a,h.onTabSelected=s,h.options={rowSelection:!0,multiSelect:!0,autoSelect:!0,decapitate:!1,largeEditDialog:!1,boundaryLinks:!1,limitSelect:!0,pageSelect:!0},h.filter={show:!1},h.pageSizes=[10,25,50,100,250,500],h.query={search:"",page:1,per_page:10},h.paginate=function(e,t){console.log("Scope Page: "+h.query.page+" Scope Limit: "+h.query.per_page),h.query.page=e,h.query.per_page=t,m()},h.clearSearchText=function(){h.query.search="",h.filter.show=!1},h.searchScreening=function(){console.log("search text",h.query.search)},n.$watch(e.bind(h,function(){return h.query.search}),function(e,t){e!==t&&console.log("search for screening ",e)}),h.visibility={showScreeningDetail:!1,showClientDetail:!1,showLoanApplicationDetail:!1,showACATDetail:!1}}e.module("app.processing").controller("LoanProcessingController",t),t.$inject=["LoanManagementService","AlertService","$scope","$mdDialog","RouteHelpers"]}(window.angular),function(e){"use strict";function t(t,o,n,i,r){function a(){n.GetBranches().then(function(e){u.branches=e.data.docs},function(e){console.log("error",e)})}function s(n){o.show({locals:{items:null},templateUrl:t.basepath("mfisetup/branches/create.branch.dialog.html"),parent:e.element(document.body),targetEvent:n,clickOutsideToClose:!1,hasBackdrop:!1,escapeToClose:!0,controller:"CreateBranchController",controllerAs:"vm"}).then(function(e){a()},function(){})}function c(n,i){o.show({locals:{items:n},templateUrl:t.basepath("mfisetup/branches/create.branch.dialog.html"),parent:e.element(document.body),targetEvent:i,clickOutsideToClose:!1,hasBackdrop:!1,escapeToClose:!0,controller:"CreateBranchController",controllerAs:"vm"}).then(function(e){a()},function(){})}function l(e){e.status="active"===e.status?"inactive":"active",n.UpdateBranch(e).then(function(e){i.showSuccess("Updated branch status","Updated Status successfully.")},function(e){i.showError("Status not changed. Please try again.","ERROR")})}var u=this;u.addBranch=s,u.editBranch=c,u.changeStatus=l,a()}e.module("app.mfi").controller("BranchController",t),t.$inject=["RouteHelpers","$mdDialog","MainService","AlertService","blockUI"]}(window.angular),function(e){"use strict";function t(t,o,n,i,r){function a(e){_.each(e.cost_of_loan,function(e){e.type=e.fixed_amount>0?"fixed_amount":e.percent>0?"percent":"fixed_amount"}),_.each(e.deductibles,function(e){e.type=e.fixed_amount>0?"fixed_amount":e.percent>0?"percent":"fixed_amount"})}function s(){t.cancel()}function c(e){_.isUndefined(e.item)||""===e.item||!_.isUndefined(e.percent)&&!_.isUndefined(e.fixed_amount)||(console.log("vm.isEditDeductible",b.isEditDeductible),b.isEditDeductible?(console.log("item",e),b.loan_product.deductibles=_.filter(b.loan_product.deductibles,function(t){return t._id!==e._id}),b.loan_product.deductibles.push(e),console.log("vm.loan_product.deductibles",b.loan_product.deductibles),b.cancelEdit(!0)):(b.loan_product.deductibles.push(e),b.loan_product.deductible={type:"fixed_amount"}))}function l(t){b.loan_product.deductibleCopy=e.copy(t),b.loan_product.deductible=t,b.isEditDeductible=!0}function u(e){_.isUndefined(e.item)||""===e.item||!_.isUndefined(e.percent)&&!_.isUndefined(e.fixed_amount)||(b.isEditCostOfLoan?b.cancelEdit("costOfLoan"):(b.loan_product.cost_of_loan.push(e),b.loan_product.costOfLoan={type:"fixed_amount"}))}function d(t){b.loan_product.costOfLoanCopy=e.copy(t),b.loan_product.costOfLoan=t,b.isEditCostOfLoan=!0}function p(e,t){n.showConfirmForDelete("You are about to DELETE "+e.item,"Are you sure?","Yes, Delete it!","warning",!0,function(o){if(o){var n=-1;t?-1!==(n=b.loan_product.deductibles.indexOf(e))&&(b.loan_product.deductibles.splice(n,1),console.log("removed item from deductibles")):-1!==(n=b.loan_product.cost_of_loan.indexOf(e))&&(b.loan_product.cost_of_loan.splice(n,1),console.log("removed item from cost_of_loan"))}})}function m(e,t){return t?b.isEditDeductible&&b.loan_product.deductible._id===e._id:b.isEditCostOfLoan&&b.loan_product.costOfLoan._id===e._id}function f(e){if(e){var t=b.loan_product.deductibles.indexOf(b.loan_product.deductible);-1!==t&&(b.loan_product.deductibles[t]=b.loan_product.deductibleCopy),b.loan_product.deductible={type:"fixed_amount"},b.isEditDeductible=!1,b.showCancelForEdit(b.loan_product.deductible,e)}else{var t=b.loan_product.cost_of_loan.indexOf(b.loan_product.costOfLoan);-1!==t&&(b.loan_product.cost_of_loan[t]=b.loan_product.costOfLoanCopy),b.loan_product.costOfLoan={type:"fixed_amount"},b.isEditCostOfLoan=!1,b.showCancelForEdit(b.loan_product.costOfLoan,e)}}function g(){var e=i.instances.get("LoanProductBlockUI");e.start(),b.isEdit?r.UpdateLoanProduct(b.loan_product).then(function(o){console.log("Updated loan product",o.data),n.showSuccess("LOAN PRODUCT","Loan Product Updated successfully"),e.stop(),t.hide()},function(t){var o=t.data.error.message;n.showError("FAILED TO UPDATE LOAN PRODUCT",o),e.stop(),console.log("error",t)}):r.CreateLoanProduct(b.loan_product).then(function(o){console.log("created loan product",o.data),n.showSuccess("LOAN PRODUCT","Loan Product Created successfully"),t.hide(),e.stop()},function(t){e.stop();var o=t.data.error.message;n.showError("FAILED TO CREATE LOAN PRODUCT",o),console.log("error",t)})}function h(e){(b.isEditCostOfLoan||b.isEditDeductible)&&n.showConfirmForDelete("You are about to change type, Which will reset amount/percent field to 0.","Are you sure?","YES, CHANGE IT!","warning",!0,function(t){t&&(e?(b.loan_product.deductible.fixed_amount=0,b.loan_product.deductible.percent=0):(b.loan_product.costOfLoan.fixed_amount=0,b.loan_product.costOfLoan.percent=0))})}var b=this;b.cancel=s,b.addToDeductibleList=c,b.addToCostOfLoanList=u,b.editDeductibleItem=l,b.editCostOfLoanItem=d,b.cancelEdit=f,b.showCancelForEdit=m,b.saveLoanProduct=g,b.removeLoanProductCostItem=p,b.onLPTypeChange=h,function(){b.isEdit=null!==o.loan_product,b.isEditCostOfLoan=!1,b.isEditDeductible=!1,b.isEdit?(b.loan_product=o.loan_product,a(b.loan_product),b.loan_product.deductible={type:"fixed_amount"},b.loan_product.costOfLoan={type:"fixed_amount"}):b.loan_product={deductibles:[],cost_of_loan:[],deductible:{type:"fixed_amount"},costOfLoan:{type:"fixed_amount"}}}()}e.module("app.acat").controller("LoanProductDialogController",t),t.$inject=["$mdDialog","data","AlertService","blockUI","LoanProductService"]}(window.angular),function(e){"use strict";function t(e,t){function o(){return e.get(t.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.LoanProducts))}function n(e){}function i(o){return e.post(t.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateLoanProducts),o)}function r(o){return e.put(t.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProducts,o._id),o)}return{GetAllLoanProducts:o,CreateLoanProduct:i,UpdateLoanProduct:r,RemoveLoanProduct:n}}e.module("app.mfi").service("LoanProductService",t),t.$inject=["$http","CommonService"]}(window.angular),function(e){"use strict";function t(t,o,n){function i(){n.GetAllLoanProducts().then(function(e){s.loanProducts=e.data.docs})}function r(n,r){t.show({locals:{data:{loan_product:n}},templateUrl:o.basepath("mfisetup/loanproduct/loan.product.dialog.html"),parent:e.element(document.body),targetEvent:r,clickOutsideToClose:!1,hasBackdrop:!1,escapeToClose:!0,controller:"LoanProductDialogController",controllerAs:"vm"}).then(function(e){i()},function(e){console.log("refresh on response"),i()})}function a(n,r){t.show({locals:{data:{loan_product:n}},templateUrl:o.basepath("mfisetup/loanproduct/loan.product.dialog.html"),parent:e.element(document.body),targetEvent:r,clickOutsideToClose:!1,hasBackdrop:!1,escapeToClose:!0,controller:"LoanProductDialogController",controllerAs:"vm"}).then(function(e){i()},function(e){console.log("refresh on response"),i()})}var s=this;s.addLoanProduct=r,s.editLoanProduct=a,i()}e.module("app.acat").controller("LoanProductsController",t),t.$inject=["$mdDialog","RouteHelpers","LoanProductService"]}(window.angular),function(e){"use strict";function t(e,t,o,n,i){function r(){if(a.IsValidData=n.Validation.ValidateForm(a.MFISetupForm,a.MFI),a.IsValidData){var t=i.instances.get("MFIFormBlockUI");t.start(),_.isUndefined(a.MFI._id)?o.CreateMFI(a.MFI,a.picFile).then(function(o){t.stop(),e.showSuccess("Created MFI successfully","MFI Information created successfully"),
-console.log("Create MFI",o)},function(o){t.stop(),console.log("Create MFI Error",o);var n=o.data.error.message;e.showError("Failed to create MFI!",n)}):o.UpdateMFI(a.MFI,a.picFile).then(function(o){t.stop(),e.showSuccess("MFI Info updated successfully","MFI Information updated successfully"),console.log("Update MFI",o)},function(o){t.stop(),console.log("UpdateMFI Error",o);var n=o.data.error.message;e.showError("MFI Information update failed",n)})}else e.showWarning("Warning","Please fill the required fields and try again.")}var a=this;a.saveChanges=r,a.MFISetupForm={IsnameValid:!0,IslocationValid:!0,Isestablishment_yearValid:!0},function(){var e=i.instances.get("MFIFormBlockUI");e.start(),o.GetMFI().then(function(t){if(e.stop(),t.data.length>0){a.MFI=t.data[0];var o=new Date(a.MFI.establishment_year);a.MFI.establishment_year=o}console.log("Get MFI",t)},function(t){e.stop(),console.log("Get MFI Error",t)}),t.clear=function(){t.dt=null},t.dateOptions={dateDisabled:!1,formatYear:"yy",maxDate:new Date(2020,5,22),startingDay:1},t.open1=function(){t.popup1.opened=!0},t.format="dd-MMMM-yyyy",t.altInputFormats=["M!/d!/yyyy"],t.popup1={opened:!1}}()}e.module("app.mfi").controller("MFIController",t),t.$inject=["AlertService","$scope","MainService","CommonService","blockUI"]}(window.angular),function(e){"use strict";function t(e,t,o,n,i,r){function a(){if(c.IsValidData=n.Validation.ValidateForm(c.MFIBranchForm,c.branch),c.branchForm.inputEmail.$error.email)o.showWarning("Branch validation failed","Please provide valid email address");else if(c.IsValidData){var t=r.instances.get("CreateBranchBlockUI");if(t.start(),c.isEdit){var a={_id:c.branch._id,name:c.branch.name,location:c.branch.location,branch_type:c.branch.branch_type,opening_date:c.branch.opening_date};_.isUndefined(c.branch.email)||(a.email=c.branch.email),_.isString(c.branch.phone)&&""!==c.branch.phone&&(a.phone=c.branch.phone),i.UpdateBranch(a).then(function(n){t.stop(),o.showSuccess("Branch Updated","Branch updated successfully."),e.hide()},function(e){t.stop();var n=e.data.error.message;console.log("could not be updated",e.data),o.showError("Could not update Branch",n)})}else i.CreateBranch(c.branch).then(function(n){t.stop(),e.hide(),o.showSuccess("success","Saved! Branch saved successfully.")},function(e){t.stop();var n=e.data.error.message;console.log("could not be saved",e.data),o.showError("ERROR","Could not be saved!, "+n)})}else o.showError("Failed to create branch","Please fill the required fields and try again.")}function s(){e.cancel()}var c=this;c.cancel=s,c.saveBranch=a,c.isEdit=null!==t,c.branch=null!==t?t:null,c.MFIBranchForm={IsnameValid:!0,IslocationValid:!0},function(){if(c.branchTypes=["Select Branch Type","Satellite office","Rural Service","Regional office","Urban office"],c.isEdit){var e=_.isUndefined(c.branch.opening_date)?void 0:new Date(c.branch.opening_date);c.branch.opening_date=e}else c.branch={branch_type:c.branchTypes[0]}}(),c.clear=function(){c.dt=null},c.dateOptions={dateDisabled:!1,formatYear:"yy",maxDate:new Date(2020,5,22),startingDay:1},c.openDatePicker=function(){c.popup1.opened=!0},c.format="dd-MMMM-yyyy",c.altInputFormats=["d!/M!/yyyy"],c.popup1={opened:!1}}e.module("app.mfi").controller("CreateBranchController",t),t.$inject=["$mdDialog","items","AlertService","CommonService","MainService","blockUI"]}(window.angular);
+
+// APP START
+// ----------------------------------- 
+
+(function() {
+    'use strict';
+
+    appRun.$inject = ["$rootScope", "AuthService", "$http", "$location"];
+    angular
+        .module('angle', [
+            'app.core',
+            'app.routes',
+            'app.sidebar',
+            'app.navsearch',
+            'app.preloader',
+            'app.loadingbar',
+            'app.translate',
+            'app.settings',
+            'app.maps',
+            'app.utils',
+            'app.material',
+            'app.common',
+            'app.auth',
+            'app.manage_users',
+            'app.manage_roles',
+            'app.welcomePage',
+            'app.mfi'
+        ]).run(appRun);
+
+    function appRun($rootScope, AuthService, $http,$location){
+            //TODO: redirect them to an access denied state if they do not have authorization to access it.
+            console.log("angle app run");
+            $rootScope.currentUser = AuthService.GetCurrentUser();
+           
+
+        //Angular UI router state changes
+        $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
+            
+            if ($rootScope.currentUser !== null) {
+                $http.defaults.headers.common['Authorization'] = 'Bearer ' + AuthService.GetToken();
+            }
+            else{
+                // console.log("tostate",toState);
+                //Clear storage and redirect
+                $location.path('/page/login');
+            }
+        });
+    }
+        
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.auth', [])
+        .run(runBlock)
+        .config(routeConfig);
+
+    function runBlock() { }
+
+    function routeConfig() {}
+
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
+})();
+(function(angular) {
+  "use strict";
+
+  angular
+    .module("app.common", [])
+      .config(routeConfig)
+      .run(runBlock);
+
+  function runBlock() {}
+  function routeConfig() {}
+
+})(window.angular);
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core', [
+            'ngRoute',
+            'ngAnimate',
+            'ngStorage',
+            'ngCookies',
+            'pascalprecht.translate',
+            'ui.bootstrap',
+            'ngSanitize',
+            'ui.router',
+            'oc.lazyLoad',
+            'cfp.loadingBar',
+            'ngResource',
+            'ui.utils',
+            'ngAria',
+            'ngMessages',
+            'angularMoment'
+        ]);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.lazyload', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar', []);
+})();
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+(function() {
+    'use strict';
+
+    angular
+        .module('app.manage_roles', [])
+        .run(runBlock)
+        .config(routeConfig);
+
+    function runBlock() {  }
+
+    function routeConfig() {}
+
+})();
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+(function() {
+    'use strict';
+
+    angular
+        .module('app.manage_users', []).config(configUM).run(runUM);
+
+    function runUM() {}
+    function configUM() {}
+
+
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.material', [
+            'ngMaterial'
+          ]);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.preloader', []);
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.routes', [
+            'app.lazyload'
+        ]);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.settings', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.sidebar', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.utils', [
+          'app.colors'
+          ]);
+})();
+
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.welcomePage', []);
+
+})();
+(function(angular) {
+    'use strict';
+    angular.module('app.auth')
+
+    .service('AuthService', AuthService);
+
+     AuthService.$inject = ['$http', 'StorageService', 'CommonService', 'APP_CONSTANTS', '$rootScope', '$state'];
+
+    function AuthService($http, StorageService, CommonService, APP_CONSTANTS, $rootScope, $state) {
+
+        return {
+            login: _login,
+            Logout: logout,
+            GetCredentials: getCredentials,
+            SetCredentials: setCredentials,
+            GetToken: getToken,
+            GetCurrentUser:_getCurrentUser,
+            GetAccessBranches:_getAccessBranches,
+            IsSuperuser:isSuper
+        };
+
+
+
+        function getCredentials() {
+            return !angular.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.SESSION)) ? StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) : null;
+        }
+
+        function setCredentials(session) {
+            StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
+        }
+
+        function getToken() {
+            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION).token;
+        }
+
+
+        function _getCurrentUser(){
+          var credential = getCredentials();
+          return credential !== null? credential.user: null;
+        }
+        function _getAccessBranches() {
+            var credential = getCredentials();
+            return credential !== null ?  !isSuper()? credential.user.account.access_branches : [] :null;
+        }
+
+        function isSuper() {
+            var credential = getCredentials();
+            return credential.user.username === 'super@bidir.com';
+        }
+
+        function _login(user) {
+          return $http.post(CommonService.buildUrl(API.Service.Auth,API.Methods.Auth.Login), user);
+        }
+
+        function logout() {
+            StorageService.Reset();
+            $rootScope.currentUser = null;
+            $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
+            $state.go('page.login');
+        }
+
+    }
+
+})(window.angular);
+
+/**=========================================================
+ * Module: access-login.js
+ * Demo for login api
+ =========================================================*/
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.auth')
+        .controller('LoginFormController', LoginFormController);
+
+    LoginFormController.$inject = ['AuthService', '$state',  '$rootScope',  'APP_CONSTANTS',  'blockUI', 'AlertService'];
+
+    function LoginFormController( AuthService,  $state, $rootScope,  APP_CONSTANTS, blockUI,AlertService
+    ) {
+        var vm = this;
+        vm.userValidator = {
+            usernameMin: 4,
+            usernameMax: 20,
+            passwordMin: 6
+        };
+
+        vm.login = function() {
+            var myBlockUI = blockUI.instances.get('loginFormBlockUI');
+            myBlockUI.start("Logging in");
+            AuthService.login(vm.user).then(
+                function(response) {
+                    var result = response.data;
+                    vm.user = result.user;
+                    $rootScope.currentUser = vm.user;
+                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
+                    AuthService.SetCredentials(result);
+                    myBlockUI.stop();
+                    $state.go("app.welcome");
+                },
+                function(error) {
+                    myBlockUI.stop();
+                    console.log("error", error);
+                    AlertService.showError("Error on Login", "The username or password is incorrect! Please try again.");
+                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
+                }
+            );
+
+
+        };
+    }
+})(window.angular);
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
+
+(function(angular) {
+  "use strict";
+
+  angular
+    .module('app.common')
+    .constant("_", window._)
+    .constant("APP_CONSTANTS", {
+      USER_ROLES: {
+        ALL: "*",
+        ADMIN: "admin",
+      },
+      StorageKey: {
+        TOKEN: "token",
+        SESSION: "SESSION",
+        PERMISSIONS:"PERMISSIONS",
+        ACCESS_BRANCHES:"ACCESS_BRANCHES"
+      },
+      AUTH_EVENTS: {
+        loginSuccess: "auth-login-success",
+        loginFailed: "auth-login-failed",
+        logoutSuccess: "auth-logout-success",
+        logoutUser: "auth-logout-user",
+        sessionTimeout: "auth-session-timeout",
+        notAuthenticated: "auth-not-authenticated",
+        notAuthorized: "auth-not-authorized"
+      }
+    });
+})(window.angular);
+
+/**
+ * Created by Yoni on 12/30/2017.
+ */
+//Directive
+
+(function(angular) {
+
+    'use strict';
+
+    angular.module('app.common')
+        .directive('userpermission', ["PermissionService", function(PermissionService) {
+            return {
+                restrict: 'A',
+                link: function(scope, element, attrs) {
+                    scope.$watch(attrs.userpermission, function(value) {
+                        var permission = value;
+                        var hasPermission = false;
+                        if (_.isString(permission)) {
+                            hasPermission = PermissionService.hasThisPermission(permission);
+                        } else if (_.isArray(permission)) {
+                            hasPermission = PermissionService.hasThesePermissions(permission); //multiple permissions
+                        }
+
+                        toggleVisibility(hasPermission);
+                    });
+
+                    function toggleVisibility(hasPermission) {
+                        if (hasPermission) {
+                            element.show();
+                        } else {
+                            element.hide();
+                        }
+                    }
+                }
+            };
+        }])
+        // Text Editor template directive
+        .directive('editor', function() {
+            return {
+                restrict: 'E',
+                template: "<div ng-show='vm.editorEnabledForElement === (radioOption);'>" +
+                    "<input class='editableTextInput' type='text' ng-model='vm.text' ng-required='true' " +
+                    "show-focus='vm.editorEnabledForElement === (radioOption);' " +
+                    "keypress-enter='vm.saveOption(radioOption, vm.text)' " +
+                    "ng-blur='vm.saveOption(radioOption, vm.text)'" +
+                    " show-focus select-on-click >" +
+                    "</div>"
+            };
+        })
+        .directive('keypressEnter', function() {
+            return function(scope, element, attrs) {
+                element.bind("keydown keypress", function(event) {
+                    if (event.which === 13) {
+                        scope.$apply(function() {
+                            scope.$eval(attrs.keypressEnter);
+                        });
+                        console.log("Pressed enter.");
+                        event.preventDefault();
+                    }
+                });
+            };
+        })
+        // Put focus on element when event is triggered.
+        // https://coderwall.com/p/a41lwa/angularjs-auto-focus-into-input-field-when-ng-show-event-is-triggered
+
+        .directive('eventFocus', ["focus", function(focus) {
+            return function(scope, elem, attr) {
+                elem.on(attr.eventFocus, function() {
+                    focus(attr.eventFocusId);
+                });
+
+                // // Removes bound events in the element itself
+                // // when the scope is destroyed
+                // scope.$on('$destroy', function() {
+                //     element.off(attr.eventFocus);
+                // });
+            };
+        }])
+        // Select text on focus.
+        // http://stackoverflow.com/questions/14995884/select-text-on-input-focus
+        .directive('selectOnClick', ['$window', function($window) {
+            return {
+                restrict: 'A',
+                link: function(scope, element, attrs) {
+                    element.on('focus', function() {
+                        if (!$window.getSelection().toString()) {
+                            // Required for mobile Safari
+                            this.setSelectionRange(0, this.value.length)
+                        }
+                    });
+                }
+            };
+        }])
+
+        .directive('questionRow', ["$timeout", "$compile", "$filter", function($timeout, $compile, $filter) {
+            return {
+                restrict: 'E',
+                replace: true,
+                scope: {
+                    questionRowData: '=questionRowData',
+                    layoutData: '=layoutData',
+                    parentRowNo: '=parentRowNo',
+                    rowNo: '=rowNo',
+                    isSubquestion: '=isSubquestion',
+                    isReadonly: '=isReadonly',
+                    valueChanged: '='
+                },
+                link: function($scope, element, attrs) {
+                    $scope.$watch('questionRowData.values', function(newValue) {
+                        if (!_.isEmpty(newValue) && $scope.questionRowData.type !== QUESTION_TYPE.FILL_IN_BLANK && !_.isUndefined($scope.valueChanged)) {
+                            $scope.valueChanged($scope.questionRowData);
+                        }
+                    }, true);
+                },
+                templateUrl: 'app/views/common/directives/templates/question_row.tmpl.html'
+            };
+        }])
+        .directive('questionRowWithAnswer', ["$timeout", "$compile", "$filter", function($timeout, $compile, $filter) {
+            return {
+                restrict: 'E',
+                replace: true,
+                scope: {
+                    questionRowData: '=questionRowData',
+                    layoutData: '=layoutData',
+                    parentRowNo: '=parentRowNo',
+                    rowNo: '=rowNo',
+                    isSubquestion: '=isSubquestion'
+                },
+                link: function($scope, element, attrs) {},
+                templateUrl: 'app/views/common/directives/templates/question_row_with_answer.tmpl.html'
+            };
+        }])
+        .directive('question', ["$timeout", "$compile", "$filter", function($timeout, $compile, $filter) {
+            return {
+                restrict: 'E',
+                replace: true,
+                scope: {
+                    questionData: '=questionData',
+                    isReadonly: '=isReadonly'
+                },
+                link: function($scope, element, attrs) {
+
+                    $scope.$watch('questionData', function(questionData) {
+                        if (questionData) {
+                            var questionType = questionData.type.toLowerCase();
+
+
+                            switch (questionType) {
+                                case "fill_in_blank":
+                                {
+                                    break;
+                                }
+                                case "yes_no":
+                                {
+                                    questionType = "single_choice";
+                                    break;
+                                }
+                            }
+
+                            //Parse values
+                            if (questionData.validation_factor === 'NUMERIC' || questionData.validation_factor === 'ALPHANUMERIC') {
+                                questionData.values = _.map(questionData.values, function(val) {
+                                    return parseFloat(val);
+                                });
+                            }
+
+                            $scope.dynamicTemplateUrl = 'app/views/common/directives/templates/' + questionType + '.tmpl.html';
+                        }
+                    });
+
+                    //Helping function
+                    //Multi-select
+                    $scope.toggle = function(item, list) {
+                        var idx = list.indexOf(item);
+                        if (idx > -1) {
+                            list.splice(idx, 1);
+                        } else {
+                            list.push(item);
+                        }
+                    };
+
+                    $scope.exists = function(item, list) {
+                        return list.indexOf(item) > -1;
+                    };
+                },
+
+                template: '<ng-include src="dynamicTemplateUrl"></ng-include>'
+            };
+        }]);
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 12/14/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.common')
+        .filter('ReplaceUnderscore', function () {
+        return function (input) {
+            return typeof input === "string" ? input.replace(/_/g, ' '):input;
+        };
+});
+
+})(window.angular);
+var API = {
+    Config: {
+        BaseUrl: 'http://api.dev.bidir.gebeya.io/' //REMOTE API
+    },
+    Service: {
+        NONE:'',
+        MFI: 'MFI',
+        Auth: 'auth',
+        Users: 'users',
+        SCREENING:'screenings',
+        LOANS:'loans',
+        FORM:'forms',
+        ACAT:'acat'
+    },
+    Methods: {
+        Auth: {
+            Login: 'login'
+        },
+        MFI: {
+            MFIUpdate:'',
+            MFI:'create',
+            GetAll:'all',
+            Branches: 'branches',
+            CreateBranch: 'branches/create'
+
+        },
+        Users: {
+            Account:'accounts',
+            UserUpdate:'',
+            User:'create',
+            GetAll: '',
+            Roles: 'roles',
+            Role: 'roles/create'
+        },
+        Roles:{
+            GetAll: 'roles',
+            Create: 'roles/create',
+            Permissions: 'permissions',
+            PermissionByGroup: 'permissions/groups'
+        },
+        Tasks: {
+            Task:'tasks',
+            GetAll: 'tasks/paginate?page=1&per_page=100'
+        },
+        Clients:{
+            All:'clients/paginate?source=web',
+            Client:'clients',
+            SearchClient:''
+        },
+        Form:{
+            All: '',
+            Create: 'create',
+            Question:'questions',
+            Create_Question:'questions/create',
+            Section:'sections',
+            Create_Section:'sections/create'
+        },
+        ACAT:{
+            ACAT:'forms',
+            Crop:'crops',
+            CreateCrop:'crops/create',
+            LoanProducts:'loanProducts',
+            CreateLoanProducts:'loanProducts/create',
+            CostListUpdate: 'costLists',
+            CostListGroups: 'costLists/groups',
+            CostList: 'costLists/add',
+            CreateACAT:'forms/initialize'
+        },
+        SCREENING:{
+            Screening:'',
+            Clients:'clients'
+        },
+        LOANS:{
+            Loans:'',
+            Clients:'clients'
+        }
+    }
+};
+
+
+var QUESTION_TYPE = {
+    FILL_IN_BLANK: "FILL_IN_BLANK",
+    YES_NO: "YES_NO",
+    MULTIPLE_CHOICE: "MULTIPLE_CHOICE",
+    SINGLE_CHOICE: "SINGLE_CHOICE",
+    GROUPED: "GROUPED"
+};
+var ACAT_GROUP_CONSTANT = {
+    SEED: "SEED",
+    FERTILIZER: "FERTILIZER",
+    CHEMICALS: "CHEMICALS",
+    LABOUR_COST:"LABOUR_COST",
+    OTHER_COST:"OTHER_COST"
+};
+var ACAT_COST_LIST_TYPE = {
+    LINEAR: "linear",
+    GROUPED: "grouped"
+};
+
+var SCREENING_STATUS = {
+    IN_PROGRESS:{code:'screening_inprogress',name:'In Progress'},
+    SUBMITTED:{code:'submitted',name:'Submitted'},
+    APPROVED:{code:'approved',name:'Approved'},
+    DECLINED_FINAL:{code:'declined_final',name:'Declined Final'},
+    DECLINED_UNDER_REVIEW:{code:'declined_under_review',name:'Declined Under Review'}
+};
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
+
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+      // Disables animation on items with class .ng-no-animation
+      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
+
+      // Improve performance disabling debugging features
+      // $compileProvider.debugInfoEnabled(false);
+
+    }
+
+})();
+/**=========================================================
+ * Module: constants.js
+ * Define constants to inject across the application
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .run(appRun);
+
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });*/
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
+    }
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.lazyload')
+        .config(lazyloadConfig);
+
+    lazyloadConfig.$inject = ['$ocLazyLoadProvider', 'APP_REQUIRES'];
+    function lazyloadConfig($ocLazyLoadProvider, APP_REQUIRES){
+
+      // Lazy Load modules configuration
+      $ocLazyLoadProvider.config({
+        debug: false,
+        events: true,
+        modules: APP_REQUIRES.modules
+      });
+
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.lazyload')
+        .constant('APP_REQUIRES', {
+          // jQuery based and standalone scripts
+          scripts: {
+            'whirl':              ['vendor/whirl/dist/whirl.css'],
+            'animo':              ['vendor/animo.js/animo.js'],
+            'fastclick':          ['vendor/fastclick/lib/fastclick.js'],
+            'modernizr':          ['vendor/modernizr/modernizr.custom.js'],
+            'animate':            ['vendor/animate.css/animate.min.css'],
+            'skycons':            ['vendor/skycons/skycons.js'],
+            'icons':              ['vendor/fontawesome/css/font-awesome.min.css',
+                                   'vendor/simple-line-icons/css/simple-line-icons.css'],
+            'weather-icons':      ['vendor/weather-icons/css/weather-icons.min.css',
+                                   'vendor/weather-icons/css/weather-icons-wind.min.css'],
+            'sparklines':         ['vendor/sparkline/index.js'],
+            'wysiwyg':            ['vendor/bootstrap-wysiwyg/bootstrap-wysiwyg.js',
+                                   'vendor/bootstrap-wysiwyg/external/jquery.hotkeys.js'],
+            'slimscroll':         ['vendor/slimScroll/jquery.slimscroll.min.js'],
+            'screenfull':         ['vendor/screenfull/dist/screenfull.js'],
+            'vector-map':         ['vendor/ika.jvectormap/jquery-jvectormap-1.2.2.min.js',
+                                   'vendor/ika.jvectormap/jquery-jvectormap-1.2.2.css'],
+            'vector-map-maps':    ['vendor/ika.jvectormap/jquery-jvectormap-world-mill-en.js',
+                                   'vendor/ika.jvectormap/jquery-jvectormap-us-mill-en.js'],
+            'loadGoogleMapsJS':   ['vendor/load-google-maps/load-google-maps.js'],
+            'flot-chart':         ['vendor/flot/jquery.flot.js'],
+            'flot-chart-plugins': ['vendor/flot.tooltip/js/jquery.flot.tooltip.min.js',
+                                   'vendor/flot/jquery.flot.resize.js',
+                                   'vendor/flot/jquery.flot.pie.js',
+                                   'vendor/flot/jquery.flot.time.js',
+                                   'vendor/flot/jquery.flot.categories.js',
+                                   'vendor/flot-spline/js/jquery.flot.spline.min.js'],
+            'moment' :            ['vendor/moment/min/moment-with-locales.min.js',
+                                    'vendor/angular-moment/angular-moment.min.js'],
+            'inputmask':          ['vendor/jquery.inputmask/dist/jquery.inputmask.bundle.js'],
+            'flatdoc':            ['vendor/flatdoc/flatdoc.js'],
+            'codemirror':         ['vendor/codemirror/lib/codemirror.js',
+                                   'vendor/codemirror/lib/codemirror.css'],
+            // modes for common web files
+            'codemirror-modes-web': ['vendor/codemirror/mode/javascript/javascript.js',
+                                     'vendor/codemirror/mode/xml/xml.js',
+                                     'vendor/codemirror/mode/htmlmixed/htmlmixed.js',
+                                     'vendor/codemirror/mode/css/css.js'],
+            'taginput' :          ['vendor/bootstrap-tagsinput/dist/bootstrap-tagsinput.css',
+                                   'vendor/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js'],
+            'filestyle':          ['vendor/bootstrap-filestyle/src/bootstrap-filestyle.js'],
+            'morris':             ['vendor/raphael/raphael.js',
+                                   'vendor/morris.js/morris.js',
+                                   'vendor/morris.js/morris.css'],
+            'loaders.css':          ['vendor/loaders.css/loaders.css'],
+            'spinkit':              ['vendor/spinkit/css/spinkit.css'],
+            'underscore':           ['vendor/underscore/underscore.js'],
+            'selectize':           ['vendor/selectize/dist/css/selectize.default.css']
+          },
+          // Angular based script (use the right module name)
+          modules: [
+
+            {name: 'md.data.table',
+                                                files: ['vendor/angular-material-data-table/dist/md-data-table.min.css',
+                                                        'vendor/angular-material-data-table/dist/md-data-table.min.js'] },
+              {name: 'blockUI',
+                  files: ["vendor/angular-block-ui/dist/angular-block-ui.css",
+                      "vendor/angular-block-ui/dist/angular-block-ui.js"] },
+            {name: 'ngFileUpload',
+                  files: ['vendor/ng-file-upload-shim/ng-file-upload-shim.min.js'] },
+            {name: 'toaster',                   files: ['vendor/ng-file-upload/ng-file-upload.min.js',
+                                                       'vendor/angularjs-toaster/toaster.css']},
+            {name: 'localytics.directives',     files: ['vendor/chosen_v1.2.0/chosen.jquery.min.js',
+                                                       'vendor/chosen_v1.2.0/chosen.min.css',
+                                                       'vendor/angular-chosen-localytics/dist/angular-chosen.js'],
+                                                        serie: true},
+            {name: 'ngDialog',                  files: ['vendor/ngDialog/js/ngDialog.min.js',
+                                                       'vendor/ngDialog/css/ngDialog.min.css',
+                                                       'vendor/ngDialog/css/ngDialog-theme-default.min.css'] },
+            {name: 'ngWig',                     files: ['vendor/ngWig/dist/ng-wig.min.js'] },
+            {name: 'ngTable',                   files: ['vendor/ng-table/dist/ng-table.min.js',
+                                                        'vendor/ng-table/dist/ng-table.min.css']},
+            {name: 'ngTableExport',             files: ['vendor/ng-table-export/ng-table-export.js']},
+            {name: 'angularBootstrapNavTree',   files: ['vendor/angular-bootstrap-nav-tree/dist/abn_tree_directive.js',
+                                                        'vendor/angular-bootstrap-nav-tree/dist/abn_tree.css']},
+            {name: 'xeditable',                 files: ['vendor/angular-xeditable/dist/js/xeditable.js',
+                                                        'vendor/angular-xeditable/dist/css/xeditable.css']},
+            {name: 'angularFileUpload',         files: ['vendor/angular-file-upload/dist/angular-file-upload.js']},
+            {name: 'ngImgCrop',                 files: ['vendor/ng-img-crop/compile/unminified/ng-img-crop.js',
+                                                        'vendor/ng-img-crop/compile/unminified/ng-img-crop.css']},
+            {name: 'ui.select',                 files: ['vendor/angular-ui-select/dist/select.js',
+                                                        'vendor/angular-ui-select/dist/select.css']},
+            {name: 'ui.codemirror',             files: ['vendor/angular-ui-codemirror/ui-codemirror.js']},
+            {name: 'angular-carousel',          files: ['vendor/angular-carousel/dist/angular-carousel.css',
+                                                        'vendor/angular-carousel/dist/angular-carousel.js']},
+            {name: 'infinite-scroll',           files: ['vendor/ngInfiniteScroll/build/ng-infinite-scroll.js']},
+            {name: 'ui.bootstrap-slider',       files: ['vendor/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js',
+                                                        'vendor/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css',
+                                                        'vendor/angular-bootstrap-slider/slider.js'], serie: true},
+            {name: 'ui.grid',                   files: ['vendor/angular-ui-grid/ui-grid.min.css',
+                                                        'vendor/angular-ui-grid/ui-grid.min.js']},
+            {name: 'summernote',                files: ['vendor/bootstrap/js/modal.js',
+                                                        'vendor/bootstrap/js/dropdown.js',
+                                                        'vendor/bootstrap/js/tooltip.js',
+                                                        'vendor/summernote/dist/summernote.css',
+                                                        'vendor/summernote/dist/summernote.js',
+                                                        'vendor/angular-summernote/dist/angular-summernote.js'
+                                                        ], serie: true},
+            {name: 'angular-rickshaw',          files: ['vendor/d3/d3.min.js',
+                                                        'vendor/rickshaw/rickshaw.js',
+                                                        'vendor/rickshaw/rickshaw.min.css',
+                                                        'vendor/angular-rickshaw/rickshaw.js'], serie: true},
+            {name: 'angular-chartist',          files: ['vendor/chartist/dist/chartist.min.css',
+                                                        'vendor/chartist/dist/chartist.js',
+                                                        'vendor/angular-chartist.js/dist/angular-chartist.js'], serie: true},
+            {name: 'ui.map',                    files: ['vendor/angular-ui-map/ui-map.js']},
+            {name: 'datatables',                files: ['vendor/datatables/media/css/jquery.dataTables.css',
+                                                        'vendor/datatables/media/js/jquery.dataTables.js',
+                                                        'vendor/datatables-buttons/js/dataTables.buttons.js',
+                                                        //'vendor/datatables-buttons/css/buttons.bootstrap.css',
+                                                        'vendor/datatables-buttons/js/buttons.bootstrap.js',
+                                                        'vendor/datatables-buttons/js/buttons.colVis.js',
+                                                        'vendor/datatables-buttons/js/buttons.flash.js',
+                                                        'vendor/datatables-buttons/js/buttons.html5.js',
+                                                        'vendor/datatables-buttons/js/buttons.print.js',
+                                                        'vendor/angular-datatables/dist/angular-datatables.js',
+                                                        'vendor/angular-datatables/dist/plugins/buttons/angular-datatables.buttons.js'],
+                                                        serie: true},
+            {name: 'angular-jqcloud',           files: ['vendor/jqcloud2/dist/jqcloud.css',
+                                                        'vendor/jqcloud2/dist/jqcloud.js',
+                                                        'vendor/angular-jqcloud/angular-jqcloud.js']},
+            {name: 'angularGrid',               files: ['vendor/ag-grid/dist/styles/ag-grid.css',
+                                                        'vendor/ag-grid/dist/ag-grid.js',
+                                                        'vendor/ag-grid/dist/styles/theme-dark.css',
+                                                        'vendor/ag-grid/dist/styles/theme-fresh.css']},
+            {name: 'ng-nestable',               files: ['vendor/ng-nestable/src/angular-nestable.js',
+                                                        'vendor/nestable/jquery.nestable.js']},
+            {name: 'akoenig.deckgrid',          files: ['vendor/angular-deckgrid/angular-deckgrid.js']},
+            {name: 'oitozero.ngSweetAlert',     files: ['vendor/sweetalert/dist/sweetalert.css',
+                                                        'vendor/sweetalert/dist/sweetalert.min.js',
+                                                        'vendor/angular-sweetalert/SweetAlert.js'], serie: true},
+            {name: 'bm.bsTour',                 files: ['vendor/bootstrap-tour/build/css/bootstrap-tour.css',
+                                                        'vendor/bootstrap-tour/build/js/bootstrap-tour-standalone.js',
+                                                        'vendor/angular-bootstrap-tour/dist/angular-bootstrap-tour.js'], serie: true},
+            {name: 'ui.knob',                   files: ['vendor/angular-knob/src/angular-knob.js',
+                                                        'vendor/jquery-knob/dist/jquery.knob.min.js']},
+            {name: 'easypiechart',              files: ['vendor/jquery.easy-pie-chart/dist/angular.easypiechart.min.js']},
+            {name: 'colorpicker.module',        files: ['vendor/angular-bootstrap-colorpicker/css/colorpicker.css',
+                                                        'vendor/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js']},
+            {name: 'ui.sortable',               files: ['vendor/jquery-ui/jquery-ui.min.js',
+                                                        'vendor/angular-ui-sortable/sortable.js'], serie: true},
+            {name: 'ui.calendar',               files: ['vendor/jquery-ui/jquery-ui.min.js',
+                                                        'vendor/jqueryui-touch-punch/jquery.ui.touch-punch.min.js',
+                                                        'vendor/fullcalendar/dist/fullcalendar.min.js',
+                                                        'vendor/fullcalendar/dist/gcal.js',
+                                                        'vendor/fullcalendar/dist/fullcalendar.css',
+                                                        'vendor/angular-ui-calendar/src/calendar.js'], serie: true},
+            {name: 'chart.js',                   files: ['vendor/chart.js/dist/Chart.js',
+                                                         'vendor/angular-chart.js/dist/angular-chart.js'], serie: true},
+          ]
+        })
+        ;
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
+
+})();
+/**
+ * Created by Yoni on 12/10/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('CreateRoleController', CreateRoleController);
+
+    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService','blockUI','$mdPanel'];
+    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService,blockUI,$mdPanel) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.saveRole = _saveRole;
+        vm.changeModuleStyle = _modulesStyle;
+        vm.showFilterDialog = _showFilterDialog;
+        vm.showFilter = false;
+        vm.isEdit = items !== null;
+        vm.role = items !== null?items:null;
+
+
+
+        initialize();
+
+        function setPermissions() {
+            _.each(vm.role.permissions, function(oldPermission){
+                _.each(vm.permissions, function(permission) {
+                    if(permission.name === oldPermission.name && !permission.checked){
+                        permission.checked = permission.name === oldPermission.name;
+                    }
+                });
+            });
+        }
+
+        function preparePermissions() {
+            vm.role.permissions = _.filter(vm.permissions,function(permission){
+                return permission.checked? permission._id : null;
+            });
+        }
+
+        function initialize(){
+           if(vm.isEdit){
+               var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
+               myLoadingBlockUI.start("Loading Role and Permissions");
+           }
+            var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
+            if(permissionFromStore !== null){
+                vm.permissions = permissionFromStore;
+                if(vm.isEdit){
+                    setPermissions();
+                    myLoadingBlockUI.stop();
+                }
+
+            }else {
+                ManageRoleService.GetPermissions().then(function(response){
+                    vm.permissions = response.data.docs;
+                    ManageRoleService.StorePermissions(vm.permissions);
+                    console.log("permissions from api",vm.permissions);
+                    if(vm.isEdit){
+                        setPermissions();
+                        myLoadingBlockUI.stop();
+                    }
+                },function(error){
+                    if(vm.isEdit){
+                        myLoadingBlockUI.stop();
+                    }
+                    console.log("error permissions",error);
+                });
+
+            }
+
+        }
+
+        function _saveRole() {
+            var myBlockUI = blockUI.instances.get('RoleBlockUI');
+            myBlockUI.start();
+            preparePermissions();
+            if(vm.isEdit){
+                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
+                        myBlockUI.stop();
+                        $mdDialog.hide();
+                        AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
+                    },
+                    function (error) {
+                        myBlockUI.stop();
+                    var message = error.data.error.message;
+                        AlertService.showError("Failed to update Role",message);
+                        console.log("could not be saved", error);
+                    });
+            }else {
+
+                ManageRoleService.SaveRole( vm.role).then(function (data) {
+                        myBlockUI.stop();
+                        AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
+                        $mdDialog.hide();
+                    },
+                    function (error) {
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to Save Role",message);
+                        console.log("could not be saved", error);
+                    });
+            }
+        }
+
+        function _showFilterDialog(show) {
+
+        }
+
+
+
+        function _modulesStyle(module){
+            var style = '';
+            switch (module){
+                case 'SCREENING':
+                    style =  'label label-primary';
+                    break;
+                case 'SCREENING_MODULE':
+                    style =  'label label-primary';
+                    break;
+                case 'FORM_BUILDER':
+                    style =  'label label-danger';
+                    break;
+                case 'USER_MANAGEMENT':
+                    style =  'label label-green';
+                    break;
+                case 'CLIENT_MANAGEMENT':
+                    style =  'label label-warning';
+                    break;
+                case 'LOAN_MODULE':
+                    style =  'label label-purple';
+                    break;
+                default:
+                    style =  'label label-default';
+            }
+            return style;
+        }
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('ManageRoleController', ManageRoleController);
+
+    ManageRoleController.$inject = ['ManageRoleService', '$mdDialog', 'RouteHelpers'];
+
+    function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
+    {
+        var vm = this;
+        vm.addRole = _addRole;
+        vm.editRole = _editRole;
+
+        fetchRoles();
+
+       function fetchRoles() {
+           ManageRoleService.GetRoles().then(function(response){
+               vm.roles = response.data.docs;
+               // console.log("vm.roles on RM",vm.roles);
+           },function(error){
+               console.log("error role",error);
+           });
+       }
+
+        function _addRole(ev){
+
+            $mdDialog.show({
+                locals: {
+                    items: null
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
+        }
+
+        function _editRole(role,ev) {
+            $mdDialog.show({
+                locals: {
+                    items: role
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
+        }
+
+
+
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 12/11/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.manage_roles')
+
+        .service('ManageRoleService', ManageRoleService);
+    ManageRoleService.$inject = ['$http', 'CommonService','AuthService','StorageService','APP_CONSTANTS'];
+
+    function ManageRoleService($http, CommonService,AuthService,StorageService,APP_CONSTANTS) {
+        return {
+            GetRoles: _getRoles,
+            GetPermissions: _getPermissions,
+            GetPermissionsbyGroup:_getPermissionsbyGroup,
+            SaveRole: _saveRole,
+            UpdateRole:_updateRole,
+            StorePermissions:_storePermissions,
+            GetPermissionsFromStore:_getPermissionsFromStorage
+        };
+
+        function _getRoles(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
+        }
+
+        function _getPermissions(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions));
+        }
+        function _getPermissionsbyGroup(){
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup));
+        }
+
+        function _saveRole(role) {
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role);
+        }
+
+        function _updateRole(role) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role);
+        }
+
+        function _storePermissions(permissions) {
+            return StorageService.Set(APP_CONSTANTS.StorageKey.PERMISSIONS, permissions);
+        }
+        function _getPermissionsFromStorage() {
+            return !_.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS)) ? StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS) : null;
+        }
+
+    }
+
+})(window.angular);
+
+/**
+ * Created by Yoni on 12/2/2017.
+ */
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_users')
+        .controller('CreateUserController', CreateUserController);
+
+    CreateUserController.$inject = ['$mdDialog','ManageUserService','items','AlertService','AuthService','blockUI','$scope','CommonService'];
+    function CreateUserController($mdDialog, ManageUserService,items,AlertService,AuthService,blockUI,$scope,CommonService) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.saveUser = _saveUser;
+        vm.onSelectedDefaultBranch = _onSelectedDefaultBranch;
+        vm.isEdit = items !== null;
+        vm.user = items !== null?items:{};
+        vm.user.selected_access_branches = [];
+        vm.UserValidationForm = {
+            Isfirst_nameValid: true,
+            Islast_nameValid: true,
+            Isselected_default_branchValid: true,
+            Isselected_roleValid: true,
+            IsusernameValid: true
+        };
+
+        initialize();
+
+        function _saveUser() {
+            vm.IsValidData = CommonService.Validation.ValidateForm(vm.UserValidationForm, vm.user);
+
+            if(vm.IsValidData){
+                var myBlockUI = blockUI.instances.get('CreateUserForm');
+                myBlockUI.start("Storing User");
+                var userInfo = {
+                    first_name: vm.user.first_name,
+                    last_name: vm.user.last_name,
+                    grandfather_name:vm.user.grandfather_name,
+                    title: vm.user.title,
+                    role : vm.user.selected_role._id,
+                    hired_date:vm.user.hired_date,
+                    default_branch : vm.user.selected_default_branch._id,
+                    access_branches:[],
+                    multi_branches: vm.user.multi_branches
+                };
+
+                _.forEach(vm.user.selected_access_branches,function(accessBranch){
+
+                    var found = userInfo.access_branches.some(function (el) {
+                        return el._id === accessBranch._id;
+                    });
+
+                    if (!found && !userInfo.multi_branches) {
+                        userInfo.access_branches.push(accessBranch._id);
+                    }
+                });
+
+                if(vm.isEdit){
+
+                    userInfo._id = vm.user.account._id;
+
+                    ManageUserService.UpdateUser( userInfo ).then(function (data) {
+                            myBlockUI.stop();
+                            console.log("updated successfully", data);
+                            $mdDialog.hide();
+                            AlertService.showSuccess('Updated Successfully!', 'User Information is Updated');
+                        },
+                        function (error) {
+                            myBlockUI.stop();
+                            var message = error.data.error.message;
+                            AlertService.showError( 'Oops... Something went wrong', message);
+                            console.log("could not be saved", error);
+                        });
+
+                }else {
+
+                    userInfo.username = vm.user.username;
+                    userInfo.password = vm.user.password;
+
+                    ManageUserService.CreateUser(userInfo).then(
+                        function (data) {
+                            myBlockUI.stop();
+                            AlertService.showSuccess('Saved Successfully!', 'User Information is saved successfully');
+                            console.log("saved successfully", data);
+                            $mdDialog.hide();
+                            //TODO: Alert & fetch user collection
+                        },
+                        function (error) {
+                            myBlockUI.stop();
+                            var message = error.data.error.message;
+                            AlertService.showError( 'Oops... Something went wrong', message);
+                            console.log("could not be saved", error);
+                        }
+                    );
+                }
+            }
+            else {
+                AlertService.showError( 'Oops... Something went wrong', "You haven't provided all required fields.");
+            }
+
+
+
+        }
+
+        function initialize(){
+            if(vm.isEdit){
+                var myLoadingBlockUI = blockUI.instances.get('UserFormLoader');
+                myLoadingBlockUI.start("Loading User Information");
+                angular.extend(vm.user, vm.user.account);
+                var dt = new Date(vm.user.hired_date);
+                vm.user.hired_date = dt;
+            }
+
+            GetRolesAndSetSelectedValue();
+
+            if(AuthService.IsSuperuser()){
+                ManageUserService.GetBranches().then(function(response){
+                    vm.branches = response.data.docs;
+                    if(vm.isEdit){
+                        setBranchesSelectedValue(vm.branches);
+                        myLoadingBlockUI.stop();
+                    }
+                },function(error){
+                    console.log("error",error);
+                });
+            }else{
+                vm.branches =  AuthService.GetAccessBranches();
+                if(vm.isEdit){
+                    setBranchesSelectedValue(vm.branches);
+                    myLoadingBlockUI.stop();
+                }
+            }
+
+        }
+
+        function GetRolesAndSetSelectedValue() {
+            ManageUserService.GetRoles().then(function(response){
+                vm.roles = response.data.docs;
+                if(vm.isEdit){
+                    //LOAD Role select value
+                    angular.forEach(vm.roles,function(role){
+                        if(!_.isUndefined(vm.user.account)){
+                            if(role._id === vm.user.account.role._id){
+                                vm.user.selected_role = role;
+                            }}
+
+                    });
+                }
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        function setBranchesSelectedValue(branches) {
+            angular.forEach(branches,function(branch){
+                //LOAD Default Branch select value
+                if(!_.isUndefined(vm.user.default_branch._id)){
+
+                    if(branch._id === vm.user.default_branch._id){
+                        vm.user.selected_default_branch = branch;
+                    }
+                }
+                //LOAD access branch select values
+                if(vm.user.access_branches.length > 0 && !vm.user.multi_branches)
+                {
+                    var found = vm.user.access_branches.some(function (accBranch) {
+                        return accBranch._id === branch._id;
+                    });
+
+                    if (found) {
+                        vm.user.selected_access_branches.push(branch);
+                    }
+                }
+
+            });
+        }
+
+        function _onSelectedDefaultBranch() {
+            var branchExist = vm.user.selected_access_branches.indexOf(vm.user.selected_default_branch);
+            if (branchExist === -1 && !vm.user.multi_branches) {
+                vm.user.selected_access_branches.push(vm.user.selected_default_branch);
+            }
+        }
+
+        $scope.$watch(function() {
+            return vm.user.multi_branches;
+        }, function(current, original) {
+            //if multi_branch is on clear access branch list
+            if(current){
+                vm.user.selected_access_branches = [];
+            }
+        });
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+
+        vm.clear = function() {
+            vm.dt = null;
+        };
+        vm.dateOptions = {
+            dateDisabled: false,
+            formatYear: "yy",
+            maxDate: new Date(2020, 5, 22),
+            startingDay: 1
+        };
+        vm.openDatePicker = function() {
+            vm.popup1.opened = true;
+        };
+        vm.format = "dd-MMMM-yyyy";
+        vm.altInputFormats = ["d!/M!/yyyy"];
+        vm.popup1 = {
+            opened: false
+        };
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular,document) {
+    "use strict";
+
+    angular
+        .module('app.manage_users')
+        .controller('ManageUsersController', ManageUsersController);
+
+    ManageUsersController.$inject = ['RouteHelpers', 'DTOptionsBuilder', 'ManageUserService','$mdDialog','AlertService','AuthService'];
+    function ManageUsersController(RouteHelpers, DTOptionsBuilder, ManageUserService,$mdDialog,AlertService,AuthService) {
+        var vm = this;
+        vm.currentUser = {
+            selected_access_branch:undefined
+        };
+        vm.addUser = _addUser;
+        vm.editUser = _editUser;
+        vm.changeStatus = _changeStatus;
+        vm.statusStyle = _statusStyle;
+        vm.onSelectedBranch = _onSelectedBranch;
+
+        activate();
+
+
+        ////////////////
+        function activate() {
+
+            fetchUserData();
+
+            GetBranchFilter();
+
+            vm.dtOptions = DTOptionsBuilder.newOptions()
+                .withPaginationType('full_numbers')
+                .withDOM('<"html5buttons"B>lTfgitp')
+                .withOption('processing', true)
+                .withOption('scrollY', 430);
+
+        }
+
+        function fetchUserData() {
+            ManageUserService.GetUsers().then(function(response){
+                // console.log("users list",response);
+                vm.users = response.data.docs;
+                vm.usersCopy = angular.copy(vm.users);
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        function GetBranchFilter() {
+            if(AuthService.IsSuperuser()){
+                ManageUserService.GetBranches().then(function(response){
+                    vm.currentUser.user_access_branches = response.data.docs;
+                },function(error){
+                    vm.currentUser.user_access_branches = [];
+                });
+            }
+            else {
+                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
+            }
+        }
+        function _changeStatus(user) {
+            vm.toaster = {
+                type:  'success',
+                title: 'Title',
+                text:  'Message'
+            };
+
+            var userAccount = {};
+            userAccount._id = user._id;
+            if(user.status === 'active'){
+                userAccount.status = 'suspended';
+                user.status = 'suspended';
+            }else{
+                userAccount.status = 'active';
+                user.status = 'active';
+            }
+        
+            ManageUserService.UpdateUserStatus(userAccount).then(function(response){
+                console.log('updated user',response);
+                var message =   userAccount.status==='active'?'activated':userAccount.status;
+                AlertService.showSuccess('Updated User Status!', 'User is ' + message  + '.');
+                // toaster.pop(vm.toaster.type, vm.toaster.title, vm.toaster.text);
+            },function(error){
+                console.log('error',error);
+                var message = error.data.error.message;
+                AlertService.showError( 'Oops... Something went wrong', message);
+                // toaster.pop(vm.toaster.type, vm.toaster.title, vm.toaster.text);
+            });
+        }
+
+        function _addUser(ev){
+
+            $mdDialog.show({
+                locals: {
+                    items: null
+                },
+                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateUserController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                    fetchUserData();
+                }, function () {
+                });
+        }
+
+        function _editUser(user,ev){
+            $mdDialog.show({
+                locals: {items: user},
+                templateUrl: RouteHelpers.basepath('manageusers/create.user.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateUserController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                fetchUserData();
+                }, function () {
+                });
+        }
+
+        function _onSelectedBranch(){
+         vm.users = vm.usersCopy;
+
+         vm.users = _.filter(vm.users,function(user){
+                 if(!_.isUndefined(user.account)){
+                     if(user.account.default_branch !== null){
+                         return user.account.default_branch._id === vm.currentUser.selected_access_branch._id;
+                     }
+                 }
+            });
+
+        }
+
+        function _statusStyle(status){
+            var style = '';
+            switch (status){
+                case 'active' || 'active ':
+                    style =  'label label-success';
+                    break;
+                case 'inactive':
+                    style =  'label label-default';
+                    break;
+                case 'suspended':
+                    style =  'label label-danger';
+                    break;
+                default:
+                    style =  'label label-default';
+            }
+            return style;
+        }
+    }
+})(window.angular,window.document);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.manage_users')
+
+        .service('ManageUserService', ManageUserService);
+    ManageUserService.$inject = ['$http', 'CommonService'];
+
+    function ManageUserService($http, CommonService) {
+        return {
+            GetUsers: _getUsers,
+            GetRoles: _getRoles,
+            GetBranches: _getBranches,
+            CreateUser: _saveUser,
+            UpdateUser: _updateUser,
+            UpdateUserStatus: _updateUserStatus
+        };
+
+        function _getUsers(params){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll,params));
+        }
+        function _getRoles(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
+        }
+        function _getBranches(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+        }
+        function _saveUser(user) {
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Users.User), user);
+        }
+        function _updateUser(account) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
+        }
+        function _updateUserStatus(user) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id), user);
+        }
+        
+    }
+
+})(window.angular);
+
+/**=========================================================
+ * Module: modals.js
+ * Provides a simple way to implement bootstrap modals from templates
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps')
+        .controller('ModalGmapController', ModalGmapController);
+
+    ModalGmapController.$inject = ['$uibModal'];
+    function ModalGmapController($uibModal) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+
+          vm.open = function (size) {
+
+            //var modalInstance =
+            $uibModal.open({
+              templateUrl: '/myModalContent.html',
+              controller: ModalInstanceCtrl,
+              size: size
+            });
+          };
+
+          // Please note that $uibModalInstance represents a modal window (instance) dependency.
+          // It is not the same as the $uibModal service used above.
+
+          ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout'];
+          function ModalInstanceCtrl($scope, $uibModalInstance, $timeout) {
+
+            $uibModalInstance.opened.then(function () {
+              var position = new google.maps.LatLng(33.790807, -117.835734);
+
+              $scope.mapOptionsModal = {
+                zoom: 14,
+                center: position,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+              };
+
+              // we use timeout to wait maps to be ready before add a markers
+              $timeout(function(){
+                // 1. Add a marker at the position it was initialized
+                new google.maps.Marker({
+                  map: $scope.myMapModal,
+                  position: position
+                });
+                // 2. Trigger a resize so the map is redrawed
+                google.maps.event.trigger($scope.myMapModal, 'resize');
+                // 3. Move to the center if it is misaligned
+                $scope.myMapModal.panTo(position);
+              });
+
+            });
+
+            $scope.ok = function () {
+              $uibModalInstance.close('closed');
+            };
+
+            $scope.cancel = function () {
+              $uibModalInstance.dismiss('cancel');
+            };
+
+          }
+
+        }
+    }
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps')
+        .controller('GMapController', GMapController);
+
+    GMapController.$inject = ['$timeout'];
+    function GMapController($timeout) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+          var position = [
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.787453, -117.835858)
+            ];
+          
+          vm.addMarker = addMarker;
+          // we use timeout to wait maps to be ready before add a markers
+          $timeout(function(){
+            addMarker(vm.myMap1, position[0]);
+            addMarker(vm.myMap2, position[1]);
+            addMarker(vm.myMap3, position[2]);
+            addMarker(vm.myMap5, position[3]);
+          });
+
+          vm.mapOptions1 = {
+            zoom: 14,
+            center: position[0],
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+          };
+
+          vm.mapOptions2 = {
+            zoom: 19,
+            center: position[1],
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+
+          vm.mapOptions3 = {
+            zoom: 14,
+            center: position[2],
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+          };
+
+          vm.mapOptions4 = {
+            zoom: 14,
+            center: position[3],
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+
+          // for multiple markers
+          $timeout(function(){
+            addMarker(vm.myMap4, position[3]);
+            addMarker(vm.myMap4, position[4]);
+          });
+
+          // custom map style
+          var MapStyles = [{'featureType':'water','stylers':[{'visibility':'on'},{'color':'#bdd1f9'}]},{'featureType':'all','elementType':'labels.text.fill','stylers':[{'color':'#334165'}]},{featureType:'landscape',stylers:[{color:'#e9ebf1'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#c5c6c6'}]},{featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'road.local',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'transit',elementType:'geometry',stylers:[{color:'#d8dbe0'}]},{featureType:'poi',elementType:'geometry',stylers:[{color:'#cfd5e0'}]},{featureType:'administrative',stylers:[{visibility:'on'},{lightness:33}]},{featureType:'poi.park',elementType:'labels',stylers:[{visibility:'on'},{lightness:20}]},{featureType:'road',stylers:[{color:'#d8dbe0',lightness:20}]}];
+          vm.mapOptions5 = {
+            zoom: 14,
+            center: position[3],
+            styles: MapStyles,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+          };
+
+          ///////////////
+          
+          function addMarker(map, position) {
+            return new google.maps.Marker({
+              map: map,
+              position: position
+            });
+          }
+
+        }
+    }
+})();
+
+
+(function() {
+    'use strict';
+    // Used only for the BottomSheetExample
+    angular
+        .module('app.material')
+        .config(materialConfig)
+        ;
+    materialConfig.$inject = ['$mdIconProvider'];
+    function materialConfig($mdIconProvider){
+      $mdIconProvider
+        .icon('share-arrow', 'app/img/icons/share-arrow.svg', 24)
+        .icon('upload', 'app/img/icons/upload.svg', 24)
+        .icon('copy', 'app/img/icons/copy.svg', 24)
+        .icon('print', 'app/img/icons/print.svg', 24)
+        .icon('hangout', 'app/img/icons/hangout.svg', 24)
+        .icon('mail', 'app/img/icons/mail.svg', 24)
+        .icon('message', 'app/img/icons/message.svg', 24)
+        .icon('copy2', 'app/img/icons/copy2.svg', 24)
+        .icon('facebook', 'app/img/icons/facebook.svg', 24)
+        .icon('twitter', 'app/img/icons/twitter.svg', 24);
+    }
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.material')
+        .controller('MDAutocompleteCtrl', MDAutocompleteCtrl)
+        .controller('MDBottomSheetCtrl', MDBottomSheetCtrl)
+        .controller('MDListBottomSheetCtrl', MDListBottomSheetCtrl)
+        .controller('MDGridBottomSheetCtrl', MDGridBottomSheetCtrl)
+        .controller('MDCheckboxCtrl', MDCheckboxCtrl)
+        .controller('MDRadioCtrl', MDRadioCtrl)
+        .controller('MDSwitchCtrl', MDSwitchCtrl)
+        .controller('MDDialogCtrl', MDDialogCtrl)
+        .controller('MDSliderCtrl', MDSliderCtrl)
+        .controller('MDSelectCtrl', MDSelectCtrl)
+        .controller('MDInputCtrl', MDInputCtrl)
+        .controller('MDProgressCtrl', MDProgressCtrl)
+        .controller('MDSidenavCtrl', MDSidenavCtrl)
+        .controller('MDSubheaderCtrl', MDSubheaderCtrl)
+        .controller('MDToastCtrl', MDToastCtrl)
+          .controller('ToastCtrl', ToastCtrl)
+        .controller('MDTooltipCtrl', MDTooltipCtrl)
+        .controller('BottomSheetExample', BottomSheetExample)
+          .controller('ListBottomSheetCtrl', ListBottomSheetCtrl)
+          .controller('GridBottomSheetCtrl', GridBottomSheetCtrl)
+        ;
+
+    /*
+      MDAutocompleteCtrl
+     */
+    MDAutocompleteCtrl.$inject = ['$scope', '$timeout', '$q'];
+    function MDAutocompleteCtrl($scope, $timeout, $q) {
+      var self = this;
+
+      self.states        = loadAll();
+      self.selectedItem  = null;
+      self.searchText    = null;
+      self.querySearch   = querySearch;
+      self.simulateQuery = false;
+      self.isDisabled    = false;
+
+      // use $timeout to simulate remote dataservice call
+      function querySearch (query) {
+        var results = query ? self.states.filter( createFilterFor(query) ) : [],
+            deferred;
+        if (self.simulateQuery) {
+          deferred = $q.defer();
+          $timeout(function () { deferred.resolve( results ); }, Math.random() * 1000, false);
+          return deferred.promise;
+        } else {
+          return results;
+        }
+      }
+
+      function loadAll() {
+        var allStates = 'Alabama, Alaska, Arizona, Arkansas, California, Colorado, Connecticut, Delaware, Florida, Georgia, Hawaii, Idaho, Illinois, Indiana, Iowa, Kansas, Kentucky, Louisiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, Mississippi, Missouri, Montana, Nebraska, Nevada, New Hampshire, New Jersey, New Mexico, New York, North Carolina, North Dakota, Ohio, Oklahoma, Oregon, Pennsylvania, Rhode Island, South Carolina, South Dakota, Tennessee, Texas, Utah, Vermont, Virginia, Washington, West Virginia, Wisconsin, Wyoming';
+
+        return allStates.split(/, +/g).map( function (state) {
+          return {
+            value: state.toLowerCase(),
+            display: state
+          };
+        });
+      }
+
+          /**
+           * Create filter function for a query string
+           */
+          function createFilterFor(query) {
+            var lowercaseQuery = angular.lowercase(query);
+
+            return function filterFn(state) {
+              return (state.value.indexOf(lowercaseQuery) === 0);
+            };
+
+          }
+        }
+
+    /*
+    MDBottomSheetCtrl
+     */
+    MDBottomSheetCtrl.$inject = ['$scope', '$timeout', '$mdBottomSheet'];
+    function MDBottomSheetCtrl($scope, $timeout, $mdBottomSheet) {
+      $scope.alert = '';
+
+      $scope.showListBottomSheet = function($event) {
+        $scope.alert = '';
+        $mdBottomSheet.show({
+          templateUrl: 'bottom-sheet-list-template.html',
+          controller: 'ListBottomSheetCtrl',
+          targetEvent: $event,
+          disableParentScroll: false
+        }).then(function(clickedItem) {
+          $scope.alert = clickedItem.name + ' clicked!';
+        });
+      };
+
+      $scope.showGridBottomSheet = function($event) {
+        $scope.alert = '';
+        $mdBottomSheet.show({
+          templateUrl: 'bottom-sheet-grid-template.html',
+          controller: 'GridBottomSheetCtrl',
+          targetEvent: $event,
+          disableParentScroll: false
+        }).then(function(clickedItem) {
+          $scope.alert = clickedItem.name + ' clicked!';
+        });
+      };
+    }
+    /*
+    MDListBottomSheetCtrl
+     */
+    MDListBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
+    function MDListBottomSheetCtrl($scope, $mdBottomSheet) {
+
+      $scope.items = [
+        { name: 'Share', icon: 'share' },
+        { name: 'Upload', icon: 'upload' },
+        { name: 'Copy', icon: 'copy' },
+        { name: 'Print this page', icon: 'print' },
+      ];
+
+      $scope.listItemClick = function($index) {
+        var clickedItem = $scope.items[$index];
+        $mdBottomSheet.hide(clickedItem);
+      };
+    }
+    /*
+    MDGridBottomSheetCtrl
+     */
+    MDGridBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
+    function MDGridBottomSheetCtrl($scope, $mdBottomSheet) {
+
+      $scope.items = [
+        { name: 'Hangout', icon: 'hangout' },
+        { name: 'Mail', icon: 'mail' },
+        { name: 'Message', icon: 'message' },
+        { name: 'Copy', icon: 'copy' },
+        { name: 'Facebook', icon: 'facebook' },
+        { name: 'Twitter', icon: 'twitter' },
+      ];
+
+      $scope.listItemClick = function($index) {
+        var clickedItem = $scope.items[$index];
+        $mdBottomSheet.hide(clickedItem);
+      };
+    }
+    /*
+    MDCheckboxCtrl
+     */
+    MDCheckboxCtrl.$inject = ['$scope'];
+    function MDCheckboxCtrl($scope) {
+
+      $scope.data = {};
+      $scope.data.cb1 = true;
+      $scope.data.cb2 = false;
+      $scope.data.cb3 = false;
+      $scope.data.cb4 = false;
+      $scope.data.cb5 = false;
+    }
+    /*
+    MDRadioCtrl
+     */
+    MDRadioCtrl.$inject = ['$scope'];
+    function MDRadioCtrl($scope) {
+
+        $scope.data = {
+          group1 : 'Banana',
+          group2 : '2',
+          group3 : 'avatar-1'
+        };
+
+        $scope.avatarData = [{
+            id: 'svg-1',
+            title: 'avatar 1',
+            value: 'avatar-1'
+          },{
+            id: 'svg-2',
+            title: 'avatar 2',
+            value: 'avatar-2'
+          },{
+            id: 'svg-3',
+            title: 'avatar 3',
+            value: 'avatar-3'
+        }];
+
+        $scope.radioData = [
+          { label: 'Apple', value: 1 },
+          { label: 'Banana', value: 2 },
+          { label: 'Mango', value: '3', isDisabled: true }
+        ];
+
+
+        $scope.submit = function() {
+          alert('submit');
+        };
+
+        var vals = ['Apple', 'Banana', 'Mango', 'Grape', 'Melon', 'Strawberry', 'Kiwi'];
+        $scope.addItem = function() {
+          var rval = vals[Math.floor(Math.random() * vals.length)];
+          $scope.radioData.push({ label: rval, value: rval });
+        };
+
+        $scope.removeItem = function() {
+          $scope.radioData.pop();
+        };
+    }
+    /*
+    MDSwitchCtrl
+     */
+    MDSwitchCtrl.$inject = ['$scope'];
+    function MDSwitchCtrl($scope) {
+      $scope.data = {
+        cb1: true,
+        cb4: true
+      };
+      
+      $scope.onChange = function(cbState){
+         $scope.message = 'The switch is now: ' + cbState;
+      };
+    }
+    /*
+    MDDialogCtrl
+     */
+    MDDialogCtrl.$inject = ['$scope', '$mdDialog'];
+    function MDDialogCtrl($scope, $mdDialog) {
+      $scope.alert = '';
+
+      $scope.showAlert = function(ev) {
+        $mdDialog.show(
+          $mdDialog.alert()
+            .title('This is an alert title')
+            .content('You can specify some description text in here.')
+            .ariaLabel('Password notification')
+            .ok('Got it!')
+            .targetEvent(ev)
+        );
+      };
+
+      $scope.showConfirm = function(ev) {
+        var confirm = $mdDialog.confirm()
+          .title('Would you like to delete your debt?')
+          .content('All of the banks have agreed to forgive you your debts.')
+          .ariaLabel('Lucky day')
+          .ok('Please do it!')
+          .cancel('Sounds like a scam')
+          .targetEvent(ev);
+
+        $mdDialog.show(confirm).then(function() {
+          $scope.alert = 'You decided to get rid of your debt.';
+        }, function() {
+          $scope.alert = 'You decided to keep your debt.';
+        });
+      };
+
+      $scope.showAdvanced = function(ev) {
+        $mdDialog.show({
+          controller: DialogController,
+          templateUrl: 'dialog1.tmpl.html',
+          targetEvent: ev,
+        })
+        .then(function(answer) {
+          $scope.alert = 'You said the information was \'' + answer + '\'.';
+        }, function() {
+          $scope.alert = 'You cancelled the dialog.';
+        });
+      };
+      DialogController.$inject = ['$scope', '$mdDialog'];
+      function DialogController($scope, $mdDialog) {
+        $scope.hide = function() {
+          $mdDialog.hide();
+        };
+
+        $scope.cancel = function() {
+          $mdDialog.cancel();
+        };
+
+        $scope.answer = function(answer) {
+          $mdDialog.hide(answer);
+        };
+      }
+    }
+    /*
+    MDSliderCtrl
+     */
+    MDSliderCtrl.$inject = ['$scope'];
+    function MDSliderCtrl($scope) {
+
+      $scope.color = {
+        red: Math.floor(Math.random() * 255),
+        green: Math.floor(Math.random() * 255),
+        blue: Math.floor(Math.random() * 255)
+      };
+
+      $scope.rating1 = 3;
+      $scope.rating2 = 2;
+      $scope.rating3 = 4;
+
+      $scope.disabled1 = 0;
+      $scope.disabled2 = 70;
+    }
+    /*
+    MDSelectCtrl
+     */
+    function MDSelectCtrl() {
+      
+      var vm = this;
+      
+      vm.userState = '';
+      vm.states = ('AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS ' +
+          'MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI ' +
+          'WY').split(' ').map(function (state) { return { abbrev: state }; });
+
+      vm.sizes = [
+          'small (12-inch)',
+          'medium (14-inch)',
+          'large (16-inch)',
+          'insane (42-inch)'
+      ];
+      vm.toppings = [
+        { category: 'meat', name: 'Pepperoni' },
+        { category: 'meat', name: 'Sausage' },
+        { category: 'meat', name: 'Ground Beef' },
+        { category: 'meat', name: 'Bacon' },
+        { category: 'veg', name: 'Mushrooms' },
+        { category: 'veg', name: 'Onion' },
+        { category: 'veg', name: 'Green Pepper' },
+        { category: 'veg', name: 'Green Olives' }
+      ];
+    }
+    /*
+    MDInputCtrl
+     */
+    MDInputCtrl.$inject = ['$scope'];
+    function MDInputCtrl($scope) {
+      $scope.user = {
+        title: 'Developer',
+        email: 'ipsum@lorem.com',
+        firstName: '',
+        lastName: '' ,
+        company: 'Google' ,
+        address: '1600 Amphitheatre Pkwy' ,
+        city: 'Mountain View' ,
+        state: 'CA' ,
+        biography: 'Loves kittens, snowboarding, and can type at 130 WPM.\n\nAnd rumor has it she bouldered up Castle Craig!',
+        postalCode : '94043'
+      };
+      $scope.project = {
+        description: 'Nuclear Missile Defense System',
+        clientName: 'Bill Clinton',
+        rate: 500
+      };
+    }
+    /*
+    MDProgressCtrl
+     */
+    MDProgressCtrl.$inject = ['$scope', '$interval'];
+    function MDProgressCtrl($scope, $interval) {
+        $scope.mode = 'query';
+        $scope.determinateValue = 30;
+        $scope.determinateValue2 = 30;
+
+        $interval(function() {
+          $scope.determinateValue += 1;
+          $scope.determinateValue2 += 1.5;
+          if ($scope.determinateValue > 100) {
+            $scope.determinateValue = 30;
+            $scope.determinateValue2 = 30;
+          }
+        }, 100, 0, true);
+
+        $interval(function() {
+          $scope.mode = ($scope.mode === 'query' ? 'determinate' : 'query');
+        }, 7200, 0, true);
+    }
+    /*
+    MDSidenavCtrl
+     */
+    MDSidenavCtrl.$inject = ['$scope', '$timeout', '$mdSidenav', '$log'];
+    function MDSidenavCtrl($scope, $timeout, $mdSidenav, $log) {
+      $scope.toggleLeft = function() {
+        $mdSidenav('left').toggle()
+                          .then(function(){
+                              $log.debug('toggle left is done');
+                          });
+      };
+      $scope.toggleRight = function() {
+        $mdSidenav('right').toggle()
+                            .then(function(){
+                              $log.debug('toggle RIGHT is done');
+                            });
+      };
+      $scope.closeLeft = function() {
+        $mdSidenav('left').close()
+                          .then(function(){
+                            $log.debug('close LEFT is done');
+                          });
+
+      };
+      $scope.closeRight = function() {
+        $mdSidenav('right').close()
+                            .then(function(){
+                              $log.debug('close RIGHT is done');
+                            });
+      };
+    }
+    /*
+    MDSubheaderCtrl
+     */
+    MDSubheaderCtrl.$inject = ['$scope'];
+    function MDSubheaderCtrl($scope) {
+        $scope.messages = [
+          {
+            face : 'app/img/user/10.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/01.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/02.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/03.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/04.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/05.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/06.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/07.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/08.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/09.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/11.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+        ];
+    }
+    /*
+    MDToastCtrl
+     */
+    MDToastCtrl.$inject = ['$scope', '$mdToast'];
+    function MDToastCtrl($scope, $mdToast) {
+
+      $scope.toastPosition = {
+        bottom: false,
+        top: true,
+        left: false,
+        right: true
+      };
+
+      $scope.getToastPosition = function() {
+        return Object.keys($scope.toastPosition)
+          .filter(function(pos) { return $scope.toastPosition[pos]; })
+          .join(' ');
+      };
+
+      $scope.showCustomToast = function() {
+        $mdToast.show({
+          controller: 'ToastCtrl',
+          templateUrl: 'toast-template.html',
+          hideDelay: 60000,
+          parent:'#toastcontainer',
+          position: $scope.getToastPosition()
+        });
+      };
+
+      $scope.showSimpleToast = function() {
+        $mdToast.show(
+          $mdToast.simple()
+            .content('Simple Toast!')
+            .position($scope.getToastPosition())
+            .hideDelay(30000)
+        );
+      };
+
+      $scope.showActionToast = function() {
+        var toast = $mdToast.simple()
+              .content('Action Toast!')
+              .action('OK')
+              .highlightAction(false)
+              .position($scope.getToastPosition());
+
+        $mdToast.show(toast).then(function() {
+          alert('You clicked \'OK\'.');
+        });
+      };
+    }
+    /*
+    ToastCtrl
+     */
+    ToastCtrl.$inject = ['$scope', '$mdToast'];
+    function ToastCtrl($scope, $mdToast) {
+      $scope.closeToast = function() {
+        $mdToast.hide();
+      };
+    }
+    /*
+    MDTooltipCtrl
+     */
+    MDTooltipCtrl.$inject = ['$scope'];
+    function MDTooltipCtrl($scope) {
+      $scope.demo = {};
+    }
+    /*
+    BottomSheetExample
+     */
+    BottomSheetExample.$inject = ['$scope', '$timeout', '$mdBottomSheet'];
+    function BottomSheetExample($scope, $timeout, $mdBottomSheet) {
+      $scope.alert = '';
+
+      $scope.showListBottomSheet = function($event) {
+        $scope.alert = '';
+        $mdBottomSheet.show({
+          templateUrl: 'bottom-sheet-list-template.html',
+          controller: 'ListBottomSheetCtrl',
+          targetEvent: $event,
+          parent: '#bottomsheetcontainer',
+          disableParentScroll: false
+        }).then(function(clickedItem) {
+          $scope.alert = clickedItem.name + ' clicked!';
+        });
+      };
+
+      $scope.showGridBottomSheet = function($event) {
+        $scope.alert = '';
+        $mdBottomSheet.show({
+          templateUrl: 'bottom-sheet-grid-template.html',
+          controller: 'GridBottomSheetCtrl',
+          targetEvent: $event,
+          parent: '#bottomsheetcontainer',
+          disableParentScroll: false
+        }).then(function(clickedItem) {
+          $scope.alert = clickedItem.name + ' clicked!';
+        });
+      };
+    }
+    /*
+    ListBottomSheetCtrl
+     */
+    ListBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
+    function ListBottomSheetCtrl($scope, $mdBottomSheet) {
+
+      $scope.items = [
+        { name: 'Share', icon: 'share-arrow' },
+        { name: 'Upload', icon: 'upload' },
+        { name: 'Copy', icon: 'copy' },
+        { name: 'Print this page', icon: 'print' },
+      ];
+
+      $scope.listItemClick = function($index) {
+        var clickedItem = $scope.items[$index];
+        $mdBottomSheet.hide(clickedItem);
+      };
+    }
+    /*
+    GridBottomSheetCtrl
+     */
+    GridBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
+    function GridBottomSheetCtrl($scope, $mdBottomSheet) {
+      $scope.items = [
+        { name: 'Hangout', icon: 'hangout' },
+        { name: 'Mail', icon: 'mail' },
+        { name: 'Message', icon: 'message' },
+        { name: 'Copy', icon: 'copy2' },
+        { name: 'Facebook', icon: 'facebook' },
+        { name: 'Twitter', icon: 'twitter' },
+      ];
+
+      $scope.listItemClick = function($index) {
+        var clickedItem = $scope.items[$index];
+        $mdBottomSheet.hide(clickedItem);
+      };
+    }
+
+
+})();
+
+(function() {
+    'use strict';
+    // Used only for the BottomSheetExample
+    angular
+        .module('app.material')
+        .run(materialRun)
+        ;
+    materialRun.$inject = ['$http', '$templateCache'];
+    function materialRun($http, $templateCache){
+      var urls = [
+        'app/img/icons/share-arrow.svg',
+        'app/img/icons/upload.svg',
+        'app/img/icons/copy.svg',
+        'app/img/icons/print.svg',
+        'app/img/icons/hangout.svg',
+        'app/img/icons/mail.svg',
+        'app/img/icons/message.svg',
+        'app/img/icons/copy2.svg',
+        'app/img/icons/facebook.svg',
+        'app/img/icons/twitter.svg'
+      ];
+
+      angular.forEach(urls, function(url) {
+        $http.get(url, {cache: $templateCache});
+      });
+
+    }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.material')
+        .controller('MaterialWidgetsController', MaterialWidgetsController);
+
+    MaterialWidgetsController.$inject = ['Colors'];
+    function MaterialWidgetsController(Colors) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+
+          vm.sparkOption1 = {
+            type : 'line',
+            width : '100%',
+            height : '140px',
+            tooltipOffsetX : -20,
+            tooltipOffsetY : 20,
+            lineColor : Colors.byName('success'),
+            fillColor : Colors.byName('success'),
+            spotColor : 'rgba(0,0,0,.26)',
+            minSpotColor : 'rgba(0,0,0,.26)',
+            maxSpotColor : 'rgba(0,0,0,.26)',
+            highlightSpotColor : 'rgba(0,0,0,.26)',
+            highlightLineColor : 'rgba(0,0,0,.26)',
+            spotRadius : 2,
+            tooltipPrefix : '',
+            tooltipSuffix : ' Visits',
+            tooltipFormat : '{{prefix}}{{y}}{{suffix}}',
+            chartRangeMin: 0,
+            resize: true
+          };
+
+          vm.sparkOptionPie = {
+            type: 'pie',
+            width : '2em',
+            height : '2em',
+            sliceColors: [ Colors.byName('success'), Colors.byName('gray-light')]
+          };
+        
+        }
+    }
+})();
+/**=========================================================
+ * Module: navbar-search.js
+ * Navbar search toggler * Auto dismiss on ESC key
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .directive('searchOpen', searchOpen)
+        .directive('searchDismiss', searchDismiss);
+
+    //
+    // directives definition
+    // 
+    
+    function searchOpen () {
+        var directive = {
+            controller: searchOpenController,
+            restrict: 'A'
+        };
+        return directive;
+
+    }
+
+    function searchDismiss () {
+        var directive = {
+            controller: searchDismissController,
+            restrict: 'A'
+        };
+        return directive;
+        
+    }
+
+    //
+    // Contrller definition
+    // 
+    
+    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchOpenController ($scope, $element, NavSearch) {
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.toggle);
+    }
+
+    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchDismissController ($scope, $element, NavSearch) {
+      
+      var inputSelector = '.navbar-form input[type="text"]';
+
+      $(inputSelector)
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('keyup', function(e) {
+          if (e.keyCode === 27) // ESC
+            NavSearch.dismiss();
+        });
+        
+      // click anywhere closes the search
+      $(document).on('click', NavSearch.dismiss);
+      // dismissable options
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.dismiss);
+    }
+
+})();
+
+
+/**=========================================================
+ * Module: nav-search.js
+ * Services to share navbar search functions
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .service('NavSearch', NavSearch);
+
+    function NavSearch() {
+        this.toggle = toggle;
+        this.dismiss = dismiss;
+
+        ////////////////
+
+        var navbarFormSelector = 'form.navbar-form';
+
+        function toggle() {
+          var navbarForm = $(navbarFormSelector);
+
+          navbarForm.toggleClass('open');
+
+          var isOpen = navbarForm.hasClass('open');
+
+          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
+        }
+
+        function dismiss() {
+          $(navbarFormSelector)
+            .removeClass('open') // Close control
+            .find('input[type="text"]').blur() // remove focus
+            // .val('') // Empty input
+            ;
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.preloader')
+        .directive('preloader', preloader);
+
+    preloader.$inject = ['$animate', '$timeout', '$q'];
+    function preloader ($animate, $timeout, $q) {
+
+        var directive = {
+            restrict: 'EAC',
+            template: 
+              '<div class="preloader-progress">' +
+                  '<div class="preloader-progress-bar" ' +
+                       'ng-style="{width: loadCounter + \'%\'}"></div>' +
+              '</div>'
+            ,
+            link: link
+        };
+        return directive;
+
+        ///////
+
+        function link(scope, el) {
+
+          scope.loadCounter = 0;
+
+          var counter  = 0,
+              timeout;
+
+          // disables scrollbar
+          angular.element('body').css('overflow', 'hidden');
+          // ensure class is present for styling
+          el.addClass('preloader');
+
+          appReady().then(endCounter);
+
+          timeout = $timeout(startCounter);
+
+          ///////
+
+          function startCounter() {
+
+            var remaining = 100 - counter;
+            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
+
+            scope.loadCounter = parseInt(counter, 10);
+
+            timeout = $timeout(startCounter, 20);
+          }
+
+          function endCounter() {
+
+            $timeout.cancel(timeout);
+
+            scope.loadCounter = 100;
+
+            $timeout(function(){
+              // animate preloader hiding
+              $animate.addClass(el, 'preloader-hidden');
+              // retore scrollbar
+              angular.element('body').css('overflow', '');
+            }, 300);
+          }
+
+          function appReady() {
+            var deferred = $q.defer();
+            var viewsLoaded = 0;
+            // if this doesn't sync with the real app ready
+            // a custom event must be used instead
+            var off = scope.$on('$viewContentLoaded', function () {
+              viewsLoaded ++;
+              // we know there are at least two views to be loaded 
+              // before the app is ready (1-index.html 2-app*.html)
+              if ( viewsLoaded === 2) {
+                // with resolve this fires only once
+                $timeout(function(){
+                  deferred.resolve();
+                }, 3000);
+
+                off();
+              }
+
+            });
+
+            return deferred.promise;
+          }
+
+        } //link
+    }
+
+})();
+/**=========================================================
+ * Module: helpers.js
+ * Provides helper functions for routes definition
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.routes')
+        .provider('RouteHelpers', RouteHelpersProvider)
+        ;
+
+    RouteHelpersProvider.$inject = ['APP_REQUIRES'];
+    function RouteHelpersProvider(APP_REQUIRES) {
+
+      /* jshint validthis:true */
+      return {
+        // provider access level
+        basepath: basepath,
+        resolveFor: resolveFor,
+        // controller access level
+        $get: function() {
+          return {
+            basepath: basepath,
+            resolveFor: resolveFor
+          };
+        }
+      };
+
+      // Set here the base of the relative path
+      // for all app views
+      function basepath(uri) {
+        return 'app/views/' + uri;
+      }
+
+      // Generates a resolve object by passing script names
+      // previously configured in constant.APP_REQUIRES
+      function resolveFor() {
+        var _args = arguments;
+        return {
+          deps: ['$ocLazyLoad','$q', function ($ocLL, $q) {
+            // Creates a promise chain for each argument
+            var promise = $q.when(1); // empty promise
+            for(var i=0, len=_args.length; i < len; i ++){
+              promise = andThen(_args[i]);
+            }
+            return promise;
+
+            // creates promise to chain dynamically
+            function andThen(_arg) {
+              // also support a function that returns a promise
+              if(typeof _arg === 'function')
+                  return promise.then(_arg);
+              else
+                  return promise.then(function() {
+                    // if is a module, pass the name. If not, pass the array
+                    var whatToLoad = getRequired(_arg);
+                    // simple error check
+                    if(!whatToLoad) return $.error('Route resolve: Bad resource name [' + _arg + ']');
+                    // finally, return a promise
+                    return $ocLL.load( whatToLoad );
+                  });
+            }
+            // check and returns required data
+            // analyze module items with the form [name: '', files: []]
+            // and also simple array of script files (for not angular js)
+            function getRequired(name) {
+              if (APP_REQUIRES.modules)
+                  for(var m in APP_REQUIRES.modules)
+                      if(APP_REQUIRES.modules[m].name && APP_REQUIRES.modules[m].name === name)
+                          return APP_REQUIRES.modules[m];
+              return APP_REQUIRES.scripts && APP_REQUIRES.scripts[name];
+            }
+
+          }]};
+      } // resolveFor
+
+    }
+
+
+})();
+
+
+/**=========================================================
+ * Module: config.js
+ * App routes and resources configuration
+ =========================================================*/
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.routes')
+        .config(routesConfig);
+
+    routesConfig.$inject = ['$stateProvider', '$locationProvider', '$urlRouterProvider', 'RouteHelpersProvider'];
+    function routesConfig($stateProvider, $locationProvider, $urlRouterProvider, helper){
+        
+        // Set the following to true to enable the HTML5 Mode
+        // You may have to set <base> tag in index and a routing configuration in your server
+        $locationProvider.html5Mode(false);
+
+        // defaults to login
+        $urlRouterProvider.otherwise('/page/login');
+
+        // 
+        // Application Routes
+        // -----------------------------------   
+        $stateProvider
+          .state('app', {
+              url: '/app',
+              abstract: true,
+              templateUrl: helper.basepath('app.html'),
+              resolve: helper.resolveFor('fastclick','modernizr','sparklines', 'icons','animo','underscore',
+                        'sparklines','slimscroll','oitozero.ngSweetAlert','toaster','blockUI')
+          })
+          .state('app.welcome', {
+              url: '/welcome',
+              title: 'Welcome',
+              templateUrl: helper.basepath('welcome.html'),
+              controller: 'WelcomeController',
+              controllerAs: 'vm'
+          })
+           .state('app.manage_user', {
+                url: '/manage_user',
+                title: 'manage users',
+                templateUrl: helper.basepath('manageusers/manage.users.html'),
+               resolve: angular.extend(helper.resolveFor('datatables','ngDialog','ui.select'),{}),
+               controller: 'ManageUsersController',
+               controllerAs: 'vm'
+            })
+            .state('app.manage_role', {
+                url: '/manage_role',
+                title: 'manage roles',
+                templateUrl: helper.basepath('manageroles/manage.roles.html'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select'),
+                controller: 'ManageRoleController',
+                controllerAs: 'vm'
+            })
+            .state('app.mfi_setting', {
+                url: '/mfi_setup',
+                title: 'MFI Setting',
+                templateUrl:helper.basepath('mfisetup/mfi.html'),
+                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment','inputmask','ngFileUpload'),
+                controller: 'MFIController',
+                controllerAs: 'vm'
+            })
+
+            .state("app.manage_branch", {
+                url: "/branches",
+                title: "branches",
+                templateUrl:helper.basepath('mfisetup/branches/branches.html'),
+                controller: "BranchController",
+                controllerAs: 'vm'
+            })
+            .state("app.forms", {
+                url: "/forms",
+                title: "forms",
+                templateUrl:helper.basepath('forms/forms.list.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "FormsController",
+                controllerAs: 'vm'
+            })
+            .state("app.builder", {
+                url: "/forms/builder/:id",
+                title: 'Form Builder',
+                templateUrl:helper.basepath('forms/builder.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select','ui.sortable'),
+                controller: 'FormBuilderController',
+                controllerAs: 'vm'
+            })
+            .state("app.acat", {
+                url: "/acat",
+                title: "acat",
+                templateUrl:helper.basepath('acat/builder/acat.list.html'),
+                resolve:helper.resolveFor('md.data.table'),
+                controller: "ACATListController",
+                controllerAs: 'vm'
+            })
+            .state("app.acatbuilder", {
+                url: "/acat/builder/:id",
+                title: 'ACAT Builder',
+                templateUrl:helper.basepath('acat/builder/acat.builder.html'),
+                controller: 'ACATController',
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controllerAs: 'vm'
+            })
+            .state("app.crop", {
+                url: "/crops",
+                title: "crops",
+                templateUrl:helper.basepath('acat/crop/crops.html'),
+                resolve:helper.resolveFor('md.data.table'),
+                controller: "CropsController",
+                controllerAs: 'vm'
+            })
+            .state("app.loanproduct", {
+                url: "/loanproducts",
+                title: "loan product",
+                templateUrl:helper.basepath('mfisetup/loanproduct/loan.products.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "LoanProductsController",
+                controllerAs: 'vm'
+            })
+            .state("app.clients", {
+                url: "/clients",
+                title: "Client Management",
+                templateUrl:helper.basepath('loan_management/client_management/client.management.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "ClientManagementController",
+                controllerAs: 'vm'
+            })
+            .state("app.client_detail", {
+                url: "/clients/:id",
+                title: "clients detail",
+                templateUrl:helper.basepath('loan_management/client_management/client.detail.html'),
+                controller: "ClientDetailController",
+                controllerAs: 'vm'
+            })
+
+            .state("app.loan_processing", {
+                url: "/loan_processing",
+                title: "Loan Processing",
+                templateUrl:helper.basepath('loan_management/loan_processing/loan.processing.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select','moment'),
+                controller: "LoanProcessingController",
+                controllerAs: 'vm'
+            })
+
+
+          // CUSTOM RESOLVES
+          //   Add your own resolves properties
+          //   following this object extend
+          //   method
+          // -----------------------------------
+            .state('page', {
+                url: '/page',
+                templateUrl: 'app/pages/page.html',
+                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert','toaster','blockUI'),
+                controller: ['$rootScope', function($rootScope) {
+                    $rootScope.app.layout.isBoxed = false;
+                }]
+            })
+            .state('page.login', {
+                url: '/login',
+                title: 'Login',
+                templateUrl: 'app/pages/login.html',
+                controller: 'LoginFormController',
+                controllerAs: 'login'
+            })
+            .state('page.404', {
+                url: '/404',
+                title: 'Not Found',
+                templateUrl: 'app/pages/404.html'
+            })
+            .state('page.500', {
+                url: '/500',
+                title: 'Server error',
+                templateUrl: 'app/pages/500.html'
+            })
+            .state('page.maintenance', {
+                url: '/maintenance',
+                title: 'Maintenance',
+                templateUrl: 'app/pages/maintenance.html'
+            })
+          ;
+
+    } // routesConfig
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.settings')
+        .run(settingsRun);
+
+    settingsRun.$inject = ['$rootScope', 'AuthService'];
+
+    function settingsRun($rootScope, AuthService){
+
+
+      // User Settings
+      // -----------------------------------
+      $rootScope.user = {
+        name:     'Yonas',
+        job:      'System Admin',
+        picture:  'app/img/user/02.jpg'
+      };
+
+      // Hides/show user avatar on sidebar from any element
+      $rootScope.toggleUserBlock = function(){
+        $rootScope.$broadcast('toggleUserBlock');
+      };
+      $rootScope.logoutUser = function (){
+            AuthService.Logout();
+      };
+
+      // Global Settings
+      // -----------------------------------
+      $rootScope.app = {
+        name: 'Bidir Web',
+        description: 'Bidir Web App',
+        year: ((new Date()).getFullYear()),
+        layout: {
+          isFixed: true,
+          isCollapsed: false,
+          isBoxed: false,
+          isRTL: false,
+          horizontal: false,
+          isFloat: false,
+          asideHover: false,
+          theme: 'app/css/theme-d.css',
+          asideScrollbar: false,
+          isCollapsedText: false
+        },
+        useFullLayout: false,
+        hiddenFooter: false,
+        offsidebarOpen: false,
+        asideToggled: false,
+        viewAnimation: 'ng-fadeInUp'
+      };
+
+      // Setup the layout mode
+      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
+
+      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
+      // if( angular.isDefined($localStorage.layout) )
+      //   $rootScope.app.layout = $localStorage.layout;
+      // else
+      //   $localStorage.layout = $rootScope.app.layout;
+      //
+      // $rootScope.$watch('app.layout', function () {
+      //   $localStorage.layout = $rootScope.app.layout;
+      // }, true);
+
+      // Close submenu when sidebar change from collapsed to normal
+      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
+        if( newValue === false )
+          $rootScope.$broadcast('closeSidebarMenu');
+      });
+
+    }
+
+})();
+
+/**=========================================================
+ * Module: sidebar-menu.js
+ * Handle sidebar collapsible elements
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.sidebar')
+        .controller('SidebarController', SidebarController);
+
+    SidebarController.$inject = ['$rootScope', '$scope', '$state', 'SidebarLoader', 'Utils','PermissionService'];
+    function SidebarController($rootScope, $scope, $state, SidebarLoader,  Utils,PermissionService) {
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+          var collapseList = [];
+
+          // demo: when switch from collapse to hover, close all items
+          var watchOff1 = $rootScope.$watch('app.layout.asideHover', function(oldVal, newVal){
+            if ( newVal === false && oldVal === true) {
+              closeAllBut(-1);
+            }
+          });
+
+
+          // Load menu from json file
+          // -----------------------------------
+
+          SidebarLoader.getMenu(sidebarReady);
+
+          function sidebarReady(items) {
+              $scope.menuItems = items.data;
+              SetMenuItemsVisibility($scope.menuItems);
+          }
+
+          function SetMenuItemsVisibility(menuItems){
+              var isSuper = false;
+              if(!_.isUndefined($rootScope.currentUser)){
+                  isSuper = $rootScope.currentUser.username === 'super@bidir.com';
+              }
+              _.each(menuItems, function(menuItem) {
+                  if(isSuper){
+                      menuItem.showMenuItem = true;
+                      validateSubMenus(menuItem);
+                  }
+                  else {
+                      menuItem.showMenuItem = PermissionService.hasThisModule(menuItem.module);
+                      validateSubMenus(menuItem);
+                  }
+
+              });
+          }
+
+          function validateSubMenus(menuItem){
+              var permissions = PermissionService.validateSubModules();
+              if(!_.isUndefined(menuItem.submenu)){
+                  _.each(menuItem.submenu,function(sub){
+                      var isSuper = false;
+                      if(!_.isUndefined($rootScope.currentUser)){
+                          isSuper = $rootScope.currentUser.username === 'super@bidir.com';
+                          if(isSuper){
+                              sub.showsubmenu = true;
+                          }else{
+                              if(!_.isUndefined(sub.permission)){
+                                  sub.showsubmenu = _.contains(permissions,sub.permission);
+                              }else {
+                                  sub.showsubmenu = false;
+                              }
+                          }
+                      }else {
+                          sub.showsubmenu = false;
+                      }
+
+                  });
+              }
+          }
+
+
+          // Handle sidebar and collapse items
+          // ----------------------------------
+          $scope.getMenuItemPropClasses = function(item) {
+            return (item.heading ? 'nav-heading' : '') +
+                   (isActive(item) ? ' active' : '') ;
+          };
+
+          $scope.addCollapse = function($index, item) {
+            collapseList[$index] = $rootScope.app.layout.asideHover ? true : !isActive(item);
+          };
+
+          $scope.isCollapse = function($index) {
+            return (collapseList[$index]);
+          };
+
+          $scope.toggleCollapse = function($index, isParentItem) {
+
+            // collapsed sidebar doesn't toggle drodopwn
+            if( Utils.isSidebarCollapsed() || $rootScope.app.layout.asideHover ) return true;
+
+            // make sure the item index exists
+            if( angular.isDefined( collapseList[$index] ) ) {
+              if ( ! $scope.lastEventFromChild ) {
+                collapseList[$index] = !collapseList[$index];
+                closeAllBut($index);
+              }
+            }
+            else if ( isParentItem ) {
+              closeAllBut(-1);
+            }
+
+            $scope.lastEventFromChild = isChild($index);
+
+            return true;
+
+          };
+
+          // Controller helpers
+          // -----------------------------------
+
+            // Check item and children active state
+            function isActive(item) {
+              if(!item) return;
+
+              if( !item.sref || item.sref === '#') {
+                var foundActive = false;
+                angular.forEach(item.submenu, function(value) {
+                  if(isActive(value)) foundActive = true;
+                });
+                return foundActive;
+              }
+              else
+                return $state.is(item.sref) || $state.includes(item.sref);
+            }
+
+            function closeAllBut(index) {
+              index += '';
+              for(var i in collapseList) {
+                if(index < 0 || index.indexOf(i) < 0)
+                  collapseList[i] = true;
+              }
+            }
+
+            function isChild($index) {
+              /*jshint -W018*/
+              return (typeof $index === 'string') && !($index.indexOf('-') < 0);
+            }
+
+            $scope.$on('$destroy', function() {
+                watchOff1();
+            });
+
+        } // activate
+    }
+
+})();
+
+/**=========================================================
+ * Module: sidebar.js
+ * Wraps the sidebar and handles collapsed state
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.sidebar')
+        .directive('sidebar', sidebar);
+
+    sidebar.$inject = ['$rootScope', '$timeout', '$window', 'Utils'];
+    function sidebar ($rootScope, $timeout, $window, Utils) {
+        var $win = angular.element($window);
+        var directive = {
+            // bindToController: true,
+            // controller: Controller,
+            // controllerAs: 'vm',
+            link: link,
+            restrict: 'EA',
+            template: '<nav class="sidebar" ng-transclude></nav>',
+            transclude: true,
+            replace: true
+            // scope: {}
+        };
+        return directive;
+
+        function link(scope, element, attrs) {
+
+          var currentState = $rootScope.$state.current.name;
+          var $sidebar = element;
+
+          var eventName = Utils.isTouch() ? 'click' : 'mouseenter' ;
+          var subNav = $();
+
+          $sidebar.on( eventName, '.nav > li', function() {
+
+            if( Utils.isSidebarCollapsed() || $rootScope.app.layout.asideHover ) {
+
+              subNav.trigger('mouseleave');
+              subNav = toggleMenuItem( $(this), $sidebar);
+
+              // Used to detect click and touch events outside the sidebar
+              sidebarAddBackdrop();
+
+            }
+
+          });
+
+          var eventOff1 = scope.$on('closeSidebarMenu', function() {
+            removeFloatingNav();
+          });
+
+          // Normalize state when resize to mobile
+          $win.on('resize.sidebar', function() {
+            if( ! Utils.isMobile() )
+          	asideToggleOff();
+          });
+
+          // Adjustment on route changes
+          var eventOff2 = $rootScope.$on('$stateChangeStart', function(event, toState) {
+            currentState = toState.name;
+            // Hide sidebar automatically on mobile
+            asideToggleOff();
+
+            $rootScope.$broadcast('closeSidebarMenu');
+          });
+
+      	  // Autoclose when click outside the sidebar
+          if ( angular.isDefined(attrs.sidebarAnyclickClose) ) {
+
+            var wrapper = $('.wrapper');
+            var sbclickEvent = 'click.sidebar';
+
+            var watchOff1 = $rootScope.$watch('app.asideToggled', watchExternalClicks);
+
+          }
+
+          //////
+
+          function watchExternalClicks(newVal) {
+            // if sidebar becomes visible
+            if ( newVal === true ) {
+              $timeout(function(){ // render after current digest cycle
+                wrapper.on(sbclickEvent, function(e){
+                  // if not child of sidebar
+                  if( ! $(e.target).parents('.aside').length ) {
+                    asideToggleOff();
+                  }
+                });
+              });
+            }
+            else {
+              // dettach event
+              wrapper.off(sbclickEvent);
+            }
+          }
+
+          function asideToggleOff() {
+            $rootScope.app.asideToggled = false;
+            if(!scope.$$phase) scope.$apply(); // anti-pattern but sometimes necessary
+      	  }
+
+          scope.$on('$destroy', function() {
+            // detach scope events
+            eventOff1();
+            eventOff2();
+            watchOff1();
+            // detach dom events
+            $sidebar.off(eventName);
+            $win.off('resize.sidebar');
+            wrapper.off(sbclickEvent);
+          });
+
+        }
+
+        ///////
+
+        function sidebarAddBackdrop() {
+          var $backdrop = $('<div/>', { 'class': 'dropdown-backdrop'} );
+          $backdrop.insertAfter('.aside-inner').on('click mouseenter', function () {
+            removeFloatingNav();
+          });
+        }
+
+        // Open the collapse sidebar submenu items when on touch devices
+        // - desktop only opens on hover
+        function toggleTouchItem($element){
+          $element
+            .siblings('li')
+            .removeClass('open')
+            .end()
+            .toggleClass('open');
+        }
+
+        // Handles hover to open items under collapsed menu
+        // -----------------------------------
+        function toggleMenuItem($listItem, $sidebar) {
+
+          removeFloatingNav();
+
+          var ul = $listItem.children('ul');
+
+          if( !ul.length ) return $();
+          if( $listItem.hasClass('open') ) {
+            toggleTouchItem($listItem);
+            return $();
+          }
+
+          var $aside = $('.aside');
+          var $asideInner = $('.aside-inner'); // for top offset calculation
+          // float aside uses extra padding on aside
+          var mar = parseInt( $asideInner.css('padding-top'), 0) + parseInt( $aside.css('padding-top'), 0);
+          var subNav = ul.clone().appendTo( $aside );
+
+          toggleTouchItem($listItem);
+
+          var itemTop = ($listItem.position().top + mar) - $sidebar.scrollTop();
+          var vwHeight = $win.height();
+
+          subNav
+            .addClass('nav-floating')
+            .css({
+              position: $rootScope.app.layout.isFixed ? 'fixed' : 'absolute',
+              top:      itemTop,
+              bottom:   (subNav.outerHeight(true) + itemTop > vwHeight) ? 0 : 'auto'
+            });
+
+          subNav.on('mouseleave', function() {
+            toggleTouchItem($listItem);
+            subNav.remove();
+          });
+
+          return subNav;
+        }
+
+        function removeFloatingNav() {
+          $('.dropdown-backdrop').remove();
+          $('.sidebar-subnav.nav-floating').remove();
+          $('.sidebar li.open').removeClass('open');
+        }
+    }
+
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.sidebar')
+        .service('SidebarLoader', SidebarLoader);
+
+    SidebarLoader.$inject = ['$http'];
+    function SidebarLoader($http) {
+        this.getMenu = getMenu;
+
+        ////////////////
+
+        function getMenu(onReady, onError) {
+          var menuJson = 'server/sidebar-menu.json',
+              menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
+
+          onError = onError || function() { alert('Failure loading menu'); };
+
+          $http
+            .get(menuURL)
+            .then(onReady, onError);
+        }
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.sidebar')
+        .controller('UserBlockController', UserBlockController);
+
+    UserBlockController.$inject = ['$scope','AuthService'];
+    function UserBlockController($scope,AuthService) {
+        var vm = this;
+        activate();
+
+        vm.user = AuthService.GetCurrentUser();
+
+        ////////////////
+        function activate() {
+
+          $scope.userBlockVisible = false;
+
+          var detach = $scope.$on('toggleUserBlock', function(/*event, args*/) {
+
+            $scope.userBlockVisible = ! $scope.userBlockVisible;
+
+          });
+
+          $scope.$on('$destroy', detach);
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .config(translateConfig)
+        ;
+    translateConfig.$inject = ['$translateProvider'];
+    function translateConfig($translateProvider){
+
+      $translateProvider.useStaticFilesLoader({
+          prefix : 'app/i18n/',
+          suffix : '.json'
+      });
+
+      $translateProvider.preferredLanguage('en');
+      $translateProvider.useLocalStorage();
+      $translateProvider.usePostCompiling(true);
+      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
+
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .run(translateRun)
+        ;
+    translateRun.$inject = ['$rootScope', '$translate'];
+    
+    function translateRun($rootScope, $translate){
+
+      // Internationalization
+      // ----------------------
+
+      $rootScope.language = {
+        // Handles language dropdown
+        listIsOpen: false,
+        // list of available languages
+        available: {
+          'en':       'English',
+          'es_AR':    'Español'
+        },
+        // display always the current ui language
+        init: function () {
+          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
+          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
+          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
+        },
+        set: function (localeId) {
+          // Set the new idiom
+          $translate.use(localeId);
+          // save a reference for the current language
+          $rootScope.language.selected = $rootScope.language.available[localeId];
+          // finally toggle dropdown
+          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
+        }
+      };
+
+      $rootScope.language.init();
+
+    }
+})();
+/**=========================================================
+ * Module: animate-enabled.js
+ * Enable or disables ngAnimate for element with directive
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.utils')
+        .directive('animateEnabled', animateEnabled);
+
+    animateEnabled.$inject = ['$animate'];
+    function animateEnabled ($animate) {
+        var directive = {
+            link: link,
+            restrict: 'A'
+        };
+        return directive;
+
+        function link(scope, element, attrs) {
+          scope.$watch(function () {
+            return scope.$eval(attrs.animateEnabled, scope);
+          }, function (newValue) {
+            $animate.enabled(!!newValue, element);
+          });
+        }
+    }
+
+})();
+
+/**=========================================================
+ * Module: browser.js
+ * Browser detection
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.utils')
+        .service('Browser', Browser);
+
+    Browser.$inject = ['$window'];
+    function Browser($window) {
+      return $window.jQBrowser;
+    }
+
+})();
+
+/**=========================================================
+ * Module: clear-storage.js
+ * Removes a key from the browser storage via element click
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.utils')
+        .directive('resetKey', resetKey);
+
+    resetKey.$inject = ['$state', '$localStorage'];
+    function resetKey ($state, $localStorage) {
+        var directive = {
+            link: link,
+            restrict: 'A',
+            scope: {
+              resetKey: '@'
+            }
+        };
+        return directive;
+
+        function link(scope, element) {
+          element.on('click', function (e) {
+              e.preventDefault();
+
+              if(scope.resetKey) {
+                delete $localStorage[scope.resetKey];
+                $state.go($state.current, {}, {reload: true});
+              }
+              else {
+                $.error('No storage key specified for reset.');
+              }
+          });
+        }
+    }
+
+})();
+
+/**=========================================================
+ * Module: fullscreen.js
+ * Toggle the fullscreen mode on/off
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.utils')
+        .directive('toggleFullscreen', toggleFullscreen);
+
+    toggleFullscreen.$inject = ['Browser'];
+    function toggleFullscreen (Browser) {
+        var directive = {
+            link: link,
+            restrict: 'A'
+        };
+        return directive;
+
+        function link(scope, element) {
+          // Not supported under IE
+          if( Browser.msie ) {
+            element.addClass('hide');
+          }
+          else {
+            element.on('click', function (e) {
+                e.preventDefault();
+
+                if (screenfull.enabled) {
+                  
+                  screenfull.toggle();
+                  
+                  // Switch icon indicator
+                  if(screenfull.isFullscreen)
+                    $(this).children('em').removeClass('fa-expand').addClass('fa-compress');
+                  else
+                    $(this).children('em').removeClass('fa-compress').addClass('fa-expand');
+
+                } else {
+                  $.error('Fullscreen not enabled');
+                }
+
+            });
+          }
+        }
+    }
+
+
+})();
+
+/**=========================================================
+ * Module: load-css.js
+ * Request and load into the current page a css file
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.utils')
+        .directive('loadCss', loadCss);
+
+    function loadCss () {
+        var directive = {
+            link: link,
+            restrict: 'A'
+        };
+        return directive;
+
+        function link(scope, element, attrs) {
+          element.on('click', function (e) {
+              if(element.is('a')) e.preventDefault();
+              var uri = attrs.loadCss,
+                  link;
+
+              if(uri) {
+                link = createLink(uri);
+                if ( !link ) {
+                  $.error('Error creating stylesheet link element.');
+                }
+              }
+              else {
+                $.error('No stylesheet location defined.');
+              }
+
+          });
+        }
+        
+        function createLink(uri) {
+          var linkId = 'autoloaded-stylesheet',
+              oldLink = $('#'+linkId).attr('id', linkId + '-old');
+
+          $('head').append($('<link/>').attr({
+            'id':   linkId,
+            'rel':  'stylesheet',
+            'href': uri
+          }));
+
+          if( oldLink.length ) {
+            oldLink.remove();
+          }
+
+          return $('#'+linkId);
+        }
+    }
+
+})();
+
+/**=========================================================
+ * Module: now.js
+ * Provides a simple way to display the current time formatted
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.utils')
+        .directive('now', now);
+
+    now.$inject = ['dateFilter', '$interval'];
+    function now (dateFilter, $interval) {
+        var directive = {
+            link: link,
+            restrict: 'EA'
+        };
+        return directive;
+
+        function link(scope, element, attrs) {
+          var format = attrs.format;
+
+          function updateTime() {
+            var dt = dateFilter(new Date(), format);
+            element.text(dt);
+          }
+
+          updateTime();
+          var intervalPromise = $interval(updateTime, 1000);
+
+          scope.$on('$destroy', function(){
+            $interval.cancel(intervalPromise);
+          });
+
+        }
+    }
+
+})();
+
+/**=========================================================
+ * Module: table-checkall.js
+ * Tables check all checkbox
+ =========================================================*/
+(function() {
+    'use strict';
+
+    angular
+        .module('app.utils')
+        .directive('checkAll', checkAll);
+
+    function checkAll () {
+        var directive = {
+            link: link,
+            restrict: 'A'
+        };
+        return directive;
+
+        function link(scope, element) {
+          element.on('change', function() {
+            var $this = $(this),
+                index= $this.index() + 1,
+                checkbox = $this.find('input[type="checkbox"]'),
+                table = $this.parents('table');
+            // Make sure to affect only the correct checkbox column
+            table.find('tbody > tr > td:nth-child('+index+') input[type="checkbox"]')
+              .prop('checked', checkbox[0].checked);
+
+          });
+        }
+    }
+
+})();
+
+/**=========================================================
+ * Module: trigger-resize.js
+ * Triggers a window resize event from any element
+ =========================================================*/
+(function() {
+    'use strict';
+
+    angular
+        .module('app.utils')
+        .directive('triggerResize', triggerResize);
+
+    triggerResize.$inject = ['$window', '$timeout'];
+    function triggerResize ($window, $timeout) {
+        var directive = {
+            link: link,
+            restrict: 'A'
+        };
+        return directive;
+
+        function link(scope, element, attributes) {
+          element.on('click', function(){
+            $timeout(function(){
+              // all IE friendly dispatchEvent
+              var evt = document.createEvent('UIEvents');
+              evt.initUIEvent('resize', true, false, $window, 0);
+              $window.dispatchEvent(evt);
+              // modern dispatchEvent way
+              // $window.dispatchEvent(new Event('resize'));
+            }, attributes.triggerResize || 300);
+          });
+        }
+    }
+
+})();
+
+/**=========================================================
+ * Module: utils.js
+ * Utility library to use across the theme
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.utils')
+        .service('Utils', Utils);
+
+    Utils.$inject = ['$window', 'APP_MEDIAQUERY'];
+    function Utils($window, APP_MEDIAQUERY) {
+
+        var $html = angular.element('html'),
+            $win  = angular.element($window),
+            $body = angular.element('body');
+
+        return {
+          // DETECTION
+          support: {
+            transition: (function() {
+                    var transitionEnd = (function() {
+
+                        var element = document.body || document.documentElement,
+                            transEndEventNames = {
+                                WebkitTransition: 'webkitTransitionEnd',
+                                MozTransition: 'transitionend',
+                                OTransition: 'oTransitionEnd otransitionend',
+                                transition: 'transitionend'
+                            }, name;
+
+                        for (name in transEndEventNames) {
+                            if (element.style[name] !== undefined) return transEndEventNames[name];
+                        }
+                    }());
+
+                    return transitionEnd && { end: transitionEnd };
+                })(),
+            animation: (function() {
+
+                var animationEnd = (function() {
+
+                    var element = document.body || document.documentElement,
+                        animEndEventNames = {
+                            WebkitAnimation: 'webkitAnimationEnd',
+                            MozAnimation: 'animationend',
+                            OAnimation: 'oAnimationEnd oanimationend',
+                            animation: 'animationend'
+                        }, name;
+
+                    for (name in animEndEventNames) {
+                        if (element.style[name] !== undefined) return animEndEventNames[name];
+                    }
+                }());
+
+                return animationEnd && { end: animationEnd };
+            })(),
+            requestAnimationFrame: window.requestAnimationFrame ||
+                                   window.webkitRequestAnimationFrame ||
+                                   window.mozRequestAnimationFrame ||
+                                   window.msRequestAnimationFrame ||
+                                   window.oRequestAnimationFrame ||
+                                   function(callback){ window.setTimeout(callback, 1000/60); },
+            /*jshint -W069*/
+            touch: (
+                ('ontouchstart' in window && navigator.userAgent.toLowerCase().match(/mobile|tablet/)) ||
+                (window.DocumentTouch && document instanceof window.DocumentTouch)  ||
+                (window.navigator['msPointerEnabled'] && window.navigator['msMaxTouchPoints'] > 0) || //IE 10
+                (window.navigator['pointerEnabled'] && window.navigator['maxTouchPoints'] > 0) || //IE >=11
+                false
+            ),
+            mutationobserver: (window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver || null)
+          },
+          // UTILITIES
+          isInView: function(element, options) {
+              /*jshint -W106*/
+              var $element = $(element);
+
+              if (!$element.is(':visible')) {
+                  return false;
+              }
+
+              var window_left = $win.scrollLeft(),
+                  window_top  = $win.scrollTop(),
+                  offset      = $element.offset(),
+                  left        = offset.left,
+                  top         = offset.top;
+
+              options = $.extend({topoffset:0, leftoffset:0}, options);
+
+              if (top + $element.height() >= window_top && top - options.topoffset <= window_top + $win.height() &&
+                  left + $element.width() >= window_left && left - options.leftoffset <= window_left + $win.width()) {
+                return true;
+              } else {
+                return false;
+              }
+          },
+
+          langdirection: $html.attr('dir') === 'rtl' ? 'right' : 'left',
+
+          isTouch: function () {
+            return $html.hasClass('touch');
+          },
+
+          isSidebarCollapsed: function () {
+            return $body.hasClass('aside-collapsed') || $body.hasClass('aside-collapsed-text');
+          },
+
+          isSidebarToggled: function () {
+            return $body.hasClass('aside-toggled');
+          },
+
+          isMobile: function () {
+            return $win.width() < APP_MEDIAQUERY.tablet;
+          }
+
+        };
+    }
+})();
+
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.welcomePage')
+        .controller('TaskDetailController', TaskDetailController);
+
+    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items','SweetAlert'];
+
+    function TaskDetailController($mdDialog, WelcomeService ,items,SweetAlert) {
+        var vm = this
+        vm.cancel = _cancel;
+        vm.approveUser = _approveUser;
+        vm.declineUser = _declineUser;
+        vm.task = items.taskInfo;
+        console.log("task ",vm.task);
+        WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
+            // console.log("task related user",response);
+            vm.userInfo = response.data;
+
+        },function(error){
+            console.log("error",error);
+        });
+
+        function _approveUser() {
+            var task = {
+                taskId:vm.task._id ,
+                status: "approved",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
+        }
+
+        function _declineUser() {
+            var task = {
+                taskId:vm.task._id ,
+                status: "declined",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
+        }
+
+        function updateStatus(task){
+            WelcomeService.ChangeTaskStatus(task).then(
+                function(response) {
+                    SweetAlert.swal('Task Status Changed!',
+                        'Task '+ task.status + ' Successfully!',
+                        'success');
+                    console.log("task updated",response);
+                    $mdDialog.hide();
+                },
+                function(error) {
+                    SweetAlert.swal( 'Oops...',
+                        'Something went wrong!',
+                        'error');
+                    console.log("could not be updated", error);
+                }
+            );
+        }
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.welcomePage')
+        .controller('WelcomeController', WelcomeController);
+
+    WelcomeController.$inject = ['$mdDialog', 'WelcomeService','AuthService'];
+
+    function WelcomeController($mdDialog, WelcomeService ,AuthService) {
+        var vm = this;
+
+    }
+
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.welcomePage')
+
+        .service('WelcomeService', WelcomeService);
+    WelcomeService.$inject = ['$http', 'CommonService','AuthService'];
+
+    function WelcomeService($http, CommonService,AuthService) {
+        return {
+            GetTasks: _getTasks,
+            GetUserAccount:_getUserAccount,
+            ChangeTaskStatus:_changeTaskStatus
+        };
+
+        function _getUserAccount(id){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
+        }
+        function _getTasks(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Tasks.GetAll),httpConfig);
+        }
+        function _changeTaskStatus(taskObj) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
+        }
+    }
+
+})(window.angular);
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function () {
+    'use strict';
+    angular.module('app.core').factory('AlertService', AlertService);
+
+    AlertService.$inject = ['SweetAlert']
+    function AlertService(SweetAlert) {
+        // init();
+        return {
+            showError: error,
+            showInfo: info,
+            showWarning: warning,
+            showSuccess: success,
+            errorHandler: errorHandler,
+            showConfirm: showConfirm,
+            showConfirmForDelete: _showConfirmForDelete
+        };
+        function error(title,message) {
+            SweetAlert.swal(title,message, "error");
+        }
+        function info(title,message) {
+            SweetAlert.swal(title,message, "info");
+        }
+        function warning(title,message) {
+            SweetAlert.swal({title: title, text: message, type: "warning", confirmButtonText: "Ok"});
+        }
+        function showConfirm(message, title, confirmText, confirmationType, closeOnConfirm) {
+            closeOnConfirm = typeof closeOnConfirm === "undefined" || typeof closeOnConfirm !== "boolean" ? true : closeOnConfirm;
+            confirmationType = typeof confirmationType === "undefined" || typeof confirmationType !== "string" ? "warning" : confirmationType;
+            return SweetAlert.swal({
+                title: title,
+                text: message,
+                type: confirmationType,
+                showCancelButton: true,
+                confirmButtonColor: "#009688",
+                confirmButtonText: confirmText,
+                closeOnConfirm: closeOnConfirm,
+                showLoaderOnConfirm: true
+            });
+        }
+        function _showConfirmForDelete(message, title, confirmText, confirmationType, closeOnConfirm,responseHandler) {
+            closeOnConfirm = typeof closeOnConfirm === "undefined" || typeof closeOnConfirm !== "boolean" ? true : closeOnConfirm;
+            confirmationType = typeof confirmationType === "undefined" || typeof confirmationType !== "string" ? "warning" : confirmationType;
+            return SweetAlert.swal({
+                title: title,
+                text: message,
+                type: confirmationType,
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: confirmText,
+                closeOnConfirm: closeOnConfirm,
+                showLoaderOnConfirm: true
+            },responseHandler);
+        }
+        function success(title,message) {
+            SweetAlert.swal(title,message, "success");
+        }
+        function errorHandler(response) {
+            var msg = 'Server was unable to process the request';
+            var exMsg = '';
+            if (response.data && response.data.Message)
+                msg = response.data.Message;
+            if (response.ExceptionMessage)
+                msg = response.ExceptionMessage;
+            if (response.data && response.data.ExceptionMessage)
+                exMsg = response.data.ExceptionMessage;
+            error(msg + ' ' + exMsg, "Error");
+        }
+
+        function init() {
+            SweetAlert.setDefaults({confirmButtonColor: '#0096884'});
+        }
+    }
+})();
+(function(angular) {
+
+    'use strict';
+
+    angular.module('app.common')
+        .factory('CommonService', CommonService);
+
+    function CommonService() {
+        var factory = {
+            buildUrl: _buildUrl,
+            buildPaginatedUrl:_buildPaginatedUrl,
+            buildPerPageUrl:_buildPerPageUrl,
+            buildUrlWithParam: _buildUrlWithParam,
+            buildUrlForSearch: _buildUrlForSearch,
+            Validation: {
+              ComputeValidation: function (validationObject) {
+                  var isValid = true;
+                  var properties = _.allKeys(validationObject);
+                  _.each(properties, function (property) {
+                      isValid = isValid && validationObject[property];
+                  });
+                  return isValid;
+              },
+              ResetValidationObject: function (validationObject) {
+                  var properties = _.allKeys(validationObject);
+                  _.each(properties, function (property) {
+                      validationObject[property] = true;
+                  });
+              },
+              ValidateForm: function (validationObject, referenceObject) {
+                  var isValid = true;
+                  var properties = _.allKeys(validationObject);
+                  var validateSingleObject= function (objValue) {
+                      if(_.isString(objValue)){
+                          return !_.isUndefined(objValue) && !_.isNull(objValue) && objValue.length > 0;
+                      }
+
+                      if(_.isNumber(objValue)){
+                          return !_.isUndefined(objValue) && !_.isNull(objValue) && !_.isNaN(objValue);
+                      }
+
+                      if(_.isDate(objValue)){
+                          return !_.isUndefined(objValue) && !_.isNull(objValue);
+                      }
+
+                      if(_.isObject(objValue)){
+
+                          return !_.isUndefined(objValue) && !_.isNull(objValue)&& !_.isEmpty(objValue);
+                      }
+
+                      return !_.isUndefined(objValue) && !_.isNull(objValue);
+                  };
+
+                  _.each(properties, function (property) {
+                      var index = property.indexOf('Valid');
+                      if(index != -1) {
+                          var objProperty = property.substring(2, index);
+                      }
+                      if (_.has(referenceObject, objProperty)) {
+                          var objValue = referenceObject[objProperty];
+                          validationObject[property] = validateSingleObject(objValue);
+                      }else{
+                          // console.log('Validation failed for: ',objProperty);
+                          validationObject[property] = false;
+                          isValid = false;
+                      }
+                      isValid = isValid && validationObject[property];
+                  });
+                  return isValid;
+              }
+          }
+        };
+
+        return factory;
+
+
+        function _buildUrl(service,url) {
+          return API.Config.BaseUrl + service +'/' + url;
+        }
+        function _buildPaginatedUrl(service,url) {
+            var parameters = {start:1,limit:200};
+            return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
+                API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
+        }
+        function _buildPerPageUrl(service,url,parameters) {
+            return url === '' ? API.Config.BaseUrl + service + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page : API.Config.BaseUrl + service + '/' + url + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page;
+        }
+        function _buildUrlWithParam(service,url, id) {
+            return url===''?API.Config.BaseUrl + service + '/' + id : API.Config.BaseUrl + service +'/'+ url + '/' + id;
+        }
+        function _buildUrlForSearch(service,url, searchText) {
+            return API.Config.BaseUrl + service +'/'+ url + '/search?search=' + searchText;
+        }
+    }
+
+})(window.angular);
+
+/**
+ * Created by Yoni on 3/9/2018.
+ */
+(function(angular) {
+
+    'use strict';
+
+    focusService.$inject = ["$timeout", "$window"];
+    angular.module('app.common')
+        .factory('focus', focusService);
+
+    function focusService($timeout, $window) {
+        return function(id) {
+            // timeout makes sure that is invoked after any other event has been triggered.
+            // e.g. click events that need to run before the focus or
+            // inputs elements that are in a disabled state but are enabled when those events
+            // are triggered.
+            $timeout(function() {
+                var element = $window.document.getElementById(id);
+                if(element)
+                    element.focus();
+            });
+        };
+    }
+
+})(window.angular);
+/**
+ * Created by Yoni on 12/30/2017.
+ */
+
+
+(function(angular) {
+
+    'use strict';
+
+    angular.module('app.auth')
+        .factory('PermissionService', PermissionService);
+
+    PermissionService.$inject = ['StorageService','$rootScope','AuthService'];
+
+    function PermissionService(StorageService,$rootScope,AuthService) {
+        var factory = {
+            hasThisPermission:_hasThisPermission,
+            hasThesePermissions:_hasThesePermissions,
+            permissions:_permissions,
+            permittedModules:_permittedModules,
+            hasThisModule:_hasThisModule,
+            validateSubModules:_validateSubModules
+        };
+
+        return factory;
+
+
+        function _permissions() {
+            var user =  AuthService.GetCurrentUser();
+            var response = {
+                isSuper: false,
+                permissions:[]
+            };
+
+            if(!_.isUndefined(user) && user !== null){
+                if(!_.isUndefined(user.account)){
+                    response.isSuper = false;
+                    response.permissions =  user.account.role.permissions;
+                    return response;
+                }
+                else if (!_.isUndefined(user.admin)) {
+                    response  = {
+                        isSuper: true,//superadmin
+                        permissions:[]
+                    };
+                    return response;
+                } else {
+                    return response;
+                }
+            }else{
+                return null;
+            }
+
+        }
+
+        function _permittedModules(){
+
+            var permissions = _permissions().permissions;
+            var moduleObj = _.uniq(permissions,function(permi){
+                return permi.module;
+            });
+
+            return _.pluck(moduleObj, 'module');
+        }
+
+        function _validateSubModules(){
+            var permissions = _permissions().permissions;
+            var moduleObj = _.uniq(permissions,function(permi){
+                permi.entityPermission =_.isUndefined(permi.entity)? '': permi.module + '_' + permi.entity;
+                return permi.entityPermission;
+            });
+            return _.pluck(moduleObj, 'entityPermission');
+        }
+
+        function _hasThisPermission(permission) {
+            var allPermissions = _permissions();
+            var hasPermission = false;
+            
+            if(allPermissions.isSuper){
+                hasPermission = true;
+            }else{
+                var permissions = _.map(allPermissions.permissions, function(perm) {
+                    return perm.module + '_' + perm.entity + '_'+ perm.operation;
+                });
+            hasPermission = _.contains(permissions, permission);
+            }
+            return hasPermission;
+        }
+
+        function _hasThisModule(module) {
+            var allModules = _permittedModules();
+            var hasModule = module === 'all'? true:_.contains(allModules, module);
+            return hasModule;
+        }
+
+        function _hasThesePermissions(permissions) {
+            var hasPermission = false;
+            _.each(permissions, function(permission) {
+                //return true if user has access to one of the permissions
+                hasPermission = hasPermission || _hasThisPermission(permission);
+            });
+            return hasPermission;
+        }
+
+
+
+    }
+
+})(window.angular);
+(function() {
+    angular.module("app.common")
+        .factory("PrintPreviewService", printPreviewService);
+
+    printPreviewService.$inject = ["$mdDialog", "$mdMedia", "PrintService", "$rootScope"];
+
+    function printPreviewService($mdDialog, $mdMedia, printService, $rootScope) {
+        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')); // && $scope.customFullscreen;
+        return {
+            show: function(model) {
+                $mdDialog.show({
+                    controller: ["$scope", "$mdDialog", "$rootScope", function($scope, $mdDialog, $rootScope) {
+
+                        $scope.removeItem = removeItem;
+
+                        $scope.printables = model;
+                        $scope.preparedBy = 'super admin';
+                        $scope.Name = 'Buusaa Gonofaa Microfinance Share Company';
+                        $scope.ShowLogoOnPrintOut = true;
+                        $scope.CurrentDate = '30-Mar-2018';
+                        $scope.Address = {
+                            Location:'Addis Ababa, Ethiopia',
+                            Phonenumber:'(255) 555-555555'
+                        };
+
+                        $scope.cancel = function() {
+                            $mdDialog.cancel();
+                        };
+                        $scope.print = function(printableDiv) {
+                            printService.print(printableDiv);
+                            $mdDialog.hide(printableDiv);
+                        };
+
+                        function removeItem(list, item) {
+                            item.HideRow = true;
+                        }
+                    }],
+                    skipHide: true,
+                    templateUrl: 'app/views/common/templates/print.preview.tmpl.html',
+                    parent: angular.element(document.body),
+                    fullscreen: useFullScreen
+                });
+            },
+            close: function(msg) {
+
+            },
+            getPreviewContent: function(model) {
+
+            }
+        };
+    }
+})();
+(function() {
+    angular.module("app.common").factory("PrintService", printService);
+
+    printService.$inject = ["$rootScope"];
+
+    function printService($rootScope) {
+
+        function closePrint() {
+            document.body.removeChild(this.__container__);
+        }
+
+        function setPrint() {
+            this.contentWindow.__container__ = this;
+            this.contentWindow.onbeforeunload = closePrint;
+            this.contentWindow.onafterprint = closePrint;
+            this.contentWindow.focus(); // Required for IE
+            this.contentWindow.print();
+        }
+
+        return {
+            print: function(printableDiv) {
+
+                var printContents = document.getElementById(printableDiv).innerHTML;
+                var oHiddFrame = document.createElement("iframe");
+
+                oHiddFrame.style.visibility = "hidden";
+                oHiddFrame.style.position = "fixed";
+                oHiddFrame.style.right = "0";
+                oHiddFrame.style.bottom = "0";
+                document.body.appendChild(oHiddFrame);
+                oHiddFrame.onload = setPrint;
+
+                var frameDoc = oHiddFrame.document;
+                if (oHiddFrame.contentWindow)
+                    frameDoc = oHiddFrame.contentWindow.document; // IE
+
+                $.ajax({
+                    url: "app/views/common/templates/print.container.tmpl.html",
+                    success: function(result) {
+                        if (!_.isNull(result) || !_.isUndefined(result)) {
+                            var content = result.replace('@PrintContent', printContents);
+                            // Write into iframe
+                            frameDoc.open();
+                            frameDoc.writeln(content);
+                            frameDoc.close();
+                        }
+                    }
+                });
+
+
+            }
+        };
+    }
+})();
+(function(angular) {
+    'use strict';
+
+    angular.module('app.common')
+        .service('StorageService', StorageService);
+
+    StorageService.$inject = ['$localStorage'];
+
+    function StorageService($localStorage) {
+        var servce = {
+            Get: get,
+            Set: set,
+            Remove: remove,
+            Reset: reset
+        };
+
+        return servce;
+
+        function get(key) {
+            var val = $localStorage[key];
+
+            if (!angular.isUndefined(val)) {
+                return JSON.parse(val);
+            } else return null;
+
+        }
+
+        function set(key, value) {
+            $localStorage[key] = JSON.stringify(value);
+        }
+
+        function remove(key) {
+            delete $localStorage[key];
+        }
+
+        function reset() {
+            $localStorage.$reset();
+        }
+    }
+
+})(window.angular);
+
+(function() {
+    'use strict';
+
+    customConfig.$inject = ["$mdAriaProvider", "$mdThemingProvider"];
+    angular
+        .module('custom', [
+            // request the the entire framework
+            'angle',
+            // or just modules
+            'app.mfi',
+            'app.clients',
+            'app.forms',
+            'app.acat',
+            'app.loan_management'
+
+        ]).config(customConfig)
+        .run(customRun);
+
+    function customRun() {
+        console.log("custom app run");
+
+    }
+    function customConfig($mdAriaProvider,$mdThemingProvider) {
+        $mdAriaProvider.disableWarnings();
+        $mdThemingProvider.theme('default')
+            .primaryPalette('blue');
+    }
+})();
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function() {
+    "use strict";
+
+    angular.module("app.acat", [
+    ]).run(runBlock).config(config);
+
+    function runBlock() {}
+    function config() {
+    }
+
+})();
+
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function() {
+    "use strict";
+
+    config.$inject = ["$mdIconProvider"];
+    angular.module("app.forms", [
+    ]).run(runBlock).config(config);
+
+    function runBlock() {}
+    function config($mdIconProvider) {
+        $mdIconProvider.iconSet("avatars", 'app/img/icons/avatar-icons.svg',128);
+    };
+
+})();
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function() {
+    'use strict';
+
+    angular.module('app.loan_management', [
+        'app.clients',
+        'app.processing'
+    ]);
+
+})();
+(function() {
+  "use strict";
+
+  angular.module("app.mfi", [
+  ]).run(runBlock);
+
+function runBlock() {
+}
+
+})();
+
+/**
+ * Created by Yoni on 1/8/2018.
+ */
+(function() {
+    "use strict";
+
+    angular.module("app.clients", [
+    ]).run(runBlock);
+
+    function runBlock() {
+        // console.log("client app run");
+    }
+
+
+})();
+
+/**
+ * Created by Yonas on 5/7/2018.
+ */
+(function() {
+    'use strict';
+
+    angular.module('app.processing', [
+    ]);
+
+})();
+
+// To run this code, edit file index.html or index.jade and change
+// html data-ng-app attribute from angle to myAppName
+// ----------------------------------------------------------------------
+
+(function() {
+    'use strict';
+
+    angular
+        .module('custom')
+        .controller('Controller', Controller);
+
+    Controller.$inject = ['$log'];
+    function Controller($log) {
+        // for controllerAs syntax
+        // var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+          $log.log('I\'m a line from custom.js');
+        }
+    }
+})();
+
+/**
+ * Created by Yoni on 3/11/2018.
+ */
+
+(function(angular) {
+    'use strict';
+    angular.module('app.forms')
+
+        .service('ACATService', ACATService);
+
+    ACATService.$inject = ['$http','CommonService'];
+
+    function ACATService($http, CommonService) {
+        return {
+            GetCrops:_getCrops,
+            SaveCrop:_createCrop,
+            UpdateCrop:_updateCrop,
+            GetAllACATList: _getAllACAT,
+            GetACATById: _getACATById,
+            CreateACAT:_createACAT,
+            UpdateACAT:_updateACAT,
+            AddCostList:_addCostList,
+            UpdateCostList:_updateCostList,
+            RemoveCostListLinear:_removeCostListLinear,
+            RemoveCostListGroup:_removeCostGroupList,
+            RemoveCostGroup:_removeCostGroup,
+            UpdateCostGroup:_updateCostGroup,
+            ResetCostList:_resetCostList
+        };
+
+
+        function _getCrops() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
+        }
+        function _createCrop(crop){
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateCrop), crop);
+        }
+        function _updateCrop(crop){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Crop,crop._id), crop);
+        }
+        function _getACATById(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,id));
+        }
+        function _getAllACAT() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
+        }
+        function _addCostList(cost) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
+        }
+
+        function _updateCostList(cost){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
+        }
+        function _createACAT(acat) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
+        }
+        function _updateACAT(acat) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,acat._id), acat);
+        }
+
+        function _removeCostListLinear(cost_list){
+            var item = {  item_id: cost_list.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + ACAT_COST_LIST_TYPE.LINEAR, item);
+        }
+        function _removeCostGroupList(group_cost_list){
+            var item = {  item_id: group_cost_list.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,group_cost_list._id) +'/items', item);
+        }
+        function _removeCostGroup(group){
+            var item = {  item_id: group.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group._id) +'/group', item);
+        }
+
+        function _updateCostGroup(group) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,'grouped') +'/' +group._id, group);
+        }
+        function _resetCostList(cost_list) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 2/9/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.forms')
+        .constant('MW_QUESTION_TYPES', [
+            {name:'Fill In Blank',url:'fib',code:'FILL_IN_BLANK',type:'text'},
+            {name:'Yes/No Question',code:'YES_NO',url:'yn',type:'yn',options:['Yes','No']},
+            {name:'Multiple Choice',url:'mc',code:'MULTIPLE_CHOICE',options:[],type:'checkbox'},
+            {name:'Single Choice',url:'sc',code:'SINGLE_CHOICE',options:[],type:'select'},
+            {name:'Grouped Question',url:'GROUPED',code:'GROUPED',type:'grouped'}])
+        .constant('MW_FORM_TYPES', [
+            {name:'ACAT',code:'ACAT'},
+            {name:'Loan Application',code:'LOAN_APPLICATION'},
+            {name:'Screening',code:'SCREENING'},
+            {name:'Group Application',code:'GROUP_APPLICATION'},
+            {name:'Test',code:'TEST'}]);
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.forms").controller("FormsController", FormsController);
+
+    FormsController.$inject = ['FormService','$state'];
+
+    function FormsController(FormService,$state) {
+        var vm = this;
+        vm.forms = [];
+        vm.logPagination = _logPagination;
+        vm.editForm = _editForm;
+
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
+
+        vm.options = {
+            rowSelection: true,
+            multiSelect: true,
+            autoSelect: true,
+            decapitate: false,
+            largeEditDialog: false,
+            boundaryLinks: true,
+            limitSelect: true,
+            pageSelect: false
+        };
+
+        vm.request = {
+            page: 1,
+            per_page: 10,
+            Search: ""
+        };
+
+        initialize();
+
+
+        function initialize() {
+            callApi();//fetch first page data initially
+        }
+
+        function _logPagination(page, pageSize) {
+            vm.request.page = page;
+            vm.request.per_page = pageSize;
+            vm.request.Start = page - 1;
+            callApi();
+        }
+
+        function callApi() {
+            FormService.GetFormsPerPage(vm.request).then(function (response) {
+                vm.forms = response.data.docs;
+                _.forEach(vm.forms,function (form) {
+                    if(form.has_sections){
+                        form.sectionCount = form.sections.length;
+                        var questionCount = 0;
+                        _.forEach(form.sections,function (sec) {
+                            questionCount = questionCount + sec.questions.length;
+                        });
+                        form.questionCount = questionCount;
+                    }else{
+                        form.questionCount = form.questions.length;
+                    }
+                })
+            },function (error) {
+                console.log(error);
+            })
+        }
+
+        function _editForm(form, ev) {
+            $state.go('app.builder',{id:form._id});
+            console.log("edit Form",form);
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.forms')
+
+        .service('FormService', FormService);
+
+    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES','MW_FORM_TYPES'];
+
+    function FormService($http, CommonService,MW_QUESTION_TYPES,MW_FORM_TYPES) {
+        return {
+            GetFormsPerPage: _getFormsPerPage,
+            CreateForm:_createForm,
+            GetForm:_getForm,
+            UpdateForm:_updateForm,
+            GetQuestion:_getQuestion,
+            CreateQuestion:_createQuestion,
+            UpdateQuestion:_updateQuestion,
+            DeleteQuestion:_deleteQuestion,
+            CreateSection:_createSection,
+            UpdateSection:_updateSection,
+            RemoveSection:_removeSection,
+            QuestionTypes: MW_QUESTION_TYPES,
+            FormTypes: MW_FORM_TYPES
+        };
+        function _getFormsPerPage(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
+        }
+        function _getForm(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM, API.Methods.Form.All, id));
+        }
+        function _updateForm(form) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,form._id), form);
+        }
+        function _createForm(form){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
+        }
+        //------QUESTION-----------
+        function _getQuestion(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,id));
+        }
+        function _createQuestion(question,type){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question) + '/' + type, question);
+        }
+        function _updateQuestion(question) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id), question);
+        }
+        function _deleteQuestion(question) {
+          return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id + '?form=' + question.form));
+        }
+
+
+        //    ------SECTION--------
+        function _createSection(section){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Section), section);
+        }
+        function _updateSection(section) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id), section);
+        }
+        function _removeSection(section) {
+            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id + '?form=' + section.form));
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.loan_management')
+
+        .service('LoanManagementService', LoanManagementService);
+
+    LoanManagementService.$inject = ['$http', 'CommonService'];
+
+    function LoanManagementService($http, CommonService) {
+        return {
+            GetLoanApplications: _getLoanApplications,
+            GetClientLoanApplication:_getClientLoanApplication,
+            GetScreenings: _getScreenings,
+            GetStaticClientInfo: _getStaticClientInfo,
+            GetClientScreening:_getClientScreening,
+            SaveClientScreening:_saveClientScreening,
+            //CLIENT MANAGEMENT RELATED SERVICES DECLARATION
+            GetClients: _getClients,
+            GetClientDetail:_getClientDetail,
+            SearchClient:_searchClient,
+            GetBranches: _getBranches,
+
+            StyleLabelByStatus: _styleLabelByStatus
+        };
+
+        function _getScreenings(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening,parameters));
+        }
+        function _saveClientScreening(screening,id) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,id),screening);
+        }
+
+        function _getStaticClientInfo() {
+            return {
+                "_id": "5ad880fba11a250001e480b7",
+                "last_modified": "2018-04-19T11:43:55.803Z",
+                "date_created": "2018-04-19T11:43:55.803Z",
+                "client": {
+                    "_id": "5acfb1d581862f000115b97c",
+                    "last_modified": "2018-04-19T11:43:55.816Z",
+                    "date_created": "2018-04-12T19:21:57.639Z",
+                    "branch": "5a632fd37ccc72000172fe80",
+                    "created_by": "5a4a62677d996f0001525df9",
+                    "status": "loan_application_new",
+                    "household_members_count": "5",
+                    "phone": "01014974009",
+                    "email": "",
+                    "geolocation": {
+                        "longitude": 0,
+                        "latitude": 0
+                    },
+                    "spouse": {
+                        "national_id_no": "",
+                        "grandfather_name": "",
+                        "last_name": "",
+                        "first_name": ""
+                    },
+                    "house_no": "34",
+                    "kebele": "Kebele",
+                    "woreda": "Woreda",
+                    "civil_status": "single",
+                    "date_of_birth": "1980-11-05T00:00:00.000Z",
+                    "national_id_card": "",
+                    "national_id_no": "0016793019",
+                    "grandfather_name": "Smith Mutai",
+                    "last_name": "Tony",
+                    "first_name": "Mutai",
+                    "gender": "Male",
+                    "picture": ""
+                },
+                "created_by": "5a4a62677d996f0001525df9",
+                "branch": "5a632fd37ccc72000172fe80",
+                "comment": "",
+                "status": "new",
+                "questions": [],
+                "disclaimer": "",
+                "signatures": [
+                    "Filled By",
+                    "Checked By"
+                ],
+                "sections": [{
+                    "_id": "5ad880fba11a250001e480b5",
+                    "last_modified": "2018-04-19T11:43:55.785Z",
+                    "date_created": "2018-04-19T11:43:55.785Z",
+                    "questions": [{
+                        "_id": "5ac87cdbc0b33b0001d2f1b9",
+                        "question_text": "Agriculture:",
+                        "prerequisites": [],
+                        "show": true,
+                        "values": [],
+                        "sub_questions": [{
+                            "_id": "5ac87cdcc0b33b0001d2f1ba",
+                            "question_text": "Which crops?",
+                            "prerequisites": [],
+                            "show": true,
+                            "values": [],
+                            "sub_questions": [],
+                            "options": [],
+                            "measurement_unit": null,
+                            "validation_factor": "NONE",
+                            "required": false,
+                            "type": "FILL_IN_BLANK",
+                            "remark": "",
+                            "number": 0
+                        },
+                            {
+                                "_id": "5ac87cdcc0b33b0001d2f1bb",
+                                "question_text": "Which agriculture crops?",
+                                "prerequisites": [],
+                                "show": true,
+                                "values": [],
+                                "sub_questions": [],
+                                "options": [],
+                                "measurement_unit": null,
+                                "validation_factor": "NONE",
+                                "required": false,
+                                "type": "FILL_IN_BLANK",
+                                "remark": "",
+                                "number": 0
+                            }
+                        ],
+                        "options": [],
+                        "measurement_unit": null,
+                        "validation_factor": "NONE",
+                        "required": false,
+                        "type": "GROUPED",
+                        "remark": "",
+                        "number": 0
+                    },
+                        {
+                            "_id": "5ac87cf3c0b33b0001d2f1bd",
+                            "question_text": "Livestock: Which animals?",
+                            "prerequisites": [],
+                            "show": true,
+                            "values": [],
+                            "sub_questions": [],
+                            "options": [],
+                            "measurement_unit": null,
+                            "validation_factor": "NONE",
+                            "required": false,
+                            "type": "FILL_IN_BLANK",
+                            "remark": "",
+                            "number": 1
+                        },
+                        {
+                            "_id": "5ac87d1ac0b33b0001d2f1bf",
+                            "question_text": "Other Income:",
+                            "prerequisites": [],
+                            "show": true,
+                            "values": [],
+                            "sub_questions": [{
+                                "_id": "5ac87d1bc0b33b0001d2f1c0",
+                                "question_text": "Regular:",
+                                "prerequisites": [],
+                                "show": true,
+                                "values": [],
+                                "sub_questions": [],
+                                "options": [],
+                                "measurement_unit": "ETB",
+                                "validation_factor": "NONE",
+                                "required": false,
+                                "type": "FILL_IN_BLANK",
+                                "remark": "",
+                                "number": 0
+                            },
+                                {
+                                    "_id": "5ac87d61c0b33b0001d2f1c5",
+                                    "question_text": "Individual responsible for this income:",
+                                    "prerequisites": [],
+                                    "show": true,
+                                    "values": [],
+                                    "sub_questions": [],
+                                    "options": [],
+                                    "measurement_unit": null,
+                                    "validation_factor": "NONE",
+                                    "required": false,
+                                    "type": "FILL_IN_BLANK",
+                                    "remark": "",
+                                    "number": 1
+                                },
+                                {
+                                    "_id": "5ac87d61c0b33b0001d2f1c6",
+                                    "question_text": "Irregular",
+                                    "prerequisites": [],
+                                    "show": true,
+                                    "values": [],
+                                    "sub_questions": [],
+                                    "options": [],
+                                    "measurement_unit": "ETB",
+                                    "validation_factor": "NUMERIC",
+                                    "required": false,
+                                    "type": "FILL_IN_BLANK",
+                                    "remark": "",
+                                    "number": 2
+                                },
+                                {
+                                    "_id": "5ac87d61c0b33b0001d2f1c7",
+                                    "question_text": "Individual for the irregular income:",
+                                    "prerequisites": [],
+                                    "show": true,
+                                    "values": [],
+                                    "sub_questions": [],
+                                    "options": [],
+                                    "measurement_unit": null,
+                                    "validation_factor": "NONE",
+                                    "required": false,
+                                    "type": "FILL_IN_BLANK",
+                                    "remark": "",
+                                    "number": 3
+                                }
+                            ],
+                            "options": [],
+                            "measurement_unit": null,
+                            "validation_factor": "NONE",
+                            "required": false,
+                            "type": "GROUPED",
+                            "remark": "",
+                            "number": 2
+                        }
+                    ],
+                    "number": 1,
+                    "title": "Economic Activities"
+                },
+                    {
+                        "_id": "5ad880fba11a250001e480b6",
+                        "last_modified": "2018-04-19T11:43:55.796Z",
+                        "date_created": "2018-04-19T11:43:55.796Z",
+                        "questions": [{
+                            "_id": "5ac87e03c0b33b0001d2f1dc",
+                            "question_text": "Borrowed in the past:",
+                            "prerequisites": [],
+                            "show": true,
+                            "values": [],
+                            "sub_questions": [],
+                            "options": [
+                                "Yes",
+                                "No"
+                            ],
+                            "measurement_unit": null,
+                            "validation_factor": "NONE",
+                            "required": false,
+                            "type": "YES_NO",
+                            "remark": "",
+                            "number": 1
+                        },
+                            {
+                                "_id": "5ac87e8ec0b33b0001d2f1de",
+                                "question_text": "If borrowed in the past:",
+                                "prerequisites": [{
+                                    "answer": "Yes",
+                                    "question": "5ac87e03c0b33b0001d2f1dc",
+                                    "_id": "5ac87ea1c0b33b0001d2f1e4"
+                                }],
+                                "show": false,
+                                "values": [],
+                                "sub_questions": [{
+                                    "_id": "5ac87e8ec0b33b0001d2f1df",
+                                    "question_text": "Where",
+                                    "prerequisites": [],
+                                    "show": true,
+                                    "values": [],
+                                    "sub_questions": [],
+                                    "options": [],
+                                    "measurement_unit": null,
+                                    "validation_factor": "NONE",
+                                    "required": false,
+                                    "type": "FILL_IN_BLANK",
+                                    "remark": "",
+                                    "number": 0
+                                },
+                                    {
+                                        "_id": "5ac87e90c0b33b0001d2f1e0",
+                                        "question_text": "Amount of last loan",
+                                        "prerequisites": [],
+                                        "show": true,
+                                        "values": [],
+                                        "sub_questions": [],
+                                        "options": [],
+                                        "measurement_unit": "ETB",
+                                        "validation_factor": "NONE",
+                                        "required": false,
+                                        "type": "FILL_IN_BLANK",
+                                        "remark": "",
+                                        "number": 1
+                                    },
+                                    {
+                                        "_id": "5ac87e90c0b33b0001d2f1e1",
+                                        "question_text": "Monthly Repayment:",
+                                        "prerequisites": [],
+                                        "show": true,
+                                        "values": [],
+                                        "sub_questions": [],
+                                        "options": [],
+                                        "measurement_unit": "ETB",
+                                        "validation_factor": "NONE",
+                                        "required": false,
+                                        "type": "FILL_IN_BLANK",
+                                        "remark": "",
+                                        "number": 2
+                                    },
+                                    {
+                                        "_id": "5ac87e90c0b33b0001d2f1e2",
+                                        "question_text": "Number of loans in the past:",
+                                        "prerequisites": [],
+                                        "show": true,
+                                        "values": [],
+                                        "sub_questions": [],
+                                        "options": [],
+                                        "measurement_unit": null,
+                                        "validation_factor": "NUMERIC",
+                                        "required": false,
+                                        "type": "FILL_IN_BLANK",
+                                        "remark": "",
+                                        "number": 3
+                                    }
+                                ],
+                                "options": [],
+                                "measurement_unit": null,
+                                "validation_factor": "NONE",
+                                "required": false,
+                                "type": "GROUPED",
+                                "remark": "",
+                                "number": 2
+                            },
+                            {
+                                "_id": "5ac87e8ec0b33b0001d2e1de",
+                                "question_text": "If xxxx in the past:",
+                                "prerequisites": [{
+                                    "answer": "Yes",
+                                    "question": "5ac87e03c0b33b0001d2f1dc",
+                                    "_id": "5ac87ea1c0b33b0001d2f1e4"
+                                }],
+                                "show": false,
+                                "values": [],
+                                "sub_questions": [{
+                                    "_id": "5ac87e8ec0b33b0001d2f1df",
+                                    "question_text": "Where",
+                                    "prerequisites": [],
+                                    "show": true,
+                                    "values": [],
+                                    "sub_questions": [],
+                                    "options": [],
+                                    "measurement_unit": null,
+                                    "validation_factor": "NONE",
+                                    "required": false,
+                                    "type": "FILL_IN_BLANK",
+                                    "remark": "",
+                                    "number": 0
+                                },
+                                    {
+                                        "_id": "5ac87e90c0b33b0001d2f1e0",
+                                        "question_text": "Amount of last loan",
+                                        "prerequisites": [],
+                                        "show": true,
+                                        "values": [],
+                                        "sub_questions": [],
+                                        "options": [],
+                                        "measurement_unit": "ETB",
+                                        "validation_factor": "NONE",
+                                        "required": false,
+                                        "type": "FILL_IN_BLANK",
+                                        "remark": "",
+                                        "number": 1
+                                    }
+                                ],
+                                "options": [],
+                                "measurement_unit": null,
+                                "validation_factor": "NONE",
+                                "required": false,
+                                "type": "GROUPED",
+                                "remark": "",
+                                "number": 2
+                            }
+                        ],
+                        "number": 1,
+                        "title": "Previous and Current Loans"
+                    }
+                ],
+                "has_sections": true,
+                "layout": "TWO_COLUMNS",
+                "purpose": "Loan Application For Mutai Tony",
+                "subtitle": "sub title.",
+                "title": "Loan Form"
+            };
+        }
+
+        function _getClientScreening(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
+        }
+        function _getLoanApplications(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.LOANS,API.Methods.LOANS.Loans,parameters));
+        }
+        function _getClientLoanApplication(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Clients,clientId));
+        }
+
+
+        //CLIENT MANAGEMENT RELATED SERVICES
+        function _searchClient(searchText) {
+            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
+        }
+
+        function _getClientDetail(id){
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
+        }
+        function _getBranches(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+        }
+        function _getClients(parameters){
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,parameters));
+        }
+
+        function _styleLabelByStatus(clientStatus) {
+            var style = '';
+            switch (clientStatus.toLowerCase()){
+                case  'new':
+                    style =  'label bg-gray';
+                    break;
+                case  'submitted':
+                    style =  'label bg-primary-dark';
+                    break;
+                case  'approved':
+                    style =  'label bg-green-dark';
+                    break;
+                case 'screening_inprogress':
+                case 'declined_under_review':
+                    style =  'label label-warning';
+                    break;
+                case 'loan_application_accepted':
+                    style =  'label bg-info-dark';
+                    break;
+                case 'eligible':
+                    style =  'label label-success';
+                    break;
+                case 'ineligible':
+                case 'declined_final':
+                    style =  'label label-danger';
+                    break;
+                case 'loan_application_new':
+                    style =  'label bg-purple-dark';
+                    break;
+                default:
+                    style =  'label label-inverse';
+            }
+            return style;
+        }
+
+    }
+
+
+})(window.angular);
+(function(angular) {
+  'use strict';
+  angular.module('app.mfi')
+
+  .service('MainService', MainService);
+
+  MainService.$inject = ['$http','CommonService','AuthService'];
+
+  function MainService($http, CommonService,AuthService) {
+
+      return {
+        GetMFI: _getMFI,
+        UpdateMFI: _updateMFI,
+        CreateMFI:_createMFI,
+        UpdateBranch: _updateBranch,
+        GetBranches: _getBranches,
+        CreateBranch:_createBranch
+      };
+
+      function _getBranches(){
+          return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+      }
+      function _createBranch(branch){
+        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch), branch);
+      }
+      function _updateBranch(updated_branch){
+          return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.Branches,updated_branch._id), updated_branch);
+      }
+
+      function _getMFI(){
+        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll));
+      }
+      function _updateMFI(data,logo){
+        var updatedMFI = setAttribute(data,logo);
+
+        return $http({
+          url: CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.MFIUpdate,data._id),
+          method: 'PUT',
+          data: updatedMFI,
+          //assigning content-type as undefined,let the browser
+          //assign the correct boundary for us
+          headers: {
+                  'Content-Type': undefined},
+          //prevents serializing payload.  don't do it.
+          transformRequest: angular.identity
+      });
+      }
+
+      function _createMFI(data,logo){
+        var mfiData = setAttribute(data,logo);
+        return $http({
+          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.MFI),
+          method: 'POST',
+          data: mfiData,
+          //assigning content-type as undefined,let the browser handle it
+          headers: {
+            'Authorization': 'Bearer ' + AuthService.GetToken(),
+            'Content-Type': undefined},
+          //prevents serializing data.  don't do it.
+          transformRequest: angular.identity
+      });
+
+      }
+
+      function setAttribute(mfi,picFile){
+          var mfiData = new FormData();
+          mfiData.append("name", mfi.name);
+          mfiData.append("location", mfi.location);
+          mfiData.append("establishment_year", mfi.establishment_year);
+          mfiData.append("contact_person", _.isUndefined(mfi.contact_person)?'':mfi.contact_person);
+          mfiData.append("phone", _.isUndefined(mfi.phone)?'':mfi.phone);
+          mfiData.append("email", _.isUndefined(mfi.email)?'':mfi.email);
+          mfiData.append("website_link", _.isUndefined(mfi.website_link)?'':mfi.website_link);
+          if(!_.isUndefined(picFile)){
+              mfiData.append("logo", picFile);
+          }
+
+          return mfiData;
+      }
+  }
+
+})(window.angular);
+
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("ACATController", ACATController);
+
+    ACATController.$inject = ['ACATService','$stateParams','blockUI','$state','AlertService'];
+
+    function ACATController(ACATService,$stateParams,blockUI,$state,AlertService) {
+        var vm = this;
+        vm.isEdit = $stateParams.id !== "0";
+        vm.ACATId = $stateParams.id;
+
+
+        vm.addToCostList = _addToCostList;
+        vm.addGroupedCostList = _addGroupedCostList;
+        vm.editCostItem = _editCostItem;
+        vm.editGroupCostItem = _editGroupCostItem;
+        vm.removeCostItem = _removeCostItem;
+        vm.removeCostItemGrouped =_removeCostItemGrouped;
+
+        vm.cancelCostItem = _cancelCostItem;
+        vm.cropSelectChanged = _cropSelectChanged;
+        vm.onCostListTypeChange = _onCostListTypeChange;
+        //GROUP RELATED
+        vm.addGroupOnSection = _addGroupOnSection;
+        vm.editGroupSection = _editGroupSection;
+        vm.removeGroupSection = _removeGroupSection;
+
+        vm.onToggleExistingGroup = _onToggleExistingGroup;
+
+
+
+        initialize();
+
+        function initialize() {
+
+            callApiForCrops();
+
+            vm.acat = {
+                fertilizer:{
+                    list_type :'linear'
+                },
+                chemicals:{
+                    list_type : 'linear'
+                },
+                input:{
+                    seedCostList:[]
+                },
+                labour_cost:{
+                    list_type : 'linear'
+                },
+                other_cost:{
+                    list_type : 'linear'
+                }
+            };
+            vm.isEditCostGroup = false;
+
+            vm.isEditSeedCost = false; //edit seed cost list
+            if(vm.isEdit){
+                callAPI();
+            }
+
+        }
+
+
+        function callAPI() {
+            var myBlockUIOnStart = blockUI.instances.get('ACATBuilderBlockUI');
+            myBlockUIOnStart.start();
+
+            ACATService.GetACATById(vm.ACATId).then(function (response) {
+                vm.acat.selected_crop = response.data.crop;
+                var subSections = response.data.sections[0].sub_sections;
+                setSubSectionCostFromResponse(subSections);
+
+                myBlockUIOnStart.stop();
+
+            },function (error) {
+                myBlockUIOnStart.stop();
+                console.log("error",error);
+            });
+        }
+        function setSubSectionCostFromResponse(subSections) {
+            vm.acat.input = subSections[0];
+            vm.acat.labour_costs = subSections[1].cost_list;
+            vm.acat.other_costs =  subSections[2].cost_list;
+            
+            vm.acat.seed_costs = vm.acat.input.sub_sections[0].cost_list;
+            vm.acat.fertilizer_costs = vm.acat.input.sub_sections[1].cost_list;
+            vm.acat.chemicals_costs = vm.acat.input.sub_sections[2].cost_list;
+
+            SetListType();
+
+        }
+        function SetListType() {
+
+            vm.acat.fertilizer.list_type = vm.acat.fertilizer_costs.grouped.length > 0 ?
+                ACAT_COST_LIST_TYPE.GROUPED :vm.acat.fertilizer_costs.linear.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+
+            vm.acat.chemicals.list_type = vm.acat.chemicals_costs.grouped.length > 0 ?
+                ACAT_COST_LIST_TYPE.GROUPED :  vm.acat.chemicals_costs.linear.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+
+            vm.acat.labour_cost.list_type = vm.acat.labour_costs.grouped.length > 0 ?
+                ACAT_COST_LIST_TYPE.GROUPED : vm.acat.labour_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+
+            vm.acat.other_cost.list_type = vm.acat.other_costs.grouped.length > 0 ?
+                ACAT_COST_LIST_TYPE.GROUPED :vm.acat.other_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+
+        }
+
+        function callApiForCrops(){
+            ACATService.GetCrops().then(function (response) {
+                vm.crops = _.filter(response.data.docs,function (crop) {
+                    return !crop.has_acat;
+                });
+            });
+        }
+
+        function _addToCostList(cost,type) {
+                if(!_.isUndefined(cost) && !_.isUndefined(cost.item)){
+                    var items = [];
+                    switch (type){
+                        case ACAT_GROUP_CONSTANT.SEED:
+                            items = vm.acat.seed_costs.linear;
+                            var costItem = {
+                                type: ACAT_COST_LIST_TYPE.LINEAR,
+                                parent_cost_list: vm.acat.input.sub_sections[0].cost_list._id,
+                                item:cost.item,
+                                unit:cost.unit
+                            };
+                            if(vm.isEditSeedCost){
+                                costItem._id = cost._id;
+                                updateCostListAPI(costItem,type);
+                            }else{
+                                if(!DoesItemExistInCostList(cost,items)){
+                                    AddCostListAPI(costItem,type);
+                                }
+                            }
+                            vm.acat.input.seed = {};//reset cost item
+                            break;
+                        case ACAT_GROUP_CONSTANT.FERTILIZER:
+                            items = vm.acat.fertilizer.list_type === ACAT_COST_LIST_TYPE.GROUPED ?
+                                vm.acat.fertilizer_costs.grouped : vm.acat.fertilizer_costs.linear;
+                                cost.type = vm.acat.fertilizer.list_type;
+                            if(vm.isEditFertilizerCost){
+                                updateCostListAPI(cost,type);
+                            }else{
+                                if(!DoesItemExistInCostList(cost,items)){
+                                   var itemUnit = {
+                                        parent_cost_list: vm.acat.fertilizer_costs._id,//Fertilizer cost list
+                                        item:cost.item,
+                                        unit:cost.unit,
+                                        type:vm.acat.fertilizer.list_type
+                                    };
+                                    AddCostListAPI(itemUnit,type);
+                                }
+                            }
+                            var resetFertilizerObj = _.pick(vm.acat.fertilizer, 'list_type');
+                            vm.acat.fertilizer = resetFertilizerObj;//reset cost item
+                            break;
+                        case ACAT_GROUP_CONSTANT.CHEMICALS:
+                            items = vm.acat.chemicals.list_type === ACAT_COST_LIST_TYPE.GROUPED ?
+                                vm.acat.chemicals_costs.grouped : vm.acat.chemicals_costs.linear;
+                            if(vm.isEditFertilizerCost){
+                                updateCostListAPI(cost,type);
+                            }else{
+                                if(!DoesItemExistInCostList(cost,items)){
+                                    var itemUnit = {
+                                        parent_cost_list: vm.acat.chemicals_costs._id,//Fertilizer cost list
+                                        item:cost.item,
+                                        unit:cost.unit,
+                                        type:vm.acat.chemicals.list_type
+                                    };
+                                    AddCostListAPI(itemUnit,type);
+                                }
+                            }
+                            var resetFertilizerObj = _.pick(vm.acat.chemicals, 'list_type');
+                            vm.acat.chemicals = resetFertilizerObj;//reset cost item
+                            break;
+                        case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                            items = vm.acat.labour_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED ?
+                                vm.acat.labour_costs.grouped : vm.acat.labour_costs.linear;
+                            if(vm.isEditLabourCost){
+                                updateCostListAPI(cost,type);
+                            }else{
+                                if(!DoesItemExistInCostList(cost,items)){
+                                    var itemUnit = {
+                                        parent_cost_list: vm.acat.labour_costs._id,//Fertilizer cost list
+                                        item:cost.item,
+                                        unit:cost.unit,
+                                        type:vm.acat.labour_cost.list_type
+                                    };
+                                    AddCostListAPI(itemUnit,type);
+                                }
+                            }
+                            var resetFertilizerObj = _.pick(vm.acat.labour_cost, 'list_type');
+                            vm.acat.labour_cost = resetFertilizerObj;//reset cost item
+                            break;
+                        case ACAT_GROUP_CONSTANT.OTHER_COST:
+                            items = vm.acat.other_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED ?
+                                vm.acat.other_costs.grouped : vm.acat.other_costs.linear;
+                            if(vm.isEditOtherCost){
+                                updateCostListAPI(cost,type);
+                            }else{
+                                if(!DoesItemExistInCostList(cost,items)){
+                                    var itemUnit = {
+                                        parent_cost_list: vm.acat.other_costs._id,//Fertilizer cost list
+                                        item:cost.item,
+                                        unit:cost.unit,
+                                        type:vm.acat.other_cost.list_type
+                                    };
+                                    AddCostListAPI(itemUnit,type);
+                                }
+                            }
+                            var resetFertilizerObj = _.pick(vm.acat.other_cost, 'list_type');
+                            vm.acat.other_cost = resetFertilizerObj;//reset cost item
+                            break;
+                        default:
+                            items = [];
+                            break;
+                    }
+
+                }else{
+                    console.log("Cost is undefined",!_.isUndefined(cost) && !_.isUndefined(cost.item));
+                    AlertService.showWarning("Cost List on " + type,"Item is not filled, Please fill all required fields");
+                }
+
+        }
+        function _addGroupedCostList(groupInfo, type) {
+
+            if(!_.isUndefined(groupInfo)){
+                    if(groupInfo.existing_group){
+                        if(!_.isUndefined(groupInfo._id)){
+                            var costItem = {
+                                parent_grouped_list:groupInfo.selected_group._id,
+                                item: groupInfo.item,
+                                unit: groupInfo.unit,
+                                _id:groupInfo._id
+                            };
+
+                            updateCostListAPI(costItem,type);
+                        }else{
+
+                            AddCostItemToGroup({
+                                parent_grouped_list:groupInfo.selected_group._id,
+                                item: groupInfo.item,
+                                unit: groupInfo.unit
+                            },type);
+                        }
+
+
+                    }
+            }
+        }
+        function PrepareGroupCostListForAdd(groupInfo,type) {
+            switch (type){
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    return  {
+                        _id: vm.acat.fertilizer_costs._id,
+                        type: 'grouped',
+                        parent_cost_list: vm.acat.fertilizer_costs._id,
+                        title:groupInfo.title
+                    };
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    return  {
+                        _id: vm.acat.chemicals_costs._id,
+                        type: 'grouped',
+                        parent_cost_list: vm.acat.chemicals_costs._id,
+                        title:groupInfo.title
+                    };
+                    break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    return  {
+                        _id: vm.acat.labour_costs._id,
+                        type: 'grouped',
+                        parent_cost_list: vm.acat.labour_costs._id,
+                        title:groupInfo.title
+                    };
+                    break;
+                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    return  {
+                        _id: vm.acat.other_costs._id,
+                        type: 'grouped',
+                        parent_cost_list: vm.acat.other_costs._id,
+                        title:groupInfo.title
+                    };
+                    break;
+                default:
+                    break;
+            }
+        }
+        function AddCostItemToGroup(costItem,type) {
+            ACATService.AddCostList(costItem).then(function (response) {
+                console.log("adding cost item on group",response);
+                resetCostItem(type);
+                callAPI();
+            },function (error) {
+                var message = error.data.error.message;
+                AlertService.showError("Error on adding cost item",message);
+                console.log("error while adding cost item on group",error);
+            });
+        }
+        function DoesItemExistInCostList(item, items) {
+            return _.some(items,function (costItem) {
+                return costItem.item === item.item && costItem.unit === item.unit;
+            });
+        }
+
+        function AddCostListAPI(cost,type) {
+            var myBlockUIOnStart = blockUI.instances.get('ACATBuilderBlockUI');
+            myBlockUIOnStart.start();
+            ACATService.AddCostList(cost).then(function (response) {
+                myBlockUIOnStart.stop();
+                console.log("COST LIST ADDED FOR " + type,response);
+                callAPI();
+            },function (error) {
+                myBlockUIOnStart.stop();
+                console.log("error while adding cost item for " + type,error);
+                var message = error.data.error.message;
+                AlertService.showError("Error when adding cost item on " + type,message);
+            });
+        }
+        function updateCostListAPI(cost,type) {
+            var myBlockUIOnStart = blockUI.instances.get('ACATBuilderBlockUI');
+            myBlockUIOnStart.start();
+            var prepareCost = {
+                _id: cost._id,
+                item:cost.item,
+                unit:cost.unit
+            };
+
+            ACATService.UpdateCostList(prepareCost).then(function (response) {
+                console.log("UPDATED COST ITEM", response.data);
+                myBlockUIOnStart.stop();
+                callAPI();
+                resetCostItem(type);
+
+            },function (error) {
+                myBlockUIOnStart.stop();
+                var message = error.data.error.message;
+                AlertService.showError("error when updating cost list",message);
+                console.log("error updating cost list",error);
+            });
+        }
+        function _editCostItem(cost,type) {
+            switch (type){
+                case ACAT_GROUP_CONSTANT.SEED:
+                    vm.isEditSeedCost =  true;
+                    vm.acat.input.seed = cost;
+                    vm.acat.input.seedCopy = angular.copy(cost);
+                    break;
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    vm.isEditFertilizerCost =  true;
+                    angular.extend(vm.acat.fertilizer,cost);
+                    vm.acat.input.fertilizerCopy = angular.copy(cost);
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    vm.isEditChemicalsCost = true;
+                    angular.extend(vm.acat.chemicals,cost);
+                    vm.acat.input.chemicalsCopy = angular.copy(cost);
+                    break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    vm.isEditLabourCost = true;
+                    angular.extend(vm.acat.labour_cost,cost);
+                    vm.acat.input.labour_costCopy = angular.copy(cost);
+                    break;
+                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    vm.isEditOtherCost = true;
+                    angular.extend(vm.acat.other_cost,cost);
+                    vm.acat.input.other_costCopy = angular.copy(cost);
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+        function _editGroupCostItem(cost,type,group) {
+            switch (type){
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    vm.isEditFertilizerCost =  true;
+                    vm.acat.fertilizer.selected_group = group;
+                    vm.acat.fertilizer.existing_group = true;
+                    angular.extend(vm.acat.fertilizer,cost);
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    vm.isEditChemicalsCost = true;
+                    vm.acat.chemicals.selected_group = group;
+                    vm.acat.chemicals.existing_group = true;
+                    angular.extend(vm.acat.chemicals,cost);
+                    break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    vm.isEditLabourCost = true;
+                    vm.acat.labour_cost.selected_group = group;
+                    vm.acat.labour_cost.existing_group = true;
+                    angular.extend(vm.acat.labour_cost,cost);
+                    break;
+                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    vm.isEditOtherCost = true;
+                    vm.acat.other_cost.selected_group = group;
+                    vm.acat.other_cost.existing_group = true;
+                    angular.extend(vm.acat.other_cost,cost);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        function resetCostItem(type) {
+            switch (type){
+                case ACAT_GROUP_CONSTANT.SEED:
+                    vm.isEditSeedCost =  false;
+                    vm.acat.input.seed = undefined;
+                    break;
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    vm.isEditFertilizerCost =  false;
+                    vm.acat.fertilizer.item = undefined;
+                    vm.acat.fertilizer.unit = undefined;
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    vm.isEditChemicalsCost =  false;
+                    vm.acat.chemicals.item = undefined;
+                    vm.acat.chemicals.unit = undefined;
+                    break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    vm.isEditLabourCost =  false;
+                    vm.acat.labour_cost.item = undefined;
+                    vm.acat.labour_cost.unit = undefined;
+                    break;
+                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    vm.isEditOtherCost =  false;
+                    vm.acat.other_cost.item = undefined;
+                    vm.acat.other_cost.unit = undefined;
+                    break;
+                default:
+                    break;
+            }
+        }
+        function _onToggleExistingGroup(value,type) {
+
+            switch (type){
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    vm.acat.fertilizer.selected_group = undefined;
+                    vm.acat.fertilizer.title =  undefined;
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    vm.acat.chemicals.selected_group = undefined;
+                    vm.acat.chemicals.title =  undefined;
+                    break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    vm.acat.labour_cost.selected_group = undefined;
+                    vm.acat.labour_cost.title =  undefined;
+                    break;
+                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    vm.acat.other_cost.selected_group = undefined;
+                    vm.acat.other_cost.title =  undefined;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        function _cancelCostItem(type) {
+           resetCostItem(type);
+            callAPI();
+        }
+
+        function prepareCostListForRemoval(cost,type) {
+            switch (type){
+                case ACAT_GROUP_CONSTANT.SEED:
+                    return {
+                        _id:vm.acat.seed_costs._id,
+                        list_type:ACAT_COST_LIST_TYPE.LINEAR,
+                        item_id:cost._id
+                    };
+                    break;
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    return {
+                        _id:vm.acat.fertilizer_costs._id,
+                        list_type:vm.acat.fertilizer.list_type,
+                        item_id:cost._id
+                    };
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    return {
+                        _id:vm.acat.chemicals_costs._id,
+                        list_type:vm.acat.chemicals.list_type,
+                        item_id:cost._id
+                    };
+                    break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    return {
+                        _id:vm.acat.labour_costs._id,
+                        list_type:vm.acat.labour_cost.list_type,
+                        item_id:cost._id
+                    };
+                    break;
+                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    return {
+                        _id:vm.acat.other_costs._id,
+                        list_type:vm.acat.other_cost.list_type,
+                        item_id:cost._id
+                    };
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        function _removeCostItem(cost,type) {
+            AlertService.showConfirmForDelete("You are about to DELETE COST LIST",
+                "Are you sure?", "Yes, Remove It!", "warning", true,function (isConfirm) {
+
+                    if(isConfirm){
+                        var removableCost = prepareCostListForRemoval(cost,type);
+
+                        ACATService.RemoveCostListLinear(removableCost,removableCost.list_type).then(function (response) {
+                            console.log("Removed Cost Item.........",response);
+                            //refresh view
+                            callAPI();
+
+                        },function (error) {
+                            var message = error.data.error.message;
+                            AlertService.showError("error when removing cost list",message);
+                            console.log("error when removing cost list",error);
+                        });
+                    }
+
+                });
+
+        }
+
+        function _removeCostItemGrouped(cost,type,groupInfo) {
+
+            AlertService.showConfirmForDelete("You are about to DELETE Cost List From Group",
+                "Are you sure?", "Yes, Remove It!", "warning", true,function (isConfirm) {
+
+                    if(isConfirm){
+                        var removableCost = {
+                            _id:groupInfo._id,
+                            group:groupInfo,
+                            list_type:vm.acat.fertilizer.list_type,
+                            item_id:cost._id
+                        };
+
+                        ACATService.RemoveCostListGroup(removableCost)
+                            .then(function (response) {
+                            console.log("Removed Cost group item Item.........",response);
+                            callAPI();
+                        },function (error) {
+                            console.log("error when removing cost list",error);
+                        });
+                    }
+
+                });
+        }
+
+
+        //UPDATE CROP FOR CROP OR CREATE NEW ACAT FOR A CROP
+        function _cropSelectChanged() {
+            if(vm.isEdit){
+                AlertService.showConfirmForDelete("You are about to change CROP for the ACAT",
+                    "Are you sure?", "Yes, Change It!", "warning", true,function (isConfirm) {
+                        if(isConfirm){
+                            //    UPDATE ACAT CROP
+                            var UpdatedACAT =   {
+                                _id:$stateParams.id,
+                                title: vm.acat.selected_crop.name +  '-CAT',
+                                crop: vm.acat.selected_crop._id
+                            };
+                            ACATService.UpdateACAT(UpdatedACAT).then(function (response) {
+                                console.log("Updated acat ",response);
+                                var acatData = response.data;
+                                $state.go('app.acatbuilder',{id:acatData._id},{inherit:true});
+                            },function (error) {
+                                console.log("error on updating acat",error);
+                            })
+                        }else{
+                           callAPI();
+                        }
+                    });
+
+            }else {
+                // Initialize ACAT with this crop
+                var acatCrop =   {
+                    title: vm.acat.selected_crop.name +  '-CAT',
+                    description: vm.acat.selected_crop.name +  '-CAT desc',
+                    crop: vm.acat.selected_crop._id
+                };
+
+                ACATService.CreateACAT(acatCrop).then(function (response) {
+                    console.log("ACAT ",response);
+                    var acatData = response.data;
+                    $state.go('app.acatbuilder',{id:acatData._id},{inherit:true});
+                },function (error) {
+                    console.log("error on initializeing acat",error);
+                })
+            }
+        }
+
+        function _onCostListTypeChange(type,cost_list) {
+
+            if(cost_list.linear.length === 0 && cost_list.grouped.length === 0){
+                console.log("cost_list is empty",cost_list);
+            }else{
+                AlertService.showConfirmForDelete("You are about to change Cost List type " +
+                    "Which will clear the previous type data",
+                    "Are you sure?", "Yes, Change It!", "warning", true,function (isConfirm) {
+                        if(isConfirm){
+                            ACATService.ResetCostList(cost_list).then(function(response){
+                                switch (type){
+                                    case ACAT_GROUP_CONSTANT.FERTILIZER:
+                                        vm.acat.fertilizer_costs.linear = [];
+                                        vm.acat.fertilizer_costs.grouped = [];
+                                        break;
+                                    case ACAT_GROUP_CONSTANT.CHEMICALS:
+                                        vm.acat.chemicals_costs.linear = [];
+                                        vm.acat.chemicals_costs.grouped = [];
+                                        break;
+                                    case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                                        vm.acat.labour_costs.linear = [];
+                                        vm.acat.labour_costs.grouped = [];
+                                        break;
+                                    case ACAT_GROUP_CONSTANT.OTHER_COST:
+                                        vm.acat.other_costs.linear = [];
+                                        vm.acat.other_costs.grouped = [];
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            },function (error) {
+                                console.log("error",error);
+                            });
+                        }else{
+                            switch (type){
+                                case ACAT_GROUP_CONSTANT.FERTILIZER:
+
+                                    if(vm.acat.fertilizer.list_type === ACAT_COST_LIST_TYPE.GROUPED){
+                                        vm.acat.fertilizer.list_type = ACAT_COST_LIST_TYPE.LINEAR;
+                                    } else{
+                                        vm.acat.fertilizer.list_type = ACAT_COST_LIST_TYPE.GROUPED;
+                                    }
+                                    break;
+                                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                                    if(vm.acat.chemicals.list_type === ACAT_COST_LIST_TYPE.GROUPED){
+                                        vm.acat.chemicals.list_type = ACAT_COST_LIST_TYPE.LINEAR;
+                                    } else{
+                                        vm.acat.chemicals.list_type = ACAT_COST_LIST_TYPE.GROUPED;
+                                    }
+                                    break;
+                                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                                    if(vm.acat.labour_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
+                                        vm.acat.labour_cost.list_type = ACAT_COST_LIST_TYPE.LINEAR;
+                                    } else{
+                                        vm.acat.labour_cost.list_type = ACAT_COST_LIST_TYPE.GROUPED;
+                                    }
+                                    break;
+                                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                                    if(vm.acat.other_cost.list_type === ACAT_COST_LIST_TYPE.GROUPED){
+                                        vm.acat.other_cost.list_type = ACAT_COST_LIST_TYPE.LINEAR;
+                                    } else{
+                                        vm.acat.other_cost.list_type = ACAT_COST_LIST_TYPE.GROUPED;
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    });
+            }
+
+        }
+
+
+        function _addGroupOnSection(groupInfo,type) {
+            if (vm.isEditCostGroup) {
+                ACATService.UpdateCostGroup(groupInfo).then(function (response) {
+                    console.log("group updated successfully",response.data);
+                    var newGroup = response.data;
+                    callAPI();
+                    groupInfo.existing_group = false;
+                    groupInfo.selected_group = newGroup;
+                    groupInfo.title = '';
+                    vm.isEditCostGroup = false;
+
+                },function (error) {
+                    console.log("error on group update",error);
+                    var message = error.data.error.message;
+                    AlertService.showError("Error on updating group title",message);
+                    callAPI();
+                });
+            } else {
+                    var groupCost = PrepareGroupCostListForAdd(groupInfo, type);
+                    //ADD THE NEW GROUP TO COST LIST PARENT
+                    groupCost._id = undefined;
+                    ACATService.AddCostList(groupCost).then(function (response) {
+                        console.log("group created", response.data);
+                        var newGroup = response.data;
+                        callAPI();
+                        groupInfo.existing_group = true;
+                        groupInfo.selected_group = newGroup;
+
+                    }, function (error) {
+                        console.log("error on group creation", error);
+                        var message = error.data.error.message;
+                        AlertService.showError("Error on creating group",message);
+
+                    });
+            }
+        }
+
+        function _removeGroupSection(groupInfo, type) {
+
+            AlertService.showConfirmForDelete("Group: " + groupInfo.title + " including " + groupInfo.items.length + " cost items",
+                "Are you sure? You are about to DELETE group", "Yes, Change It!", "warning", true,function (isConfirm) {
+                    if(isConfirm){
+                        var groupCost = PrepareGroupCostListForAdd(groupInfo, type);
+                        groupCost.item_id = groupInfo._id;
+
+                        ACATService.RemoveCostGroup(groupCost).then(function (response) {
+                            console.log("group removed successfully",response.data);
+                            callAPI();
+                        },function (error) {
+                            console.log("error on group remove",error);
+                            var message = error.data.error.message;
+                            AlertService.showError("Error on removing group",message);
+                        });
+                    }
+                });
+
+        }
+
+        function _editGroupSection(group, type) {
+            switch (type){
+                case ACAT_GROUP_CONSTANT.FERTILIZER:
+                    vm.isEditCostGroup = true;
+                    vm.acat.fertilizer.title = group.title;
+                    vm.acat.fertilizer._id = group._id;
+                    vm.acat.fertilizer.existing_group = true;
+                    break;
+                case ACAT_GROUP_CONSTANT.CHEMICALS:
+                    vm.isEditCostGroup = true;
+                    vm.acat.chemicals.title = group.title;
+                    vm.acat.chemicals._id = group._id;
+                    vm.acat.chemicals.existing_group = true;
+                    break;
+                case ACAT_GROUP_CONSTANT.LABOUR_COST:
+                    vm.isEditCostGroup = true;
+                    vm.acat.labour_cost.title = group.title;
+                    vm.acat.labour_cost._id = group._id;
+                    vm.acat.labour_cost.existing_group = true;
+                    break;
+                case ACAT_GROUP_CONSTANT.OTHER_COST:
+                    vm.isEditCostGroup = true;
+                    vm.acat.other_cost.title = group.title;
+                    vm.acat.other_cost._id = group._id;
+                    vm.acat.other_cost.existing_group = true;
+                    break;
+                default:
+                    vm.isEditCostGroup = false;
+                    break;
+            }
+
+
+        }
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/19/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("ACATListController", ACATListController);
+
+    ACATListController.$inject = ['ACATService','$state'];
+
+    function ACATListController(ACATService,$state) {
+        var vm = this;
+        vm.addACAT = _addACAT;
+        vm.editACAT = _editACAT;
+
+        function _addACAT() {
+            $state.go('app.acatbuilder',{id:0});
+        }
+
+        function _editACAT(acat) {
+            $state.go('app.acatbuilder',{id:acat._id});
+        }
+
+        initialize();
+
+        function initialize() {
+            ACATService.GetAllACATList().then(function (response) {
+                vm.acat_list = response.data.docs;
+                console.log("vm.acat_list",response);
+            })
+
+        }
+
+
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        callApi();
+
+       function callApi(){
+           ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.forms").controller("FormBuilderController", FormBuilderController);
+
+    FormBuilderController.$inject = ['FormService','$mdDialog','RouteHelpers','$stateParams','AlertService','blockUI','$scope','$state'];
+
+    function FormBuilderController(FormService,$mdDialog,RouteHelpers,$stateParams,AlertService,blockUI,$scope,$state) {
+        var vm = this;
+        vm.isEdit = $stateParams.id !== "0";
+        vm.formId = $stateParams.id;
+        vm.formTypes = FormService.FormTypes;
+
+        //QUESTION RELATED
+        vm.addQuestion = _addQuestion;
+        vm.editQuestion = _editQuestion;
+
+        vm.saveForm = _saveForm;
+        vm.typeStyle = _typeStyle;
+
+        //Section related
+        vm.selectSection = _selectSection;
+        vm.addSection = _addSection;
+        vm.saveSection = _saveSection;
+        vm.editSection = _editSection;
+        vm.removeSection = _removeSection;
+        vm.cancelSection = _cancelSection;
+
+        //QUESTION ORDERING RELATED
+        $scope.sortableOptions = {
+            placeholder: 'ui-state-highlight',
+            update: function(e, ui) {
+            },
+            stop: function(e, ui) {
+                vm.selected_section.questions.map(function(question,index){
+                    question.number = index;
+                    UpdateQuestionOrder(question);
+                });
+            }
+        };
+        $scope.sectionSortableOptions = {
+            placeholder: 'ui-state-highlight',
+            stop: function(e, ui) {
+                console.log("stop ordering questions");
+                vm.formData.questions.map(function(question,index){
+                    question.number = index;
+                    UpdateQuestionOrder(question);
+                });
+            }
+        };
+
+        function UpdateQuestionOrder(question) {
+            FormService.UpdateQuestion(question).then(
+                function (response) {
+                    // console.log("saving ordered [" + question.question_text + "] ",response);
+                },function (error) {
+                    console.log("error saving order question [" + question.question_text + "] ",error);
+                }
+            )
+        }
+
+        initialize();
+
+        function _saveForm() {
+            var myBlockUI = blockUI.instances.get('formBuilderBlockUI');
+            myBlockUI.start();
+
+            if(vm.isEdit){
+
+                var editForm = {
+                    _id:vm.formData._id,
+                    title:vm.formData.title,
+                    subtitle:vm.formData.subtitle,
+                    purpose:vm.formData.purpose,
+                    layout:vm.formData.layout,
+                    has_sections:vm.formData.has_sections
+                };
+
+                FormService.UpdateForm(editForm).then(function (response) {
+                    myBlockUI.stop();
+                    vm.formData = response.data;
+                    vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+                    AlertService.showSuccess("FORM UPDATED","Form updated successfully");
+                    $state.go('app.builder',{id:vm.formData._id},{inherit:true});
+                },function (error) {
+                    myBlockUI.stop();
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to Save Form",message);
+                    console.log("error",error);
+                });
+
+            }else
+                {
+
+                var preparedForm = {
+                    title:vm.formData.title,
+                    subtitle:vm.formData.subtitle,
+                    purpose:vm.formData.purpose,
+                    layout:vm.formData.layout,
+                    has_sections:vm.formData.has_sections,
+                    type: vm.formData.selected_formType.code,
+                    questions: []
+                };
+
+                FormService.CreateForm(preparedForm).then(function (response) {
+                    myBlockUI.stop();
+                    vm.formData = response.data;
+                    vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+                    AlertService.showSuccess("FORM CREATED","Form created successfully");
+                    $state.go('app.builder',{id:vm.formData._id},{inherit:true});
+                },function (error) {
+                    myBlockUI.stop();
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to Save Form",message);
+                    console.log("error",error);
+                });
+
+            }
+
+        }
+
+
+        function _addQuestion(sectionData,ev) {
+            $mdDialog.show({
+                locals: {data: {question:null,form: {_id: vm.formData._id,questions:vm.formData.has_sections?vm.selected_section.questions:vm.formData.questions},section:sectionData,number:vm.maxOrderNumber}},
+                templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'QuestionBuilderController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                console.log("call api to refresh");
+                callAPI();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+
+        }
+        function _editQuestion(question,ev) {
+            $mdDialog.show({
+                locals: {data: {question:question,form: {_id: vm.formData._id,questions:vm.formData.has_sections?vm.selected_section.questions:vm.formData.questions},number:vm.maxOrderNumber}},
+                templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'QuestionBuilderController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callAPI();
+            }, function () {
+            });
+        }
+
+        function initialize() {
+
+            if(vm.isEdit){
+                callAPI();
+            }else{
+                vm.formData = {
+                    has_sections:0,
+                    layout:'TWO_COLUMNS'
+                };
+            }
+        }
+
+        function callAPI() {
+            var myBlockUIOnStart = blockUI.instances.get('formBuilderBlockUI');
+            myBlockUIOnStart.start();
+            FormService.GetForm(vm.formId).then(function (response) {
+                vm.formData = response.data;
+                //REFRESH SELECTED SECTION
+                if(vm.formData.sections.length > 0 && !_.isUndefined(vm.selected_section)){
+                    vm.selected_section = _.first(_.filter(vm.formData.sections,function (section) {
+                        return section._id === vm.selected_section._id;
+                    }));
+                }
+
+                if(vm.formData.has_sections){
+                    GetMaximumOrderNumberForSection();
+
+                }else{
+
+                    if(vm.formData.questions.length > 0){
+                        vm.maxOrderNumber = _.max(vm.formData.questions,function (qn) {
+                            return qn.number;
+                        }).number;
+                    }else{
+                        vm.maxOrderNumber = 0;
+                    }
+
+                    console.log("max number for question without section",vm.maxOrderNumber);
+                }
+
+                vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+
+                myBlockUIOnStart.stop();
+
+            },function (error) {
+                myBlockUIOnStart.stop();
+                console.log("error",error);
+            });
+        }
+
+        function GetMaximumOrderNumberForSection() {
+            if(!_.isUndefined(vm.selected_section)){
+
+                if(vm.selected_section.questions.length > 0){
+                    vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
+                        return qn.number;
+                    }).number;
+                }else {
+                    vm.maxOrderNumber = 0;
+                }
+
+            }else{
+                vm.maxOrderNumber = 0;
+            }
+        }
+        function getFormTypeObj(code) {
+            return _.first(_.filter(vm.formTypes,function (type) {
+                return type.code === code;
+            }));
+        }
+
+        function _typeStyle(type){
+            var style = '';
+            switch (type.trim()){
+                case 'Fill In Blank':
+                case 'FILL_IN_BLANK':
+                    style =  'label bg-green-dark';
+                    break;
+                case 'Yes/No':
+                case 'YES_NO':
+                    style =  'label bg-info';
+                    break;
+                case 'GROUPED':
+                    style =  'label bg-warning-dark';
+                    break;
+                case 'SINGLE_CHOICE':
+                    style =  'label bg-primary';
+                    break;
+                case 'MULTIPLE_CHOICE':
+                    style =  'label bg-pink-dark';
+                    break;
+                default:
+                    style =  'label bg-inverse';
+            }
+            return style;
+        }
+
+        //------SECTION RELATED---------
+
+        function _addSection() {
+            vm.selected_section = {};
+            vm.showSectionForm = true;
+        }
+        function _selectSection(selectedSection) {
+            vm.showSectionForm = false;
+            vm.selected_section = selectedSection;
+            vm.selected_section.form = vm.formId; //This is important for remove section
+            GetMaximumOrderNumberForSection();
+            // vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
+            //     return qn.number;
+            // }).number;
+            console.log("max number for question with section on select",vm.maxOrderNumber);
+        }
+
+        function _saveSection(section) {
+            section.form = vm.formId;
+            if( _.isUndefined(section._id)){
+
+            FormService.CreateSection(section).then(function (response) {
+                vm.selected_section = response.data;
+                vm.selected_section.form = vm.formId; //set to which form it belongs
+                vm.showSectionForm = false;
+                AlertService.showSuccess("SECTION","Section Created successfully");
+                callAPI();//REFRESH FORM DATA
+            },function (error) {
+                console.log("error when saving section",error);
+            });
+
+            }else {
+                FormService.UpdateSection(section).then(function (response) {
+                    vm.selected_section = response.data;
+                    vm.selected_section.form = vm.formId; //set to which form it belongs
+                    vm.showSectionForm = false;
+                    callAPI();//REFRESH FORM DATA
+                    AlertService.showSuccess("SECTION","Section Updated successfully");
+                    console.log("saved section",response);
+                },function (error) {
+                    console.log("error when saving section",error);
+                });
+            }
+        }
+        function _editSection(section) {
+            vm.selected_section = section;
+            vm.selected_section.form = vm.formId;
+            vm.showSectionForm = true;
+        }
+        function _cancelSection() {
+            vm.showSectionForm = false;
+        }
+
+        function _removeSection(section) {
+            AlertService.showConfirmForDelete("You are about to DELETE SECTION, All Questions under this section will be removed",
+                "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
+                    if(isConfirm){
+                        vm.selected_section.form = vm.formId; //set to which form it belongs
+                        FormService.RemoveSection(section).then(function(response){
+                            vm.showSectionForm = false;
+                            callAPI();
+                            AlertService.showSuccess("SECTION","Section Deleted successfully");
+                            vm.selected_section = undefined;
+                        },function(error){
+                            console.log("Section deleting error",error);
+                            var message = error.data.error.message;
+                            AlertService.showError("Failed to DELETE Section",message);
+                        });
+                    }
+
+                });
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 2/9/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.forms").controller("QuestionBuilderController", QuestionBuilderController);
+
+    QuestionBuilderController.$inject = ['FormService','$mdDialog','data','AlertService','$scope'];
+
+    function QuestionBuilderController(FormService,$mdDialog,data,AlertService,$scope) {
+        var vm = this;
+        vm.questionTypes = FormService.QuestionTypes;
+        vm.readOnly = false;
+
+        vm.saveQuestion = _saveQuestion;
+        vm.cancel = _cancel;
+        vm.addAnother = _addAnother;
+        vm.showQuestionOn = _showQuestionOn;
+        vm.removeQuestion = _removeQuestion;
+
+        vm.questionTypeChanged = _questionTypeChanged;
+
+        //Sub Question related
+        vm.showSubQuestion = false;//used for grouped questions
+        vm.toggleAddSubQuestion = _toggleAddSubQuestion;
+        vm.addToSubQuestion = _addToSubQuestion;
+        vm.editSubQuestion = _editSubQuestion;
+        vm.removeSubQuestion = _removeSubQuestion;
+        vm.cancelSubQuestion = _cancelSubQuestion;
+        vm.subQuestionValidationSelected = _subQuestionValidationSelected;
+
+
+        //SC & MC related
+        vm.addRadio = _addRadio;
+        vm.removeOption = _removeOption;
+        vm.editOption = _editOption;
+
+        //SUB QUESTION ORDERING RELATED
+        $scope.sortableSubQuestions = {
+            placeholder: 'ui-state-highlight',
+            update: function(e, ui) {
+              console.log("update")
+            },
+            stop: function(e, ui) {
+                vm.sub_question_list.map(function(question,index){
+                    question.number = index;
+                    FormService.UpdateQuestion(question).then(
+                        function (response) {
+                            // console.log("saving ordered [" + question.question_text + "] ",response);
+                        },function (error) {
+                            console.log("error saving order question [" + question.question_text + "] ",error);
+                        }
+                    )
+                });
+            }
+        };
+
+        initialize();
+
+        function initialize() {
+            vm.sub_question_list = [];
+            vm.fibvalidation = [{name:'NONE',code:'text'},{name:'ALPHANUMERIC',code:'text'},{name:'NUMERIC',code:'number'},{name:'ALPHABETIC',code:'text'}];
+            vm.isEdit = data.question !== null;
+            vm.form = data.form;
+            vm.maxOrderNumber = data.number;
+            vm.isSubEdit = false;
+            vm.sub_question = {};
+            vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
+                return val.name === 'NONE'; //set sub question validation default to NONE
+            }));
+            vm.questionList = _.filter(data.form.questions,function (question) {
+                return question.options.length > 0 && (question.type === QUESTION_TYPE.YES_NO || question.type === QUESTION_TYPE.SINGLE_CHOICE);
+               //question list used for WHEN is selected
+            });
+
+            if(vm.isEdit){
+                vm.question = data.question;
+                if(!_.isUndefined(vm.question.sub_questions)){
+                    vm.sub_question_list = vm.question.sub_questions;
+                }
+                if(vm.question.prerequisites.length === 1){
+                    var prereq = vm.question.prerequisites[0];
+                    FormService.GetQuestion(prereq.question).then(function (response) {
+                        vm.selected_question = response.data;
+                        vm.selected_question.selected_value =  prereq.answer;
+                    })
+                }
+                vm.question.form = data.form._id;
+                vm.question.selected_type = getQuestionTypeObj(vm.question.type);
+                SetValidationObj(false);
+            }else {
+                vm.question = {
+                    show: 1,
+                    required:0,
+                    options:[]
+                };
+
+                vm.question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
+                    return val.name === 'NONE'; //set question validation default to NONE
+                }));
+
+                if(data.section.has_section){
+                    vm.question.section = data.section.sectionId;
+                }
+
+            }
+        }
+
+        function _saveQuestion() {
+            var preparedQn = {
+                question_text:vm.question.question_text,
+                remark:vm.question.remark,
+                required:vm.question.required,
+                show:vm.question.show,
+                measurement_unit: !_.isUndefined(vm.question.measurement_unit)? vm.question.measurement_unit:null,
+                form:vm.form._id
+            };
+            if(vm.question.selected_type.code === QUESTION_TYPE.FILL_IN_BLANK){
+                preparedQn.validation_factor = vm.question.selected_validation.name;
+            }
+            else if(vm.question.selected_type.code === QUESTION_TYPE.YES_NO){
+                preparedQn.options = vm.question.selected_type.options;
+            }
+            if(!_.isUndefined(vm.question.options) && vm.question.options.length > 0 ){
+                preparedQn.options = vm.question.options;
+            }
+            //SET PREREQUISITE IF SHOW IS FALSE
+            if(vm.question.show === "0" || !vm.question.show){
+                if(!_.isUndefined(vm.selected_question) &&
+                    !_.isUndefined(vm.selected_question.selected_value)){
+                    var prerequisite = {
+                        question:vm.selected_question._id,
+                        answer:vm.selected_question.selected_value
+                    };
+                    preparedQn.prerequisites = [];
+                    preparedQn.prerequisites.push(prerequisite);
+                }
+            }else{
+                preparedQn.prerequisites = [];
+            }
+
+            if(!vm.isEdit){
+                preparedQn.section = vm.question.section;
+                preparedQn.number = GetNextQuestionOrderNumber();
+                FormService.CreateQuestion(preparedQn,vm.question.selected_type.url).then(function (response) {
+                    console.log("Question created",response);
+                    vm.maxOrderNumber = preparedQn.number;
+                    vm.question = response.data;
+                    vm.showSubQuestion = true;
+                    if(vm.question.type === QUESTION_TYPE.GROUPED){
+                        saveSubQuestionList();
+                    }
+                    $mdDialog.hide();
+                    AlertService.showSuccess("Question Created","Question Created successfully");
+                },function (error) {
+                    console.log("Question create error",error);
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to Save Question",message);
+                });
+
+            }else
+                {
+                preparedQn._id = vm.question._id;
+
+                FormService.UpdateQuestion(preparedQn).then(function (response) {
+                    if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED){
+                        saveSubQuestionList();
+                    }
+                    $mdDialog.hide();
+                    AlertService.showSuccess("Question Updated","Question Updated successfully");
+                },function (error) {
+                    console.log("qn update error",error);
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to Update Question",message);
+
+                });
+            }
+        }
+        function _removeQuestion(question,$event) {
+            AlertService.showConfirmForDelete("You are about to DELETE this Question?",
+                "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
+                    question.form = vm.form._id;
+
+                if(isConfirm){
+                    FormService.DeleteQuestion(question).then(function(response){
+                        AlertService.showSuccess("Question","Question Deleted successfully");
+                        $mdDialog.hide();
+                    },function(error){
+                        console.log("qn deleting error",error);
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to DELETE Question",message);
+                    })
+                }
+
+                });
+
+        }
+
+        //SC AND MC OPTIONS RELATED
+        function _addRadio(newValue) {
+            // If value is undefined, cancel.
+            if (newValue === undefined || newValue === '') {
+                return;
+            }
+            // Push it to radioOptions
+            if(!_.isUndefined(vm.oldOption)){
+                var oldOptionIndex =  vm.question.options.indexOf(vm.oldOption);
+                if(oldOptionIndex !== -1 ){
+                    vm.question.options.splice(oldOptionIndex, 1);
+                }
+                vm.isOptionEdit = false;
+            }
+
+            var index =  vm.question.options.indexOf(newValue);
+            if(index === -1) {
+                vm.question.options.push(newValue);
+            }
+            console.log("question",vm.question.options);
+            // vm.isOptionEdit
+            // Clear input contents
+            vm.newRadioValue = '';
+        }
+        function _removeOption(option) {
+            var index = vm.question.options.indexOf(option);
+            if(index !== -1){
+                vm.question.options.splice(index,1);
+            }
+        }
+        function _editOption(option) {
+            vm.isOptionEdit = true;
+            vm.newRadioValue = option;
+            vm.oldOption = option;
+        }
+
+        //SUB QUESTIONS RELATED
+        function _toggleAddSubQuestion() {
+            vm.showSubQuestion = true;
+            if(vm.isSubEdit){
+                vm.sub_question = {};
+                vm.isSubEdit = false
+            }
+        }
+        function _addToSubQuestion() {
+
+            var subQuestion = {
+                question_text:vm.sub_question.question_text,
+                parent_question:vm.question._id,
+                required:vm.question.required,
+                show:true,
+                measurement_unit: !_.isUndefined(vm.sub_question.measurement_unit)? vm.sub_question.measurement_unit:null,
+                validation_factor: vm.sub_question.selected_validation.name,
+                sub_question_type: 'fib',
+                form:vm.form._id
+            };
+            //TODO check obj b4 adding
+            vm.sub_question_list.push(subQuestion);
+            vm.vallidationCopy = vm.sub_question.selected_validation;
+            vm.sub_question = {};
+            vm.sub_question.selected_validation = vm.vallidationCopy;
+            vm.showSubQuestion = false;
+        }
+        function _cancelSubQuestion() {
+            vm.sub_question = {};
+            vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
+                return val.name === 'NONE'; //set sub question validation default to NONE
+            }));
+            vm.showSubQuestion = false;
+        }
+        function saveSubQuestionList() {
+            _.forEach(vm.sub_question_list,function (subQn) {
+                if(!_.isUndefined(subQn._id)){
+                    FormService.UpdateQuestion(subQn).then(function (response) {
+                        // console.log(subQn.question_text + "Updated",response);
+                    },function (error) {
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to Save Sub Question",message);
+                    });
+                }else {
+                    subQn.number = setSubQuestionOrderNumber();
+                    subQn.parent_question = vm.question._id;
+                    vm.maxSubOrderNumber = subQn.number;
+                    FormService.CreateQuestion(subQn,subQn.sub_question_type).then(function (response) {
+                        // console.log(subQn.question_text + "sub question created",response);
+                    },function (error) {
+                        console.log("sub question error create",error);
+                    });
+                }
+            });
+        }
+        function _editSubQuestion(question,ev) {
+            vm.isSubEdit = true;
+            vm.showSubQuestion = true;
+            vm.sub_question = question;
+            SetValidationObj(true);
+            console.log("vm.sub_question.selected_validation",vm.sub_question);
+        }
+
+        function spliceQuestionFromList(question) {
+            var subQuestionIndex =  vm.sub_question_list.indexOf(question);
+            if(subQuestionIndex !== -1 ){
+                vm.sub_question_list.splice(subQuestionIndex, 1);
+            }
+        }
+
+        function _removeSubQuestion(question, ev) {
+            AlertService.showConfirmForDelete("You are about to REMOVE this Question?",
+                "Are you sure?", "Yes, REMOVE it!", "warning", true,function (isConfirm) {
+
+                    if(isConfirm){
+                        if(_.isUndefined(question._id)){
+                            // vm.sub_question
+                            if(_.isUndefined(vm.question.sub_questions)){
+                                spliceQuestionFromList(question);
+                            }else{
+                                var subIndex =  vm.question.sub_questions.indexOf(question);
+                                if(subIndex !== -1 ){
+                                    vm.question.sub_questions.splice(subIndex, 1);
+                                }
+                            }
+
+                        }else{
+                            question.form = vm.form._id;
+                            FormService.DeleteQuestion(question).then(function(response){
+                                spliceQuestionFromList(question);
+                                AlertService.showSuccess("SUB QUESTION","Sub Question Deleted successfully");
+                            },function(error){
+                                console.log("qn deleting error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("Failed to DELETE Question",message);
+                            })
+                        }
+                    }
+
+                });
+
+        }
+        function _subQuestionValidationSelected() {
+          console.log("vm.sub_question.selected_validation",vm.sub_question.selected_validation)
+        }
+
+
+
+        function _addAnother() {
+            console.log("question",vm.question);
+        }
+        function _showQuestionOn() {
+            console.log("Question show",vm.question.show);
+        }
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+        function _questionTypeChanged() {
+            // if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED && !vm.isEdit){
+            //     vm.showSubQuestion = true;
+            // }
+        }
+
+
+
+        function getQuestionTypeObj(typeName) {
+            return _.first(_.filter(vm.questionTypes,function (type) {
+                return type.name === typeName || type.code === typeName;
+            }));
+        }
+        function SetValidationObj(isSubQuestion) {
+            if(isSubQuestion){
+                vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function (val) {
+                    return val.name === vm.sub_question.validation_factor;
+                }));
+            }else{
+                if(vm.question.selected_type.code === QUESTION_TYPE.FILL_IN_BLANK){
+                    vm.question.selected_validation = _.first(_.filter(vm.fibvalidation,function (val) {
+                        return val.name === vm.question.validation_factor;
+                    }));
+                }
+            }
+
+        }
+
+        function setSubQuestionOrderNumber() {
+            var maxNo = _.max(vm.question.sub_questions,function(sub){
+                return sub.number;
+            });
+            vm.maxSubOrderNumber = _.isUndefined(vm.maxSubOrderNumber)?maxNo.number: vm.maxSubOrderNumber;
+            var number =  _.isEmpty(vm.maxSubOrderNumber)? 0 :  parseInt(vm.maxSubOrderNumber) + 1;
+            return _.isUndefined(number)? 0 : number;
+        }
+        function GetNextQuestionOrderNumber() {
+            return vm.maxOrderNumber + 1;
+        }
+
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 1/9/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.clients").controller("ClientDetailController", ClientDetailController);
+
+    ClientDetailController.$inject = ['LoanManagementService','$stateParams','blockUI','PrintPreviewService'];
+
+    function ClientDetailController(LoanManagementService,$stateParams,blockUI,PrintPreviewService) {
+        var vm = this;
+        vm.clientId =  $stateParams.id;
+        vm.visibility = {showMoreClientDetail: false};
+        vm.labelBasedOnStatusStyle = LoanManagementService.StyleLabelByStatus;
+
+        vm.onTabSelected = _onTabSelected;
+        vm.printLaonProcess = _print;
+
+        initialize();
+
+
+        function _print(type) {
+            console.log("type",vm.clientScreening)
+            var preview = [];
+            if(type === 'SCREENING'){
+                preview = [{
+                    Name: "Screening",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "Screening Result For " +
+                                                    vm.clientScreening.client.first_name + " " +
+                                                    vm.clientScreening.client.last_name + " " +
+                                                    vm.clientScreening.client.grandfather_name}, vm.clientScreening)
+                }];
+                PrintPreviewService.show(preview);
+            }else{
+                preview = [{
+                    Name: "Loan Application",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "Loan Application"}, vm.client.loan_application)
+                }];
+                PrintPreviewService.show(preview);
+            }
+
+
+        }
+
+
+        function initialize() {
+            var myBlockUI = blockUI.instances.get('ClientBlockUI');
+            myBlockUI.start();
+            LoanManagementService.GetClientDetail(vm.clientId)
+                .then(function(response){
+                    myBlockUI.stop();
+                    vm.client = response.data;
+                    CallClientScreeningAPI();
+                    console.log("client detail",response);
+                },function(error){
+                    myBlockUI.stop();
+                    console.log("error getting client detail",error);
+                });
+        }
+
+        function CallClientScreeningAPI() {
+            var myBlockUI = blockUI.instances.get('ClientScreeningBlockUI');
+            myBlockUI.start();
+            LoanManagementService.GetClientScreening(vm.clientId).then(function (response) {
+                myBlockUI.stop();
+                vm.clientScreening = response.data;
+                console.log("screening",vm.clientScreening);
+
+            },function (error) {
+                myBlockUI.stop();
+                console.log("error fetching screening",error);
+            });
+        }
+
+        function CallClientLoanApplicationAPI() {
+            var myBlockUI = blockUI.instances.get('ClientLoanApplicationBlockUI');
+            myBlockUI.start();
+            LoanManagementService.GetClientLoanApplication(vm.clientId)
+                .then(function (response) {
+                    myBlockUI.stop();
+                    vm.client.loan_application = response.data;
+                    console.log("vm.client.loan_application",vm.client);
+                },function (error) {
+                    myBlockUI.stop();
+                    console.log(" error .loan_application",error);
+                });
+        }
+
+        function _onTabSelected(type) {
+            console.log("tab name clicked",type);
+            switch (type){
+                case 'CLIENT':
+                    console.log("tab name clicked",type);
+                    break;
+                case 'SCREENING':
+                    CallClientScreeningAPI();
+                    console.log("tab name clicked",type);
+                    break;
+                case 'LOAN_APPLICATION':
+                    CallClientLoanApplicationAPI();
+                    break;
+                case 'ACAT':
+                    console.log("tab name clicked",type);
+                    break;
+                default:
+                    console.log("tab name clicked",type);
+            }
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.loan_management")
+        .controller("ClientManagementController", ClientManagementController);
+
+    ClientManagementController.$inject = ['LoanManagementService','$state','$scope','AuthService'];
+
+    function ClientManagementController(LoanManagementService,$state,$scope,AuthService) {
+        var vm = this;
+        vm.currentUser = {selected_access_branch:undefined};
+        vm.labelBasedOnStatus = LoanManagementService.StyleLabelByStatus;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearch;
+        //CLIENT RELATED
+        vm.clientDetail = _clientDetail;
+        vm.onSelectedBranch = _onSelectedBranch;
+
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+            GetBranchFilter();
+        }
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function GetBranchFilter() {
+            if(AuthService.IsSuperuser()){
+                LoanManagementService.GetBranches().then(function(response){
+                    vm.currentUser.user_access_branches = response.data.docs;
+                },function(error){
+                    vm.currentUser.user_access_branches = [];
+                    console.log("error on GetBranchFilter",error);
+                });
+            }
+            else {
+                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
+            }
+        }
+
+        function callApi(){
+            vm.clientPromise = LoanManagementService.GetClients(vm.query).then(function(response){
+                vm.clients = response.data.docs;
+                vm.clientsCopy = angular.copy(vm.clients);
+                vm.query.total_docs_count =  response.data.total_docs_count;
+            },function (error) {
+                console.log("error callApi vm.clients",error);
+            });
+        }
+
+        function SearchApi(SearchText){
+            $scope.promise = LoanManagementService.SearchClient(SearchText)
+                .then(function(response){
+                    vm.clients = response.data.docs;
+                    vm.clientsCount = response.data.total_docs_count;
+                    console.log(response);
+                },function (error) {
+                    vm.clients = vm.clientsCopy;
+                    console.log("error",error);
+                });
+        }
+
+        function _clientDetail(client,ev) {
+            $state.go('app.client_detail',{id:client._id});
+        }
+
+        function _onSelectedBranch(){
+            vm.clients = vm.clientsCopy;
+
+            vm.clients = _.filter(vm.clients,function(client){
+                if(!_.isUndefined(client.branch) && client.branch !== null){
+                    return client.branch._id === vm.currentUser.selected_access_branch._id;
+                }
+            });
+
+        }
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                //make sure at least two characters are entered
+                if(newValue.length > 2){
+                    SearchApi(newValue);
+                }else{
+                    vm.clients = vm.clientsCopy;
+                }
+
+            }
+        });
+
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 5/7/2018.
+ */
+
+(function(angular) {
+    'use strict';
+
+    angular.module('app.processing')
+        .controller('ClientDialogController', ClientDialogController);
+
+    ClientDialogController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService','blockUI'];
+
+    function ClientDialogController($mdDialog, items,AlertService,CommonService,MainService,blockUI) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.isEdit = items !== null;
+
+        init();
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+
+        function init(){
+
+        }
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("LoanProcessingController", LoanProcessingController);
+
+    LoanProcessingController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers'];
+
+    function LoanProcessingController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers ) {
+        var vm = this;
+        vm.screeningDetail = _screeningDetail;
+        vm.backToList = _backToList;
+        vm.saveScreeningForm = _saveScreeningForm;
+        vm.questionValueChanged = questionValueChanged;
+
+        vm.addClient = _addClient;
+        vm.clientDetail = _clientDetail;
+
+        vm.onTabSelected = _onTabSelected;
+
+        vm.options = {
+            rowSelection: true,
+            multiSelect: true,
+            autoSelect: true,
+            decapitate: false,
+            largeEditDialog: false,
+            boundaryLinks: false,
+            limitSelect: true,
+            pageSelect: true
+        };
+        vm.filter = {show : false};
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
+
+        vm.query = {
+            search:'',
+            page:1,
+            per_page:10
+        };
+
+        vm.paginate = function(page, pageSize) {
+            console.log('Scope Page: ' + vm.query.page + ' Scope Limit: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callScreeningAPI();
+
+        };
+        vm.clearSearchText = function () {
+            vm.query.search = '';
+            vm.filter.show = false;
+        };
+        vm.searchScreening = function () {
+            console.log("search text",vm.query.search);
+        };
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("search for screening ",newValue);
+            }
+        });
+
+        vm.visibility = {
+            showScreeningDetail:false,
+            showClientDetail:false,
+            showLoanApplicationDetail:false,
+            showACATDetail:false
+        };
+
+        initialize();
+
+        function _clientDetail(client, ev) {
+            console.log("Client detail",client);
+        }
+
+        function _onTabSelected(type) {
+            console.log("tab name clicked",type);
+            switch (type){
+                case 'CLIENT':
+                    console.log("tab name clicked",type);
+                    break;
+                case 'SCREENING':
+                    callScreeningAPI();
+                    console.log("tab name clicked",type);
+                    break;
+                case 'LOAN_APPLICATION':
+
+                    callLoanApplicationAPI();
+                    break;
+                case 'ACAT':
+                    console.log("tab name clicked",type);
+                    break;
+                default:
+                    console.log("tab name clicked",type);
+            }
+        };
+
+        function _addClient(ev) {
+            $mdDialog.show({
+                locals: {items: null},
+                templateUrl: RouteHelpers.basepath('loan_management/loan_processing/create.client.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'ClientDialogController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+
+            }, function () {
+            });
+
+        }
+
+        function _screeningDetail(screening) {
+            vm.selectedScreening = screening;
+            console.log("screening detail");
+            var client = screening.client;
+
+            LoanManagementService.GetClientScreening(client._id).then(function (response) {
+                vm.client = response.data;
+                vm.visibility.showScreeningDetail = true;
+                console.log("vm.client",vm.client);
+            });
+        }
+        function _backToList(type) {
+            switch(type){
+                case 'SCREENING':
+                    vm.visibility.showScreeningDetail = false;
+                    break;
+            }
+
+        }
+        function _saveScreeningForm(client,screening_status) {
+
+            var status = _.find(SCREENING_STATUS,function (stat) {
+                return stat.code === screening_status;
+            });
+            var screening = {
+                status: status.code,
+                questions: client.questions
+            };
+
+            // console.log("save screening status ", screening);
+
+            LoanManagementService.SaveClientScreening(screening,client._id)
+                .then(function (response) {
+                    AlertService.showSuccess('Screening',"Successfully saved screening information  with status: " + status.name);
+                    console.log("saved screening ", screening);
+                },function (error) {
+                    var message = error.data.error.message;
+                    AlertService.showError("Error when saving screening",message);
+                    console.log("error on saving screening ", error);
+                });
+
+        }
+
+        function initialize() {
+            // callScreeningAPI();
+        }
+        function callLoanApplicationAPI() {
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+            vm.loanApplicationPromise = LoanManagementService.GetLoanApplications(vm.query).then(function (response) {
+                console.log("loan applications",response);
+                vm.loan_applications = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+            });
+        }
+
+        function callScreeningAPI() {
+            vm.screeningPromise = LoanManagementService.GetScreenings(vm.query).then(function (response) {
+                vm.screenings = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+                console.log("screenings info",vm.screenings);
+            });
+        }
+
+
+        function questionValueChanged(question) {
+
+            var prQues = getPrerequisiteQuestion(question._id);
+
+            _.each(prQues, function(prQue) {
+                if (prQue) {
+                    var prerequisite = prQue.prerequisites[0];
+                    //Set question's show based by comparing current value with expected preq. value
+                    prQue.show = (prerequisite.answer === question.values[0]);
+                }
+            });
+
+        }
+        function getPrerequisiteQuestion(questionID) {
+
+            //extract outer questions; if section type, get them from sections
+            var questions = vm.client.has_sections ?
+                _.reduce(vm.client.sections, function(m, q) {
+                    return m.concat(q.questions);
+                }, []) :
+                vm.client.questions;
+
+            //Get all subquestions
+            var subQuestions = _.reduce(questions, function(m, q) {
+                return m.concat(q.sub_questions);
+            }, []);
+
+            //merge questions with subquestions into a singl array
+            var mergedQuestions = _.uniq(_.union(questions, subQuestions), false, _.property('_id'));
+
+            //Search in mergedQuestions
+            var prQue = _.filter(mergedQuestions, function(obj) {
+                return _.some(obj.prerequisites, { question: questionID });
+            });
+
+            return prQue;
+        }
+
+    }
+
+
+
+})(window.angular);
+(function(angular) {
+  "use strict";
+
+    angular.module("app.mfi").controller("BranchController", BranchController);
+
+    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
+
+  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
+    var vm = this;
+
+    vm.addBranch = addBranch;
+    vm.editBranch = _editBranch;
+    vm.changeStatus = _changeStatus;
+
+     getBranches();
+
+    function getBranches() {
+      MainService.GetBranches().then(
+        function(response) {
+          vm.branches = response.data.docs;
+        },
+        function(error) {
+          console.log("error", error);
+        }
+      );
+
+    }
+
+    function addBranch(ev) {
+        $mdDialog.show({
+            locals: {items: null},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+
+    }
+
+    function _editBranch(selectedBranch,ev) {
+        $mdDialog.show({
+            locals: {items: selectedBranch},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+    }
+
+    function _changeStatus(ChangeStatus) {
+      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
+      MainService.UpdateBranch(ChangeStatus).then(
+        function(response) {
+
+          AlertService.showSuccess(
+              "Updated branch status",
+              "Updated Status successfully."
+          );
+          // console.log("updated successfully", response);
+
+        },
+        function(error) {
+          // console.log("could not be updated", error);
+          AlertService.showError(
+            "Status not changed. Please try again.",
+            "ERROR"
+          );
+        }
+      );
+
+    }
+
+  }
+})(window.angular);
+
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function (angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("LoanProductDialogController", LoanProductDialogController);
+
+    LoanProductDialogController.$inject = ['$mdDialog', 'data', 'AlertService', 'blockUI', 'LoanProductService'];
+
+    function LoanProductDialogController($mdDialog, data, AlertService, blockUI,LoanProductService) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.addToDeductibleList = _addToDeductibleList;
+        vm.addToCostOfLoanList = _addToCostOfLoanList;
+        vm.editDeductibleItem = _editDeductibleItem;
+        vm.editCostOfLoanItem = _editCostOfLoanItem;
+        vm.cancelEdit = _cancelEdit;
+        vm.showCancelForEdit = _showCancelForEdit;
+        vm.saveLoanProduct = _saveLoanProduct;
+        vm.removeLoanProductCostItem = _removeLoanProductCostItem;
+        vm.onLPTypeChange = _onLPTypeChange;
+
+
+        initialize();
+
+        function initialize() {
+            vm.isEdit = data.loan_product !== null;
+            vm.isEditCostOfLoan = false;
+            vm.isEditDeductible = false;
+
+            if (vm.isEdit) {
+                vm.loan_product = data.loan_product;
+                LoadDeductibleAndCostOfLoanTypes(vm.loan_product);
+
+                vm.loan_product.deductible = {type: 'fixed_amount'};
+                vm.loan_product.costOfLoan = { type: 'fixed_amount'};
+
+            } else {
+                vm.loan_product = {
+                    deductibles: [],
+                    cost_of_loan: [],
+                    deductible: {
+                        type: 'fixed_amount'
+                    },
+                    costOfLoan: {
+                        type: 'fixed_amount'
+                    }
+                };
+            }
+        }
+
+
+        function LoadDeductibleAndCostOfLoanTypes(loanProd) {
+
+            _.each(loanProd.cost_of_loan, function (cLoan) {
+                cLoan.type = cLoan.fixed_amount > 0 ? 'fixed_amount' : cLoan.percent > 0 ? 'percent' : 'fixed_amount';
+            });
+
+            _.each(loanProd.deductibles, function (deduct) {
+                deduct.type = deduct.fixed_amount > 0 ? 'fixed_amount' : deduct.percent > 0 ? 'percent' : 'fixed_amount';
+            });
+        }
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+
+        function _addToDeductibleList(item) {
+            if (!_.isUndefined(item.item) && item.item !== '' && (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )) {
+                console.log("vm.isEditDeductible",vm.isEditDeductible);
+                if (!vm.isEditDeductible) {
+                    vm.loan_product.deductibles.push(item);
+                    vm.loan_product.deductible = {type: 'fixed_amount'};
+                } else {
+                    console.log("item",item);
+                    vm.loan_product.deductibles = _.filter(vm.loan_product.deductibles,function (dedu) {
+                        return dedu._id !== item._id;
+                    });
+                    vm.loan_product.deductibles.push(item);
+                    console.log("vm.loan_product.deductibles",vm.loan_product.deductibles);
+                    vm.cancelEdit(true);
+                }
+            }
+
+        }
+
+        function _editDeductibleItem(item) {
+            vm.loan_product.deductibleCopy = angular.copy(item);
+            vm.loan_product.deductible = item;
+            vm.isEditDeductible = true;
+        }
+
+        function _addToCostOfLoanList(item) {
+
+            if (!_.isUndefined(item.item) && item.item !== '' &&
+                (_.isUndefined(item.percent) || _.isUndefined(item.fixed_amount) )) {
+                if (!vm.isEditCostOfLoan) {
+                    vm.loan_product.cost_of_loan.push(item);
+                    vm.loan_product.costOfLoan = {type: 'fixed_amount'};//reset
+                } else {
+                    vm.cancelEdit('costOfLoan');
+                }
+
+            }
+
+        }
+
+        function _editCostOfLoanItem(item) {
+            vm.loan_product.costOfLoanCopy = angular.copy(item);
+            vm.loan_product.costOfLoan = item;
+            vm.isEditCostOfLoan = true;
+        }
+
+        function _removeLoanProductCostItem(cost, isDeductible) {
+            AlertService.showConfirmForDelete("You are about to DELETE " + cost.item,
+                "Are you sure?", "Yes, Delete it!", "warning", true, function (isConfirm) {
+                    if (isConfirm) {
+                        var itemIndex = -1;
+                        if (isDeductible) {
+                            itemIndex = vm.loan_product.deductibles.indexOf(cost);
+                            if (itemIndex !== -1) {
+                                vm.loan_product.deductibles.splice(itemIndex, 1);
+                                console.log("removed item from deductibles");
+                            }
+                        } else {
+                            itemIndex = vm.loan_product.cost_of_loan.indexOf(cost);
+                            if (itemIndex !== -1) {
+                                vm.loan_product.cost_of_loan.splice(itemIndex, 1);
+                                console.log("removed item from cost_of_loan");
+                            }
+                        }
+                    }
+                });
+        }
+
+        function _showCancelForEdit(cost, isDeductible) {
+            if (isDeductible) {
+                return vm.isEditDeductible && vm.loan_product.deductible._id === cost._id;
+            } else {
+                return vm.isEditCostOfLoan && vm.loan_product.costOfLoan._id === cost._id;
+            }
+        }
+
+        function _cancelEdit(isDeductible) {
+            if (isDeductible) {
+                var index = vm.loan_product.deductibles.indexOf(vm.loan_product.deductible);
+                if (index !== -1) {
+                    vm.loan_product.deductibles[index] =  vm.loan_product.deductibleCopy;
+                }
+                vm.loan_product.deductible = {type: 'fixed_amount'};
+                vm.isEditDeductible = false;
+                vm.showCancelForEdit(vm.loan_product.deductible, isDeductible);
+            } else {
+
+                var index = vm.loan_product.cost_of_loan.indexOf(vm.loan_product.costOfLoan);
+
+                if (index !== -1) {
+                    vm.loan_product.cost_of_loan[index] =  vm.loan_product.costOfLoanCopy;
+                }
+                vm.loan_product.costOfLoan = {type: 'fixed_amount'};
+                vm.isEditCostOfLoan = false;
+                vm.showCancelForEdit(vm.loan_product.costOfLoan, isDeductible);
+            }
+        }
+
+        function _saveLoanProduct() {
+            var myBlockUI = blockUI.instances.get('LoanProductBlockUI');
+            myBlockUI.start();
+
+            if (!vm.isEdit) {
+                LoanProductService.CreateLoanProduct(vm.loan_product).then(function (response) {
+                    console.log("created loan product", response.data);
+                    AlertService.showSuccess("LOAN PRODUCT", "Loan Product Created successfully");
+                    $mdDialog.hide();
+                    myBlockUI.stop();
+                }, function (error) {
+                    myBlockUI.stop();
+                    var message = error.data.error.message;
+                    AlertService.showError("FAILED TO CREATE LOAN PRODUCT", message);
+                    console.log("error", error);
+                });
+            } else {
+                LoanProductService.UpdateLoanProduct(vm.loan_product).then(function (response) {
+                    console.log("Updated loan product", response.data);
+                    AlertService.showSuccess("LOAN PRODUCT", "Loan Product Updated successfully");
+                    myBlockUI.stop();
+                    $mdDialog.hide();
+                }, function (error) {
+                    var message = error.data.error.message;
+                    AlertService.showError("FAILED TO UPDATE LOAN PRODUCT", message);
+                    myBlockUI.stop();
+                    console.log("error", error);
+                });
+            }
+
+        }
+
+        function _onLPTypeChange(isDeductible) {
+            if(vm.isEditCostOfLoan || vm.isEditDeductible){
+                AlertService.showConfirmForDelete("You are about to change type," +
+                    " Which will reset amount/percent field to 0.",
+                    "Are you sure?", "YES, CHANGE IT!", "warning", true,function (isConfirm) {
+                        if(isConfirm){
+                            if(isDeductible) {
+                                vm.loan_product.deductible.fixed_amount = 0;
+                                vm.loan_product.deductible.percent = 0;
+                            }else{
+                                vm.loan_product.costOfLoan.fixed_amount = 0;
+                                vm.loan_product.costOfLoan.percent = 0;
+                            }
+                        }else{
+                        //    REVERT BACK THE TYPE TO THE FIRST
+                        }
+                    });
+            }else{
+                // console.log("type on create",type);
+            }
+
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/30/2018.
+ */
+
+
+(function(angular) {
+    'use strict';
+    angular.module('app.mfi')
+
+        .service('LoanProductService', LoanProductService);
+
+    LoanProductService.$inject = ['$http','CommonService'];
+
+    function LoanProductService($http, CommonService) {
+        return {
+            GetAllLoanProducts:_getAllLoanProducts,
+            CreateLoanProduct:_createLoanProduct,
+            UpdateLoanProduct:_updateLoanProduct,
+            RemoveLoanProduct:_removeLoanProduct
+        };
+
+        function _getAllLoanProducts() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.LoanProducts));
+        }
+        function _removeLoanProduct(loanProduct) {
+
+        }
+        function _createLoanProduct(loanProduct) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateLoanProducts),loanProduct);
+        }
+        function _updateLoanProduct(loanProduct) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProducts,loanProduct._id),loanProduct);
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("LoanProductsController", LoanProductsController);
+
+    LoanProductsController.$inject = ['$mdDialog','RouteHelpers','LoanProductService'];
+
+    function LoanProductsController($mdDialog,RouteHelpers,LoanProductService) {
+        var vm = this;
+        vm.addLoanProduct = _addLoanProduct;
+        vm.editLoanProduct = _editLoanProduct;
+        callAPI();
+
+        function callAPI() {
+            LoanProductService.GetAllLoanProducts().then(function (response) {
+                vm.loanProducts = response.data.docs;
+            });
+        }
+
+        function _addLoanProduct(loan_product,ev) {
+            $mdDialog.show({
+                locals: {data:{loan_product:loan_product}},
+                templateUrl: RouteHelpers.basepath('mfisetup/loanproduct/loan.product.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'LoanProductDialogController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callAPI();
+            }, function (response) {
+                console.log("refresh on response");
+                callAPI();
+            });
+        }
+        function _editLoanProduct(loan_product,ev) {
+            $mdDialog.show({
+                locals: {data:{loan_product:loan_product}},
+                templateUrl: RouteHelpers.basepath('mfisetup/loanproduct/loan.product.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'LoanProductDialogController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callAPI();
+            }, function (response) {
+                console.log("refresh on response");
+                callAPI();
+            });
+        }
+
+
+    }
+
+
+
+})(window.angular);
+(function(angular) {
+  "use strict";
+
+  angular.module("app.mfi").controller("MFIController", MFIController);
+
+  MFIController.$inject = ['AlertService', '$scope','MainService','CommonService','blockUI'];
+
+  function MFIController(AlertService,$scope,MainService,CommonService,blockUI)
+
+  {
+    var vm = this;
+    vm.saveChanges = saveChanges;
+
+    vm.MFISetupForm = {
+      IsnameValid: true,
+      IslocationValid: true,
+      Isestablishment_yearValid: true
+  };
+
+    init();
+
+    function saveChanges() {
+
+      vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFISetupForm, vm.MFI);
+
+      if (vm.IsValidData) {
+          var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
+          myBlockUI.start();
+        if (_.isUndefined(vm.MFI._id)) {
+          MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
+              myBlockUI.stop();
+              AlertService.showSuccess("Created MFI successfully","MFI Information created successfully");
+              console.log("Create MFI", response);
+            }, function(error) {
+              myBlockUI.stop();
+              console.log("Create MFI Error", error);
+              var message = error.data.error.message;
+            AlertService.showError("Failed to create MFI!", message);
+
+            });
+        } else {
+          
+          MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
+              myBlockUI.stop();
+              AlertService.showSuccess("MFI Info updated successfully","MFI Information updated successfully");
+              console.log("Update MFI", response);
+            }, function(error) {
+              myBlockUI.stop();
+              console.log("UpdateMFI Error", error);
+              var message = error.data.error.message;
+              AlertService.showError("MFI Information update failed",message);
+            });
+        }
+      } else {
+          AlertService.showWarning("Warning","Please fill the required fields and try again.");
+      }
+    }
+
+    function init() {
+        var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
+        myBlockUI.start();
+      MainService.GetMFI().then(
+        function(response) {
+            myBlockUI.stop();
+          if (response.data.length > 0) {
+            vm.MFI = response.data[0];
+            var dt = new Date(vm.MFI.establishment_year);
+            vm.MFI.establishment_year = dt;
+          }
+          console.log("Get MFI", response);
+        },
+        function(error) {
+            myBlockUI.stop();
+          console.log("Get MFI Error", error);
+        }
+      );
+
+      $scope.clear = function() {
+        $scope.dt = null;
+      };
+
+      $scope.dateOptions = {
+        dateDisabled: false,
+        formatYear: "yy",
+        maxDate: new Date(2020, 5, 22),
+        startingDay: 1
+      };
+
+      $scope.open1 = function() {
+        $scope.popup1.opened = true;
+      };
+
+      $scope.format = "dd-MMMM-yyyy";
+      $scope.altInputFormats = ["M!/d!/yyyy"];
+
+      $scope.popup1 = {
+        opened: false
+      };
+    }
+  }
+})(window.angular);
+
+(function(angular) {
+  'use strict';
+
+    angular.module('app.mfi')
+        .controller('CreateBranchController', CreateBranchController);
+
+    CreateBranchController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService','blockUI'];
+
+  function CreateBranchController($mdDialog, items,AlertService,CommonService,MainService,blockUI) {
+      var vm = this;
+      vm.cancel = _cancel;
+      vm.saveBranch = _saveBranch;
+      vm.isEdit = items !== null;
+      vm.branch = items !== null?items:null;
+      vm.MFIBranchForm = {
+          IsnameValid: true,
+          IslocationValid: true
+      };
+
+      init();
+
+      function _saveBranch() {
+          vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFIBranchForm, vm.branch);
+
+          if(vm.branchForm.inputEmail.$error.email){
+              AlertService.showWarning("Branch validation failed","Please provide valid email address");
+          }else if(vm.IsValidData){
+              var myBlockUI = blockUI.instances.get('CreateBranchBlockUI')
+              myBlockUI.start();
+              if(!vm.isEdit){
+                  //Save new branch API
+                  MainService.CreateBranch(vm.branch).then(
+                      function(data) {
+                          myBlockUI.stop();
+                          $mdDialog.hide();
+                          AlertService.showSuccess(
+                              "success",
+                              "Saved! Branch saved successfully."
+                          );
+                      },
+                      function(response) {
+                          myBlockUI.stop();
+                          var message = response.data.error.message;
+                          console.log("could not be saved", response.data);
+                          AlertService.showError(
+                              "ERROR",
+                              "Could not be saved!, " + message
+                          );
+                      }
+                  )
+              }else {
+
+                  var upBranch = {
+                      _id: vm.branch._id,
+                      name: vm.branch.name,
+                      location: vm.branch.location,
+                      branch_type: vm.branch.branch_type,
+                      opening_date: vm.branch.opening_date
+                  };
+
+                      if(!_.isUndefined(vm.branch.email)){
+                        upBranch.email =vm.branch.email;
+                      }
+                      if(_.isString(vm.branch.phone) && vm.branch.phone !== ""){
+                        upBranch.phone =vm.branch.phone;
+                      }
+                      //Update branch api
+                      MainService.UpdateBranch(upBranch).then(
+                        function(response) {
+                            myBlockUI.stop();
+                          AlertService.showSuccess(
+                            "Branch Updated",
+                            "Branch updated successfully."
+                          );
+                          $mdDialog.hide();
+                        },
+                        function(response) {
+                            myBlockUI.stop();
+                            var message = response.data.error.message;
+                          console.log("could not be updated", response.data);
+                          AlertService.showError(
+                              "Could not update Branch",
+                              message
+                          );
+                        }
+                      );
+
+              }
+
+          } else {
+              AlertService.showError("Failed to create branch","Please fill the required fields and try again.");
+          }
+      }
+
+      vm.clear = function() {
+          vm.dt = null;
+      };
+      vm.dateOptions = {
+          dateDisabled: false,
+          formatYear: "yy",
+          maxDate: new Date(2020, 5, 22),
+          startingDay: 1
+      };
+      vm.openDatePicker = function() {
+          vm.popup1.opened = true;
+      };
+      vm.format = "dd-MMMM-yyyy";
+      vm.altInputFormats = ["d!/M!/yyyy"];
+      vm.popup1 = {
+          opened: false
+      };
+
+      function _cancel() {
+          $mdDialog.cancel();
+      }
+
+      function init(){
+          vm.branchTypes =['Select Branch Type','Satellite office','Rural Service','Regional office','Urban office'];
+
+          if(vm.isEdit)
+          {
+              var dt =_.isUndefined(vm.branch.opening_date)?undefined: new Date(vm.branch.opening_date);
+              vm.branch.opening_date = dt;
+          }else{
+              vm.branch = { branch_type : vm.branchTypes[0] }; //SET DEFAULT SELECT OPTION FOR BRANCH TYPE
+          }
+      }
+  }
+
+
+
+})(window.angular);
