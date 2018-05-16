@@ -360,6 +360,7 @@ gulp.task('clean', function(done) {
 
 // build for production (minify)
 gulp.task('build', gulpsync.sync([
+    'clean',
     'prod',
     'vendor',
     'assets'
