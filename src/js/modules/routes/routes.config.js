@@ -43,7 +43,7 @@
                 url: '/manage_user',
                 title: 'manage users',
                 templateUrl: helper.basepath('manageusers/manage.users.html'),
-               resolve: angular.extend(helper.resolveFor('datatables','ngDialog','ui.select'),{}),
+               resolve: angular.extend(helper.resolveFor('datatables','ui.select'),{}),
                controller: 'ManageUsersController',
                controllerAs: 'vm'
             })
@@ -51,7 +51,7 @@
                 url: '/manage_role',
                 title: 'manage roles',
                 templateUrl: helper.basepath('manageroles/manage.roles.html'),
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select'),
+                resolve:helper.resolveFor('datatables','ui.select'),
                 controller: 'ManageRoleController',
                 controllerAs: 'vm'
             })
@@ -59,7 +59,7 @@
                 url: '/mfi_setup',
                 title: 'MFI Setting',
                 templateUrl:helper.basepath('mfisetup/mfi.html'),
-                resolve:helper.resolveFor('datatables','ngDialog','ui.select','moment','inputmask','ngFileUpload'),
+                resolve:helper.resolveFor('datatables','ui.select','moment','inputmask','ngFileUpload'),
                 controller: 'MFIController',
                 controllerAs: 'vm'
             })
