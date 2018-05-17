@@ -11,6 +11,7 @@ NPM=$(which npm)
 cd src
 sudo $NPM install
 sudo $NPM install -g gulp
+sudo $NPM install npm install
 sudo $NPM install bower install
 sudo $NPM install node-build-web-app --save-dev
 sudo $NPM install --no-optional
