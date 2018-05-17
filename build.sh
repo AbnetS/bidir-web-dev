@@ -8,8 +8,8 @@ CONT_PORT=80
 HOST_IP=`ifconfig ens4 | awk '/inet addr/{print substr($2,6)}'`
 MONGODB_URL=mongodb://$HOST_IP:27017/bidir
 NPM=$(which npm)
-sudo $NPM install
 cd src
+sudo $NPM install
 sudo $NPM install -g gulp
 sudo $NPM install bower install
 sudo $NPM install node-build-web-app --save-dev
