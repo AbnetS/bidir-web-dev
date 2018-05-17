@@ -10,7 +10,7 @@ MONGODB_URL=mongodb://$HOST_IP:27017/bidir
 NPM=$(which npm)
 #sudo $NPM install
 cd src
-sudo $NPM install -g gulp
+sudo $NPM install gulp
 sudo $NPM install -g gulp-sass
 sudo $NPM install -g gulp-less
 #sudo $NPM install -g bower
