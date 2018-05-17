@@ -8,4 +8,4 @@ build/
 dist/
 node_modules/
 src/debug.log
-vendor/
+/src/vendor

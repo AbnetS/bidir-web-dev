@@ -7974,6 +7974,9 @@ md-dialog {
 .limit-select > .label {
   color: rgba(0, 0, 0, 0.54);
 }
+.md-toolbar-tools.small {
+  background-color: #039661;
+}
 .receipt-header {
   text-align: center;
 }

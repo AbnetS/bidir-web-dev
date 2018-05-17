@@ -60,7 +60,7 @@
                         <label class="control-label small">Based at Branch</label>
                         <span class="control-label required" aria-required="true"> * </span>
                         <br/>
-                        <ui-select ng-model="vm.user.selected_default_branch" theme="select2"
+                        <ui-select ng-model="vm.user.selected_default_branch" theme="bootstrap"
                                    on-select="vm.onSelectedDefaultBranch()"
                                    title="Choose default branch">
                             <ui-select-match placeholder="Select or search a branch from the list...">
@@ -82,7 +82,7 @@
                         <!--access branches-->
                         <ui-select ng-disabled="vm.user.multi_branches" multiple
                                    ng-model="vm.user.selected_access_branches"
-                                   theme="select2" close-on-select="false" style="width:100%">
+                                   theme="bootstrap" close-on-select="false" style="width:100%">
                             <ui-select-match placeholder="Select access branch...">
                                 {{$item.name}} - {{$item.location}}
                             </ui-select-match>
