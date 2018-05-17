@@ -11,10 +11,13 @@ NPM=$(which npm)
 cd src
 sudo $NPM install
 sudo $NPM install -g gulp
-sudo $NPM install npm install
-sudo $NPM install bower install
+sudo $NPM install -g gulp-sass
+sudo $NPM install -g gulp-less
+sudo $NPM install -g npm install
+sudo $NPM install -g bower
 sudo $NPM install node-build-web-app --save-dev
 sudo $NPM install --no-optional
+bower install
 GULP=$(which gulp)
 $GULP build
 cd ..
