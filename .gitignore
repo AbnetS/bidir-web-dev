@@ -10,3 +10,4 @@ src/debug.log
 .vendor/
 app/css/
 app/js/
+vendor/
