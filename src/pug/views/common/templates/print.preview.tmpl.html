@@ -3,7 +3,7 @@
         table,
         figure,
         .table-content {
-            page-break-inside: avoid;
+            page-break-inside: auto;
         }
         
         body {
@@ -91,7 +91,7 @@
         .table-content .row {
             border-bottom: 1px solid #AAA;
         }
-        
+
         .italic-font {
             font-style: italic;
         }
@@ -103,6 +103,15 @@
         .header-title h3 {
             display: inline-block;
         }
+        small,
+        .small {
+            font-size: 80%;
+        }
+        .ib {
+            display: inline-block;
+        }
+
+
     </style>
     <md-dialog-content>
         <div class="container-fluid print-container" id="printableDiv">
