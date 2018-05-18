@@ -29,7 +29,7 @@
                     TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
                     IsCommon: false,
                     IsSelected: false,
-                    Data: angular.extend({ Title: "Screening Result For " +
+                    Data: angular.extend({ Title: "Screening Form Result for " +
                                                     vm.clientScreening.client.first_name + " " +
                                                     vm.clientScreening.client.last_name + " " +
                                                     vm.clientScreening.client.grandfather_name}, vm.clientScreening)
@@ -41,7 +41,10 @@
                     TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
                     IsCommon: false,
                     IsSelected: false,
-                    Data: angular.extend({ Title: "Loan Application"}, vm.client.loan_application)
+                    Data: angular.extend({ Title: "Loan Application Formm Result for " +
+                    vm.client.loan_application.client.first_name + " " +
+                    vm.client.loan_application.client.last_name + " " +
+                    vm.client.loan_application.client.grandfather_name}, vm.client.loan_application)
                 }];
                 PrintPreviewService.show(preview);
             }

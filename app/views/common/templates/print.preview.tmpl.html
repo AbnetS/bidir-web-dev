@@ -115,16 +115,16 @@
       <div class="container-fluid print-container" id="printableDiv">
          <div class="row">
             <div class="col-xs-12 " ng-if="ShowLogoOnPrintOut">
-               <img id="Logo" src="http://bidir-api-bucket.storage.googleapis.com/assets/BUUSAA_GONOFAA_MICROFINANCE_SHARE_COMPANY_28713d14d76c.png" class="img-logo-thumbnail" alt="mfi logo" width="40%" height="100%">
+               <img id="Logo" src="http://bidir-api-bucket.storage.googleapis.com/assets/BUUSAA_GONOFAA_MICROFINANCE_SHARE_COMPANY_28713d14d76c.png" class="img-logo-thumbnail" alt="mfi logo" width="20%" height="100%">
             </div>
-            <div class="col-xs-12 receipt-header text-center">
-               <h3>{{Name}}</h3>
-               <h5>
+            <div class="col-xs-12 text-center">
+               <h5>{{Name}}</h5>
+               <h6>
                   <strong>Location:</strong>{{Address.Location}}
-                  <strong>&nbsp;&nbsp; Phone Number:</strong>{{Address.Phonenumber}}</h5>
+                  <strong>&nbsp;&nbsp; Phone Number:</strong>{{Address.Phonenumber}}</h6>
             </div>
          </div>
-         <hr>
+
          <div ng-repeat="printable in printables" ng-include="printable.TemplateUrl">
             <div ng-include src="printable.TemplateUrl" onLoad="vm=printable.Data"></div>
          </div>
