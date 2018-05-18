@@ -58,6 +58,7 @@ var API = {
         ACAT:{
             ACAT:'forms',
             Crop:'crops',
+            Clients:'clients',
             CreateCrop:'crops/create',
             LoanProducts:'loanProducts',
             CreateLoanProducts:'loanProducts/create',

@@ -14,11 +14,16 @@
         vm.visibility = {showMoreClientDetail: false};
         vm.labelBasedOnStatusStyle = LoanManagementService.StyleLabelByStatus;
 
+        vm.query = {
+            search:'',
+            page:1,
+            per_page:10
+        };
+
         vm.onTabSelected = _onTabSelected;
         vm.printLaonProcess = _print;
 
         initialize();
-
 
         function _print(type) {
             console.log("type",vm.clientScreening)
@@ -52,10 +57,11 @@
 
         }
 
-
         function initialize() {
+
             var myBlockUI = blockUI.instances.get('ClientBlockUI');
             myBlockUI.start();
+
             LoanManagementService.GetClientDetail(vm.clientId)
                 .then(function(response){
                     myBlockUI.stop();
@@ -96,6 +102,21 @@
                 });
         }
 
+        function CallClientACAT() {
+
+            var myBlockUI = blockUI.instances.get('ClientACATBlockUI');
+            myBlockUI.start();
+            LoanManagementService.GetClientACAT(vm.clientId)
+                .then(function(response){
+                    myBlockUI.stop();
+                    vm.clientACATs = response.data;
+                    console.log("vm.clientACATs ",vm.clientACATs);
+                },function(error){
+                    myBlockUI.stop();
+                    console.log("error getting client acat ",error);
+                });
+        }
+
         function _onTabSelected(type) {
             console.log("tab name clicked",type);
             switch (type){
@@ -104,13 +125,12 @@
                     break;
                 case 'SCREENING':
                     CallClientScreeningAPI();
-                    console.log("tab name clicked",type);
                     break;
                 case 'LOAN_APPLICATION':
                     CallClientLoanApplicationAPI();
                     break;
                 case 'ACAT':
-                    console.log("tab name clicked",type);
+                    CallClientACAT();
                     break;
                 default:
                     console.log("tab name clicked",type);

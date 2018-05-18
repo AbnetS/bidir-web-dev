@@ -23,6 +23,9 @@
             SearchClient:_searchClient,
             GetBranches: _getBranches,
 
+            GetACATCollections: _getACATCollections,
+            GetClientACAT:_getClientACAT,
+
             StyleLabelByStatus: _styleLabelByStatus
         };
 
@@ -446,6 +449,13 @@
                     style =  'label label-inverse';
             }
             return style;
+        }
+
+        function _getACATCollections(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.ACAT,API.Methods.ACAT.Clients,parameters));
+        }
+        function _getClientACAT(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Clients,clientId));
         }
 
     }

@@ -277,12 +277,7 @@
             </uib-tab>
             <!--ACAT-->
             <uib-tab ng-click="vm.onTabSelected('ACAT')" heading="ACAT">
-
-               <div class="row" block-ui="ClientACATBlockUI">
-                  <div class="col-md-2 bg-success-dark text-left text-uppercase">
-                     <h5 class="">ACAT</h5>
-                  </div>
-               </div>
+               <div ng-include="'app/views/loan_management/client_management/acat.summary.view.html'"></div>
             </uib-tab>
          </uib-tabset>
       </div>
