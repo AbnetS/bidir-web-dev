@@ -23,6 +23,8 @@
         vm.onTabSelected = _onTabSelected;
         vm.printLaonProcess = _print;
 
+        vm.ACATGroupOnClick = _aCATGroupOnClick;
+
         initialize();
 
         function _print(type) {
@@ -135,6 +137,13 @@
                 default:
                     console.log("tab name clicked",type);
             }
+        }
+
+        function _aCATGroupOnClick(index) {
+            console.log("index",index);
+            vm.list = {
+                settingActive:index
+            };
         }
     }
 

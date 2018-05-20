@@ -551,6 +551,8 @@
                             console.log("Removed Cost group item Item.........",response);
                             callAPI();
                         },function (error) {
+                            var message = error.data.error.message;
+                            AlertService.showError("Error removing cost group item",message);
                             console.log("error when removing cost list",error);
                         });
                     }
@@ -724,9 +726,9 @@
                             console.log("group removed successfully",response.data);
                             callAPI();
                         },function (error) {
-                            console.log("error on group remove",error);
                             var message = error.data.error.message;
                             AlertService.showError("Error on removing group",message);
+                            console.log("error on group remove",error);
                         });
                     }
                 });
