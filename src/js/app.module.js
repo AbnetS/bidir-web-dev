@@ -27,33 +27,11 @@
             'app.settings',
             'app.maps',
             'app.utils',
-            'app.material',
-            'app.common',
-            'app.auth',
-            'app.manage_users',
-            'app.manage_roles',
-            'app.welcomePage',
-            'app.mfi'
+            'app.material'
         ]).run(appRun);
 
     function appRun($rootScope, AuthService, $http,$location){
-            //TODO: redirect them to an access denied state if they do not have authorization to access it.
-            console.log("angle app run");
-            $rootScope.currentUser = AuthService.GetCurrentUser();
-           
 
-        //Angular UI router state changes
-        $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
-            
-            if ($rootScope.currentUser !== null) {
-                $http.defaults.headers.common['Authorization'] = 'Bearer ' + AuthService.GetToken();
-            }
-            else{
-                // console.log("tostate",toState);
-                //Clear storage and redirect
-                $location.path('/page/login');
-            }
-        });
     }
         
 })();

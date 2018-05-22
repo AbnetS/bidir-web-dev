@@ -3,7 +3,7 @@
  */
 (function () {
     'use strict';
-    angular.module('app.core').factory('AlertService', AlertService);
+    angular.module('app.common').factory('AlertService', AlertService);
 
     AlertService.$inject = ['SweetAlert']
     function AlertService(SweetAlert) {

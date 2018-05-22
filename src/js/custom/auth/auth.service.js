@@ -1,6 +1,6 @@
 (function(angular) {
     'use strict';
-    angular.module('app.auth')
+    angular.module('app.authentication')
 
     .service('AuthService', AuthService);
 

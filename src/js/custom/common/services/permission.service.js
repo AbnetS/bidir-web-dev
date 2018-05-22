@@ -7,12 +7,12 @@
 
     'use strict';
 
-    angular.module('app.auth')
+    angular.module('app.common')
         .factory('PermissionService', PermissionService);
 
-    PermissionService.$inject = ['StorageService','$rootScope','AuthService'];
+    PermissionService.$inject = ['AuthService'];
 
-    function PermissionService(StorageService,$rootScope,AuthService) {
+    function PermissionService(AuthService) {
         var factory = {
             hasThisPermission:_hasThisPermission,
             hasThesePermissions:_hasThesePermissions,

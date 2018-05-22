@@ -7,7 +7,7 @@
     "use strict";
 
     angular
-        .module('app.auth')
+        .module('app.authentication')
         .controller('LoginFormController', LoginFormController);
 
     LoginFormController.$inject = ['AuthService', '$state',  '$rootScope',  'APP_CONSTANTS',  'blockUI', 'AlertService'];

@@ -1,7 +1,4 @@
 /**
- * Created by Yoni on 12/2/2017.
- */
-/**
  * Created by Yoni on 11/30/2017.
  */
 
