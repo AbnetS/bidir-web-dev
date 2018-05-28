@@ -7,13 +7,53 @@
 
     angular.module("app.acat").controller("CropsController", CropsController);
 
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers'];
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
 
-    function CropsController(ACATService,$mdDialog,RouteHelpers) {
+    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
         var vm = this;
         vm.addCrop = _addCrop;
         vm.editCrop = _addCrop;
-        callApi();
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+        }
+
+
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
 
        function callApi(){
            ACATService.GetCrops().then(function (response) {
