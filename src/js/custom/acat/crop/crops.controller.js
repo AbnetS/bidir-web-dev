@@ -56,7 +56,7 @@
         }
 
        function callApi(){
-           ACATService.GetCrops().then(function (response) {
+        vm.promise =   ACATService.GetCrops().then(function (response) {
                vm.crops = response.data.docs;
            });
        }

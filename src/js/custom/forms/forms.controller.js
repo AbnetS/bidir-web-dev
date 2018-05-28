@@ -11,44 +11,48 @@
     function FormsController(FormService,$state) {
         var vm = this;
         vm.forms = [];
-        vm.logPagination = _logPagination;
+        vm.paginate = _paginate;
         vm.editForm = _editForm;
-
-        vm.pageSizes = [10, 25, 50, 100, 250, 500];
-
-        vm.options = {
-            rowSelection: true,
-            multiSelect: true,
-            autoSelect: true,
-            decapitate: false,
-            largeEditDialog: false,
-            boundaryLinks: true,
-            limitSelect: true,
-            pageSelect: false
-        };
-
-        vm.request = {
-            page: 1,
-            per_page: 10,
-            Search: ""
-        };
+        vm.clearSearchText = _clearSearch;
 
         initialize();
 
 
         function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
             callApi();//fetch first page data initially
         }
 
-        function _logPagination(page, pageSize) {
-            vm.request.page = page;
-            vm.request.per_page = pageSize;
-            vm.request.Start = page - 1;
+        function _paginate (page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
             callApi();
         }
 
         function callApi() {
-            FormService.GetFormsPerPage(vm.request).then(function (response) {
+             vm.promise = FormService.GetFormsPerPage(vm.query).then(function (response) {
                 vm.forms = response.data.docs;
                 _.forEach(vm.forms,function (form) {
                     if(form.has_sections){
