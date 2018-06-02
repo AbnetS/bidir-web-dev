@@ -24,6 +24,7 @@
         vm.printLaonProcess = _print;
 
         vm.ACATGroupOnClick = _aCATGroupOnClick;
+        vm.onLoanProductClick = _onLoanProductClick;
 
         initialize();
 
@@ -145,6 +146,11 @@
             vm.list = {
                 settingActive:index + 1
             };
+        }
+        function _onLoanProductClick(loanProduct) {
+            vm.selectedLoanProduct = loanProduct;
+            console.log("vm.selectedClientACAT",vm.selectedLoanProduct );
+            vm.list = { settingActive: 10 };
         }
     }
 

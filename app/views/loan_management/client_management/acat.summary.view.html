@@ -7,6 +7,12 @@
             <a class="list-group-item" ng-click="vm.ACATGroupOnClick(acat,$index)" ng-class="{'active': (vm.list.settingActive === $index+1)}">{{acat.title}}</a>
          </div>
       </div>
+      <div class="panel b">
+         <div class="panel-heading bg-gray-light text-bold">Loan Proposal</div>
+         <div class="list-group">
+            <a class="list-group-item" ng-click="vm.onLoanProductClick(vm.clientACATs.loan_product)" ng-class="{'active': (vm.list.settingActive === 10)}">Summary</a>
+         </div>
+      </div>
    </div>
    <div class="col-md-9">
       <div ng-show="{'true': (vm.list.settingActive === $index+1)}">
@@ -171,8 +177,7 @@
          </div>
       </div>
 
-
-      <div>
+      <div ng-show="{'true': (vm.list.settingActive === $index+1)}">
          <div class="panel b text-center">
             <div class="panel-body bt">
                <div class="row">
@@ -199,6 +204,95 @@
                </div>
 
             </div>
+         </div>
+      </div>
+
+      <div ng-show="{'true': (vm.list.settingActive === 10)}">
+         <div class="panel b">
+            <div class="panel-heading bb">
+               <h4 class="panel-title">TOTAL</h4>
+            </div>
+            <div class="panel-body bt">
+               <h4 class="b0">Total</h4>
+            </div>
+            <table class="table">
+               <tbody>
+                  <tr>
+                     <td>Total Revenue</td>
+                     <td>
+                        <div class="text-right text-bold">$400</div>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>Total Cost</td>
+                     <td>
+                        <div class="text-right text-bold">$1.44</div>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>NET Income</td>
+                     <td>
+                        <div class="text-right text-bold">$5</div>
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+
+         </div>
+         <div class="panel b">
+            <div class="panel-heading bb">
+               <h4 class="panel-title">Loan Proposal Summary</h4>
+            </div>
+            <div class="panel-body bt">
+               <h4 class="b0">Loan Proposal</h4>
+            </div>
+            <table class="table">
+               <tbody>
+                  <tr>
+                     <td>Loan Requested</td>
+                     <td>
+                        <div class="text-right text-bold">$1.44</div>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>Loan Proposed</td>
+                     <td>
+                        <div class="text-right text-bold">$1.44</div>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>Loan Approved</td>
+                     <td>
+                        <div class="text-right text-bold">$5</div>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>Total Deductables</td>
+                     <td>
+                        <div class="text-right text-bold">$1.44</div>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>Total Loan Costs</td>
+                     <td>
+                        <div class="text-right text-bold">$1.44</div>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>Cash at hand</td>
+                     <td>
+                        <div class="text-right text-bold">$5</div>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>Repayable</td>
+                     <td>
+                        <div class="text-right text-bold">$5</div>
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+
          </div>
       </div>
 
