@@ -1,171 +1,168 @@
 <div class="row"  block-ui="ClientACATBlockUI">
+
     <div class="col-md-3">
         <div class="panel b" >
             <div class="panel-heading bg-gray-light text-bold">Crops</div>
             <div class="list-group"
-                 ng-repeat=" acat in vm.clientACATs.ACATs">
-                <a class="list-group-item" ng-click="vm.ACATGroupOnClick($index+1)"
+                 ng-repeat="acat in vm.clientACATs.ACATs">
+                <a class="list-group-item" ng-click="vm.ACATGroupOnClick(acat,$index)"
                    ng-class="{'active': (vm.list.settingActive === $index+1)}">{{acat.title}}</a>
             </div>
         </div>
     </div>
     <div class="col-md-9">
-        <div ng-show="settingActive == 3">
+        <div ng-show="{'true': (vm.list.settingActive === $index+1)}">
             <div class="panel b">
-                <div class="panel-heading bg-gray-lighter text-bold">Emails</div>
-                <div class="panel-body">
-                    <p>Etiam eros nibh, condimentum in auctor et, aliquam quis elit. Donec id libero eros. Ut fringilla,
-                        justo id fringilla pretium, nibh nunc suscipit mauris, et suscipit nulla nisl ac dolor. Nam
-                        egestas, leo eu gravida tincidunt, sem ipsum
-                        pellentesque quam, vel iaculis est quam et eros.</p>
-                    <p>
-                        <strong>Your email addresses</strong>
-                    </p>
-                    <p>
-                        <span class="mr">email@someaddress.com</span>
-                        <span class="label label-success">primary</span>
-                    </p>
-                    <p>
-                        <span class="mr">another.email@someaddress.com</span>
-                        <span class="label bg-gray">private</span>
-                    </p>
+                <div class="panel-heading bb">
+                    <h4 class="panel-title">{{vm.selectedClientACAT.title | uppercase}}</h4>
                 </div>
+                <!--COST-->
+                <div>
+                    <div class="panel-body bt">
+                        <h4 class="b0">Cost</h4>
+                    </div>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th class="text-center">Estimated</th>
+                            <th class="text-right">Actual</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="text-left">Inputs</td>
+                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[0].sub_sections[0].estimated_sub_total | number}}</small></td>
+                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[0].sub_sections[0].achieved_sub_total | number}}</div></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Labour Costs</td>
+                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[0].sub_sections[1].estimated_sub_total | number}}</small></td>
+                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[0].sub_sections[1].achieved_sub_total | number}}</div></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Other Costs</td>
+                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[0].sub_sections[2].estimated_sub_total | number}}</small></td>
+                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[0].sub_sections[2].achieved_sub_total | number}}</div></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left text-bold text-dark">Total</td>
+                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[0].estimated_sub_total | number}}</small></td>
+                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[0].achieved_sub_total | number}}</div></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+                <!--Revenue-->
+                <div>
+                    <div class="panel-body bt">
+                        <h4 class="b0">Revenue</h4>
+                    </div>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="text-left"></th>
+                            <th class="text-center">Estimated</th>
+                            <th class="text-right">Actual</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="text-left">Probable</td>
+                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[0].estimated_sub_total | number}}</small></td>
+                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[0].achieved_sub_total | number}}</div></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Maximum</td>
+                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[1].estimated_sub_total | number}}</small></td>
+                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[1].achieved_sub_total | number}}</div></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Minimum</td>
+                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[2].estimated_sub_total | number}}</small></td>
+                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[2].achieved_sub_total | number}}</div></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left text-bold text-dark">Total</td>
+                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].estimated_sub_total | number}}</small></td>
+                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].achieved_sub_total | number}}</div></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+                <!--Yield Consumption-->
+                <div>
+                    <div class="panel-body bt">
+                        <h4 class="b0">Yield Consumption</h4>
+                    </div>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="text-left"></th>
+                            <th class="text-center">Estimated</th>
+                            <th class="text-right">Actual</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="text-left">Own Consumption</td>
+                            <td class="text-center"><small >0</small></td>
+                            <td class="text-right"><div >0</div></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">  Seed Reserve</td>
+                            <td class="text-center"><small >0</small></td>
+                            <td class="text-right"><div >0</div></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">  For Market</td>
+                            <td class="text-center">
+                                <small >0</small>
+                            </td>
+                            <td class="text-right">
+                                <div >0</div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <div>
+            <div class="panel b text-center">
                 <div class="panel-body bt">
-                    <p>
-                        <strong>Add email address</strong>
-                    </p>
-                    <form action="">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <input class="form-control" type="email" placeholder="email@server.com"/>
-                                        <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button">Add</button>
-                                 </span>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" value=""/>Keep my email address private</label>
-                                    </div>
-                                </div>
+                    <div class="row">
+                        <div class="col-md-12 br">
+                            <label class="text-bold text-gray-darker pb-sm pt-sm">Estimated Net Cash Flow </label>
+                        </div>
+                        <!--Estimated Net Cash Flow-->
+                        <div class="col-md-12">
+                            <div ng-repeat="(key, value) in vm.selectedClientACAT.estimated.net_cash_flow" class="col-xs-4 col-md-2 br">
+                                <small class="center-block">{{key | uppercase}} </small>
+                                <strong>{{value | number}}</strong>
                             </div>
                         </div>
-                        <button class="btn btn-info" type="button">Update email</button>
-                        <p>
-                            <small class="text-muted">* Integer fermentum accumsan metus, id sagittis ipsum molestie
-                                vitae
-                            </small>
-                        </p>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div ng-show="settingActive == 4">
-            <form action="">
-                <div class="panel b">
-                    <div class="panel-heading bg-gray-lighter text-bold">Notifications</div>
-                    <div class="panel-body bb">
-                        <div class="form-group">
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" value=""/>
-                                    <strong>Disable email notifications</strong>
-                                </label>
+                        <!--Actual Net Cash Flow-->
+                        <div class="col-md-12 br">
+                            <label class="text-bold text-gray-darker pb-sm pt-sm">Actual Net Cash Flow </label>
+                        </div>
+                        <div class="col-md-12">
+                            <div ng-repeat="(key, value) in vm.selectedClientACAT.achieved.net_cash_flow" class="col-xs-4 col-md-2 br">
+                                <small class="center-block">{{key | uppercase}} </small>
+                                <strong>{{value | number}}</strong>
                             </div>
                         </div>
                     </div>
-                    <div class="panel-body">
-                        <p>
-                            <strong>Interaction</strong>
-                        </p>
-                        <div class="form-group">
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" value=""/>Alert me when someone start to follow me</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" value=""/>Alert me when someone star my work</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" value=""/>Alert me when post a new comment</label>
-                            </div>
-                        </div>
-                        <p>
-                            <strong>Marketing</strong>
-                        </p>
-                        <div class="form-group">
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" value=""/>Send me news and interesting updates</label>
-                            </div>
-                        </div>
-                        <button class="btn btn-info" type="button">Update notifications</button>
-                        <p>
-                            <small class="text-muted">Mauris sodales accumsan erat, ut dapibus erat faucibus vitae.
-                            </small>
-                        </p>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div ng-show="settingActive == 5">
-            <div class="panel b">
-                <div class="panel-heading bg-gray-lighter text-bold">Applications</div>
-                <div class="panel-body">
-                    <p>
-                        <span>You have granted access for</span>
-                        <strong>3 applications</strong>
-                        <span>to your account.</span>
-                    </p>
-                    <ul class="list-group">
-                        <li class="list-group-item clearfix">
-                            <div class="pull-left mr">
-                                <img class="img-responsive thumb48" src="app/img/dummy.png" alt="App"/>
-                            </div>
-                            <div class="pull-right">
-                                <button class="btn btn-default" type="button">
-                                    <strong>Revoke</strong>
-                                </button>
-                            </div>
-                            <p class="text-bold mb0">Application #1</p>
-                            <small>Ut turpis urna, tristique sed adipiscing nec, luctus quis leo.</small>
-                        </li>
-                        <li class="list-group-item clearfix">
-                            <div class="pull-left mr">
-                                <img class="img-responsive thumb48" src="app/img/dummy.png" alt="App"/>
-                            </div>
-                            <div class="pull-right">
-                                <button class="btn btn-default" type="button">
-                                    <strong>Revoke</strong>
-                                </button>
-                            </div>
-                            <p class="text-bold mb0">Application #2</p>
-                            <small>Ut turpis urna, tristique sed adipiscing nec, luctus quis leo.</small>
-                        </li>
-                        <li class="list-group-item clearfix">
-                            <div class="pull-left mr">
-                                <img class="img-responsive thumb48" src="app/img/dummy.png" alt="App"/>
-                            </div>
-                            <div class="pull-right">
-                                <button class="btn btn-default" type="button">
-                                    <strong>Revoke</strong>
-                                </button>
-                            </div>
-                            <p class="text-bold mb0">Application #3</p>
-                            <small>Ut turpis urna, tristique sed adipiscing nec, luctus quis leo.</small>
-                        </li>
-                    </ul>
+
                 </div>
             </div>
         </div>
+
     </div>
 </div>

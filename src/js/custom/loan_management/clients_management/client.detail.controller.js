@@ -139,10 +139,11 @@
             }
         }
 
-        function _aCATGroupOnClick(index) {
-            console.log("index",index);
+        function _aCATGroupOnClick(selectedClientACAT,index) {
+            vm.selectedClientACAT = selectedClientACAT;
+            console.log("vm.selectedClientACAT",vm.selectedClientACAT);
             vm.list = {
-                settingActive:index
+                settingActive:index + 1
             };
         }
     }
