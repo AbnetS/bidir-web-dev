@@ -186,7 +186,157 @@
 
                 template: '<ng-include src="dynamicTemplateUrl"></ng-include>'
             };
-        });
+        })
+        .directive('costList', function($timeout, $compile, $filter) {
+            return {
+                restrict: 'E',
+                replace: true,
+                scope: {
+                    costListData: '=costListData'
+                },
+                link: function($scope, element, attrs) {
+
+                    $scope.$watch(watchExpected, function(oldvalue) {
+                        $scope.costListData.estimated.total_price = $scope.costListData.estimated.value * $scope.costListData.estimated.unit_price;
+                    }, true);
+
+                    $scope.$watch(watchActual, function(oldvalue) {
+                        $scope.costListData.achieved.total_price = $scope.costListData.achieved.value * $scope.costListData.achieved.unit_price;
+                    }, true);
+
+                    function watchExpected() {
+                        return watchProperties($scope.costListData.estimated, ['cash_flow', 'total_price']);
+                    }
+
+                    function watchActual() {
+                        return watchProperties($scope.costListData.achieved, ['cash_flow', 'total_price']);
+                    }
+
+                    function watchProperties(obj, keys) {
+                        return Object.keys(obj).filter(function(key) {
+                            return keys.indexOf(key) === -1;
+                        }).reduce(function(result, key) {
+                            result[key] = obj[key];
+                            return result;
+                        }, {});
+                    }
+
+                    $scope.monthes = [{
+                        "name": "January",
+                        "short": "jan"
+                    }, {
+                        "name": "February",
+                        "short": "feb"
+                    }, {
+                        "name": "March",
+                        "short": "mar"
+                    }, {
+                        "name": "April",
+                        "short": "apr"
+                    }, {
+                        "name": "May",
+                        "short": "may"
+                    }, {
+                        "name": "June",
+                        "short": "june"
+                    }, {
+                        "name": "July",
+                        "short": "july"
+                    }, {
+                        "name": "August",
+                        "short": "aug"
+                    }, {
+                        "name": "September",
+                        "short": "sep"
+                    }, {
+                        "name": "October",
+                        "short": "oct"
+                    }, {
+                        "name": "November",
+                        "short": "nov"
+                    }, {
+                        "name": "December",
+                        "short": "dec",
+                    }];
+                },
+                templateUrl: 'app/views/common/directives/templates/cost_list.tmpl.html'
+            };
+        })
+        .directive('formWizard', formWizard);
+
+            formWizard.$inject = ['$parse'];
+            function formWizard ($parse) {
+                var directive = {
+                    link: link,
+                    controller:  function ($scope) {
+                        $scope.wizardValidate = function(formName) {
+                            if(angular.isDefined($scope[formName] )) {
+                                // Set submitted to perform validation
+                                $scope[formName].$setSubmitted(true);
+                                // return valid status of the subform
+                                return $scope[formName].$valid;
+                            }
+                        }
+                    },
+                    restrict: 'A',
+                    scope: true
+                };
+                return directive;
+
+                function link(scope, element, attrs) {
+                    var validate = $parse(attrs.validateSteps)(scope),
+                        wiz = new Wizard(attrs.steps, !!validate, element);
+                    scope.wizard = wiz.init();
+                }
+
+                function Wizard (quantity, validate, element) {
+
+                    var self = this;
+                    self.quantity = parseInt(quantity,10);
+                    self.validate = validate;
+                    self.element = element;
+
+                    self.init = function() {
+                        self.createsteps(self.quantity);
+                        self.go(1); // always start at fist step
+                        return self;
+                    };
+
+                    self.go = function(step) {
+
+                        if ( angular.isDefined(self.steps[step]) ) {
+                            if(self.validate && step !== 1) { // no need to validate when move to first state
+                                var scope = self.element.scope();
+                                if(typeof scope.wizardValidate === 'function') {
+                                    var form = $(self.element).children().children('div').eq(step - 2).children('[ng-form]');
+                                    if ( ! scope.wizardValidate(form.attr('ng-form')))
+                                        return false;
+                                }
+                            }
+
+                            self.cleanall();
+                            self.steps[step] = true;
+                        }
+                    };
+
+                    self.active = function(step) {
+                        return !!self.steps[step];
+                    };
+
+                    self.cleanall = function() {
+                        for(var i in self.steps){
+                            self.steps[i] = false;
+                        }
+                    };
+
+                    self.createsteps = function(q) {
+                        self.steps = [];
+                        for(var i = 1; i <= q; i++) self.steps[i] = false;
+                    };
+
+                }
+
+            }
 
 
 })(window.angular);

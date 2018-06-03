@@ -139,7 +139,7 @@
                 url: "/loan_processing",
                 title: "Loan Processing",
                 templateUrl:helper.basepath('loan_management/loan_processing/loan.processing.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select','moment'),
+                resolve:helper.resolveFor('md.data.table','ui.select','moment','filestyle'),
                 controller: "LoanProcessingController",
                 controllerAs: 'vm'
             })
