@@ -125,6 +125,7 @@
                 .then(function(response){
                     myBlockUI.stop();
                     vm.clientACATs = response.data;
+                    vm.selectedClientACAT = vm.clientACATs.ACATs[0];
                     console.log("vm.clientACATs ",vm.clientACATs);
                 },function(error){
                     myBlockUI.stop();
