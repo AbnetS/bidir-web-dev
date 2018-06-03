@@ -1,5 +1,12 @@
 <div class="row"  block-ui="ClientACATBlockUI">
-
+    <div class="col-lg-12">
+        <div class="pull-right">
+            <a ng-click="vm.printLaonProcess('ACAT')" class="btn btn-default hidden-print">
+                <i class="icon-printer"></i>
+            </a>
+            <span class="label label-inverse" am-time-ago="vm.clientACATs.last_modified"> Last Modified</span>
+        </div>
+    </div>
     <div class="col-md-3">
         <div class="panel b" >
             <div class="panel-heading bg-gray-light text-bold">Crops</div>

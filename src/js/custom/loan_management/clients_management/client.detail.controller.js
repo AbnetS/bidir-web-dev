@@ -29,7 +29,7 @@
         initialize();
 
         function _print(type) {
-            console.log("type",vm.clientScreening)
+            console.log("type",vm.clientScreening);
             var preview = [];
             if(type === 'SCREENING'){
                 preview = [{
@@ -43,7 +43,19 @@
                                                     vm.clientScreening.client.grandfather_name}, vm.clientScreening)
                 }];
                 PrintPreviewService.show(preview);
-            }else{
+            }else if(type === 'ACAT'){
+                preview = [{
+                    Name: "ACAT Summary",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.acat.summary.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "ACAT Summary for " +
+                    vm.clientACATs.client.first_name + " " +
+                    vm.clientACATs.client.last_name + " " +
+                    vm.clientACATs.client.grandfather_name}, vm.clientACATs)
+                }];
+                PrintPreviewService.show(preview);
+            } else{
                 preview = [{
                     Name: "Loan Application",
                     TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
