@@ -73,52 +73,51 @@
                   <div class="panel-body bt">
                      <h4 class="b0">Revenue</h4>
                   </div>
-                  <table class="table">
-                     <thead>
-                        <tr>
-                           <th class="text-left"></th>
-                           <th class="text-center">Estimated</th>
-                           <th class="text-right">Actual</th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                        <tr>
-                           <td class="text-left">Probable</td>
-                           <td class="text-center">
-                              <small>{{selectedClientACAT.sections[1].sub_sections[0].estimated_sub_total | number}}</small>
-                           </td>
-                           <td class="text-right">
-                              <div>{{selectedClientACAT.sections[1].sub_sections[0].achieved_sub_total | number}}</div>
-                           </td>
-                        </tr>
-                        <tr>
-                           <td class="text-left">Maximum</td>
-                           <td class="text-center">
-                              <small>{{selectedClientACAT.sections[1].sub_sections[1].estimated_sub_total | number}}</small>
-                           </td>
-                           <td class="text-right">
-                              <div>{{selectedClientACAT.sections[1].sub_sections[1].achieved_sub_total | number}}</div>
-                           </td>
-                        </tr>
-                        <tr>
-                           <td class="text-left">Minimum</td>
-                           <td class="text-center">
-                              <small>{{selectedClientACAT.sections[1].sub_sections[2].estimated_sub_total | number}}</small>
-                           </td>
-                           <td class="text-right">
-                              <div>{{selectedClientACAT.sections[1].sub_sections[2].achieved_sub_total | number}}</div>
-                           </td>
-                        </tr>
-                        <tr>
-                           <td class="text-left text-bold text-dark">Total</td>
-                           <td class="text-center">
-                              <small>{{selectedClientACAT.sections[1].estimated_sub_total | number}}</small>
-                           </td>
-                           <td class="text-right">
-                              <div>{{selectedClientACAT.sections[1].achieved_sub_total | number}}</div>
-                           </td>
-                        </tr>
-                     </tbody>
+                  <thead>
+                     <tr>
+                        <th class="text-left"></th>
+                        <th class="text-center">Estimated</th>
+                        <th class="text-right">Actual</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td class="text-left">Probable</td>
+                        <td class="text-center">
+                           <small>{{selectedClientACAT.sections[1].sub_sections[0].estimated_sub_total | number}}</small>
+                        </td>
+                        <td class="text-right">
+                           <div>{{selectedClientACAT.sections[1].sub_sections[0].achieved_sub_total | number}}</div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="text-left">Maximum</td>
+                        <td class="text-center">
+                           <small>{{selectedClientACAT.sections[1].sub_sections[1].estimated_sub_total | number}}</small>
+                        </td>
+                        <td class="text-right">
+                           <div>{{selectedClientACAT.sections[1].sub_sections[1].achieved_sub_total | number}}</div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="text-left">Minimum</td>
+                        <td class="text-center">
+                           <small>{{selectedClientACAT.sections[1].sub_sections[2].estimated_sub_total | number}}</small>
+                        </td>
+                        <td class="text-right">
+                           <div>{{selectedClientACAT.sections[1].sub_sections[2].achieved_sub_total | number}}</div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="text-left text-bold text-dark">Total</td>
+                        <td class="text-center">
+                           <small>{{selectedClientACAT.sections[1].estimated_sub_total | number}}</small>
+                        </td>
+                        <td class="text-right">
+                           <div>{{selectedClientACAT.sections[1].achieved_sub_total | number}}</div>
+                        </td>
+                     </tr>
+                  </tbody>
                   </table>
 
                </div>
@@ -139,28 +138,28 @@
                         <tr>
                            <td class="text-left">Own Consumption</td>
                            <td class="text-center">
-                              <small>0</small>
+                              <small>{{selectedClientACAT.sections[1].sub_sections[0].yield_consumption.estimated.own_consumption | number}}</small>
                            </td>
                            <td class="text-right">
-                              <div>0</div>
+                              <div>{{selectedClientACAT.sections[1].sub_sections[0].yield_consumption.achieved.own_consumption | number}}</div>
                            </td>
                         </tr>
                         <tr>
                            <td class="text-left">Seed Reserve</td>
                            <td class="text-center">
-                              <small>0</small>
+                              <small>{{selectedClientACAT.sections[1].sub_sections[0].yield_consumption.estimated.seed_reserve | number}}</small>
                            </td>
                            <td class="text-right">
-                              <div>0</div>
+                              <div>{{selectedClientACAT.sections[1].sub_sections[0].yield_consumption.achieved.seed_reserve | number}}</div>
                            </td>
                         </tr>
                         <tr>
                            <td class="text-left">For Market</td>
                            <td class="text-center">
-                              <small>0</small>
+                              <small>{{selectedClientACAT.sections[1].sub_sections[0].yield_consumption.estimated.for_market | number}}</small>
                            </td>
                            <td class="text-right">
-                              <div>0</div>
+                              <div>{{selectedClientACAT.sections[1].sub_sections[0].yield_consumption.achieved.for_market | number}}</div>
                            </td>
                         </tr>
                      </tbody>

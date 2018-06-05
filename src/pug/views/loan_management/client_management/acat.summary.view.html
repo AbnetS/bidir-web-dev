@@ -97,11 +97,6 @@
                             <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[2].estimated_sub_total | number}}</small></td>
                             <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[2].achieved_sub_total | number}}</div></td>
                         </tr>
-                        <tr>
-                            <td class="text-left text-bold text-dark">Total</td>
-                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].estimated_sub_total | number}}</small></td>
-                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].achieved_sub_total | number}}</div></td>
-                        </tr>
                         </tbody>
                     </table>
 
@@ -122,22 +117,18 @@
                         <tbody>
                         <tr>
                             <td class="text-left">Own Consumption</td>
-                            <td class="text-center"><small >0</small></td>
-                            <td class="text-right"><div >0</div></td>
+                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.estimated.own_consumption | number}}</small></td>
+                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.achieved.own_consumption | number}}</div></td>
                         </tr>
                         <tr>
                             <td class="text-left">  Seed Reserve</td>
-                            <td class="text-center"><small >0</small></td>
-                            <td class="text-right"><div >0</div></td>
+                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.estimated.seed_reserve | number}}</small></td>
+                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.achieved.seed_reserve | number}}</div></td>
                         </tr>
                         <tr>
                             <td class="text-left">  For Market</td>
-                            <td class="text-center">
-                                <small >0</small>
-                            </td>
-                            <td class="text-right">
-                                <div >0</div>
-                            </td>
+                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.estimated.for_market | number}}</small></td>
+                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.achieved.for_market | number}}</div></td>
                         </tr>
                         </tbody>
                     </table>
@@ -149,6 +140,41 @@
 
         <div ng-show="{'true': (vm.list.settingActive === $index+1)}">
             <div class="panel b text-center">
+
+                <div>
+                    <div class="panel-body bt">
+                        <h4 class="b0">Revenue</h4>
+                    </div>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="text-left"></th>
+                            <th class="text-center">Estimated</th>
+                            <th class="text-right">Actual</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="text-left">Probable</td>
+                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[0].estimated_sub_total | number}}</small></td>
+                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[0].achieved_sub_total | number}}</div></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Maximum</td>
+                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[1].estimated_sub_total | number}}</small></td>
+                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[1].achieved_sub_total | number}}</div></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Minimum</td>
+                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[2].estimated_sub_total | number}}</small></td>
+                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[2].achieved_sub_total | number}}</div></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                
                 <div class="panel-body bt">
                     <div class="row">
                         <div class="col-md-12 br">
@@ -165,6 +191,7 @@
                         <div class="col-md-12 br">
                             <label class="text-bold text-gray-darker pb-sm pt-sm">Actual Net Cash Flow </label>
                         </div>
+
                         <div class="col-md-12">
                             <div ng-repeat="(key, value) in vm.selectedClientACAT.achieved.net_cash_flow" class="col-xs-4 col-md-2 br">
                                 <small class="center-block">{{key | uppercase}} </small>
@@ -172,7 +199,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -190,19 +216,19 @@
                     <tr>
                         <td>Total Revenue</td>
                         <td>
-                            <div class="text-right text-bold">$400</div>
+                            <div class="text-right text-bold">{{vm.clientACATs.estimated.total_revenue | number}}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>Total Cost</td>
                         <td>
-                            <div class="text-right text-bold">$1.44</div>
+                            <div class="text-right text-bold"> {{vm.clientACATs.estimated.total_cost | number}} </div>
                         </td>
                     </tr>
                     <tr>
                         <td>NET Income</td>
                         <td>
-                            <div class="text-right text-bold">$5</div>
+                            <div class="text-right text-bold">{{vm.clientACATs.estimated.net_income | number}}</div>
                         </td>
                     </tr>
                     </tbody>
