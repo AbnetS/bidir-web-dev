@@ -9,24 +9,28 @@
     </div>
     <div class="col-md-3">
         <div class="panel b" >
-            <div class="panel-heading bg-gray-light text-bold">Crops</div>
-            <div class="list-group"
-                 ng-repeat="acat in vm.clientACATs.ACATs">
-                <a class="list-group-item" ng-click="vm.ACATGroupOnClick(acat,$index)"
-                   ng-class="{'active': (vm.list.settingActive === $index+1)}">{{acat.title}}</a>
-            </div>
-        </div>
-        <div class="panel b" >
-            <div class="panel-heading bg-gray-light text-bold">Loan Proposal </div>
+            <div class="panel-heading  text-bold">Crops</div>
             <div class="list-group">
-                <a class="list-group-item" ng-click="vm.onLoanProductClick(vm.clientACATs.loan_product)"
-                   ng-class="{'active': (vm.list.settingActive === 10)}">Summary</a>
+                <a class="list-group-item"
+                            ng-repeat="acat in vm.clientACATs.ACATs"
+                            ng-click="vm.ACATGroupOnClick(acat,$index)"
+                            ng-class="{'active': (acat === vm.selectedClientACAT && vm.visibility.showCropPanel)}">
+                    <span class="circle circle-inverse mr"></span>
+                    <span>{{acat.title}}</span>
+                </a>
+            </div>
+            <div class="panel-heading text-bold">Loan Proposal </div>
+            <div class="list-group">
+                <a class="list-group-item" ng-click="vm.onLoanProposalClick(vm.clientACATs.loan_product)"
+                   ng-class="{'active': (vm.visibility.showSummaryPanel)}">
+                    <span class="circle circle-inverse mr"></span>
+                    <span>Summary</span></a>
             </div>
         </div>
     </div>
     <div class="col-md-9">
-        <div ng-show="{'true': (vm.list.settingActive === $index+1)}">
-            <div class="panel b">
+        <div>
+            <div class="panel b" ng-if="vm.selectedClientACAT && vm.visibility.showCropPanel && !vm.visibility.showSummaryPanel">
                 <div class="panel-heading bb">
                     <h4 class="panel-title">{{vm.selectedClientACAT.title | uppercase}}</h4>
                 </div>
@@ -136,45 +140,17 @@
                 </div>
 
             </div>
+            <div  ng-if="!vm.visibility.showCropPanel && !vm.visibility.showSummaryPanel">
+                <h4 class="centerPageText">
+                    PLEASE! <strong>SELECT CROP FROM THE LEFT SIDE</strong>
+                    <a><i class="fa fa-arrow-left"></i></a>
+                </h4>
+            </div>
         </div>
 
-        <div ng-show="{'true': (vm.list.settingActive === $index+1)}">
+        <div ng-show="vm.selectedClientACAT && vm.visibility.showCropPanel && !vm.visibility.showSummaryPanel">
             <div class="panel b text-center">
 
-                <div>
-                    <div class="panel-body bt">
-                        <h4 class="b0">Revenue</h4>
-                    </div>
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th class="text-left"></th>
-                            <th class="text-center">Estimated</th>
-                            <th class="text-right">Actual</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td class="text-left">Probable</td>
-                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[0].estimated_sub_total | number}}</small></td>
-                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[0].achieved_sub_total | number}}</div></td>
-                        </tr>
-                        <tr>
-                            <td class="text-left">Maximum</td>
-                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[1].estimated_sub_total | number}}</small></td>
-                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[1].achieved_sub_total | number}}</div></td>
-                        </tr>
-                        <tr>
-                            <td class="text-left">Minimum</td>
-                            <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[2].estimated_sub_total | number}}</small></td>
-                            <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[2].achieved_sub_total | number}}</div></td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                </div>
-
-                
                 <div class="panel-body bt">
                     <div class="row">
                         <div class="col-md-12 br">
@@ -203,7 +179,8 @@
             </div>
         </div>
 
-        <div ng-show="{'true': (vm.list.settingActive === 10)}">
+        <div ng-show="vm.visibility.showSummaryPanel && !vm.visibility.showCropPanel">
+            <!--TOTAL-->
             <div class="panel b">
                 <div class="panel-heading bb">
                     <h4 class="panel-title">TOTAL</h4>
@@ -235,6 +212,7 @@
                 </table>
 
             </div>
+            <!--Loan Proposal Summary-->
             <div class="panel b">
                 <div class="panel-heading bb">
                     <h4 class="panel-title">Loan Proposal Summary</h4>
@@ -247,43 +225,43 @@
                     <tr>
                         <td>Loan Requested</td>
                         <td>
-                            <div class="text-right text-bold">$1.44</div>
+                            <div class="text-right text-bold">0.00</div>
                         </td>
                     </tr>
                     <tr>
                         <td>Loan Proposed</td>
                         <td>
-                            <div class="text-right text-bold">$1.44</div>
+                            <div class="text-right text-bold">0.00</div>
                         </td>
                     </tr>
                     <tr>
                         <td>Loan Approved</td>
                         <td>
-                            <div class="text-right text-bold">$5</div>
+                            <div class="text-right text-bold">0.00</div>
                         </td>
                     </tr>
                     <tr>
-                        <td>Total Deductables</td>
+                        <td>Total Deductibles</td>
                         <td>
-                            <div class="text-right text-bold">$1.44</div>
+                            <div class="text-right text-bold">0.00</div>
                         </td>
                     </tr>
                     <tr>
                         <td>Total Loan Costs</td>
                         <td>
-                            <div class="text-right text-bold">$1.44</div>
+                            <div class="text-right text-bold">0.00</div>
                         </td>
                     </tr>
                     <tr>
                         <td>Cash at hand</td>
                         <td>
-                            <div class="text-right text-bold">$5</div>
+                            <div class="text-right text-bold">0.00</div>
                         </td>
                     </tr>
                     <tr>
                         <td>Repayable</td>
                         <td>
-                            <div class="text-right text-bold">$5</div>
+                            <div class="text-right text-bold">0.00</div>
                         </td>
                     </tr>
                     </tbody>

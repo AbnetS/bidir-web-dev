@@ -57,6 +57,7 @@
                         <div class="panel-body bt">
                             <h4 class="b0">Revenue</h4>
                         </div>
+                        <table class="table">
                             <thead>
                             <tr>
                                 <th class="text-left"></th>
@@ -79,11 +80,6 @@
                                 <td class="text-left">Minimum</td>
                                 <td class="text-center"><small >{{selectedClientACAT.sections[1].sub_sections[2].estimated_sub_total | number}}</small></td>
                                 <td class="text-right"><div >{{selectedClientACAT.sections[1].sub_sections[2].achieved_sub_total | number}}</div></td>
-                            </tr>
-                            <tr>
-                                <td class="text-left text-bold text-dark">Total</td>
-                                <td class="text-center"><small >{{selectedClientACAT.sections[1].estimated_sub_total | number}}</small></td>
-                                <td class="text-right"><div >{{selectedClientACAT.sections[1].achieved_sub_total | number}}</div></td>
                             </tr>
                             </tbody>
                         </table>
@@ -158,6 +154,7 @@
             </div>
 
             <div>
+                <!--TOTAL-->
                 <div class="panel panel-success b">
                     <div class="panel-heading bb">
                         <h4 class="panel-title">TOTAL</h4>
@@ -189,6 +186,7 @@
                     </table>
 
                 </div>
+                <!--Loan Proposal Summary-->
                 <div class="panel panel-success b">
                     <div class="panel-heading bb">
                         <h4 class="panel-title">Loan Proposal Summary</h4>
@@ -201,43 +199,43 @@
                         <tr>
                             <td>Loan Requested</td>
                             <td>
-                                <div class="text-right text-bold">$1.44</div>
+                                <div class="text-right text-bold">0.00</div>
                             </td>
                         </tr>
                         <tr>
                             <td>Loan Proposed</td>
                             <td>
-                                <div class="text-right text-bold">$1.44</div>
+                                <div class="text-right text-bold">0.00</div>
                             </td>
                         </tr>
                         <tr>
                             <td>Loan Approved</td>
                             <td>
-                                <div class="text-right text-bold">$5</div>
+                                <div class="text-right text-bold">0.00</div>
                             </td>
                         </tr>
                         <tr>
-                            <td>Total Deductables</td>
+                            <td>Total Deductibles</td>
                             <td>
-                                <div class="text-right text-bold">$1.44</div>
+                                <div class="text-right text-bold">0.00</div>
                             </td>
                         </tr>
                         <tr>
                             <td>Total Loan Costs</td>
                             <td>
-                                <div class="text-right text-bold">$1.44</div>
+                                <div class="text-right text-bold">0.00</div>
                             </td>
                         </tr>
                         <tr>
                             <td>Cash at hand</td>
                             <td>
-                                <div class="text-right text-bold">$5</div>
+                                <div class="text-right text-bold">0.00</div>
                             </td>
                         </tr>
                         <tr>
                             <td>Repayable</td>
                             <td>
-                                <div class="text-right text-bold">$5</div>
+                                <div class="text-right text-bold">0.00</div>
                             </td>
                         </tr>
                         </tbody>

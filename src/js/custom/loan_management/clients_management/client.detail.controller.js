@@ -13,7 +13,10 @@
         vm.clientId =  $stateParams.id;
         vm.visibility = {showMoreClientDetail: false};
         vm.labelBasedOnStatusStyle = LoanManagementService.StyleLabelByStatus;
-
+        vm.visibility = {
+            showCropPanel:false,
+            showSummaryPanel:false
+        };
         vm.query = {
             search:'',
             page:1,
@@ -24,7 +27,7 @@
         vm.printLaonProcess = _print;
 
         vm.ACATGroupOnClick = _aCATGroupOnClick;
-        vm.onLoanProductClick = _onLoanProductClick;
+        vm.onLoanProposalClick = _onLoanProposalClick;
 
         initialize();
 
@@ -73,6 +76,7 @@
         }
 
         function initialize() {
+
 
             var myBlockUI = blockUI.instances.get('ClientBlockUI');
             myBlockUI.start();
@@ -125,7 +129,6 @@
                 .then(function(response){
                     myBlockUI.stop();
                     vm.clientACATs = response.data;
-                    vm.selectedClientACAT = vm.clientACATs.ACATs[0];
                     console.log("vm.clientACATs ",vm.clientACATs);
                 },function(error){
                     myBlockUI.stop();
@@ -155,15 +158,23 @@
 
         function _aCATGroupOnClick(selectedClientACAT,index) {
             vm.selectedClientACAT = selectedClientACAT;
+            ShowCropPanel();
             console.log("vm.selectedClientACAT",vm.selectedClientACAT);
-            vm.list = {
-                settingActive:index + 1
-            };
         }
-        function _onLoanProductClick(loanProduct) {
+        function _onLoanProposalClick(loanProduct) {
+            ShowSummaryPanel();
             vm.selectedLoanProduct = loanProduct;
             console.log("vm.selectedClientACAT",vm.selectedLoanProduct );
             vm.list = { settingActive: 10 };
+        }
+
+        function ShowCropPanel() {
+            vm.visibility.showCropPanel = true;
+            vm.visibility.showSummaryPanel = false;
+        }
+        function ShowSummaryPanel() {
+            vm.visibility.showCropPanel = false;
+            vm.visibility.showSummaryPanel = true;
         }
     }
 
