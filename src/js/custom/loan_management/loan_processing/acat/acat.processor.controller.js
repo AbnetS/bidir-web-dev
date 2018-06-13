@@ -44,8 +44,17 @@
                 page:1,
                 per_page:10
             };
-
+            fetchCropsList();
             callAPI();
+        }
+
+        function fetchCropsList() {
+            LoanManagementService.GetCrops().then(
+                function (response) {
+                    console.log("response.data",response);
+                    vm.crops = response.data.docs;
+                }
+            )
         }
 
         function callAPI() {
@@ -60,10 +69,10 @@
 
 
         function _onClientACATClick(acat, ev) {
-            vm.visibility.showClientACAT = true;
-
+            vm.visibility.showClientACAT = true;//show client acat
             vm.acats = acat;
-            vm.acat = vm.acats[0].ACATs[0].sections[0];
+            console.log("loan product",acat);
+            vm.acat = vm.acats.ACATs[0].sections[0];
             vm.selectedSubsection = vm.acat.sub_sections[0].sub_sections[1];
         }
 

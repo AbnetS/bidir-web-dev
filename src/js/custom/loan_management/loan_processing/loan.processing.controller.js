@@ -87,9 +87,9 @@
                 case 'LOAN_APPLICATION':
                     callLoanApplicationAPI();
                     break;
-                case 'ACAT':
-                    // console.log("tab name clicked",type);
-                    vm.visibility.showACATDetail = true;
+                case 'ACAT_PROCESSOR':
+                    callACATProcessor();
+
                     break;
                 default:
                     console.log("tab name clicked",type);
@@ -129,6 +129,9 @@
             switch(type){
                 case 'SCREENING':
                     vm.visibility.showScreeningDetail = false;
+                    break;
+                case 'ACAT_PROCESSOR':
+                    vm.visibility.showClientACAT=false;
                     break;
             }
 
@@ -181,6 +184,9 @@
                 vm.query.total_docs_count = response.data.total_docs_count;
                 console.log("screenings info",vm.screenings);
             });
+        }
+        function callACATProcessor() {
+            vm.visibility.showACATDetail = true;
         }
 
 
