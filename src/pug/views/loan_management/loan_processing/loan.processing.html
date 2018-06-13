@@ -239,7 +239,7 @@
         </uib-tab>
         <uib-tab ng-click="vm.onTabSelected('ACAT')" heading="ACAT">
             <div class="row">
-                <div class="col-lg-12">
+                <div ng-if="vm.visibility.showACATDetail" class="col-lg-12">
                     <acat-processor></acat-processor>
                 </div>
             </div>

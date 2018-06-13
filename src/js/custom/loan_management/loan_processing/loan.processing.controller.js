@@ -80,18 +80,16 @@
             console.log("tab name clicked",type);
             switch (type){
                 case 'CLIENT':
-                    console.log("tab name clicked",type);
                     break;
                 case 'SCREENING':
                     callScreeningAPI();
-                    console.log("tab name clicked",type);
                     break;
                 case 'LOAN_APPLICATION':
-
                     callLoanApplicationAPI();
                     break;
                 case 'ACAT':
-                    console.log("tab name clicked",type);
+                    // console.log("tab name clicked",type);
+                    vm.visibility.showACATDetail = true;
                     break;
                 default:
                     console.log("tab name clicked",type);

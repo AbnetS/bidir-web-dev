@@ -1,243 +1,331 @@
-<!-- START panel-->
-<div class="panel panel-default">
-    <!--<div class="panel-heading">Form Wizard No indicator (no validation)</div>-->
-    <div class="panel-body">
-        <form form-wizard="" action="/" method="POST" steps="5">
-            <div class="form-wizard">
-                <!-- START Wizard Step inputs-->
-                <div ng-show="wizard.active(1)">
-                    <legend>1. Preliminary Information</legend>
-                    <fieldset>
-                        <div class="form-group clearfix">
-                            <label class="col-md-2 control-label">Loan Product</label>
-                            <div class="col-md-10 controls">
-                                <ui-select ng-model="vm.client.selected_acat"
-                                           theme="bootstrap"
-                                           title="Choose Loan Product">
-                                    <ui-select-match placeholder="Select loan product from the list...">
-                                        {{$select.selected.name}}
-                                    </ui-select-match>
-                                    <ui-select-choices repeat="ftype in vm.formTypes | filter: $select.search">
-                                        <span ng-bind-html="ftype.name | highlight: $select.search"></span>
-                                    </ui-select-choices>
-                                </ui-select>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="form-group clearfix">
-                            <label class="col-md-2 controls pt-lg">Type of Crops</label>
-                            <div class="col-md-10 controls pt-sm">
-                                <div layout="row" layout-wrap flex>
-                                    <div flex="50" ng-repeat="option in vm.cropOptions">
-                                        <md-checkbox ng-checked="exists(option, questionData.values)"
-                                                     ng-click="toggle(option, questionData.values)">
-                                            {{ option }}
-                                        </md-checkbox>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+<!-- START Table List of CLIENT ACAT-->
+<div ng-if="!vm.visibility.showClientACAT" class="row">
+        <div class="col-lg-12">
 
-                    </fieldset>
-                    <ul class="pager">
-                        <li class="next"><a href="" ng-click="wizard.go(2)">Next<span>&rarr;</span></a>
-                        </li>
-                    </ul>
+            <md-toolbar class="md-table-toolbar md-default" ng-show="vm.filter.show">
+                <div class="md-toolbar-tools">
+                    <md-button class="md-icon-button" ng-click="vm.search('ACAT_PROCESSOR')">
+                        <i class="fa fa-search"></i>
+                    </md-button>
+
+                    <!-- Input Text -->
+                    <md-input-container flex>
+                        <input id="search-input" type="text" ng-model="vm.query.search"/>
+                    </md-input-container>
+
+                    <md-button class="md-icon-button" ng-click="vm.clearSearchText()">
+                        <i class="fa fa-times"></i>
+                    </md-button>
                 </div>
-                <!-- END Wizard Step inputs-->
+            </md-toolbar>
 
-                <!-- START Wizard Step inputs-->
-                <div ng-show="wizard.active(2)">
-                    <legend>2. Preliminary Information</legend>
-                    <fieldset>
-                        <div class="table-responsive clearfix">
-                            <table class="table">
-                                <thead>
-                                <tr class="text-center">
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th class="text-center">Access to non financial resources</th>
-                                    <th class="text-center">GPS Location</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr class="text-center" ng-repeat="crop in vm.cropOptions">
-                                    <td> <small>{{crop}}</small> </td>
-                                    <td>
-                                        <ui-select ng-model="vm.client.selected_acat"
-                                                   theme="bootstrap"
-                                                   title="Choose Loan Product">
-                                            <ui-select-match placeholder="Select loan product from the list...">
-                                                {{$select.selected.name}}
-                                            </ui-select-match>
-                                            <ui-select-choices repeat="ftype in vm.formTypes | filter: $select.search">
-                                                <span ng-bind-html="ftype.name | highlight: $select.search"></span>
-                                            </ui-select-choices>
-                                        </ui-select>
-                                    </td>
-                                    <td>
-                                        <input class=" form-control" type="text" name="cropping_area" placeholder="cropping area per ha.." />
-                                    </td>
-                                    <td >
-                                        <md-checkbox ng-model="isChecked" aria-label="Finished?">
-                                           Yes ?
-                                        </md-checkbox>
-                                    </td>
-                                    <td>
-                                        <small> Tap to view locations </small>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+            <md-toolbar class="md-table-toolbar md-default" ng-hide="vm.filter.show">
+                <div class="md-toolbar-tools">
+                    <h2 class="md-title">Clients ACAT</h2>
+
+                    <div flex="" class="flex"></div>
+                    <button class="md-icon-button md-button md-ink-ripple" type="button"
+                            ng-click="vm.filter.show = true">
+                        <i class="fa fa-filter"></i>
+                        <div class="md-ripple-container"></div>
+                    </button>
+                </div>
+            </md-toolbar>
 
 
-                    </fieldset>
-                    <ul class="pager">
-                        <li class="previous">
-                            <a href="" ng-click="wizard.go(1)">
-                                <span>&larr; Previous</span>
+            <md-table-container>
+                <table md-table md-progress="vm.acatCollectionPromise"
+                       class="table-hover">
+                    <thead md-head class="text-gray-dark">
+                    <tr md-row>
+                        <th md-column><span> No</span></th>
+                        <th md-column><span>Full Name</span></th>
+                        <th md-column><span>Gender</span></th>
+                        <th md-column><span>DOB</span></th>
+                        <th md-column><span>Civil Status</span></th>
+                        <th md-column><span>Branch</span></th>
+                        <th md-column><span>Created Date</span></th>
+                        <th md-column>Action</th>
+                    </tr>
+
+                    <tbody md-body>
+                    <tr md-row ng-repeat="acat in vm.acatCollection">
+
+                        <td md-cell>{{vm.query.per_page* (vm.query.page - 1) +  $index + 1}}</td>
+                        <td md-cell>
+                            {{ acat.client.first_name }} {{ acat.client.last_name }} {{acat.client.grandfather_name}}
+                        </td>
+                        <td md-cell >{{acat.client.gender}}</td>
+                        <td md-cell > {{acat.client.date_of_birth | date}}</td>
+                        <td md-cell>{{acat.client.civil_status}}</td>
+                        <td md-cell>{{acat.branch.name}}</td>
+                        <td md-cell> <span am-time-ago="acat.date_created"></span></td>
+                        <td md-cell>
+                            <a ng-click="vm.onClientACATClick(acat,$event)">
+                                <i class="fa fa-eye"></i>
                             </a>
-                        </li>
-                        <li class="next"><a href="" ng-click="wizard.go(3)">Next<span>&rarr;</span></a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- END Wizard Step inputs-->
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </md-table-container>
 
-                <!-- START Wizard Step inputs-->
-                <div ng-show="wizard.active(3)">
-                    <legend>3. Cost Estimation </legend>
-                    <fieldset>
-                        <div class="row">
-                            <div class="col-sm-2 background-white">
-                                <md-list flex>
-                                    <div ng-repeat="sub_section in vm.acat.sub_sections">
-                                        <md-list-item class="border-primary" ng-click="vm.onSubsectionClick(sub_section)">
-                                            <span flex>{{sub_section.title}}</span>
-                                            <i class="fa fa-angle-right" ng-show="sub_section.sub_sections.length > 0 && !vm.toggle[sub_section._id]"></i>
-                                            <i class="fa fa-angle-down" ng-show="sub_section.sub_sections.length > 0 && vm.toggle[sub_section._id]"></i>
-                                        </md-list-item>
-                                        <md-list-item class="m-xs" ng-repeat="sb in sub_section.sub_sections" ng-click="vm.onSubsectionClick(sb)" ng-show="vm.toggle[sub_section._id]">
-                                            <span flex-offset="5">{{sb.title}}</span>
-                                        </md-list-item>
-                                    </div>
+            <md-table-pagination md-limit="vm.query.per_page"
+                                 md-limit-options="vm.pageSizes"
+                                 md-page="vm.query.page"
+                                 md-total="{{vm.query.total_docs_count}}"
+                                 md-page-select="vm.options.pageSelect"
+                                 md-boundary-links="vm.options.boundaryLinks"
+                                 md-on-paginate="vm.paginate"></md-table-pagination>
 
-                                </md-list>
-                            </div>
-                            <div class="col-sm-10 pr0 background-white">
-                                <div class="row mr0">
-                                    <uib-accordion close-others="true">
-                                        <div uib-accordion-group="uib-accordion-group" ng-repeat-start="costlist in vm.selectedSubsection.cost_list.linear" ng-if="$first" is-open="accordionToggle[costlist._id]" ng-init="accordionToggle[costlist._id] = true" panel-class="b">
-                                            <uib-accordion-heading>{{$index + 1}}. {{costlist.item}}</uib-accordion-heading>
-                                            <div>
-                                                <cost-list cost-list-data="costlist"></cost-list>
-                                            </div>
-                                        </div>
-                                        <div uib-accordion-group="uib-accordion-group" ng-repeat-end is-open="accordionToggle[costlist._id]" ng-if="!$first" panel-class="b">
-                                            <uib-accordion-heading>{{$index + 1}}. {{costlist.item}}</uib-accordion-heading>
-                                            <div>
-                                                <cost-list cost-list-data="costlist"></cost-list>
-                                            </div>
-                                        </div>
-                                    </uib-accordion>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="panel b text-center">
-                            <div class="panel-body bt">
-                                <div class="row row-table">
-                                    <div class="col-xs-4">
-                                        <h3 class="m0">400</h3>
-                                        <p class="m0">
-                                            <span>Subtotal Fertilizers</span>
-                                        </p>
-                                    </div>
-                                    <div class="col-xs-8 br">
-                                        <h3 class="m0">{{vm.acat.estimated_sub_total| number}}</h3>
-                                        <p class="m0">Total Cost(TC)</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="panel b text-center">
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-md-1 br">
-                                        <label class="text-bold text-gray-darker">Net Cash Flow</label>
-                                    </div>
-                                    <!--MONTHS-->
-                                    <div class="col-md-11">
-                                        <div ng-repeat="(key, value) in vm.acat.estimated_cash_flow" class="col-xs-1 br">
-                                            <small class="center-block">{{key | uppercase}} </small>
-                                            <strong>{{value}}</strong>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </fieldset>
-                    <ul class="pager">
-                        <li class="previous">
-                            <a href="" ng-click="wizard.go(2)">
-                                <span>&larr; Previous</span>
-                            </a>
-                        </li>
-                        <li class="next"><a href="" ng-click="wizard.go(4)">Next<span>&rarr;</span></a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- END Wizard Step inputs-->
-
-                <!-- START Wizard Step inputs-->
-                <div ng-show="wizard.active(4)">
-                    <legend>4. Estimated Yield</legend>
-                    <fieldset>
-                        <h1> All the content here are related to Revenue</h1>
-                    </fieldset>
-
-                    <ul class="pager">
-                        <li class="previous">
-                            <a href="" ng-click="wizard.go(3)">
-                                <span>&larr; Previous</span>
-                            </a>
-                        </li>
-                        <li class="next"><a href="" ng-click="wizard.go(5)">Next<span>&rarr;</span></a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- END Wizard Step inputs-->
-
-                <!-- START Wizard Step inputs-->
-                <div ng-show="wizard.active(5)">
-                    <legend>  5.  Loan Proposal  </legend>
-                    <fieldset>
-                        <div class="form-group">
-                            <h1> Summary Loan Proposal</h1>
-                        </div>
-
-                        <div  class="form-group pull-right">
-                            <a class="btn btn-sm  btn-default" ng-click="save()"> <i class="fa fa-save"> </i> Save</a>
-                            <a class="btn btn-sm btn-info" ng-click="save()"><i class="fa fa-save"> </i> Submit</a>
-                            <a class="btn btn-sm btn-success" ng-click="save()"> <i class="fa fa-save"> </i> Approve</a>
-                        </div>
-                    </fieldset>
-                    <ul class="pager">
-                        <li class="previous">
-                            <a href="" ng-click="wizard.go(3)">
-                                <span>&larr; Previous</span>
-                            </a>
-                        </li>
-
-                    </ul>
-                </div>
-                <!-- END Wizard Step inputs-->
-            </div>
-        </form>
+        </div>
     </div>
+
+<!-- START Client ACAT-->
+<div ng-if="vm.visibility.showClientACAT" class="row">
+    <div class="panel-heading">
+        <small>
+            <a ng-click="vm.visibility.showClientACAT=false"><i class="fa fa-arrow-left"></i> Back </a>
+        </small>
+        <span class="pull-right">
+            {{vm.acats.client.first_name}}
+        </span>
+    </div>
+    <form form-wizard="" action="/" method="POST" steps="5">
+        <div class="form-wizard">
+            <!-- START Wizard Step inputs-->
+            <div ng-show="wizard.active(1)">
+                <legend>1. Preliminary Information</legend>
+                <fieldset>
+                    <div class="form-group clearfix">
+                        <label class="col-md-2 control-label">Loan Product</label>
+                        <div class="col-md-10 controls">
+                            <ui-select ng-model="vm.client.selected_acat"
+                                       theme="bootstrap"
+                                       title="Choose Loan Product">
+                                <ui-select-match placeholder="Select loan product from the list...">
+                                    {{$select.selected.name}}
+                                </ui-select-match>
+                                <ui-select-choices repeat="ftype in vm.formTypes | filter: $select.search">
+                                    <span ng-bind-html="ftype.name | highlight: $select.search"></span>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group clearfix">
+                        <label class="col-md-2 controls pt-lg">Type of Crops</label>
+                        <div class="col-md-10 controls pt-sm">
+                            <div layout="row" layout-wrap flex>
+                                <div flex="50" ng-repeat="option in vm.cropOptions">
+                                    <md-checkbox ng-checked="exists(option, questionData.values)"
+                                                 ng-click="toggle(option, questionData.values)">
+                                        {{ option }}
+                                    </md-checkbox>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </fieldset>
+                <ul class="pager">
+                    <li class="next"><a href="" ng-click="wizard.go(2)">Next<span>&rarr;</span></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- END Wizard Step inputs-->
+
+            <!-- START Wizard Step inputs-->
+            <div ng-show="wizard.active(2)">
+                <legend>2. Preliminary Information</legend>
+                <fieldset>
+                    <div class="table-responsive clearfix">
+                        <table class="table">
+                            <thead>
+                            <tr class="text-center">
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th class="text-center">Access to non financial resources</th>
+                                <th class="text-center">GPS Location</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="text-center" ng-repeat="crop in vm.cropOptions">
+                                <td> <small>{{crop}}</small> </td>
+                                <td>
+                                    <ui-select ng-model="vm.client.selected_acat"
+                                               theme="bootstrap"
+                                               title="Choose Loan Product">
+                                        <ui-select-match placeholder="Select loan product from the list...">
+                                            {{$select.selected.name}}
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="ftype in vm.formTypes | filter: $select.search">
+                                            <span ng-bind-html="ftype.name | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </td>
+                                <td>
+                                    <input class=" form-control" type="text" name="cropping_area" placeholder="cropping area per ha.." />
+                                </td>
+                                <td >
+                                    <md-checkbox ng-model="isChecked" aria-label="Finished?">
+                                        Yes ?
+                                    </md-checkbox>
+                                </td>
+                                <td>
+                                    <small> Tap to view locations </small>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                </fieldset>
+                <ul class="pager">
+                    <li class="previous">
+                        <a href="" ng-click="wizard.go(1)">
+                            <span>&larr; Previous</span>
+                        </a>
+                    </li>
+                    <li class="next"><a href="" ng-click="wizard.go(3)">Next<span>&rarr;</span></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- END Wizard Step inputs-->
+
+            <!-- START Wizard Step inputs-->
+            <div ng-show="wizard.active(3)">
+                <legend>3. Cost Estimation </legend>
+                <fieldset>
+                    <div class="row">
+                        <div class="col-sm-2 background-white">
+                            <md-list flex>
+                                <div ng-repeat="sub_section in vm.acat.sub_sections">
+                                    <md-list-item class="border-primary" ng-click="vm.onSubsectionClick(sub_section)">
+                                        <span flex>{{sub_section.title}}</span>
+                                        <i class="fa fa-angle-right" ng-show="sub_section.sub_sections.length > 0 && !vm.toggle[sub_section._id]"></i>
+                                        <i class="fa fa-angle-down" ng-show="sub_section.sub_sections.length > 0 && vm.toggle[sub_section._id]"></i>
+                                    </md-list-item>
+                                    <md-list-item class="m-xs" ng-repeat="sb in sub_section.sub_sections" ng-click="vm.onSubsectionClick(sb)" ng-show="vm.toggle[sub_section._id]">
+                                        <span flex-offset="5">{{sb.title}}</span>
+                                    </md-list-item>
+                                </div>
+
+                            </md-list>
+                        </div>
+                        <div class="col-sm-10 pr0 background-white">
+                            <div class="row mr0">
+                                <uib-accordion close-others="true">
+                                    <div uib-accordion-group="uib-accordion-group" ng-repeat-start="costlist in vm.selectedSubsection.cost_list.linear" ng-if="$first" is-open="accordionToggle[costlist._id]" ng-init="accordionToggle[costlist._id] = true" panel-class="b">
+                                        <uib-accordion-heading>{{$index + 1}}. {{costlist.item}}</uib-accordion-heading>
+                                        <div>
+                                            <cost-list cost-list-data="costlist"></cost-list>
+                                        </div>
+                                    </div>
+                                    <div uib-accordion-group="uib-accordion-group" ng-repeat-end is-open="accordionToggle[costlist._id]" ng-if="!$first" panel-class="b">
+                                        <uib-accordion-heading>{{$index + 1}}. {{costlist.item}}</uib-accordion-heading>
+                                        <div>
+                                            <cost-list cost-list-data="costlist"></cost-list>
+                                        </div>
+                                    </div>
+                                </uib-accordion>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel b text-center">
+                        <div class="panel-body bt">
+                            <div class="row row-table">
+                                <div class="col-xs-4">
+                                    <h3 class="m0">400</h3>
+                                    <p class="m0">
+                                        <span>Subtotal Fertilizers</span>
+                                    </p>
+                                </div>
+                                <div class="col-xs-8 br">
+                                    <h3 class="m0">{{vm.acat.estimated_sub_total| number}}</h3>
+                                    <p class="m0">Total Cost(TC)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel b text-center">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-1 br">
+                                    <label class="text-bold text-gray-darker">Net Cash Flow</label>
+                                </div>
+                                <!--MONTHS-->
+                                <div class="col-md-11">
+                                    <div ng-repeat="(key, value) in vm.acat.estimated_cash_flow" class="col-xs-1 br">
+                                        <small class="center-block">{{key | uppercase}} </small>
+                                        <strong>{{value}}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <ul class="pager">
+                    <li class="previous">
+                        <a href="" ng-click="wizard.go(2)">
+                            <span>&larr; Previous</span>
+                        </a>
+                    </li>
+                    <li class="next"><a href="" ng-click="wizard.go(4)">Next<span>&rarr;</span></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- END Wizard Step inputs-->
+
+            <!-- START Wizard Step inputs-->
+            <div ng-show="wizard.active(4)">
+                <legend>4. Estimated Yield</legend>
+                <fieldset>
+                    <h1> All the content here are related to Revenue</h1>
+                </fieldset>
+
+                <ul class="pager">
+                    <li class="previous">
+                        <a href="" ng-click="wizard.go(3)">
+                            <span>&larr; Previous</span>
+                        </a>
+                    </li>
+                    <li class="next"><a href="" ng-click="wizard.go(5)">Next<span>&rarr;</span></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- END Wizard Step inputs-->
+
+            <!-- START Wizard Step inputs-->
+            <div ng-show="wizard.active(5)">
+                <legend>  5.  Loan Proposal  </legend>
+                <fieldset>
+                    <div class="form-group">
+                        <h1> Summary Loan Proposal</h1>
+                    </div>
+
+                    <div  class="form-group pull-right">
+                        <a class="btn btn-sm  btn-default" ng-click="save()"> <i class="fa fa-save"> </i> Save</a>
+                        <a class="btn btn-sm btn-info" ng-click="save()"><i class="fa fa-save"> </i> Submit</a>
+                        <a class="btn btn-sm btn-success" ng-click="save()"> <i class="fa fa-save"> </i> Approve</a>
+                    </div>
+                </fieldset>
+                <ul class="pager">
+                    <li class="previous">
+                        <a href="" ng-click="wizard.go(3)">
+                            <span>&larr; Previous</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+            <!-- END Wizard Step inputs-->
+        </div>
+    </form>
 </div>
-<!-- END panel-->
+<!-- END Client ACAT-->
 
 
 
