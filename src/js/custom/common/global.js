@@ -179,3 +179,17 @@ var SCREENING_STATUS = {
     DECLINED_FINAL:{code:'declined_final',name:'Declined Final'},
     DECLINED_UNDER_REVIEW:{code:'declined_under_review',name:'Declined Under Review'}
 };
+
+var MD_TABLE_GLOBAL_SETTINGS = {
+    PAGE_SIZES : [10, 25, 50, 100, 250, 500],
+    OPTIONS:  {
+        rowSelection: false,
+        multiSelect: false,
+        autoSelect: true,
+        decapitate: false,
+        largeEditDialog: false,
+        boundaryLinks: false,
+        limitSelect: true,
+        pageSelect: false
+    }
+};

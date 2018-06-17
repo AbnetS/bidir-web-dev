@@ -105,6 +105,56 @@
       </div>
    </div>
    <div class="panel-body">
+      <br/>
+      <!-- CROP ACAT LIST-->
+      <table class="table table-striped">
+         <thead>
+            <tr>
+               <th class=" text-center">Crop</th>
+               <th class=" text-center hidden-xs ">Loan Product</th>
+               <th class=" text-center ">Cropping Area</th>
+               <th class=" text-center ">First Expense Month</th>
+               <th class=" hidden-xs hidden-sm">Status</th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr class="text-center" ng-repeat="cropACAT in vm.acats.ACATs">
+               <td>
+                  <span>
+                     <a ng-click="vm.cropACATDetail(cropACAT)">
+                        <strong>{{cropACAT.crop.name}}</strong>
+                     </a>
+                  </span>
+                  <div class="text-muted">
+                     <small>{{cropACAT.crop.category}}</small>
+                  </div>
+               </td>
+               <td class="  hidden-xs hidden-sm">
+                  <strong>{{vm.acats.loan_product.name}}</strong>
+                  <br/>
+                  <em class="text-muted">Max Loan Amount:
+                     <small>{{vm.acats.loan_product.maximum_loan_amount | number}}</small>
+                  </em>
+               </td>
+               <td class="text-center  ">
+                  <strong>{{cropACAT.cropping_area_size}}</strong>
+               </td>
+               <td class="text-center ">
+                  <strong>{{cropACAT.first_expense_month}}</strong>
+               </td>
+               <td class="hidden-xs hidden-sm ">
+                  <a href="">{{cropACAT.status}}</a>
+                  <br/>
+                  <em class="text-muted">Last Modified:
+                     <small class="label label-default " am-time-ago="cropACAT.last_modified"></small>
+                  </em>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+   </div>
+
+   <div ng-show="false" class="panel-body">
       <form form-wizard="" action="/" method="POST" steps="4">
          <div class="form-wizard">
             <!-- START Wizard Step inputs-->
@@ -142,7 +192,7 @@
                   <div class="form-group clearfix">
                      <label class="col-md-2 control-label">Cropping Area</label>
                      <div class="col-md-6 controls">
-                        <input class=" form-control" type="text" name="cropping_area" placeholder="cropping area per ha.." />
+                        <input class=" form-control" ng-model="vm.acats.ACATs[0].cropping_area_size" type="text" name="cropping_area" placeholder="cropping area per ha.." />
                      </div>
                      <div class="col-md-4 controls">
                         <md-checkbox ng-model="isChecked" aria-label="Finished?">
@@ -163,21 +213,6 @@
                               </tr>
                            </thead>
                            <tbody>
-                              <tr>
-                                 <td>
-                                    <span>10000,10000</span>
-                                 </td>
-                                 <td>
-                                    <button class="btn btn-info btn-xs">
-                                       <i class="fa fa-edit"></i> Edit
-                                    </button>
-                                 </td>
-                                 <td>
-                                    <button class="btn btn-danger btn-xs">
-                                       <i class="fa fa-times"></i> Remove
-                                    </button>
-                                 </td>
-                              </tr>
                               <tr>
                                  <td>
                                     <span>10000,10000</span>

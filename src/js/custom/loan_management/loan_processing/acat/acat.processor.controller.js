@@ -23,27 +23,12 @@
         initialize();
 
         function initialize() {
-            vm.visibility = {
-                showClientACAT:false
-            };
-            vm.options = {
-                rowSelection: false,
-                multiSelect: false,
-                autoSelect: true,
-                decapitate: false,
-                largeEditDialog: false,
-                boundaryLinks: false,
-                limitSelect: true,
-                pageSelect: false
-            };
+            vm.visibility = { showClientACAT:false };
+            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
             vm.filter = {show : false};
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
 
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
+            vm.query = { search:'',   page:1,  per_page:10 };
             fetchCropsList();
             callAPI();
         }
@@ -74,6 +59,10 @@
             console.log("loan product",acat);
             vm.acat = vm.acats.ACATs[0].sections[0];
             vm.selectedSubsection = vm.acat.sub_sections[0].sub_sections[1];
+            vm.acats.crops = [];
+            _.each(vm.acats.ACATs,function (acat_crop) {
+                vm.acats.crops.push(acat_crop.crop);
+            });
         }
 
 
@@ -87,7 +76,8 @@
         function _clearSearchText() {
             vm.query.search = '';
             vm.filter.show = false;
-        };
+        }
+
         $scope.$watch(angular.bind(vm, function () {
             return vm.query.search;
         }), function (newValue, oldValue) {
