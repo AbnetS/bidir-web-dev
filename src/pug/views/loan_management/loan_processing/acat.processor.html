@@ -85,281 +85,93 @@
 <div ng-if="vm.visibility.showClientACAT" class="row">
     <div class="panel-heading">
         <div class="col-lg-12">
-            <a ng-click="vm.visibility.showClientACAT = false">
-                <i class="fa fa-arrow-left"></i> Back
-            </a>
+
+            <button ng-click="vm.visibility.showClientACAT = false"
+                    class="btn btn-labeled btn-default" type="button">
+                <span class="btn-label"><i class="fa fa-arrow-left"></i></span>Back
+            </button>
             <div class="pull-right">
                 <h5 class="inline">{{vm.acats.client.first_name}} {{vm.acats.client.last_name}}</h5>
                 <span class="label label-green">{{vm.acats.status}}</span>
                 <span class="label label-inverse text-muted" am-time-ago="vm.acats.last_modified"></span>
             </div>
-
         </div>
     </div>
-    <div class="panel-body">
-        <br/>
+
+    <div ng-show="!vm.visibility.showCropACAT"  class="panel-body">
+
+        <md-toolbar class="md-table-toolbar md-default">
+            <div class="md-toolbar-tools">
+                <div flex="" class="flex"></div>
+                <button class="md-icon-button md-button md-ink-ripple" type="button"
+                        ng-click="vm.addEditClientACAT(null)">
+                    <i class="fa fa-plus"></i>
+                    <div class="md-ripple-container"></div>
+                </button>
+            </div>
+        </md-toolbar>
         <!-- CROP ACAT LIST-->
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th class=" text-center">Crop</th>
-                <th class=" text-center hidden-xs ">Loan Product</th>
-                <th class=" text-center ">Cropping Area</th>
-                <th class=" text-center ">First Expense Month</th>
-                <th class=" hidden-xs hidden-sm">Status</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr class="text-center" ng-repeat="cropACAT in vm.acats.ACATs">
-                <td>
-                        <span>
-                            <a ng-click="vm.cropACATDetail(cropACAT)">
-                                <strong>{{cropACAT.crop.name}}</strong>
+        <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr class="text-center">
+                        <th class="text-center"></th>
+                        <th class="text-center">Crop</th>
+                        <th class="text-center hidden-xs ">Loan Product</th>
+                        <th class="text-center ">Cropping Area</th>
+                        <th class="text-center ">First Expense Month</th>
+                        <th class="text-center  hidden-xs hidden-sm">Status</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="text-center" ng-repeat="cropACAT in vm.acats.ACATs">
+                        <td>{{$index + 1}} </td>
+                        <td>
+                            <span>
+                                <a ng-click="vm.addEditClientACAT(cropACAT)">
+                                    <strong>{{cropACAT.crop.name}}</strong>
+                                </a>
+                            </span>
+                            <div class="text-muted"><small>{{cropACAT.crop.category}}</small></div>
+                        </td>
+                        <td class="  hidden-xs hidden-sm">
+                            <strong>{{vm.acats.loan_product.name}}</strong>
+                            <br/>
+                            <em class="text-muted">Max Loan Amount:   <small> {{vm.acats.loan_product.maximum_loan_amount | number}} </small> </em>
+                        </td>
+                        <td class="text-center  ">
+                            <strong>{{cropACAT.cropping_area_size}}</strong>
+                        </td>
+                        <td class="text-center ">
+                            <strong>{{cropACAT.first_expense_month}}</strong>
+                        </td>
+                        <td class="hidden-xs hidden-sm ">
+                            <strong>{{cropACAT.status}}</strong>
+                            <br/>
+                            <em class="text-muted"><small class="label bg-gray"> modified <span am-time-ago="cropACAT.last_modified"></span> </small> </em>
+                        </td>
+                        <td class="hidden-xs hidden-sm ">
+                            <a ng-click="vm.addEditClientACAT(cropACAT)">
+                                <i class="fa fa-edit"></i>
                             </a>
-                        </span>
-                    <div class="text-muted"><small>{{cropACAT.crop.category}}</small></div>
-                </td>
-                <td class="  hidden-xs hidden-sm">
-                    <strong>{{vm.acats.loan_product.name}}</strong>
-                    <br/>
-                    <em class="text-muted">Max Loan Amount:   <small> {{vm.acats.loan_product.maximum_loan_amount | number}} </small> </em>
-                </td>
-                <td class="text-center  ">
-                    <strong>{{cropACAT.cropping_area_size}}</strong>
-                </td>
-                <td class="text-center ">
-                    <strong>{{cropACAT.first_expense_month}}</strong>
-                </td>
-                <td class="hidden-xs hidden-sm ">
-                    <a href="">{{cropACAT.status}}</a>
-                    <br/>
-                    <em class="text-muted">Last Modified: <small class="label label-default " am-time-ago="cropACAT.last_modified"></small> </em>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
     </div>
 
-    <div ng-show="false" class="panel-body">
-        <form form-wizard="" action="/" method="POST" steps="4">
-            <div class="form-wizard">
-                <!-- START Wizard Step inputs-->
-                <div ng-show="wizard.active(1)">
-                    <legend>1. Preliminary Information</legend>
-                    <fieldset>
-                        <div class="form-group clearfix">
-                            <label class="col-md-2 control-label">Loan Product</label>
-                            <div class="col-md-10 controls">
-                                <ui-select ng-model="vm.acats.loan_product"
-                                           theme="bootstrap"
-                                           title="Choose Loan Product">
-                                    <ui-select-match placeholder="Select loan product from the list...">
-                                        {{$select.selected.name}}
-                                    </ui-select-match>
-                                    <ui-select-choices repeat="loan_product in vm.loanProducts | filter: $select.search">
-                                        <span ng-bind-html="loan_product.name | highlight: $select.search"></span>
-                                    </ui-select-choices>
-                                </ui-select>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="form-group clearfix">
-                            <label class="col-md-2 control-label">Type of Crops</label>
-                            <div class="col-md-10 controls">
-                                <ui-select ng-model="vm.acats.crops"
-                                           theme="bootstrap" multiple
-                                           title="Choose Crops">
-                                    <ui-select-match placeholder="Select crops from the list...">
-                                        {{$item.name}} - {{$item.category}}
-                                    </ui-select-match>
-                                    <ui-select-choices repeat="crop in vm.crops | filter: $select.search">
-                                        <span ng-bind-html="crop.name + ' - ' + crop.category | highlight: $select.search"></span>
-                                    </ui-select-choices>
-                                </ui-select>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="form-group clearfix">
-                            <label class="col-md-2 control-label">Cropping Area</label>
-                            <div class="col-md-6 controls">
-                                <input class=" form-control" ng-model="vm.acats.ACATs[0].cropping_area_size" type="text" name="cropping_area" placeholder="cropping area per ha.." />
-                            </div>
-                            <div class="col-md-4 controls">
-                                <md-checkbox ng-model="isChecked" aria-label="Finished?">
-                                    Access to non financial resources ?
-                                </md-checkbox>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="form-group clearfix">
-                            <label class="col-md-2 control-label">GPS Location</label>
-                            <div class="col-md-10">
-                                <table class="table table-bordered table-condensed">
-                                    <thead>
-                                   <tr>
-                                       <th>(Latitude,Longitude)</th>
-                                       <th></th>
-                                       <th></th>
-                                   </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>
-                                            <span>10000,10000</span>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-info btn-xs">
-                                                <i class="fa fa-edit"></i> Edit
-                                            </button>
-                                        </td>
-                                        <td>  <button class="btn btn-danger btn-xs">
-                                                <i class="fa fa-times"></i> Remove
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+    <div ng-show="vm.visibility.showCropACAT" class="panel-body">
+        <br/>
+        <div class="pull-right">
+            <a class="btn btn-default btn-sm"
+               ng-click="vm.visibility.showCropACAT = false">
+                <i class="fa fa-arrow-left"></i> Back to Crop ACAT</a>
+        </div>
 
-                        </div>
+        <div ng-include="'app/views/loan_management/loan_processing/crop.acat.processor.html'"></div>
 
-                    </fieldset>
-                    <ul class="pager">
-                        <li class="next"><a href="" ng-click="wizard.go(2)">Next<span>&rarr;</span></a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- END Wizard Step inputs-->
-
-                <!-- START Wizard Step inputs-->
-                <div ng-show="wizard.active(2)">
-                    <legend>2. Cost Estimation </legend>
-                    <fieldset>
-                        <div class="row">
-                            <div class="col-sm-2 background-white">
-                                <md-list flex>
-                                    <div ng-repeat="sub_section in vm.acat.sub_sections">
-                                        <md-list-item class="border-primary" ng-click="vm.onSubsectionClick(sub_section)">
-                                            <span flex>{{sub_section.title}}</span>
-                                            <i class="fa fa-angle-right" ng-show="sub_section.sub_sections.length > 0 && !vm.toggle[sub_section._id]"></i>
-                                            <i class="fa fa-angle-down" ng-show="sub_section.sub_sections.length > 0 && vm.toggle[sub_section._id]"></i>
-                                        </md-list-item>
-                                        <md-list-item class="m-xs" ng-repeat="sb in sub_section.sub_sections" ng-click="vm.onSubsectionClick(sb)" ng-show="vm.toggle[sub_section._id]">
-                                            <span flex-offset="5">{{sb.title}}</span>
-                                        </md-list-item>
-                                    </div>
-
-                                </md-list>
-                            </div>
-                            <div class="col-sm-10 pr0 background-white">
-                                <div class="row mr0">
-                                    <uib-accordion close-others="true">
-                                        <div uib-accordion-group="uib-accordion-group" ng-repeat-start="costlist in vm.selectedSubsection.cost_list.linear" ng-if="$first" is-open="accordionToggle[costlist._id]" ng-init="accordionToggle[costlist._id] = true" panel-class="b">
-                                            <uib-accordion-heading>{{$index + 1}}. {{costlist.item}}</uib-accordion-heading>
-                                            <div>
-                                                <cost-list cost-list-data="costlist"></cost-list>
-                                            </div>
-                                        </div>
-                                        <div uib-accordion-group="uib-accordion-group" ng-repeat-end is-open="accordionToggle[costlist._id]" ng-if="!$first" panel-class="b">
-                                            <uib-accordion-heading>{{$index + 1}}. {{costlist.item}}</uib-accordion-heading>
-                                            <div>
-                                                <cost-list cost-list-data="costlist"></cost-list>
-                                            </div>
-                                        </div>
-                                    </uib-accordion>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="panel b text-center">
-                            <div class="panel-body bt">
-                                <div class="row row-table">
-                                    <div class="col-xs-4">
-                                        <h3 class="m0">400</h3>
-                                        <p class="m0">
-                                            <span>Subtotal Fertilizers</span>
-                                        </p>
-                                    </div>
-                                    <div class="col-xs-8 br">
-                                        <h3 class="m0">{{vm.acat.estimated_sub_total| number}}</h3>
-                                        <p class="m0">Total Cost(TC)</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="panel b text-center">
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-md-1 br">
-                                        <label class="text-bold text-gray-darker">Net Cash Flow</label>
-                                    </div>
-                                    <!--MONTHS-->
-                                    <div class="col-md-11">
-                                        <div ng-repeat="(key, value) in vm.acat.estimated_cash_flow" class="col-xs-1 br">
-                                            <small class="center-block">{{key | uppercase}} </small>
-                                            <strong>{{value}}</strong>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </fieldset>
-                    <ul class="pager">
-                        <li class="previous">
-                            <a href="" ng-click="wizard.go(1)">
-                                <span>&larr; Previous</span>
-                            </a>
-                        </li>
-                        <li class="next"><a href="" ng-click="wizard.go(3)">Next<span>&rarr;</span></a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- END Wizard Step inputs-->
-
-                <!-- START Wizard Step inputs-->
-                <div ng-show="wizard.active(3)">
-                    <legend>3. Estimated Yield</legend>
-                    <fieldset>
-                        <h1> All the content here are related to Revenue</h1>
-                    </fieldset>
-
-                    <ul class="pager">
-                        <li class="previous">
-                            <a href="" ng-click="wizard.go(2)">
-                                <span>&larr; Previous</span>
-                            </a>
-                        </li>
-                        <li class="next"><a href="" ng-click="wizard.go(4)">Next<span>&rarr;</span></a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- END Wizard Step inputs-->
-
-                <!-- START Wizard Step inputs-->
-                <div ng-show="wizard.active(4)">
-                    <legend>  4.  Loan Proposal  </legend>
-                    <fieldset>
-                        <div class="form-group">
-                            <h1> Summary Loan Proposal</h1>
-                        </div>
-
-                        <div  class="form-group pull-right">
-                            <a class="btn btn-sm  btn-default" ng-click="save()"> <i class="fa fa-save"> </i> Save</a>
-                            <a class="btn btn-sm btn-info" ng-click="save()"><i class="fa fa-save"> </i> Submit</a>
-                            <a class="btn btn-sm btn-success" ng-click="save()"> <i class="fa fa-save"> </i> Approve</a>
-                        </div>
-                    </fieldset>
-                    <ul class="pager">
-                        <li class="previous">
-                            <a href="" ng-click="wizard.go(3)">
-                                <span>&larr; Previous</span>
-                            </a>
-                        </li>
-
-                    </ul>
-                </div>
-                <!-- END Wizard Step inputs-->
-            </div>
-        </form>
     </div>
 
 </div>
