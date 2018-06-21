@@ -14,13 +14,14 @@
         vm.selectedSubsection = {};
         vm.toggle = {};
         vm.accordionToggle = {};
-        vm.cropOptions = [ "Tomato","Onion","Cabbage",'Bean','Crop 1'];
+
         vm.paginate = _paginate;
         vm.clearSearchText = _clearSearchText;
 
         vm.addEditClientACAT = _addEditClientACAT;
         //CLIENT ACAT
         vm.onClientACATClick = _onClientACATClick;
+        vm.onSubsectionClick = _onSubsectionClick;
         initialize();
 
         function initialize() {
@@ -47,6 +48,20 @@
             )
         }
 
+        vm.onSubsectionClick = _onSubsectionClick;
+        vm.onAccordionClick = _onAccordionClick;
+
+            function _onSubsectionClick(subsection) {
+            vm.toggle[subsection._id] = !vm.toggle[subsection._id];
+            if (subsection.sub_sections.length == 0) {
+                vm.selectedSubsection = subsection;
+            }
+        }
+
+
+            function _onAccordionClick(acc) {
+            vm.toggle[acc._id] = !vm.toggle[acc._id];
+        }
 
 
         function _onClientACATClick(acat, ev) {
@@ -77,16 +92,14 @@
         function _addEditClientACAT(clientAcat) {
             vm.visibility.showCropACAT = true;//show client acat
             console.log("Client ACAT Detail",clientAcat);
-            vm.clientAcat = clientAcat; // vm.acats.ACATs[0].sections[0];
+            vm.clientAcat = clientAcat;
             vm.clientAcat.loan_product = vm.acats.loan_product;
-            console.log("vm.clientAcat",vm.clientAcat);
+            // console.log("vm.clientAcat",vm.clientAcat);
             // vm.acat = clientAcat.sections[0];
-            // vm.selectedSubsection = vm.acat.sub_sections[0].sub_sections[1];
-            // vm.acats.crops = [];
-            // _.each(vm.acats.ACATs,function (acat_crop) {
-            //     vm.acats.crops.push(acat_crop.crop);
-            // });
+            vm.selectedSubsection = vm.clientAcat.sections[0].sub_sections[0].sub_sections[1];
+
         }
+
 
         function fetchCropsList() {
             LoanManagementService.GetCrops().then(

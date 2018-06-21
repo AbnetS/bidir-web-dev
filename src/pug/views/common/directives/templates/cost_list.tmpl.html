@@ -1,12 +1,6 @@
-<form>
+<form name="costListForm">
     <div class="col-md-3">
-        <div class="form-group text-center text-uppercase">
-            <div class="col-sm-12 col-md-12">
-                <h4 class="panel-title">Unit : {{costListData.unit}}</h4>
-
-            </div>
-        </div>
-
+        <!--EXPECTED-->
         <div class="panel mt">
             <div class="panel-heading">
                 <h4 class="panel-title">Expected</h4>
@@ -37,9 +31,9 @@
                 </div>
             </div>
         </div>
-        <br>
+        <br/>
 
-
+        <!--ACTUAL-->
         <div class="panel">
             <div class="panel-heading">
                 <h4 class="panel-title">Actual</h4>
@@ -70,8 +64,21 @@
                 </div>
             </div>
         </div>
+
+        <!--UNIT-->
+        <div class="panel">
+            <div class="panel-body">
+                <div class="clearfix">
+                    <div class="pull-right text-right">
+                        <div class="text-bold">{{costListData.unit }}</div>
+                    </div>
+                    <div class="pull-left text-bold text-dark">Unit</div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="col-md-9">
+
         <div class="form-group text-center text-uppercase">
             <div class="col-sm-12 col-md-2">
             </div>
@@ -96,7 +103,7 @@
     </div>
     <br>
     <div class="col-md-12 panel-body">
-        <div class="clearfix col-md-8 col-md-offset-2">
+        <div class=" col-md-8 col-md-offset-2">
             <div class="pull-left text-bold text-dark col-md-2 ">Remark</div>
             <textarea class="form-control col-md-10 " cols="2" ng-model="costListData.remark"></textarea>
 
