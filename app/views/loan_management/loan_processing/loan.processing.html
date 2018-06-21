@@ -6,12 +6,14 @@
    <uib-tabset justified="true">
       <uib-tab ng-click="vm.onTabSelected('CLIENT')" heading="Manage Clients">
          <div class="row" ng-show="!vm.visibility.showClientDetail">
-            <div class="col-md-2 bg-gray-dark text-left text-uppercase">
+            <div class="centerPageText">
+               ...Nothing so far... wait for it... use tablet app for adding clients for now...
+            </div>
+            <div ng-if="false" class="col-md-2 bg-gray-dark text-left text-uppercase">
                <h5 class="">MANAGE CLIENTS</h5>
             </div>
 
-            <div class="col-lg-12">
-
+            <div ng-if="false" class="col-lg-12">
                <md-table-container>
                   <table md-table md-progress="promise" class="table-hover">
                      <thead md-head class="bg-grey md-head">
