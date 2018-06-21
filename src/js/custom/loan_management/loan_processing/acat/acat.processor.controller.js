@@ -22,6 +22,8 @@
         //CLIENT ACAT
         vm.onClientACATClick = _onClientACATClick;
         vm.onSubsectionClick = _onSubsectionClick;
+        vm.onAccordionClick = _onAccordionClick;
+
         initialize();
 
         function initialize() {
@@ -40,26 +42,27 @@
         }
 
         function callAPI() {
-            vm.acatCollectionPromise = LoanManagementService.GetACATCollections(vm.query).then(
+            vm.acatCollectionPromise = LoanManagementService
+                .GetACATCollections(vm.query).then(
                 function (response) {
                     vm.acatCollection = response.data.docs;
                     vm.query.total_docs_count = response.data.total_docs_count;
-                }
-            )
+                },function (error) {
+                        console.log("error",error);
+                    });
         }
 
-        vm.onSubsectionClick = _onSubsectionClick;
-        vm.onAccordionClick = _onAccordionClick;
 
-            function _onSubsectionClick(subsection) {
+
+        function _onSubsectionClick(subsection) {
             vm.toggle[subsection._id] = !vm.toggle[subsection._id];
-            if (subsection.sub_sections.length == 0) {
+            if (subsection.sub_sections.length === 0) {
                 vm.selectedSubsection = subsection;
             }
         }
 
 
-            function _onAccordionClick(acc) {
+        function _onAccordionClick(acc) {
             vm.toggle[acc._id] = !vm.toggle[acc._id];
         }
 

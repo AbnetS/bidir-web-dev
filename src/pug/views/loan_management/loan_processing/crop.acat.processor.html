@@ -119,7 +119,11 @@
                                     <i class="fa fa-angle-right" ng-show="sub_section.sub_sections.length > 0 && !vm.toggle[sub_section._id]"></i>
                                     <i class="fa fa-angle-down" ng-show="sub_section.sub_sections.length > 0 && vm.toggle[sub_section._id]"></i>
                                 </md-list-item>
-                                <md-list-item class="m-xs" ng-repeat="sb in sub_section.sub_sections" ng-click="vm.onSubsectionClick(sb)" ng-show="vm.toggle[sub_section._id]">
+                                <md-list-item class="m-xs"
+                                              ng-repeat="sb in sub_section.sub_sections"
+                                              ng-click="vm.onSubsectionClick(sb)"
+                                              ng-class="{'bg-gray': sb._id === vm.selectedSubsection._id}"
+                                              ng-show="vm.toggle[sub_section._id]">
                                     <span flex-offset="5">{{sb.title}}</span>
                                 </md-list-item>
                             </div>
@@ -128,6 +132,30 @@
                     </div>
                     <div class="col-sm-10 pr0 background-white">
                         <div class="row mr0">
+                            <div class="table-responsive  table-bordered">
+                                <table class="table table-condensed table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-left">{{vm.selectedSubsection.title}}</th>
+                                        <th></th>
+                                        <th class="text-right" ><a  > Cash flow for {{vm.selectedSubsection.title}} </a></th>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-left"></th>
+                                        <th class="text-center">Estimated</th>
+                                        <th class="text-right">Actual</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="text-left">Sub Total</td>
+                                        <td class="text-center"><small >{{vm.selectedSubsection.estimated_sub_total | number}}</small></td>
+                                        <td class="text-right"><div >{{vm.selectedSubsection.achieved_sub_total | number}}</div></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <br/>
                             <uib-accordion close-others="true">
                                 <div uib-accordion-group="uib-accordion-group"
                                      ng-repeat-start="costlist in vm.selectedSubsection.cost_list.linear"
@@ -147,39 +175,27 @@
                                 </div>
                             </uib-accordion>
 
-                            <div class="panel b text-center">
-                                <div class="panel-body">
-                                    <div class="col-md-2">
-                                        <h5 class="m0"> {{vm.selectedSubsection.title}} </h5>
-                                    </div>
-                                    <div class="col-xs-4 col-md-4">
-                                        <h5 class="m0"><strong>Estimated Sub Total:</strong> &nbsp;&nbsp;  {{vm.selectedSubsection.estimated_sub_total | number}}</h5>
-                                    </div>
-                                    <div class="col-xs-4 col-md-4">
-                                        <h5 class="m0"><strong>Actual Total Cost: </strong> &nbsp;&nbsp; {{vm.selectedSubsection.achieved_sub_total| number}}</h5>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <a  class="m0 btn btn-sm btn-default" > Cash flow detail... </a>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="panel b text-center">
                     <div class="panel-body bt">
-                        <div class="row row-table">
-                            <div class="col-xs-4">
-                                <h3 class="m0">{{vm.clientAcat.sections[0].estimated_sub_total | number}}</h3>
-                                <p class="m0">
-                                    <span>Estimated Total Cost</span>
-                                </p>
-                            </div>
-                            <div class="col-xs-8 br">
-                                <h3 class="m0">{{vm.clientAcat.sections[0].achieved_sub_total| number}}</h3>
-                                <p class="m0">Actual Total Cost</p>
-                            </div>
-                        </div>
+                        <table class="table table-condensed">
+                            <thead>
+                            <tr>
+                                <th class="text-left"></th>
+                                <th class="text-center">Estimated</th>
+                                <th class="text-right">Actual</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="h4 text-left text-bold">Total Cost</td>
+                                <td class="h4 text-center"><small >{{vm.clientAcat.sections[0].estimated_sub_total | number}}</small></td>
+                                <td class="h4 text-right"><div >{{vm.clientAcat.sections[0].achieved_sub_total| number}}</div></td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <div class="panel b text-center">
