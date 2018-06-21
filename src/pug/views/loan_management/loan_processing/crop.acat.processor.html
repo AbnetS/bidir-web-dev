@@ -132,6 +132,7 @@
                     </div>
                     <div class="col-sm-10 pr0 background-white">
                         <div class="row mr0">
+                            <!--Sub Total for selected sub section-->
                             <div class="table-responsive  table-bordered">
                                 <table class="table table-condensed table-striped">
                                     <thead>
@@ -156,19 +157,26 @@
                                 </table>
                             </div>
                             <br/>
+                            <!--COST LIST FOR SELECTED SUB SECTION-->
                             <uib-accordion close-others="true">
                                 <div uib-accordion-group="uib-accordion-group"
                                      ng-repeat-start="costlist in vm.selectedSubsection.cost_list.linear"
                                      ng-if="$first" is-open="accordionToggle[costlist._id]"
                                      ng-init="accordionToggle[costlist._id] = true" panel-class="b">
-                                    <uib-accordion-heading>{{$index + 1}}. {{costlist.item}} <small class="label label-success pull-right"><em am-time-ago="costlist.last_modified"></em> </small> </uib-accordion-heading>
+                                    <uib-accordion-heading>{{$index + 1}}. {{costlist.item}}
+                                        <small class="label label-success pull-right">
+                                            <em am-time-ago="costlist.last_modified"></em>
+                                        </small>
+                                    </uib-accordion-heading>
                                     <div>
                                         <cost-list cost-list-data="costlist"></cost-list>
                                     </div>
                                 </div>
                                 <div uib-accordion-group="uib-accordion-group"
                                      ng-repeat-end is-open="accordionToggle[costlist._id]" ng-if="!$first" panel-class="b">
-                                    <uib-accordion-heading>{{$index + 1}}. {{costlist.item}}  <small class="label label-success pull-right"><em am-time-ago="costlist.last_modified"></em> </small>   </uib-accordion-heading>
+                                    <uib-accordion-heading>{{$index + 1}}. {{costlist.item}}
+                                        <small class="label label-success pull-right"><em am-time-ago="costlist.last_modified"></em> </small>
+                                    </uib-accordion-heading>
                                     <div>
                                         <cost-list cost-list-data="costlist"></cost-list>
                                     </div>
