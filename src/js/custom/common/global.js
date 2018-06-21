@@ -78,7 +78,7 @@ var API = {
     }
 };
 
-var MONTHS = [
+var MONTHS_CONST = [
     {
         "name": "January",
         "short": "Jan",

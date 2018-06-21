@@ -33,7 +33,9 @@
             vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
 
             vm.query = { search:'',   page:1,  per_page:10 };
+            vm.months = MONTHS_CONST;
             callAPI();
+            fetchCropsList();
         }
 
         function callAPI() {
@@ -75,12 +77,24 @@
         function _addEditClientACAT(clientAcat) {
             vm.visibility.showCropACAT = true;//show client acat
             console.log("Client ACAT Detail",clientAcat);
-            vm.acat = vm.acats.ACATs[0].sections[0];
-            vm.selectedSubsection = vm.acat.sub_sections[0].sub_sections[1];
-            vm.acats.crops = [];
-            _.each(vm.acats.ACATs,function (acat_crop) {
-                vm.acats.crops.push(acat_crop.crop);
-            });
+            vm.clientAcat = clientAcat; // vm.acats.ACATs[0].sections[0];
+            vm.clientAcat.loan_product = vm.acats.loan_product;
+            console.log("vm.clientAcat",vm.clientAcat);
+            // vm.acat = clientAcat.sections[0];
+            // vm.selectedSubsection = vm.acat.sub_sections[0].sub_sections[1];
+            // vm.acats.crops = [];
+            // _.each(vm.acats.ACATs,function (acat_crop) {
+            //     vm.acats.crops.push(acat_crop.crop);
+            // });
+        }
+
+        function fetchCropsList() {
+            LoanManagementService.GetCrops().then(
+                function (response) {
+                    console.log("response.data",response);
+                    vm.crops = response.data.docs;
+                }
+            )
         }
 
 
