@@ -7,9 +7,9 @@
     angular.module("app.processing")
         .controller("ACATProcessorController", ACATProcessorController);
 
-    ACATProcessorController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers'];
+    ACATProcessorController.$inject = ['LoanManagementService','$scope'];
 
-    function ACATProcessorController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers ) {
+    function ACATProcessorController(LoanManagementService,$scope ) {
         var vm = this;
         vm.selectedSubsection = {};
         vm.toggle = {};
@@ -94,11 +94,10 @@
 
         function _addEditClientACAT(clientAcat) {
             vm.visibility.showCropACAT = true;//show client acat
-            console.log("Client ACAT Detail",clientAcat);
+            console.log("Client ACAT Detail Clicked",clientAcat);
             vm.clientAcat = clientAcat;
             vm.clientAcat.loan_product = vm.acats.loan_product;
-            // console.log("vm.clientAcat",vm.clientAcat);
-            // vm.acat = clientAcat.sections[0];
+
             vm.selectedSubsection = vm.clientAcat.sections[0].sub_sections[0].sub_sections[1];
 
         }
@@ -107,7 +106,7 @@
         function fetchCropsList() {
             LoanManagementService.GetCrops().then(
                 function (response) {
-                    console.log("response.data",response);
+                    console.log("vm.crops", response.data.docs);
                     vm.crops = response.data.docs;
                 }
             )

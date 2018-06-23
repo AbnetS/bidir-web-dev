@@ -1,6 +1,6 @@
 var API = {
     Config: {
-        BaseUrl: 'http://api.dev.bidir.gebeya.io/' //REMOTE API
+        BaseUrl: 'http://api.dev.bidir.gebeya.co/' //REMOTE API
     },
     Service: {
         NONE:'',
