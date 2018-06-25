@@ -21,16 +21,7 @@
 
         vm.onTabSelected = _onTabSelected;
 
-        vm.options = {
-            rowSelection: true,
-            multiSelect: true,
-            autoSelect: true,
-            decapitate: false,
-            largeEditDialog: false,
-            boundaryLinks: false,
-            limitSelect: true,
-            pageSelect: true
-        };
+        vm.options = MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
         vm.filter = {show : false};
         vm.pageSizes = [10, 25, 50, 100, 250, 500];
 

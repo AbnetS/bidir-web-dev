@@ -150,9 +150,9 @@ gulp.task('scripts:app', function() {
         .pipe($.concat('app.js'))
         .pipe($.ngAnnotate())
         .on('error', handleError)
-        .pipe($.if(isProduction, $.uglify({
-            preserveComments: 'some'
-        })))
+        // .pipe($.if(isProduction, $.uglify({
+        //     preserveComments: 'some'
+        // })))
         .on('error', handleError)
         .pipe($.if(useSourceMaps, $.sourcemaps.write()))
         .pipe(gulp.dest(build.scripts))
@@ -207,7 +207,7 @@ gulp.task('vendor:app', function() {
         })
         .pipe($.expectFile(vendor.app.source))
         .pipe(jsFilter)
-        .pipe($.if(isProduction, $.uglify(vendorUglifyOpts)))
+        // .pipe($.if(isProduction, $.uglify(vendorUglifyOpts)))
         .pipe(jsFilter.restore)
         .pipe(cssFilter)
         .pipe($.if(isProduction, $.cssnano(cssnanoOpts)))
