@@ -19,7 +19,7 @@
         $locationProvider.html5Mode(false);
 
         // defaults to login
-        $urlRouterProvider.otherwise('/page/login');
+        $urlRouterProvider.otherwise('/app/welcome');
 
         // 
         // Application Routes
