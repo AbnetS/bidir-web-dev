@@ -9,52 +9,9 @@
                 <div class="centerPageText">
                     ...Nothing so far... wait for it... use tablet app for adding clients for now...
                 </div>
-                <div ng-if="false" class="col-md-2 bg-gray-dark text-left text-uppercase">
-                    <h5 class="">MANAGE CLIENTS</h5>
-                </div>
-
-                <div ng-if="false" class="col-lg-12">
-                    <md-table-container>
-                        <table md-table md-progress="promise" class="table-hover">
-                            <thead md-head class="bg-grey md-head">
-                            <tr md-row>
-                                <th md-column><span> No</span></th>
-                                <th md-column><span>Full Name</span></th>
-                                <th md-column><span>Gender</span></th>
-                                <th md-column><span>DOB</span></th>
-                                <th md-column><span>Civil Status</span></th>
-                                <th md-column><span>Status</span></th>
-                                <th md-column>Action</th>
-                            </tr>
-                            </thead>
-
-                            <tbody md-body>
-                            <tr md-row ng-repeat="client in vm.clients">
-
-                                <td md-cell>{{$index + 1}}</td>
-                                <td md-cell>
-                                    {{ client.first_name }}
-                                    {{ client.last_name }}
-                                    {{client.grandfather_name}}
-                                </td>
-                                <td md-cell >{{client.gender}}</td>
-                                <td md-cell >{{client.date_of_birth | date }}</td>
-                                <td md-cell>{{client.civil_status}}</td>
-                                <td md-cell>{{client.status | ReplaceUnderscore}}</td>
-
-                                <td md-cell>
-                                    <a ng-click="vm.addClient(client,$event)">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </md-table-container>
-                </div>
             </div>
-            <div class="row" ng-show="vm.visibility.showClientDetail">
-
+            <div class="row" ng-if="vm.visibility.showClientDetail">
+                <clients></clients>
             </div>
         </uib-tab>
         <uib-tab  ng-click="vm.onTabSelected('SCREENING')" heading="Screenings">

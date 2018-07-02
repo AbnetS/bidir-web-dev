@@ -56,7 +56,7 @@
 
         vm.visibility = {
             showScreeningDetail:false,
-            showClientDetail:false,
+            showClientDetail:true,
             showLoanApplicationDetail:false,
             showACATDetail:false
         };
@@ -71,6 +71,8 @@
             console.log("tab name clicked",type);
             switch (type){
                 case 'CLIENT':
+                    vm.visibility.showClientDetail = true;
+                    callClientAPI();
                     break;
                 case 'SCREENING':
                     callScreeningAPI();
@@ -85,7 +87,7 @@
                 default:
                     console.log("tab name clicked",type);
             }
-        };
+        }
 
         function _addClient(ev) {
             $mdDialog.show({
@@ -178,6 +180,9 @@
         }
         function callACATProcessor() {
             vm.visibility.showACATDetail = true;
+        }
+        function callClientAPI() {
+            vm.visibility.showClientDetail = true;
         }
 
 

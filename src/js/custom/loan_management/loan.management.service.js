@@ -14,6 +14,7 @@
             GetLoanApplications: _getLoanApplications,
             GetClientLoanApplication:_getClientLoanApplication,
             GetScreenings: _getScreenings,
+
             GetClientScreening:_getClientScreening,
             SaveClientScreening:_saveClientScreening,
             //CLIENT MANAGEMENT RELATED SERVICES DECLARATION
