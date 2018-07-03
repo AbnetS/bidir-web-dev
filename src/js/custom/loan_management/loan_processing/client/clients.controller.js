@@ -13,7 +13,6 @@
         var vm = this;
         vm.paginate = _paginate;
         vm.clearSearchText = _clearSearchText;
-        console.log("CLIENTS CONTROLLER");
 
         initialize();
 
@@ -52,7 +51,7 @@
             return vm.query.search;
         }), function (newValue, oldValue) {
             if (newValue !== oldValue) {
-                console.log("search for ",newValue);
+                console.log("searching clients for ",newValue);
             }
         });
 
