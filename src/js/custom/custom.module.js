@@ -23,21 +23,21 @@
 
     function customRun($rootScope, AuthService, $http,$location){
         //TODO: redirect them to an access denied state if they do not have authorization to access it.
-        console.log("angle app run");
-        // $rootScope.currentUser = AuthService.GetCurrentUser();
-
 
         //Angular UI router state changes
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
-            $rootScope.currentUser = AuthService.GetCurrentUser();
-            if ($rootScope.currentUser !== null) {
-                $http.defaults.headers.common['Authorization'] = 'Bearer ' + AuthService.GetToken();
-            }
-            else{
-                console.log("current user",$rootScope);
-                // console.log("tostate",toState);
-                //Clear storage and redirect
+            console.log("toState.data.authenticate",toState.data.authenticate);
+
+            if(!AuthService.IsAuthenticated()){
+                //WHEN USER IS LOGGED OUT
+                console.log("USER IS LOGGED OUT");
+                AuthService.SaveAttemptUrl();
                 $location.path('/page/login');
+
+            }else{
+                $rootScope.currentUser = AuthService.GetCurrentUser();
+                console.log("currentUser",$rootScope.currentUser);
+                $http.defaults.headers.common['Authorization'] = 'Bearer ' + AuthService.GetToken();
             }
         });
     }

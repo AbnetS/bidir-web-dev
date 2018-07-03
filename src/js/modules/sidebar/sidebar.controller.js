@@ -40,7 +40,7 @@
 
           function SetMenuItemsVisibility(menuItems){
               var isSuper = false;
-              if(!_.isUndefined($rootScope.currentUser)){
+              if(!_.isUndefined($rootScope.currentUser) && $rootScope.currentUser !== null ){
                   isSuper = $rootScope.currentUser.username === 'super@bidir.com';
               }
               _.each(menuItems, function(menuItem) {

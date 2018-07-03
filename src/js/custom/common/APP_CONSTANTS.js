@@ -23,6 +23,7 @@
         sessionTimeout: "auth-session-timeout",
         notAuthenticated: "auth-not-authenticated",
         notAuthorized: "auth-not-authorized"
-      }
+      },
+      REDIRECT_TO_URL: "redirectToUrlAfterLogin"
     });
 })(window.angular);

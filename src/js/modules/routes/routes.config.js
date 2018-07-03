@@ -30,14 +30,20 @@
               abstract: true,
               templateUrl: helper.basepath('app.html'),
               resolve: helper.resolveFor('fastclick','modernizr','sparklines', 'icons','animo','underscore',
-                        'sparklines','slimscroll','oitozero.ngSweetAlert','toaster','blockUI')
+                        'sparklines','slimscroll','oitozero.ngSweetAlert','toaster','blockUI'),
+              data: {
+                  authenticate: true
+              }
           })
           .state('app.welcome', {
               url: '/welcome',
               title: 'Welcome',
               templateUrl: helper.basepath('welcome.html'),
               controller: 'WelcomeController',
-              controllerAs: 'vm'
+              controllerAs: 'vm',
+              data: {
+                  authenticate: true
+              }
           })
            .state('app.manage_user', {
                 url: '/manage_user',
@@ -45,7 +51,10 @@
                 templateUrl: helper.basepath('manageusers/manage.users.html'),
                resolve: angular.extend(helper.resolveFor('datatables','ui.select'),{}),
                controller: 'ManageUsersController',
-               controllerAs: 'vm'
+               controllerAs: 'vm',
+               data: {
+                   authenticate: true
+               }
             })
             .state('app.manage_role', {
                 url: '/manage_role',
@@ -53,7 +62,10 @@
                 templateUrl: helper.basepath('manageroles/manage.roles.html'),
                 resolve:helper.resolveFor('datatables','ui.select'),
                 controller: 'ManageRoleController',
-                controllerAs: 'vm'
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
             })
             .state('app.mfi_setting', {
                 url: '/mfi_setup',
@@ -61,7 +73,10 @@
                 templateUrl:helper.basepath('mfisetup/mfi.html'),
                 resolve:helper.resolveFor('datatables','ui.select','moment','inputmask','ngFileUpload'),
                 controller: 'MFIController',
-                controllerAs: 'vm'
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
             })
 
             .state("app.manage_branch", {
@@ -69,7 +84,10 @@
                 title: "branches",
                 templateUrl:helper.basepath('mfisetup/branches/branches.html'),
                 controller: "BranchController",
-                controllerAs: 'vm'
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
             })
             .state("app.forms", {
                 url: "/forms",
@@ -77,7 +95,10 @@
                 templateUrl:helper.basepath('forms/forms.list.html'),
                 resolve:helper.resolveFor('md.data.table','ui.select'),
                 controller: "FormsController",
-                controllerAs: 'vm'
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
             })
             .state("app.builder", {
                 url: "/forms/builder/:id",
@@ -85,7 +106,10 @@
                 templateUrl:helper.basepath('forms/builder.html'),
                 resolve:helper.resolveFor('md.data.table','ui.select','ui.sortable'),
                 controller: 'FormBuilderController',
-                controllerAs: 'vm'
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
             })
             .state("app.acat", {
                 url: "/acat",
@@ -93,7 +117,10 @@
                 templateUrl:helper.basepath('acat/builder/acat.list.html'),
                 resolve:helper.resolveFor('md.data.table'),
                 controller: "ACATListController",
-                controllerAs: 'vm'
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
             })
             .state("app.acatbuilder", {
                 url: "/acat/builder/:id",
@@ -101,7 +128,10 @@
                 templateUrl:helper.basepath('acat/builder/acat.builder.html'),
                 controller: 'ACATController',
                 resolve:helper.resolveFor('md.data.table','ui.select'),
-                controllerAs: 'vm'
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
             })
             .state("app.crop", {
                 url: "/crops",
@@ -109,7 +139,10 @@
                 templateUrl:helper.basepath('acat/crop/crops.html'),
                 resolve:helper.resolveFor('md.data.table'),
                 controller: "CropsController",
-                controllerAs: 'vm'
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
             })
             .state("app.loanproduct", {
                 url: "/loanproducts",
@@ -117,7 +150,10 @@
                 templateUrl:helper.basepath('mfisetup/loanproduct/loan.products.html'),
                 resolve:helper.resolveFor('md.data.table','ui.select'),
                 controller: "LoanProductsController",
-                controllerAs: 'vm'
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
             })
             .state("app.clients", {
                 url: "/clients",
@@ -125,14 +161,20 @@
                 templateUrl:helper.basepath('loan_management/client_management/client.management.html'),
                 resolve:helper.resolveFor('md.data.table','ui.select'),
                 controller: "ClientManagementController",
-                controllerAs: 'vm'
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
             })
             .state("app.client_detail", {
                 url: "/clients/:id",
                 title: "clients detail",
                 templateUrl:helper.basepath('loan_management/client_management/client.detail.html'),
                 controller: "ClientDetailController",
-                controllerAs: 'vm'
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
             })
 
             .state("app.loan_processing", {
@@ -142,7 +184,10 @@
                 resolve:helper.resolveFor('md.data.table','ui.select','moment','filestyle'),
                 controller: "LoanProcessingController",
                 controllerAs: 'vm',
-                abstract: true
+                abstract: true,
+                data: {
+                    authenticate: true
+                }
             })
             .state("app.loan_processing.clients", {
                 url: "/clients",
@@ -198,29 +243,44 @@
                 resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert','toaster','blockUI'),
                 controller: ['$rootScope', function($rootScope) {
                     $rootScope.app.layout.isBoxed = false;
-                }]
+                }],
+                data: {
+                    authenticate: false
+                }
             })
             .state('page.login', {
                 url: '/login',
                 title: 'Login',
                 templateUrl: 'app/pages/login.html',
                 controller: 'LoginFormController',
-                controllerAs: 'login'
+                controllerAs: 'login',
+                data: {
+                    authenticate: false
+                }
             })
             .state('page.404', {
                 url: '/404',
                 title: 'Not Found',
-                templateUrl: 'app/pages/404.html'
+                templateUrl: 'app/pages/404.html',
+                data: {
+                    authenticate: false
+                }
             })
             .state('page.500', {
                 url: '/500',
                 title: 'Server error',
-                templateUrl: 'app/pages/500.html'
+                templateUrl: 'app/pages/500.html',
+                data: {
+                    authenticate: false
+                }
             })
             .state('page.maintenance', {
                 url: '/maintenance',
                 title: 'Maintenance',
-                templateUrl: 'app/pages/maintenance.html'
+                templateUrl: 'app/pages/maintenance.html',
+                data: {
+                    authenticate: false
+                }
             })
           ;
 

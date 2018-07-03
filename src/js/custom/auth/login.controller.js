@@ -32,7 +32,7 @@
                     $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
                     AuthService.SetCredentials(result);
                     myBlockUI.stop();
-                    $state.go("app.welcome");
+                    AuthService.RedirectToAttemptedUrl();
                 },
                 function(error) {
                     myBlockUI.stop();
