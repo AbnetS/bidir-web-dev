@@ -141,9 +141,45 @@
                 templateUrl:helper.basepath('loan_management/loan_processing/loan.processing.html'),
                 resolve:helper.resolveFor('md.data.table','ui.select','moment','filestyle'),
                 controller: "LoanProcessingController",
-                controllerAs: 'vm'
+                controllerAs: 'vm',
+                abstract: true
             })
+            .state("app.loan_processing.clients", {
+                url: "/clients",
+                views: {
+                    "tabContent": {
+                        templateUrl: helper.basepath('loan_management/loan_processing/tabs/clients.html'),
+                        controller: "ClientsController",
+                        controllerAs: "vm"
+                    }
+                }})
+            .state("app.loan_processing.screenings", {
+                url: "/screenings",
+                 views: {
+                     "tabContent": {
+                         templateUrl: helper.basepath('loan_management/loan_processing/tabs/screenings.html')
+                     }
+                 }
+                }
+                )
+            .state("app.loan_processing.loan_applications", {
+                url: "/loan_application",
+                views: {
+                    "tabContent": {
+                        templateUrl: helper.basepath('loan_management/loan_processing/tabs/loan_applications.html')
+                    }
+                }
 
+            })
+            .state("app.loan_processing.acat", {
+                url: "/acat_processor",
+                views: {
+                    "tabContent": {
+                        templateUrl: helper.basepath('loan_management/loan_processing/tabs/acat.processor.html')
+                    }
+                }
+
+            })
 
           // CUSTOM RESOLVES
           //   Add your own resolves properties

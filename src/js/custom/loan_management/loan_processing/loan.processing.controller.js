@@ -7,9 +7,9 @@
     angular.module("app.processing")
         .controller("LoanProcessingController", LoanProcessingController);
 
-    LoanProcessingController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers'];
+    LoanProcessingController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers','$state'];
 
-    function LoanProcessingController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers ) {
+    function LoanProcessingController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers,$state ) {
         var vm = this;
         vm.screeningDetail = _screeningDetail;
         vm.backToList = _backToList;
@@ -19,7 +19,7 @@
         vm.addClient = _addClient;
         vm.clientDetail = _clientDetail;
 
-        vm.onTabSelected = _onTabSelected;
+        // vm.onTabSelected = _onTabSelected;
 
         vm.options = MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
         vm.filter = {show : false};
@@ -30,6 +30,20 @@
             page:1,
             per_page:10
         };
+        vm.tabs = [
+            { title:'Manage Clients',code:'CLIENT', route: 'app.loan_processing.clients' ,active:false },
+            { title:'Screenings',code:'SCREENING', route: 'app.loan_processing.screenings' ,active:true },
+            { title:'Loan Applications',code:'LOAN_APPLICATION', route: 'app.loan_processing.loan_applications' ,active:false },
+            { title:'ACAT Processor',code:'ACAT_PROCESSOR', route: 'app.loan_processing.acat' ,active:false }
+        ];
+        vm.setActiveTab = _setActiveTab;
+
+        function _setActiveTab(route,index){
+            vm.selectedTab = index; //SET ACTIVE TAB
+            $state.go(route); //REDIRECT TO CHILD VIEW
+        }
+
+
 
         vm.paginate = function(page, pageSize) {
             console.log('Scope Page: ' + vm.query.page + ' Scope Limit: ' + vm.query.per_page);

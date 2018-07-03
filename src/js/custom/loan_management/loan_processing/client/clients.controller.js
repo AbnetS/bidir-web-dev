@@ -13,7 +13,7 @@
         var vm = this;
         vm.paginate = _paginate;
         vm.clearSearchText = _clearSearchText;
-
+        console.log("CLIENTS CONTROLLER");
 
         initialize();
 
@@ -32,7 +32,7 @@
                 vm.clients = response.data.docs;
                 vm.query.total_pages = response.data.total_pages;
                 vm.query.total_docs_count = response.data.total_docs_count;
-                console.log("clients list",vm.clients);
+                console.log("clients list from clients",vm.clients);
             });
         }
 
