@@ -1,25 +1,21 @@
 /**
- * Created by Yonas on 4/27/2018.
+ * Created by Yonas on 7/3/2018.
  */
 (function(angular) {
     "use strict";
 
     angular.module("app.processing")
-        .controller("LoanProcessingController", LoanProcessingController);
+        .controller("ScreeningProcessorController", ScreeningProcessorController);
 
-    LoanProcessingController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers','$state'];
+    ScreeningProcessorController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers','$state'];
 
-    function LoanProcessingController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers,$state ) {
+    function ScreeningProcessorController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers,$state ) {
         var vm = this;
         vm.screeningDetail = _screeningDetail;
         vm.backToList = _backToList;
         vm.saveScreeningForm = _saveScreeningForm;
         vm.questionValueChanged = questionValueChanged;
 
-        vm.addClient = _addClient;
-        vm.clientDetail = _clientDetail;
-
-        // vm.onTabSelected = _onTabSelected;
 
         vm.options = MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
         vm.filter = {show : false};
@@ -30,20 +26,6 @@
             page:1,
             per_page:10
         };
-        vm.tabs = [
-            { title:'Manage Clients',code:'CLIENT', route: 'app.loan_processing.clients' },
-            { title:'Screenings',code:'SCREENING', route: 'app.loan_processing.screenings'},
-            { title:'Loan Applications',code:'LOAN_APPLICATION', route: 'app.loan_processing.loan_applications' },
-            { title:'ACAT Processor',code:'ACAT_PROCESSOR', route: 'app.loan_processing.acat'}
-        ];
-        vm.setActiveTab = _setActiveTab;
-
-        function _setActiveTab(route,index){
-            vm.selectedTab = index; //SET ACTIVE TAB
-            $state.go(route); //REDIRECT TO CHILD VIEW
-        }
-
-
 
         vm.paginate = function(page, pageSize) {
             console.log('Scope Page: ' + vm.query.page + ' Scope Limit: ' + vm.query.per_page);
@@ -76,50 +58,6 @@
         };
 
         initialize();
-
-        function _clientDetail(client, ev) {
-            console.log("Client detail",client);
-        }
-
-        function _onTabSelected(type) {
-            console.log("tab name clicked",type);
-            switch (type){
-                case 'CLIENT':
-                    vm.visibility.showClientDetail = true;
-                    callClientAPI();
-                    break;
-                case 'SCREENING':
-                    callScreeningAPI();
-                    break;
-                case 'LOAN_APPLICATION':
-                    callLoanApplicationAPI();
-                    break;
-                case 'ACAT_PROCESSOR':
-                    callACATProcessor();
-
-                    break;
-                default:
-                    console.log("tab name clicked",type);
-            }
-        }
-
-        function _addClient(ev) {
-            $mdDialog.show({
-                locals: {items: null},
-                templateUrl: RouteHelpers.basepath('loan_management/loan_processing/create.client.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'ClientDialogController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-
-            }, function () {
-            });
-
-        }
 
         function _screeningDetail(screening) {
             vm.selectedScreening = screening;
@@ -168,23 +106,10 @@
         }
 
         function initialize() {
-            // callScreeningAPI();
-        }
-        function callLoanApplicationAPI() {
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-            vm.loanApplicationPromise = LoanManagementService.GetLoanApplications(vm.query).then(function (response) {
-                console.log("loan applications",response);
-                vm.loan_applications = response.data.docs;
-                vm.query.total_pages = response.data.total_pages;
-                vm.query.total_docs_count = response.data.total_docs_count;
-            });
+            callAPI();
         }
 
-        function callScreeningAPI() {
+        function callAPI() {
             vm.screeningPromise = LoanManagementService.GetScreenings(vm.query).then(function (response) {
                 vm.screenings = response.data.docs;
                 vm.query.total_pages = response.data.total_pages;
@@ -192,14 +117,6 @@
                 console.log("screenings info",vm.screenings);
             });
         }
-        function callACATProcessor() {
-            vm.visibility.showACATDetail = true;
-        }
-        function callClientAPI() {
-            vm.visibility.showClientDetail = true;
-        }
-
-
         function questionValueChanged(question) {
 
             var prQues = getPrerequisiteQuestion(question._id);

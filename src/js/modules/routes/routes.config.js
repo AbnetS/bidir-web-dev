@@ -157,7 +157,9 @@
                 url: "/screenings",
                  views: {
                      "tabContent": {
-                         templateUrl: helper.basepath('loan_management/loan_processing/tabs/screenings.html')
+                         templateUrl: helper.basepath('loan_management/loan_processing/tabs/screenings.html'),
+                         controller: 'ScreeningProcessorController',
+                         controllerAs:'vm'
                      }
                  }
                 }
@@ -166,7 +168,9 @@
                 url: "/loan_application",
                 views: {
                     "tabContent": {
-                        templateUrl: helper.basepath('loan_management/loan_processing/tabs/loan_applications.html')
+                        templateUrl: helper.basepath('loan_management/loan_processing/tabs/loan_applications.html'),
+                        controller: 'LoanApplicationProcessorController',
+                        controllerAs:'vm'
                     }
                 }
 
@@ -175,7 +179,9 @@
                 url: "/acat_processor",
                 views: {
                     "tabContent": {
-                        templateUrl: helper.basepath('loan_management/loan_processing/tabs/acat.processor.html')
+                        templateUrl: helper.basepath('loan_management/loan_processing/tabs/acat.processor.html'),
+                        controller: 'ACATProcessorController',
+                        controllerAs:'vm'
                     }
                 }
 
