@@ -7,16 +7,23 @@
     angular.module("app.processing")
         .controller("ClientsController", ClientsController);
 
-    ClientsController.$inject = ['LoanManagementService','$scope'];
+    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService'];
 
-    function ClientsController(LoanManagementService,$scope ) {
+    function ClientsController(LoanManagementService,$scope,blockUI,SharedService) {
         var vm = this;
+        vm.clientDetail = _clientDetail;
+        vm.civilStatuses = ["Single","Married","Widowed","Other"];
         vm.paginate = _paginate;
         vm.clearSearchText = _clearSearchText;
 
         initialize();
 
         function initialize() {
+            initializeDatePicker();
+            vm.visibility = {
+                showClientDetail: false
+            };
+
             vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
             vm.filter = {show : false};
             vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
@@ -27,13 +34,34 @@
         }
 
         function callAPI() {
+            var myBlockUI = blockUI.instances.get('clientsBlockUI');
+            myBlockUI.start();
+
             vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
                 vm.clients = response.data.docs;
                 vm.query.total_pages = response.data.total_pages;
                 vm.query.total_docs_count = response.data.total_docs_count;
-                console.log("clients list from clients",vm.clients);
+                myBlockUI.stop();
+                console.log("clients",vm.clients);
             });
         }
+
+        function _clientDetail(client,ev) {
+            getBranches();
+            console.log("client detail",client);
+            vm.visibility.showClientDetail = true;
+        }
+        function getBranches() {
+            SharedService.GetBranches().then(function(response){
+                vm.branches = response.data.docs;
+                console.log("vm.branches",vm.branches);
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+
+
 
 
 
@@ -56,7 +84,29 @@
         });
 
 
+        function initializeDatePicker() {
+            vm.clear = function() {
+                vm.dt = null;
+            };
 
+            vm.dateOptions = {
+                dateDisabled: false,
+                formatYear: "yy",
+                maxDate: new Date(2020, 5, 22),
+                startingDay: 1
+            };
+
+            vm.openPopup = function() {
+                vm.popup1.opened = true;
+            };
+
+            vm.dateFormat = "dd-MMMM-yyyy";
+            vm.altInputFormats = ["M!/d!/yyyy"];
+
+            vm.popup1 = {
+                opened: false
+            };
+        }
 
     }
 
