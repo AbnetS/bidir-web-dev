@@ -14,6 +14,39 @@
                     <div class="panel-heading bb">
                         <h4 class="panel-title"> {{$index + 1 }}.  {{selectedClientACAT.title | uppercase}}</h4>
                     </div>
+                    <!--TOTAL-->
+                    <div>
+                        <div class="panel-body bt">
+                            <h4 class="b0"> TOTAL</h4>
+                        </div>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th class="text-center">Estimated</th>
+                                <th class="text-right">Actual</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="text-left">Total Cost</td>
+                                <td class="text-center"><small >{{selectedClientACAT.estimated.total_cost | number}}</small></td>
+                                <td class="text-right"><div >{{selectedClientACAT.achieved.total_cost | number}}</div></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Total Revenue</td>
+                                <td class="text-center"><small >{{selectedClientACAT.estimated.total_revenue | number}}</small></td>
+                                <td class="text-right"><div >{{selectedClientACAT.achieved.total_revenue| number}}</div></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Net Income</td>
+                                <td class="text-center"><small >{{selectedClientACAT.estimated.net_income | number}}</small></td>
+                                <td class="text-right"><div >{{selectedClientACAT.achieved.net_income | number}}</div></td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
                     <!--COST-->
                     <div>
                         <div class="panel-body bt">
@@ -167,19 +200,19 @@
                         <tr>
                             <td>Total Revenue</td>
                             <td>
-                                <div class="text-right text-bold">$400</div>
+                                <div class="text-right text-bold">400</div>
                             </td>
                         </tr>
                         <tr>
                             <td>Total Cost</td>
                             <td>
-                                <div class="text-right text-bold">$1.44</div>
+                                <div class="text-right text-bold">1.44</div>
                             </td>
                         </tr>
                         <tr>
                             <td>NET Income</td>
                             <td>
-                                <div class="text-right text-bold">$5</div>
+                                <div class="text-right text-bold">5</div>
                             </td>
                         </tr>
                         </tbody>
