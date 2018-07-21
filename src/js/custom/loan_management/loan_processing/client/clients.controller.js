@@ -7,23 +7,21 @@
     angular.module("app.processing")
         .controller("ClientsController", ClientsController);
 
-    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService'];
+    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
 
-    function ClientsController(LoanManagementService,$scope,blockUI,SharedService) {
+    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
         var vm = this;
         vm.clientDetail = _clientDetail;
-        vm.civilStatuses = ["Single","Married","Widowed","Other"];
         vm.paginate = _paginate;
         vm.clearSearchText = _clearSearchText;
+        vm.saveClient = _saveClient;
 
         initialize();
 
         function initialize() {
             initializeDatePicker();
-            vm.visibility = {
-                showClientDetail: false
-            };
-
+            vm.visibility = { showClientDetail: false };
+            vm.civilStatuses = CIVIL_STATUSES;
             vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
             vm.filter = {show : false};
             vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
@@ -31,6 +29,7 @@
             vm.query = { search:'',   page:1,  per_page:10 };
             vm.months = MONTHS_CONST;
             callAPI();
+            getBranches();
         }
 
         function callAPI() {
@@ -47,7 +46,6 @@
         }
 
         function _clientDetail(client,ev) {
-            getBranches();
             console.log("client detail",client);
             vm.visibility.showClientDetail = true;
         }
@@ -59,11 +57,6 @@
                 console.log("error",error);
             });
         }
-
-
-
-
-
 
         function _paginate(page, pageSize) {
             vm.query.page = page;
@@ -83,7 +76,30 @@
             }
         });
 
+        function _saveClient() {
 
+            if(_.isUndefined(vm.selectedClient.selected_branch)){
+                AlertService.showWarning("Warning!","Please Select Branch....");
+            }else{
+                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
+                myBlockUI.start();
+                var client = vm.selectedClient;
+                client.branch = vm.selectedClient.selected_branch._id;
+
+                LoanManagementService.SaveClient(client).then(function (response) {
+                    console.log("save client",response);
+                    myBlockUI.stop();
+                    AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
+                },function (error) {
+                    console.log("save client error",error);
+                    myBlockUI.stop();
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to update Role",message);
+
+                });
+            }
+
+        }
         function initializeDatePicker() {
             vm.clear = function() {
                 vm.dt = null;

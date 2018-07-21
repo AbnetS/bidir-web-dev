@@ -191,7 +191,6 @@
             })
             .state("app.loan_processing.clients", {
                 url: "/clients",
-                resolve:helper.resolveFor( 'ui.select' ),
                 views: {
                     "tabContent": {
                         templateUrl: helper.basepath('loan_management/loan_processing/tabs/clients.html'),

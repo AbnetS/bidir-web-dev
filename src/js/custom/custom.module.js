@@ -26,7 +26,6 @@
 
         //Angular UI router state changes
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
-            console.log("toState.data.authenticate",toState.data.authenticate);
 
             if(!AuthService.IsAuthenticated()){
                 //WHEN USER IS LOGGED OUT
@@ -36,7 +35,7 @@
 
             }else{
                 $rootScope.currentUser = AuthService.GetCurrentUser();
-                console.log("currentUser",$rootScope.currentUser);
+                // console.log("currentUser",$rootScope.currentUser);
                 $http.defaults.headers.common['Authorization'] = 'Bearer ' + AuthService.GetToken();
             }
         });

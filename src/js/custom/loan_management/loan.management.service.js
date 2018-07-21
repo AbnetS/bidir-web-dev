@@ -19,6 +19,7 @@
             SaveClientScreening:_saveClientScreening,
             //CLIENT MANAGEMENT RELATED SERVICES DECLARATION
             GetClients: _getClients,
+            SaveClient: _saveClient,
             GetClientDetail:_getClientDetail,
             SearchClient:_searchClient,
             GetBranches: _getBranches,
@@ -62,6 +63,9 @@
         }
         function _getClients(parameters){
             return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,parameters));
+        }
+        function _saveClient(client) {
+            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients + '/create'),client);
         }
 
         function _styleLabelByStatus(clientStatus) {
