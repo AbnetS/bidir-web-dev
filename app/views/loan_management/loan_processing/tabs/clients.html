@@ -48,7 +48,7 @@
          <md-table-container>
 
             <table md-table md-progress="vm.clientsPromise" class="table-hover">
-               <thead md-head class="bg-gray-lighter md-head">
+               <thead md-head>
                   <tr md-row>
                      <th md-column>
                         <span>No</span>
@@ -102,6 +102,6 @@
 </div>
 
 
-<div class="row m0" ng-if="vm.visibility.showClientDetail">
-   <client-detail></client-detail>
+<div class="row m0" ng-show="vm.visibility.showClientDetail">
+   <div ng-include="'app/views/loan_management/loan_processing/tabs/client.detail.html'"></div>
 </div>

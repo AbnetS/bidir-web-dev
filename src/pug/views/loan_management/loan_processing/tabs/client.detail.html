@@ -1,186 +1,205 @@
-<div class="row m0">
-
+<div ng-show="vm.visibility.showClientDetail">
     <div class="panel-heading">
         <small>
-            <a ui-sref="app.loan_processing.clients" ng-click="vm.visibility.showClientDetail = false"><i class="fa fa-arrow-left"></i> Back </a>
+            <a ng-click="vm.backToClientList()"><i class="fa fa-arrow-left"></i> Back </a>
         </small>
     </div>
-        <!-- CLIENT FORM-->
-        <form action="" method="post" novalidate="novalidate" block-ui="ClientDetailBlockUI">
-            <fieldset class="m0">
-                <legend class="p-lg">Personal Information</legend>
-                <!--FULL NAME-->
-                <div class="row m0">
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label>First Name <span class="text-danger">*</span></label>
-                            <input class="form-control" type="text" ng-model="vm.selectedClient.first_name"  name="first-name" required/>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label>Middle Name <span class="text-danger">*</span></label>
-                            <input class="form-control" type="text" ng-model="vm.selectedClient.last_name" name="middle-name" required/>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label>Last Name*</label>
-                            <input class="form-control" type="text" ng-model="vm.selectedClient.grandfather_name" name="grand-father-name" required/>
-                        </div>
+    <!-- CLIENT FORM-->
+    <form action="" method="post" novalidate="novalidate" block-ui="ClientDetailBlockUI">
+        <fieldset class="m0">
+            <legend class="p-lg">Personal Information</legend>
+            <!--FULL NAME-->
+            <div class="row m0">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>First Name <span class="text-danger">*</span></label>
+                        <input class="form-control" type="text" ng-model="vm.selectedClient.first_name"
+                               name="first-name"
+                               required/>
                     </div>
                 </div>
-                <!--PERSONAL INFO-->
-                <div class="row m0">
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label>Date of Birth <span class="text-danger">*</span></label>
-                            <p class="input-group">
-                                <input type="text" class="form-control"
-                                       uib-datepicker-popup="{{vm.dateFormat}}"
-                                       ng-model="vm.selectedClient.date_of_birth"
-                                       is-open="vm.popup1.opened"
-                                       datepicker-options="vm.dateOptions"
-                                       close-text="Close" alt-input-formats="vm.altInputFormats"/>
-                                <span class="input-group-btn">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Middle Name <span class="text-danger">*</span></label>
+                        <input class="form-control" type="text" ng-model="vm.selectedClient.last_name"
+                               name="middle-name"
+                               required/>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Last Name*</label>
+                        <input class="form-control" type="text" ng-model="vm.selectedClient.grandfather_name"
+                               name="grand-father-name" required/>
+                    </div>
+                </div>
+            </div>
+            <!--PERSONAL INFO-->
+            <div class="row m0">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Date of Birth <span class="text-danger">*</span></label>
+                        <p class="input-group">
+                            <input type="text" class="form-control"
+                                   uib-datepicker-popup="{{vm.dateFormat}}"
+                                   ng-model="vm.selectedClient.date_of_birth"
+                                   is-open="vm.popup1.opened"
+                                   datepicker-options="vm.dateOptions"
+                                   close-text="Close" alt-input-formats="vm.altInputFormats"/>
+                            <span class="input-group-btn">
                                      <button type="button" class="btn btn-default" ng-click="vm.openPopup()">
                                       <i class="fa fa-calendar"></i>
                                     </button>
                                 </span>
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label>Civil Status</label>
-                            <select  class="form-control" name="civil_status"
-                                     ng-options="status for status in vm.civilStatuses"
-                                     ng-model="vm.selectedClient.civil_status">
-
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <md-input-container class="md-block">
-                            <p class="text-bold">Gender</p>
-                            <md-radio-group layout="row" ng-model="vm.selectedClient.gender">
-                                <md-radio-button value=male class="md-primary"> Male</md-radio-button>
-                                <md-radio-button value=female class="md-primary">Female</md-radio-button>
-                            </md-radio-group>
-                        </md-input-container>
-                    </div>
-                </div>
-                <!--ADDRESS-->
-                <legend class="p-lg">Address</legend>
-                <div class="row m0">
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label>National ID <span class="text-danger">*</span>  </label>
-                            <input class="form-control" ng-model="vm.selectedClient.national_id_no" type="text" name="checkout-zip" required="" />
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label>Woreda</label>
-                            <input class="form-control" ng-model="vm.selectedClient.woreda" type="text" name="checkout-woreda" required="" />
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label>Kebele</label>
-                            <input class="form-control" ng-model="vm.selectedClient.kebele" type="text" name="checkout-address" required="" />
-                        </div>
-                    </div>
-
-                </div>
-
-                <!--National ID-->
-                <div class="row m0">
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label>House Number</label>
-                            <input class="form-control" ng-model="vm.selectedClient.house_no" type="text" name="checkout-address" required="" />
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label>Phone Number </label>
-                            <input class="form-control" ng-model="vm.selectedClient.phone" type="text" name="checkout-phone" required="" />
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label>Email </label>
-                            <input class="form-control" ng-model="vm.selectedClient.email" type="email" name="checkout-zip" required="" />
-                        </div>
-                    </div>
-                </div>
-                <div class="row m0">
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label>House Hold Members </label>
-                            <input class="form-control" ng-model="vm.selectedClient.household_members_count" type="number" name="checkout-zip" required="" />
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <label>Branch</label>
-                            <ui-select ng-model="vm.selectedClient.selected_branch"
-                                       theme="bootstrap"
-                                       on-select="vm.onSelectedDefaultBranch()"
-                                       title="Choose branch">
-                                <ui-select-match placeholder="Select or search a branch from the list...">
-                                    {{$select.selected.name}} - {{$select.selected.location}}</ui-select-match>
-                                <ui-select-choices repeat="branch in vm.branches | filter: $select.search">
-                                    <span ng-bind-html="branch.name | highlight: $select.search"></span>
-                                    <small ng-bind-html="branch.location"></small>
-                                </ui-select-choices>
-                            </ui-select>
-                        </div>
+                        </p>
                     </div>
                 </div>
 
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Civil Status</label>
+                        <select class="form-control" name="civil_status"
+                                ng-options="status for status in vm.civilStatuses"
+                                ng-model="vm.selectedClient.civil_status">
 
-                <!--ADDRESS-->
-                <legend class="p-lg">Spouse</legend>
-                <div class="row m0">
-                    <div class="col-lg-3">
-                        <div class="form-group">
-                            <label>First Name <span class="text-danger">*</span></label>
-                            <input class="form-control" type="text" ng-model="vm.selectedClient.spouse.first_name"  name="first-name" required/>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="form-group">
-                            <label>Middle Name <span class="text-danger">*</span></label>
-                            <input class="form-control" type="text" ng-model="vm.selectedClient.spouse.last_name" name="middle-name" required/>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="form-group">
-                            <label>Last Name </label>
-                            <input class="form-control" type="text" ng-model="vm.selectedClient.spouse.grandfather_name" name="grand-father-name" required/>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="form-group">
-                            <label>National ID Number</label>
-                            <input class="form-control" type="text" ng-model="vm.selectedClient.spouse.national_id_no" name="grand-father-name" required/>
-                        </div>
-                    </div>
-
-                </div>
-                <!--save button area-->
-
-                <div class="pt p-lg clearfix">
-                    <p class="pull-left text-sm"><i>Fields marked with (<span class="text-danger">*</span>) are required</i>
-                    </p>
-                    <div class="pull-right">
-                        <button class="btn btn-primary" type="button" ng-click="vm.saveClient()">Save</button>
+                        </select>
                     </div>
                 </div>
-            </fieldset>
-        </form>
+                <div class="col-lg-4">
+                    <md-input-container class="md-block">
+                        <p class="text-bold">Gender</p>
+                        <md-radio-group layout="row" ng-model="vm.selectedClient.gender">
+                            <md-radio-button value=male class="md-primary"> Male</md-radio-button>
+                            <md-radio-button value=female class="md-primary">Female</md-radio-button>
+                        </md-radio-group>
+                    </md-input-container>
+                </div>
+            </div>
+            <!--ADDRESS-->
+            <legend class="p-lg">Address</legend>
+            <div class="row m0">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>National ID <span class="text-danger">*</span> </label>
+                        <input class="form-control" ng-model="vm.selectedClient.national_id_no" type="text"
+                               name="checkout-zip" required=""/>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Woreda</label>
+                        <input class="form-control" ng-model="vm.selectedClient.woreda" type="text"
+                               name="checkout-woreda"
+                               required=""/>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Kebele</label>
+                        <input class="form-control" ng-model="vm.selectedClient.kebele" type="text"
+                               name="checkout-address"
+                               required=""/>
+                    </div>
+                </div>
+
+            </div>
+
+            <!--National ID-->
+            <div class="row m0">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>House Number</label>
+                        <input class="form-control" ng-model="vm.selectedClient.house_no" type="text"
+                               name="checkout-address" required=""/>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Phone Number </label>
+                        <input class="form-control" ng-model="vm.selectedClient.phone" type="text" name="checkout-phone"
+                               required=""/>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Email </label>
+                        <input class="form-control" ng-model="vm.selectedClient.email" type="email" name="checkout-zip"
+                               required=""/>
+                    </div>
+                </div>
+            </div>
+            <div class="row m0">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>House Hold Members </label>
+                        <input class="form-control" ng-model="vm.selectedClient.household_members_count" type="number"
+                               name="checkout-zip" required=""/>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Branch</label>
+                        <ui-select ng-model="vm.selectedClient.selected_branch"
+                                   theme="bootstrap"
+                                   on-select="vm.onSelectedDefaultBranch()"
+                                   title="Choose branch">
+                            <ui-select-match placeholder="Select or search a branch from the list...">
+                                {{$select.selected.name}} - {{$select.selected.location}}
+                            </ui-select-match>
+                            <ui-select-choices repeat="branch in vm.branches | filter: $select.search">
+                                <span ng-bind-html="branch.name | highlight: $select.search"></span>
+                                <small ng-bind-html="branch.location"></small>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>
+
+
+            <!--ADDRESS-->
+            <legend class="p-lg">Spouse</legend>
+            <div class="row m0">
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label>First Name <span class="text-danger">*</span></label>
+                        <input class="form-control" type="text" ng-model="vm.selectedClient.spouse.first_name"
+                               name="first-name" required/>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label>Middle Name <span class="text-danger">*</span></label>
+                        <input class="form-control" type="text" ng-model="vm.selectedClient.spouse.last_name"
+                               name="middle-name" required/>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label>Last Name </label>
+                        <input class="form-control" type="text" ng-model="vm.selectedClient.spouse.grandfather_name"
+                               name="grand-father-name" required/>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label>National ID Number</label>
+                        <input class="form-control" type="text" ng-model="vm.selectedClient.spouse.national_id_no"
+                               name="grand-father-name" required/>
+                    </div>
+                </div>
+
+            </div>
+            <!--save button area-->
+
+            <div class="pt p-lg clearfix">
+                <p class="pull-left text-sm"><i>Fields marked with (<span class="text-danger">*</span>) are required</i>
+                </p>
+                <div class="pull-right">
+                    <button class="btn btn-primary" type="button" ng-click="vm.saveClient()">Save</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+
 </div>

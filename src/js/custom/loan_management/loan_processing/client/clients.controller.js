@@ -15,6 +15,9 @@
         vm.paginate = _paginate;
         vm.clearSearchText = _clearSearchText;
         vm.saveClient = _saveClient;
+        vm.backToClientList = _backToClientList;
+
+
 
         initialize();
 
@@ -49,33 +52,10 @@
             console.log("client detail",client);
             vm.visibility.showClientDetail = true;
         }
-        function getBranches() {
-            SharedService.GetBranches().then(function(response){
-                vm.branches = response.data.docs;
-                console.log("vm.branches",vm.branches);
-            },function(error){
-                console.log("error",error);
-            });
-        }
 
-        function _paginate(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
+        function _backToClientList() {
+            vm.visibility = { showClientDetail: false };
         }
-        function _clearSearchText() {
-            vm.query.search = '';
-            vm.filter.show = false;
-        }
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("searching clients for ",newValue);
-            }
-        });
-
         function _saveClient() {
 
             if(_.isUndefined(vm.selectedClient.selected_branch)){
@@ -100,6 +80,29 @@
             }
 
         }
+
+        function getBranches() {
+            SharedService.GetBranches().then(function(response){
+                vm.branches = response.data.docs;
+                console.log("vm.branches",vm.branches);
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        /**
+         *
+         *  Paging parameters and methods
+         */
+                 function _paginate(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        }
+        function _clearSearchText() {
+            vm.query.search = '';
+            vm.filter.show = false;
+        }
         function initializeDatePicker() {
             vm.clear = function() {
                 vm.dt = null;
@@ -123,9 +126,14 @@
                 opened: false
             };
         }
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("searching clients for ",newValue);
+            }
+        });
 
     }
-
-
 
 })(window.angular);

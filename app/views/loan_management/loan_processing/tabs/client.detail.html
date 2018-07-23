@@ -1,8 +1,7 @@
-<div class="row m0">
-
+<div ng-show="vm.visibility.showClientDetail">
    <div class="panel-heading">
       <small>
-         <a ui-sref="app.loan_processing.clients" ng-click="vm.visibility.showClientDetail = false"><i class="fa fa-arrow-left"></i> Back </a>
+         <a ng-click="vm.backToClientList()"><i class="fa fa-arrow-left"></i> Back </a>
       </small>
    </div>
    <!-- CLIENT FORM-->
@@ -130,7 +129,8 @@
                   <label>Branch</label>
                   <ui-select ng-model="vm.selectedClient.selected_branch" theme="bootstrap" on-select="vm.onSelectedDefaultBranch()" title="Choose branch">
                      <ui-select-match placeholder="Select or search a branch from the list...">
-                        {{$select.selected.name}} - {{$select.selected.location}}</ui-select-match>
+                        {{$select.selected.name}} - {{$select.selected.location}}
+                     </ui-select-match>
                      <ui-select-choices repeat="branch in vm.branches | filter: $select.search">
                         <span ng-bind-html="branch.name | highlight: $select.search"></span>
                         <small ng-bind-html="branch.location"></small>
@@ -185,4 +185,5 @@
          </div>
       </fieldset>
    </form>
+
 </div>
