@@ -1,12 +1,5 @@
 <div class="row"  block-ui="ClientACATBlockUI">
-    <div class="col-lg-12">
-        <div class="pull-right">
-            <a ng-click="vm.printLaonProcess('ACAT')" class="btn btn-default hidden-print">
-                <i class="icon-printer"></i>
-            </a>
-            <span class="label label-inverse" am-time-ago="vm.clientACATs.last_modified"> Last Modified</span>
-        </div>
-    </div>
+
     <div class="col-md-3">
         <div class="panel b" >
             <div class="panel-heading  text-bold">Crops</div>
@@ -29,6 +22,14 @@
         </div>
     </div>
     <div class="col-md-9">
+        <div class="col-lg-12" ng-show="vm.selectedClientACAT && vm.visibility.showCropPanel && !vm.visibility.showSummaryPanel">
+            <div class="pull-right">
+                <a ng-click="vm.printLaonProcess('ACAT_CROP')" class="btn btn-default hidden-print">
+                    <i class="icon-printer"></i>
+                </a>
+                <span class="label label-inverse" am-time-ago="vm.clientACATs.last_modified"> Last Modified</span>
+            </div>
+        </div>
         <div>
             <!--IF CROP IS NOT SELECTED-->
             <div  ng-if="!vm.visibility.showCropPanel && !vm.visibility.showSummaryPanel">
@@ -219,13 +220,20 @@
 
         <!--SHOW SUMMARY-->
         <div ng-show="vm.visibility.showSummaryPanel && !vm.visibility.showCropPanel">
+            <div class="col-lg-12">
+                <div class="pull-right">
+                    <a ng-click="vm.printLaonProcess('ACAT_TOTAL')" class="btn btn-default hidden-print">
+                        <i class="icon-printer"></i>
+                    </a>
+                </div>
+            </div>
             <!--TOTAL-->
             <div class="panel b">
                 <div class="panel-heading bb">
                     <h4 class="panel-title">TOTAL</h4>
                 </div>
                 <div class="panel-body bt">
-                    <h4 class="b0">Total</h4>
+                    <h4 class="b0">Total Estimated</h4>
                 </div>
                 <table class="table">
                     <tbody>
@@ -251,6 +259,25 @@
                 </table>
 
             </div>
+
+            <!--ESTIMATED NET CASH FLOW-->
+            <div class="panel b text-center">
+                <div class="panel-body bt">
+                    <div class="row">
+                        <div class="col-md-12 br">
+                            <label class="text-bold text-gray-darker pb-sm pt-sm">Estimated Net Cash Flow </label>
+                        </div>
+                        <!--Estimated Net Cash Flow-->
+                        <div class="col-md-12">
+                            <div ng-repeat="(key, value) in vm.clientACATs.estimated.net_cash_flow" class="col-xs-4 col-md-2 br">
+                                <small class="center-block">{{key | uppercase}} </small>
+                                <strong>{{value | number}}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!--Loan Proposal Summary-->
             <div class="panel b">
                 <div class="panel-heading bb">

@@ -9,10 +9,9 @@
     <div class="row" >
 
         <div class="col-md-12">
-            <div ng-repeat="selectedClientACAT in vm.ACATs">
                 <div class="panel panel-success b">
                     <div class="panel-heading bb">
-                        <h4 class="panel-title"> {{$index + 1 }}.  {{selectedClientACAT.title | uppercase}}</h4>
+                        <h4 class="panel-title"> {{$index + 1 }}.  {{vm.title | uppercase}}</h4>
                     </div>
                     <!--TOTAL-->
                     <div>
@@ -30,18 +29,18 @@
                             <tbody>
                             <tr>
                                 <td class="text-left">Total Cost</td>
-                                <td class="text-center"><small >{{selectedClientACAT.estimated.total_cost | number}}</small></td>
-                                <td class="text-right"><div >{{selectedClientACAT.achieved.total_cost | number}}</div></td>
+                                <td class="text-center"><small >{{vm.estimated.total_cost | number}}</small></td>
+                                <td class="text-right"><div >{{vm.achieved.total_cost | number}}</div></td>
                             </tr>
                             <tr>
                                 <td class="text-left">Total Revenue</td>
-                                <td class="text-center"><small >{{selectedClientACAT.estimated.total_revenue | number}}</small></td>
-                                <td class="text-right"><div >{{selectedClientACAT.achieved.total_revenue| number}}</div></td>
+                                <td class="text-center"><small >{{vm.estimated.total_revenue | number}}</small></td>
+                                <td class="text-right"><div >{{vm.achieved.total_revenue| number}}</div></td>
                             </tr>
                             <tr>
                                 <td class="text-left">Net Income</td>
-                                <td class="text-center"><small >{{selectedClientACAT.estimated.net_income | number}}</small></td>
-                                <td class="text-right"><div >{{selectedClientACAT.achieved.net_income | number}}</div></td>
+                                <td class="text-center"><small >{{vm.estimated.net_income | number}}</small></td>
+                                <td class="text-right"><div >{{vm.achieved.net_income | number}}</div></td>
                             </tr>
                             </tbody>
                         </table>
@@ -63,23 +62,23 @@
                             <tbody>
                             <tr>
                                 <td class="text-left">Inputs</td>
-                                <td class="text-center"><small >{{selectedClientACAT.sections[0].sub_sections[0].estimated_sub_total | number}}</small></td>
-                                <td class="text-right"><div >{{selectedClientACAT.sections[0].sub_sections[0].achieved_sub_total | number}}</div></td>
+                                <td class="text-center"><small >{{vm.sections[0].sub_sections[0].estimated_sub_total | number}}</small></td>
+                                <td class="text-right"><div >{{vm.sections[0].sub_sections[0].achieved_sub_total | number}}</div></td>
                             </tr>
                             <tr>
                                 <td class="text-left">Labour Costs</td>
-                                <td class="text-center"><small >{{selectedClientACAT.sections[0].sub_sections[1].estimated_sub_total | number}}</small></td>
-                                <td class="text-right"><div >{{selectedClientACAT.sections[0].sub_sections[1].achieved_sub_total | number}}</div></td>
+                                <td class="text-center"><small >{{vm.sections[0].sub_sections[1].estimated_sub_total | number}}</small></td>
+                                <td class="text-right"><div >{{vm.sections[0].sub_sections[1].achieved_sub_total | number}}</div></td>
                             </tr>
                             <tr>
                                 <td class="text-left">Other Costs</td>
-                                <td class="text-center"><small >{{selectedClientACAT.sections[0].sub_sections[2].estimated_sub_total | number}}</small></td>
-                                <td class="text-right"><div >{{selectedClientACAT.sections[0].sub_sections[2].achieved_sub_total | number}}</div></td>
+                                <td class="text-center"><small >{{vm.sections[0].sub_sections[2].estimated_sub_total | number}}</small></td>
+                                <td class="text-right"><div >{{vm.sections[0].sub_sections[2].achieved_sub_total | number}}</div></td>
                             </tr>
                             <tr>
                                 <td class="text-left text-bold text-dark">Total</td>
-                                <td class="text-center"><small >{{selectedClientACAT.sections[0].estimated_sub_total | number}}</small></td>
-                                <td class="text-right"><div >{{selectedClientACAT.sections[0].achieved_sub_total | number}}</div></td>
+                                <td class="text-center"><small >{{vm.sections[0].estimated_sub_total | number}}</small></td>
+                                <td class="text-right"><div >{{vm.sections[0].achieved_sub_total | number}}</div></td>
                             </tr>
                             </tbody>
                         </table>
@@ -101,18 +100,18 @@
                             <tbody>
                             <tr>
                                 <td class="text-left">Probable</td>
-                                <td class="text-center"><small >{{selectedClientACAT.sections[1].sub_sections[0].estimated_sub_total | number}}</small></td>
-                                <td class="text-right"><div >{{selectedClientACAT.sections[1].sub_sections[0].achieved_sub_total | number}}</div></td>
+                                <td class="text-center"><small >{{vm.sections[1].sub_sections[0].estimated_sub_total | number}}</small></td>
+                                <td class="text-right"><div >{{vm.sections[1].sub_sections[0].achieved_sub_total | number}}</div></td>
                             </tr>
                             <tr>
                                 <td class="text-left">Maximum</td>
-                                <td class="text-center"><small >{{selectedClientACAT.sections[1].sub_sections[1].estimated_sub_total | number}}</small></td>
-                                <td class="text-right"><div >{{selectedClientACAT.sections[1].sub_sections[1].achieved_sub_total | number}}</div></td>
+                                <td class="text-center"><small >{{vm.sections[1].sub_sections[1].estimated_sub_total | number}}</small></td>
+                                <td class="text-right"><div >{{vm.sections[1].sub_sections[1].achieved_sub_total | number}}</div></td>
                             </tr>
                             <tr>
                                 <td class="text-left">Minimum</td>
-                                <td class="text-center"><small >{{selectedClientACAT.sections[1].sub_sections[2].estimated_sub_total | number}}</small></td>
-                                <td class="text-right"><div >{{selectedClientACAT.sections[1].sub_sections[2].achieved_sub_total | number}}</div></td>
+                                <td class="text-center"><small >{{vm.sections[1].sub_sections[2].estimated_sub_total | number}}</small></td>
+                                <td class="text-right"><div >{{vm.sections[1].sub_sections[2].achieved_sub_total | number}}</div></td>
                             </tr>
                             </tbody>
                         </table>
@@ -134,18 +133,18 @@
                             <tbody>
                             <tr>
                                 <td class="text-left">Own Consumption</td>
-                                <td class="text-center"><small >{{selectedClientACAT.sections[1].sub_sections[0].yield_consumption.estimated.own_consumption | number}}</small></td>
-                                <td class="text-right"><div >{{selectedClientACAT.sections[1].sub_sections[0].yield_consumption.achieved.own_consumption | number}}</div></td>
+                                <td class="text-center"><small >{{vm.sections[1].sub_sections[0].yield_consumption.estimated.own_consumption | number}}</small></td>
+                                <td class="text-right"><div >{{vm.sections[1].sub_sections[0].yield_consumption.achieved.own_consumption | number}}</div></td>
                             </tr>
                             <tr>
                                 <td class="text-left">  Seed Reserve</td>
-                                <td class="text-center"><small >{{selectedClientACAT.sections[1].sub_sections[0].yield_consumption.estimated.seed_reserve | number}}</small></td>
-                                <td class="text-right"><div >{{selectedClientACAT.sections[1].sub_sections[0].yield_consumption.achieved.seed_reserve | number}}</div></td>
+                                <td class="text-center"><small >{{vm.sections[1].sub_sections[0].yield_consumption.estimated.seed_reserve | number}}</small></td>
+                                <td class="text-right"><div >{{vm.sections[1].sub_sections[0].yield_consumption.achieved.seed_reserve | number}}</div></td>
                             </tr>
                             <tr>
                                 <td class="text-left">  For Market</td>
-                                <td class="text-center"><small >{{selectedClientACAT.sections[1].sub_sections[0].yield_consumption.estimated.for_market | number}}</small></td>
-                                <td class="text-right"><div >{{selectedClientACAT.sections[1].sub_sections[0].yield_consumption.achieved.for_market | number}}</div></td>
+                                <td class="text-center"><small >{{vm.sections[1].sub_sections[0].yield_consumption.estimated.for_market | number}}</small></td>
+                                <td class="text-right"><div >{{vm.sections[1].sub_sections[0].yield_consumption.achieved.for_market | number}}</div></td>
                             </tr>
                             </tbody>
                         </table>
@@ -160,7 +159,7 @@
                         <div class="panel-body bt">
                         <!--Estimated Net Cash Flow-->
                         <div class="col-md-12 text-center">
-                            <div ng-repeat="(key, value) in selectedClientACAT.estimated.net_cash_flow" class="col-xs-4 col-md-2 br">
+                            <div ng-repeat="(key, value) in vm.estimated.net_cash_flow" class="col-xs-4 col-md-2 br">
                                 <small class="center-block">{{key | uppercase}} </small>
                                 <strong>{{value | number}}</strong>
                             </div>
@@ -174,7 +173,7 @@
                         </div>
                         <div class="panel-body">
                             <div class="col-md-12 text-center">
-                                <div ng-repeat="(key, value) in selectedClientACAT.achieved.net_cash_flow" class="col-xs-4 col-md-2 br">
+                                <div ng-repeat="(key, value) in vm.achieved.net_cash_flow" class="col-xs-4 col-md-2 br">
                                     <small class="center-block">{{key | uppercase}} </small>
                                     <strong>{{value | number}}</strong>
                                 </div>
@@ -182,100 +181,6 @@
                         </div>
                     </div>
                 </div>
-
-
-            </div>
-
-            <div>
-                <!--TOTAL-->
-                <div class="panel panel-success b">
-                    <div class="panel-heading bb">
-                        <h4 class="panel-title">TOTAL</h4>
-                    </div>
-                    <div class="panel-body bt">
-                        <h4 class="b0">Total</h4>
-                    </div>
-                    <table class="table">
-                        <tbody>
-                        <tr>
-                            <td>Total Revenue</td>
-                            <td>
-                                <div class="text-right text-bold">400</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Total Cost</td>
-                            <td>
-                                <div class="text-right text-bold">1.44</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>NET Income</td>
-                            <td>
-                                <div class="text-right text-bold">5</div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                </div>
-                <!--Loan Proposal Summary-->
-                <div class="panel panel-success b">
-                    <div class="panel-heading bb">
-                        <h4 class="panel-title">Loan Proposal Summary</h4>
-                    </div>
-                    <div class="panel-body bt">
-                        <h4 class="b0">Loan Proposal</h4>
-                    </div>
-                    <table class="table">
-                        <tbody>
-                        <tr>
-                            <td>Loan Requested</td>
-                            <td>
-                                <div class="text-right text-bold">0.00</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Loan Proposed</td>
-                            <td>
-                                <div class="text-right text-bold">0.00</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Loan Approved</td>
-                            <td>
-                                <div class="text-right text-bold">0.00</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Total Deductibles</td>
-                            <td>
-                                <div class="text-right text-bold">0.00</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Total Loan Costs</td>
-                            <td>
-                                <div class="text-right text-bold">0.00</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Cash at hand</td>
-                            <td>
-                                <div class="text-right text-bold">0.00</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Repayable</td>
-                            <td>
-                                <div class="text-right text-bold">0.00</div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                </div>
-            </div>
 
         </div>
     </div>
