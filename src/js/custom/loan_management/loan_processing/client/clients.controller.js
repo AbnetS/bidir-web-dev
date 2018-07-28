@@ -11,7 +11,7 @@
 
     function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
         var vm = this;
-        vm.clientDetail = _clientDetail;
+        vm.clientDetailEdit = _clientDetailEdit;
         vm.paginate = _paginate;
         vm.clearSearchText = _clearSearchText;
         vm.saveClient = _saveClient;
@@ -48,9 +48,12 @@
             });
         }
 
-        function _clientDetail(client,ev) {
+        function _clientDetailEdit(client,ev) {
             console.log("client detail",client);
             vm.visibility.showClientDetail = true;
+            //data set
+            vm.selectedClient = client;
+            vm.selectedClient.selected_branch = client.branch;
         }
 
         function _backToClientList() {
@@ -66,17 +69,35 @@
                 var client = vm.selectedClient;
                 client.branch = vm.selectedClient.selected_branch._id;
 
-                LoanManagementService.SaveClient(client).then(function (response) {
-                    console.log("save client",response);
-                    myBlockUI.stop();
-                    AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
-                },function (error) {
-                    console.log("save client error",error);
-                    myBlockUI.stop();
-                    var message = error.data.error.message;
-                    AlertService.showError("Failed to update Role",message);
 
-                });
+                if( _.isUndefined(vm.selectedClient._id)){
+                    LoanManagementService.SaveClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
+                    },function (error) {
+                        console.log("save client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to save client",message);
+
+                    });
+                }else{
+
+                    LoanManagementService.UpdateClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
+                    },function (error) {
+                        console.log("Updated client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to update Client",message);
+
+                    });
+                }
+
+
             }
 
         }
@@ -94,7 +115,7 @@
          *
          *  Paging parameters and methods
          */
-                 function _paginate(page, pageSize) {
+        function _paginate(page, pageSize) {
             vm.query.page = page;
             vm.query.per_page = pageSize;
             callAPI();

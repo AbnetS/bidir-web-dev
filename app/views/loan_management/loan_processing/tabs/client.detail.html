@@ -121,7 +121,7 @@
             <div class="col-lg-4">
                <div class="form-group">
                   <label>House Hold Members</label>
-                  <input class="form-control" ng-model="vm.selectedClient.household_members_count" type="number" name="checkout-zip" required="" />
+                  <input class="form-control" ng-model="vm.selectedClient.household_members_count" type="text" name="checkout-zip" required="" />
                </div>
             </div>
             <div class="col-lg-4">
@@ -180,7 +180,7 @@
             <p class="pull-left text-sm"><i>Fields marked with (<span class="text-danger">*</span>) are required</i>
             </p>
             <div class="pull-right">
-               <button class="btn btn-primary" type="button" ng-click="vm.saveClient()">Save</button>
+               <button class="btn btn-primary" type="button" ng-click="vm.saveClient()">{{vm.selectedClient._id ? 'Update': 'Save'}}</button>
             </div>
          </div>
       </fieldset>

@@ -36,7 +36,7 @@
                      <i class="fa fa-filter"></i>
                      <div class="md-ripple-container"></div>
                   </button>
-                  <button class="md-icon-button md-button md-ink-ripple " type="button" ng-click="vm.clientDetail(null,$event)">
+                  <button class="md-icon-button md-button md-ink-ripple " type="button" ng-click="vm.clientDetailEdit(null,$event)">
                      <i class="fa fa-plus"></i>
                      <div class="md-ripple-container"></div>
                   </button>
@@ -47,7 +47,7 @@
 
          <md-table-container>
 
-            <table md-table md-progress="vm.clientsPromise" class="table-hover">
+            <table md-table md-progress="vm.clientsPromise">
                <thead md-head>
                   <tr md-row>
                      <th md-column>
@@ -85,7 +85,7 @@
                      <td md-cell>{{client.status | ReplaceUnderscore}}</td>
 
                      <td md-cell>
-                        <a ng-click="vm.clientDetail(client,$event)">
+                        <a ng-click="vm.clientDetailEdit(client,$event)">
                            <i class="fa fa-eye"></i>
                         </a>
                      </td>
