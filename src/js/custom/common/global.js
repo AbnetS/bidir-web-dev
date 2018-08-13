@@ -193,4 +193,4 @@ var MD_TABLE_GLOBAL_SETTINGS = {
         pageSelect: false
     }
 };
-var CIVIL_STATUSES  = ["Single","Married","Widowed","Other"];
+var CIVIL_STATUSES  = ["single","married","widowed","other"];

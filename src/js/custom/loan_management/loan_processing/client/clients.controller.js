@@ -53,7 +53,7 @@
             vm.visibility.showClientDetail = true;
             //data set
             vm.selectedClient = client;
-            vm.selectedClient.selected_branch = client.branch;
+            vm.selected_branch = client.branch;
         }
 
         function _backToClientList() {
@@ -61,13 +61,13 @@
         }
         function _saveClient() {
 
-            if(_.isUndefined(vm.selectedClient.selected_branch)){
+            if(_.isUndefined(vm.selected_branch)){
                 AlertService.showWarning("Warning!","Please Select Branch....");
             }else{
                 var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
                 myBlockUI.start();
                 var client = vm.selectedClient;
-                client.branch = vm.selectedClient.selected_branch._id;
+                client.branch = vm.selected_branch;
 
 
                 if( _.isUndefined(vm.selectedClient._id)){
