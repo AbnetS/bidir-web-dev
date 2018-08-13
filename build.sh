@@ -7,19 +7,19 @@ EXPOSE_PORT=18080
 CONT_PORT=80
 HOST_IP=`ifconfig ens4 | awk '/inet addr/{print substr($2,6)}'`
 MONGODB_URL=mongodb://$HOST_IP:27017/bidir
-NPM=$(which npm)
+#NPM=$(which npm)
 #sudo $NPM install
-cd src
-sudo $NPM install gulp
-sudo $NPM install -g gulp-sass
-sudo $NPM install -g gulp-less
-#sudo $NPM install -g bower
-sudo $NPM install node-build-web-app --save-dev
-sudo $NPM install --no-optional
-bower install
-GULP=$(which gulp)
-$GULP build
-cd ..
+#cd src
+#sudo $NPM install gulp
+#sudo $NPM install -g gulp-sass
+#sudo $NPM install -g gulp-less
+##sudo $NPM install -g bower
+#sudo $NPM install node-build-web-app --save-dev
+#sudo $NPM install --no-optional
+#bower install
+#GULP=$(which gulp)
+#$GULP build
+#cd ..
 #Stop running container
 $DOCKER_PATH stop $SERVICE_NAME
 # Remove container
