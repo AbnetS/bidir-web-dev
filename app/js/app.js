@@ -3837,8 +3837,8 @@ function runBlock() {
 })(window.angular);
 var API = {
     Config: {
-        BaseUrl: 'http://api.buusaa-bidir.local/' //REMOTE API
-        // BaseUrl: 'http://api.dev.bidir.gebeya.co/' //REMOTE API
+        // BaseUrl: 'http://api.buusaa-bidir.local/' //REMOTE APIs
+        BaseUrl: 'http://api.dev.bidir.gebeya.co/' //REMOTE API
     },
     Service: {
         NONE:'',
