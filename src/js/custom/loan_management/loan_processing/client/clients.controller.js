@@ -67,7 +67,8 @@
                 var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
                 myBlockUI.start();
                 var client = vm.selectedClient;
-                client.branch = vm.selected_branch;
+                client.branch = vm.selected_branch._id;
+                client.created_by =  undefined;
 
 
                 if( _.isUndefined(vm.selectedClient._id)){

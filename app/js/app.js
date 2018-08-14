@@ -1740,7 +1740,7 @@
         $locationProvider.html5Mode(false);
 
         // defaults to login
-        $urlRouterProvider.otherwise('/page/login');
+        $urlRouterProvider.otherwise('/app/welcome');
 
         // 
         // Application Routes
@@ -8523,7 +8523,8 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
                 var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
                 myBlockUI.start();
                 var client = vm.selectedClient;
-                client.branch = vm.selected_branch;
+                client.branch = vm.selected_branch._id;
+                client.created_by =  undefined;
 
 
                 if( _.isUndefined(vm.selectedClient._id)){
