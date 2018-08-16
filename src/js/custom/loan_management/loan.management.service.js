@@ -13,8 +13,9 @@
         return {
             GetLoanApplications: _getLoanApplications,
             GetClientLoanApplication:_getClientLoanApplication,
-            GetScreenings: _getScreenings,
+            SaveClientLoanApplication:_saveClientLoanApplication,
 
+            GetScreenings: _getScreenings,
             GetClientScreening:_getClientScreening,
             SaveClientScreening:_saveClientScreening,
             //CLIENT MANAGEMENT RELATED SERVICES DECLARATION
@@ -49,6 +50,10 @@
         function _getClientLoanApplication(clientId) {
             return $http.get(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Clients,clientId));
         }
+        function _saveClientLoanApplication(loan_application,id) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Loans,id),loan_application);
+        }
+
 
 
         //CLIENT MANAGEMENT RELATED SERVICES

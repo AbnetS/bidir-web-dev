@@ -14,7 +14,7 @@
         vm.backToList = _backToList;
         vm.questionValueChanged = questionValueChanged;
         vm.loanApplicationDetail = _loanApplicationDetail;
-        vm.saveLoanApplicationForm = _saveLoanApplicationForm;
+        vm.saveClientForm = _saveClientForm;
 
         vm.options = MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
         vm.filter = {show : false};
@@ -58,27 +58,28 @@
         }
 
 
-        function _saveLoanApplicationForm(client) {
+        function _saveClientForm(client,status) {
 
-            // var status = _.find(SCREENING_STATUS,function (stat) {
-            //     return stat.code === screening_status;
-            // });
-            // var screening = {
-            //     status: status.code,
-            //     questions: client.questions
-            // };
+            var status = _.find(SCREENING_STATUS,function (stat) {
+                return stat.code === status;
+            });
+            var loan_application = {
+                status: "accepted",
+                sections: client.sections
+            };
+            // "[{"status":"Correct Status is either inprogress, accepted, submitted, rejected or declined_under_review"}]"
 
             console.log("save status ", client);
 
-            // LoanManagementService.SaveClientScreening(screening,client._id)
-            //     .then(function (response) {
-            //         AlertService.showSuccess('Screening',"Successfully saved screening information  with status: " + status.name);
-            //         console.log("saved screening ", screening);
-            //     },function (error) {
-            //         var message = error.data.error.message;
-            //         AlertService.showError("Error when saving screening",message);
-            //         console.log("error on saving screening ", error);
-            //     });
+            LoanManagementService.SaveClientLoanApplication(loan_application,client._id)
+                .then(function (response) {
+                    // AlertService.showSuccess('Screening',"Successfully saved screening information  with status: " + status.name);
+                    console.log("saved  ", response);
+                },function (error) {
+                    var message = error.data.error.message;
+                    // AlertService.showError("Error when saving screening",message);
+                    console.log("error on saving ", error);
+                });
 
         }
 
