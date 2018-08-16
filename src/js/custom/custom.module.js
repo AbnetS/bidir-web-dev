@@ -7,6 +7,7 @@
             'angle',
             'app.common',
             'app.authentication',
+            'app.profile',
             'app.mfi',
             'app.manage_roles',
             'app.manage_users',

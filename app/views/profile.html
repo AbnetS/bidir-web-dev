@@ -1,0 +1,131 @@
+<div class="container-md">
+   <div class="row">
+      <div class="col-md-3">
+         <div class="panel b">
+            <div class="panel-heading bg-gray-lighter text-bold">Personal Settings</div>
+            <div class="list-group" ng-init="settingActive = 1">
+               <a class="list-group-item" href="" ng-click="settingActive=1" ng-class="{'active': (settingActive == 1)}">Profile</a>
+               <a class="list-group-item" href="" ng-click="settingActive=2" ng-class="{'active': (settingActive == 2)}">Account</a>
+               <a class="list-group-item" href="" ng-click="settingActive=3" ng-class="{'active': (settingActive == 3)}">Notifications</a>
+            </div>
+         </div>
+      </div>
+      <div class="col-md-9">
+         <div ng-show="settingActive == 1">
+            <div class="panel b">
+               <div class="panel-heading bg-gray-lighter text-bold">Profile</div>
+               <div class="panel-body">
+                  <form action="ProfileForm">
+                     <div class="col-md-6">
+                        <div class="main-img-preview">
+                           <img ng-show="vm.picFile" ngf-thumbnail="vm.picFile" class="thumbnail img-preview" title="Preview Logo">
+                           <img ng-hide="vm.picFile" ng-src="{{vm.user.picture}}" src="app/img/user/02.jpg" class="thumbnail img-preview" title="Preview Logo">
+                        </div>
+
+                     </div>
+                     <div class="col-md-6">
+                        <label>Logo *</label>
+                        <input class="form-control inline" type="file" ngf-select ng-model="vm.picFile" name="mfi_logo" accept="image/*" ngf-max-size="2MB" ngf-model-invalid="errorFile">
+
+                        <i ng-show="ProfileForm.file.$error.maxSize">File too large {{errorFile.size / 1000000|number:1}}MB: max 2M</i>
+                     </div>
+                     <!-- FIRST NAME -->
+                     <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <label class="control-label small">First Name</label>
+                        <span class="required" aria-required="true">*</span>
+                        <input name="inputFirstName" ng-model="vm.user.first_name" placeholder="First Name" type="text" class="form-control input-sm" required>
+                     </div>
+                     <!-- LAST NAME -->
+                     <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <label class="control-label small">Last Name</label>
+                        <span class="required" aria-required="true">*</span>
+                        <input name="inputLastName" ng-model="vm.user.last_name" placeholder="Last Name" type="text" class="form-control input-sm" required>
+                     </div>
+                     <!-- Grand Father Name -->
+                     <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <label class="control-label small">Grand Father Name</label>
+                        <input name="inputSurName" ng-model="vm.user.grandfather_name" placeholder="Grand Father Name" type="text" class="form-control input-sm">
+                     </div>
+                     <!-- Job Title -->
+                     <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <label class="control-label small">Job Title</label>
+                        <span class="required" aria-required="true">*</span>
+                        <input name="inputTitle" ng-model="vm.user.title" placeholder="Title" type="text" class="form-control input-sm">
+                     </div>
+
+                     <!-- Email -->
+                     <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <label class="control-label small">Email</label>
+                        <input name="inputTitle" ng-model="vm.user.email" placeholder="Email" type="email" class="form-control input-sm">
+                     </div>
+
+                     <!-- Phone -->
+                     <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <label class="control-label small">Phone</label>
+                        <input name="inputTitle" ng-model="vm.user.phone" placeholder="Phone" type="text" class="form-control input-sm">
+                     </div>
+
+
+                     <br/>
+
+                     <button class="btn btn-success pull-right" type="button">Update</button>
+
+                  </form>
+               </div>
+            </div>
+         </div>
+         <div ng-show="settingActive == 2">
+            <div class="panel b">
+               <div class="panel-heading bg-gray-lighter text-bold">Account</div>
+               <div class="panel-body">
+                  <form action="">
+                     <div class="form-group">
+                        <label>Current password</label>
+                        <input class="form-control" type="password" />
+                     </div>
+                     <div class="form-group">
+                        <label>New password</label>
+                        <input class="form-control" type="password" />
+                     </div>
+                     <div class="form-group">
+                        <label>Confirm new password</label>
+                        <input class="form-control" type="password" />
+                     </div>
+                     <button class="btn btn-success pull-right" type="button">Update password</button>
+
+                  </form>
+               </div>
+            </div>
+         </div>
+         <div ng-show="settingActive == 3">
+            <form action="">
+               <div class="panel b">
+                  <div class="panel-heading bg-gray-lighter text-bold">Notifications</div>
+                  <div class="panel-body bb">
+                     <div class="form-group">
+                        <div class="checkbox">
+                           <label>
+                              <input type="checkbox" value="" />
+                              <strong>Disable email notifications</strong>
+                           </label>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="panel-body">
+                     <p>
+                        <strong>Interaction</strong>
+                     </p>
+                     <div class="form-group">
+                        <div class="checkbox">
+                           <label>
+                              <input type="checkbox" value="" />Alert me on status changes</label>
+                        </div>
+                     </div>
+
+                  </div>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>

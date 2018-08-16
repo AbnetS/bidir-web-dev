@@ -33,7 +33,9 @@
                   </div>
                   <!-- Name and Job-->
                   <div class="user-block-info">
-                     <span class="user-block-name">{{vm.user.username}}</span>
+                     <a ui-sref="app.profile">
+                        <span class="user-block-name">{{vm.user.username}}</span>
+                     </a>
                      <span class="user-block-role">{{vm.user.account.title}}</span>
                   </div>
                </div>

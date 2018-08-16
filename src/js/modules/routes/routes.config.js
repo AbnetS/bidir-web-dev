@@ -45,6 +45,16 @@
                   authenticate: true
               }
           })
+            .state('app.profile', {
+                url: '/profile',
+                title: 'Profile',
+                templateUrl: helper.basepath('profile.html'),
+                controller: 'ProfileController',
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
            .state('app.manage_user', {
                 url: '/manage_user',
                 title: 'manage users',
