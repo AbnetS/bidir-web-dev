@@ -31,7 +31,7 @@
             console.log('Scope Page: ' + vm.query.page + ' Scope Limit: ' + vm.query.per_page);
             vm.query.page = page;
             vm.query.per_page = pageSize;
-            callScreeningAPI();
+            callAPI();
 
         };
         vm.clearSearchText = function () {

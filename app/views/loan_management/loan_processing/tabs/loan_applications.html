@@ -91,3 +91,63 @@
       </div>
    </div>
 </div>
+
+
+<div class="row" ng-show="vm.visibility.showLoanApplicationDetail">
+   <br/>
+   <div class="col-lg-12">
+      <a ng-click="vm.backToList('LOAN_APPLICATION')">
+         <i class="fa fa-arrow-left"></i> Back
+      </a>
+      <div class="pull-right">
+         <h5 class="inline">{{vm.client.client.first_name}} {{vm.client.client.last_name}}</h5>
+         <span class="label label-green">{{vm.client.status}}</span>
+         <span class="label label-warning" am-time-ago="vm.client.last_modified"></span>
+      </div>
+   </div>
+   <div class="col-lg-12" ng-include="'app/views/loan_management/loan_processing/question.component.template.html'"></div>
+
+   <div class="col-lg-12 col-sm-12">
+      <span class="pull-right">
+         <!-- START button group-->
+         <div class="btn-group mb-sm" uib-dropdown="dropdown">
+            <button class="btn dropdown-toggle btn-info" type="button" uib-dropdown-toggle="">Save
+               <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+               <li><a ng-click="vm.saveScreeningForm(vm.client,'screening_inprogress')">Save</a>
+               </li>
+               <li><a ng-click="vm.saveScreeningForm(vm.client,'submitted')">Submit</a>
+               </li>
+            </ul>
+         </div>
+         <!-- END button group-->
+
+         <!-- START button group-->
+         <div class="btn-group mb-sm" uib-dropdown="dropdown">
+            <button class="btn dropdown-toggle btn-success" type="button" uib-dropdown-toggle="">Approve
+               <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+               <li><a ng-click="vm.saveScreeningForm(vm.client,'approved')">Approve</a>
+               </li>
+            </ul>
+         </div>
+         <!-- END button group-->
+
+         <!-- START button group-->
+         <div class="btn-group mb-sm" uib-dropdown="dropdown">
+            <button class="btn dropdown-toggle btn-danger" type="button" uib-dropdown-toggle="">Decline
+               <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+               <li><a ng-click="vm.saveScreeningForm(vm.client,'declined_final')">Decline Final</a>
+               </li>
+               <li><a ng-click="vm.saveScreeningForm(vm.client,'declined_under_review')">Decline Under Review</a>
+               </li>
+            </ul>
+         </div>
+         <!-- END button group-->
+      </span>
+   </div>
+</div>

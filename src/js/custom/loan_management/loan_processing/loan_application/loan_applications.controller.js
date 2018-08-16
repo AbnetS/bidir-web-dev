@@ -13,6 +13,8 @@
         var vm = this;
         vm.backToList = _backToList;
         vm.questionValueChanged = questionValueChanged;
+        vm.loanApplicationDetail = _loanApplicationDetail;
+        vm.saveLoanApplicationForm = _saveLoanApplicationForm;
 
         vm.options = MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
         vm.filter = {show : false};
@@ -23,45 +25,67 @@
             page:1,
             per_page:10
         };
-        vm.visibility = {
-            showScreeningDetail:false,
-            showClientDetail:true,
-            showLoanApplicationDetail:false,
-            showACATDetail:false
-        };
+        vm.visibility = { showLoanApplicationDetail: false };
 
         vm.paginate = function(page, pageSize) {
-            console.log('Scope Page: ' + vm.query.page + ' Scope Limit: ' + vm.query.per_page);
             vm.query.page = page;
             vm.query.per_page = pageSize;
             callAPI();
-
         };
         vm.clearSearchText = function () {
             vm.query.search = '';
             vm.filter.show = false;
-        };
-        vm.searchScreening = function () {
-            console.log("search text",vm.query.search);
         };
 
         $scope.$watch(angular.bind(vm, function () {
             return vm.query.search;
         }), function (newValue, oldValue) {
             if (newValue !== oldValue) {
-                console.log("search for screening ",newValue);
+                console.log("search for ",newValue);
             }
         });
 
         initialize();
 
+        function _loanApplicationDetail(client_loan_application) {
+            var client = client_loan_application.client;
+
+            LoanManagementService.GetClientLoanApplication(client._id).then(function (response) {
+                vm.client = response.data;
+                vm.visibility.showLoanApplicationDetail = true;
+                console.log("vm.client",vm.client);
+            });
+        }
+
+
+        function _saveLoanApplicationForm(client) {
+
+            // var status = _.find(SCREENING_STATUS,function (stat) {
+            //     return stat.code === screening_status;
+            // });
+            // var screening = {
+            //     status: status.code,
+            //     questions: client.questions
+            // };
+
+            console.log("save status ", client);
+
+            // LoanManagementService.SaveClientScreening(screening,client._id)
+            //     .then(function (response) {
+            //         AlertService.showSuccess('Screening',"Successfully saved screening information  with status: " + status.name);
+            //         console.log("saved screening ", screening);
+            //     },function (error) {
+            //         var message = error.data.error.message;
+            //         AlertService.showError("Error when saving screening",message);
+            //         console.log("error on saving screening ", error);
+            //     });
+
+        }
+
         function _backToList(type) {
             switch(type){
-                case 'SCREENING':
-                    vm.visibility.showScreeningDetail = false;
-                    break;
-                case 'ACAT_PROCESSOR':
-                    vm.visibility.showClientACAT=false;
+                case 'LOAN_APPLICATION':
+                    vm.visibility.showLoanApplicationDetail = false;
                     break;
             }
 
@@ -92,6 +116,7 @@
             });
 
         }
+
         function getPrerequisiteQuestion(questionID) {
 
             //extract outer questions; if section type, get them from sections
