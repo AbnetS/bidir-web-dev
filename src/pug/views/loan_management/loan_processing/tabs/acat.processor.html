@@ -2,33 +2,43 @@
 <div ng-if="!vm.visibility.showClientACAT" class="row">
         <div class="col-lg-12">
 
+            <br/>
+
             <md-toolbar class="md-table-toolbar md-default" ng-show="vm.filter.show">
                 <div class="md-toolbar-tools">
-                    <md-button class="md-icon-button" ng-click="vm.search('ACAT_PROCESSOR')">
-                        <i class="fa fa-search"></i>
-                    </md-button>
-
+                    <div class="p-lg">
+                        <md-button class="md-icon-button">
+                            <i class="fa fa-search"></i>
+                        </md-button>
+                    </div>
                     <!-- Input Text -->
                     <md-input-container flex>
                         <input id="search-input" type="text" ng-model="vm.query.search"/>
                     </md-input-container>
 
-                    <md-button class="md-icon-button" ng-click="vm.clearSearchText()">
-                        <i class="fa fa-times"></i>
-                    </md-button>
+                    <div class="p-lg">
+
+                        <md-button class="md-icon-button" ng-click="vm.clearSearchText()">
+                            <i class="fa fa-times"></i>
+                        </md-button>
+                    </div>
+
                 </div>
             </md-toolbar>
 
             <md-toolbar class="md-table-toolbar md-default" ng-hide="vm.filter.show">
                 <div class="md-toolbar-tools">
-                    <h2 class="md-title">Clients ACAT</h2>
+                    <h2 class="md-title p-lg">Clients under ACAT Processor</h2>
 
-                    <div flex="" class="flex"></div>
-                    <button class="md-icon-button md-button md-ink-ripple" type="button"
-                            ng-click="vm.filter.show = true">
-                        <i class="fa fa-filter"></i>
-                        <div class="md-ripple-container"></div>
-                    </button>
+                    <div flex="" class="flex  p-lg"></div>
+                    <div class="p-lg">
+                        <button class="md-icon-button md-button md-ink-ripple " type="button"
+                                ng-click="vm.filter.show = true">
+                            <i class="fa fa-filter"></i>
+                            <div class="md-ripple-container"></div>
+                        </button>
+                    </div>
+
                 </div>
             </md-toolbar>
 

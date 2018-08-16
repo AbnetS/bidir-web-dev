@@ -53,6 +53,10 @@
             vm.visibility.showClientDetail = true;
             //data set
             vm.selectedClient = client;
+            var dt = new Date(client.date_of_birth);
+            vm.selectedClient.date_of_birth = dt;
+            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
+            vm.selectedClient.gender = client.gender.toLowerCase();
             vm.selected_branch = client.branch;
         }
 
@@ -72,10 +76,13 @@
 
 
                 if( _.isUndefined(vm.selectedClient._id)){
+                    //ADD NEW CLIENT INFORMATION
                     LoanManagementService.SaveClient(client).then(function (response) {
                         console.log("save client",response);
                         myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
                         AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
+
                     },function (error) {
                         console.log("save client error",error);
                         myBlockUI.stop();
@@ -84,10 +91,11 @@
 
                     });
                 }else{
-
+                    //UPDATE CLIENT INFORMATION
                     LoanManagementService.UpdateClient(client).then(function (response) {
                         console.log("save client",response);
                         myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
                         AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
                     },function (error) {
                         console.log("Updated client error",error);
