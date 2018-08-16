@@ -73,7 +73,7 @@
                </thead>
 
                <tbody md-body>
-                  <tr md-row ng-repeat="client in vm.clients">
+                  <tr md-row ng-repeat="client in vm.clients" ng-click="vm.clientDetailEdit(client,$event)">
 
                      <td md-cell>{{vm.query.per_page* (vm.query.page - 1) + $index + 1}}</td>
                      <td md-cell>
