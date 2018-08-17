@@ -15,7 +15,7 @@
             <div class="panel b">
                <div class="panel-heading bg-gray-lighter text-bold">Profile</div>
                <div class="panel-body">
-                  <form action="ProfileForm">
+                  <form name="ProfileForm" block-ui="UserProfileBlockUI">
                      <div class="col-md-6">
                         <div class="main-img-preview">
                            <img ng-show="vm.picFile" ngf-thumbnail="vm.picFile" class="thumbnail img-preview" title="Preview Logo">
@@ -68,7 +68,7 @@
 
                      <br/>
 
-                     <button class="btn btn-success pull-right" type="button">Update</button>
+                     <button type="button" class="btn btn-success pull-right" ng-click="vm.updateProfile(vm.user)">Update</button>
 
                   </form>
                </div>
