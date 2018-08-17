@@ -60,11 +60,9 @@
 
         function _saveClientForm(client,status) {
 
-            var status = _.find(SCREENING_STATUS,function (stat) {
-                return stat.code === status;
-            });
             var loan_application = {
-                status: "accepted",
+                status: status,
+                questions:[],
                 sections: client.sections
             };
             // "[{"status":"Correct Status is either inprogress, accepted, submitted, rejected or declined_under_review"}]"
@@ -73,12 +71,12 @@
 
             LoanManagementService.SaveClientLoanApplication(loan_application,client._id)
                 .then(function (response) {
-                    // AlertService.showSuccess('Screening',"Successfully saved screening information  with status: " + status.name);
+                    AlertService.showSuccess('Client Loan Application',"Successfully saved Client Loan Application information  with status: " + status);
                     console.log("saved  ", response);
                 },function (error) {
+                    console.log("error on saving loan application", error);
                     var message = error.data.error.message;
-                    // AlertService.showError("Error when saving screening",message);
-                    console.log("error on saving ", error);
+                    AlertService.showError("Error when saving loan application",message);
                 });
 
         }
@@ -87,6 +85,7 @@
             switch(type){
                 case 'LOAN_APPLICATION':
                     vm.visibility.showLoanApplicationDetail = false;
+                    callAPI();
                     break;
             }
 
