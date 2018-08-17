@@ -24,8 +24,10 @@
         vm.login = function() {
             var myBlockUI = blockUI.instances.get('loginFormBlockUI');
             myBlockUI.start("Logging in");
+
             AuthService.login(vm.user).then(
                 function(response) {
+                    console.log("login user",response);
                     var result = response.data;
                     vm.user = result.user;
                     $rootScope.currentUser = vm.user;

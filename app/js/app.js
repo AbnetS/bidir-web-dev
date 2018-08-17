@@ -3061,6 +3061,16 @@ function runBlock() {
 })();
 
 /**
+ * Created by Yonas on 8/16/2018.
+ */
+(function() {
+    'use strict';
+
+    angular
+        .module('app.profile', []);
+
+})();
+/**
  * Created by Yoni on 12/3/2017.
  */
 
@@ -3069,16 +3079,6 @@ function runBlock() {
 
     angular
         .module('app.welcomePage', []);
-
-})();
-/**
- * Created by Yonas on 8/16/2018.
- */
-(function() {
-    'use strict';
-
-    angular
-        .module('app.profile', []);
 
 })();
 
@@ -3323,8 +3323,10 @@ function runBlock() {
         vm.login = function() {
             var myBlockUI = blockUI.instances.get('loginFormBlockUI');
             myBlockUI.start("Logging in");
+
             AuthService.login(vm.user).then(
                 function(response) {
+                    console.log("login user",response);
                     var result = response.data;
                     vm.user = result.user;
                     $rootScope.currentUser = vm.user;
@@ -3742,8 +3744,8 @@ function runBlock() {
 })(window.angular);
 var API = {
     Config: {
-        // BaseUrl: 'http://api.buusaa-bidir.local/' //REMOTE APIs
-        BaseUrl: 'http://api.dev.bidir.gebeya.co/' //REMOTE API
+        BaseUrl: 'http://api.buusaa-bidir.local/' //REMOTE APIs
+        // BaseUrl: 'http://api.dev.bidir.gebeya.co/' //REMOTE API
     },
     Service: {
         NONE:'',
@@ -5022,6 +5024,73 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 })(window.angular);
 
 /**
+ * Created by Yonas on 8/16/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.profile')
+        .controller('ProfileController', ProfileController);
+
+    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService'];
+
+    function ProfileController( ProfileService,   blockUI,AlertService ) {
+        var vm = this;
+        vm.updateProfile = _updateUserProfile;
+
+        vm.user = ProfileService.GetUser();
+        // console.log("vm.user",vm.user);
+
+
+        function _updateUserProfile(profile) {
+            console.log("update profile clicked");
+            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
+            myBlockUI.stop();
+            ProfileService.UpdateProfile(profile).then(function (response) {
+                myBlockUI.start();
+                console.log("updated user profile",response);
+                AlertService.showSuccess("User Profile","User Account Info updated successfully" );
+            },function (error) {
+                myBlockUI.stop();
+                console.log("error",error);
+                var message = error.data.error.message;
+                AlertService.showError("User Account Information failed updating",message);
+            });
+        }
+    }
+})(window.angular);
+/**
+ * Created by Yonas on 8/17/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.profile')
+
+        .service('ProfileService', ProfileService);
+
+    ProfileService.$inject = ['$http','CommonService','AuthService'];
+
+    function ProfileService($http, CommonService,AuthService) {
+
+        return {
+            GetUser: _getUser,
+            UpdateProfile: _updateProfile
+        };
+
+        function _getUser(){
+            var user = AuthService.GetCurrentUser();
+            return _.isUndefined(user.account)? user.admin:user.account;
+        }
+
+        function _updateProfile(account){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
+        }
+
+    }
+
+})(window.angular);
+/**
  * Created by Yoni on 12/3/2017.
  */
 (function(angular) {
@@ -5151,73 +5220,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
             };
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
         }
-    }
-
-})(window.angular);
-/**
- * Created by Yonas on 8/16/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.profile')
-        .controller('ProfileController', ProfileController);
-
-    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService'];
-
-    function ProfileController( ProfileService,   blockUI,AlertService ) {
-        var vm = this;
-        vm.updateProfile = _updateUserProfile;
-
-        vm.user = ProfileService.GetUser();
-        // console.log("vm.user",vm.user);
-
-
-        function _updateUserProfile(profile) {
-            console.log("update profile clicked");
-            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
-            myBlockUI.stop();
-            ProfileService.UpdateProfile(profile).then(function (response) {
-                myBlockUI.start();
-                console.log("updated user profile",response);
-                AlertService.showSuccess("User Profile","User Account Info updated successfully" );
-            },function (error) {
-                myBlockUI.stop();
-                console.log("error",error);
-                var message = error.data.error.message;
-                AlertService.showError("User Account Information failed updating",message);
-            });
-        }
-    }
-})(window.angular);
-/**
- * Created by Yonas on 8/17/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.profile')
-
-        .service('ProfileService', ProfileService);
-
-    ProfileService.$inject = ['$http','CommonService','AuthService'];
-
-    function ProfileService($http, CommonService,AuthService) {
-
-        return {
-            GetUser: _getUser,
-            UpdateProfile: _updateProfile
-        };
-
-        function _getUser(){
-            var user = AuthService.GetCurrentUser();
-            return _.isUndefined(user.account)? user.admin:user.account;
-        }
-
-        function _updateProfile(account){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
-        }
-
     }
 
 })(window.angular);
