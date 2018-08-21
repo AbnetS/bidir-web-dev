@@ -15,11 +15,18 @@
         vm.updateProfile = _updateUserProfile;
 
         vm.user = ProfileService.GetUser();
-        // console.log("vm.user",vm.user);
 
-
-        function _updateUserProfile(profile) {
-            console.log("update profile clicked");
+        function _updateUserProfile(user) {
+            var profile = {
+                _id:user._id,
+                title:user.title,
+                email: user.email,
+                first_name : user.first_name,
+                last_name:user.last_name,
+                grandfather_name:user.grandfather_name,
+                phone:user.phone,
+                // picture:""
+            };
             var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
             myBlockUI.stop();
             ProfileService.UpdateProfile(profile).then(function (response) {
