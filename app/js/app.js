@@ -3061,6 +3061,16 @@ function runBlock() {
 })();
 
 /**
+ * Created by Yonas on 8/16/2018.
+ */
+(function() {
+    'use strict';
+
+    angular
+        .module('app.profile', []);
+
+})();
+/**
  * Created by Yoni on 12/3/2017.
  */
 
@@ -3069,16 +3079,6 @@ function runBlock() {
 
     angular
         .module('app.welcomePage', []);
-
-})();
-/**
- * Created by Yonas on 8/16/2018.
- */
-(function() {
-    'use strict';
-
-    angular
-        .module('app.profile', []);
 
 })();
 
@@ -5024,6 +5024,80 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 })(window.angular);
 
 /**
+ * Created by Yonas on 8/16/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.profile')
+        .controller('ProfileController', ProfileController);
+
+    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService'];
+
+    function ProfileController( ProfileService,   blockUI,AlertService ) {
+        var vm = this;
+        vm.updateProfile = _updateUserProfile;
+
+        vm.user = ProfileService.GetUser();
+
+        function _updateUserProfile(user) {
+            var profile = {
+                _id:user._id,
+                title:user.title,
+                email: user.email,
+                first_name : user.first_name,
+                last_name:user.last_name,
+                grandfather_name:user.grandfather_name,
+                phone:user.phone
+                // picture:""
+            };
+            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
+            myBlockUI.stop();
+            ProfileService.UpdateProfile(profile).then(function (response) {
+                myBlockUI.start();
+                console.log("updated user profile",response);
+                AlertService.showSuccess("User Profile","User Account Info updated successfully" );
+            },function (error) {
+                myBlockUI.stop();
+                console.log("error",error);
+                var message = error.data.error.message;
+                AlertService.showError("User Account Information failed updating",message);
+            });
+        }
+    }
+})(window.angular);
+/**
+ * Created by Yonas on 8/17/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.profile')
+
+        .service('ProfileService', ProfileService);
+
+    ProfileService.$inject = ['$http','CommonService','AuthService'];
+
+    function ProfileService($http, CommonService,AuthService) {
+
+        return {
+            GetUser: _getUser,
+            UpdateProfile: _updateProfile
+        };
+
+        function _getUser(){
+            var user = AuthService.GetCurrentUser();
+            return _.isUndefined(user.account)? user.admin:user.account;
+        }
+
+        function _updateProfile(account){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
+        }
+
+    }
+
+})(window.angular);
+/**
  * Created by Yoni on 12/3/2017.
  */
 (function(angular) {
@@ -5154,223 +5228,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
         }
     }
-
-})(window.angular);
-/**
- * Created by Yonas on 8/16/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.profile')
-        .controller('ProfileController', ProfileController);
-
-    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService'];
-
-    function ProfileController( ProfileService,   blockUI,AlertService ) {
-        var vm = this;
-        vm.updateProfile = _updateUserProfile;
-
-        vm.user = ProfileService.GetUser();
-
-        function _updateUserProfile(user) {
-            var profile = {
-                _id:user._id,
-                title:user.title,
-                email: user.email,
-                first_name : user.first_name,
-                last_name:user.last_name,
-                grandfather_name:user.grandfather_name,
-                phone:user.phone,
-                // picture:""
-            };
-            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
-            myBlockUI.stop();
-            ProfileService.UpdateProfile(profile).then(function (response) {
-                myBlockUI.start();
-                console.log("updated user profile",response);
-                AlertService.showSuccess("User Profile","User Account Info updated successfully" );
-            },function (error) {
-                myBlockUI.stop();
-                console.log("error",error);
-                var message = error.data.error.message;
-                AlertService.showError("User Account Information failed updating",message);
-            });
-        }
-    }
-})(window.angular);
-/**
- * Created by Yonas on 8/17/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.profile')
-
-        .service('ProfileService', ProfileService);
-
-    ProfileService.$inject = ['$http','CommonService','AuthService'];
-
-    function ProfileService($http, CommonService,AuthService) {
-
-        return {
-            GetUser: _getUser,
-            UpdateProfile: _updateProfile
-        };
-
-        function _getUser(){
-            var user = AuthService.GetCurrentUser();
-            return _.isUndefined(user.account)? user.admin:user.account;
-        }
-
-        function _updateProfile(account){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
-        }
-
-    }
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearch;
-
-        initialize();
-
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-
-            callApi();
-        }
-
-
-        function _paginate (page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-
-       function callApi(){
-        vm.promise =   ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
-
-    }
-
-
 
 })(window.angular);
 /**
@@ -6221,6 +6078,149 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
         }
 
 
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+        }
+
+
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+       function callApi(){
+        vm.promise =   ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
 
     }
 
@@ -7874,108 +7874,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
   }
 })(window.angular);
 
-(function(angular) {
-  "use strict";
-
-  angular.module("app.mfi").controller("MFIController", MFIController);
-
-  MFIController.$inject = ['AlertService', '$scope','MainService','CommonService','blockUI'];
-
-  function MFIController(AlertService,$scope,MainService,CommonService,blockUI)
-
-  {
-    var vm = this;
-    vm.saveChanges = saveChanges;
-
-    vm.MFISetupForm = {
-      IsnameValid: true,
-      IslocationValid: true,
-      Isestablishment_yearValid: true
-  };
-
-    init();
-
-    function saveChanges() {
-
-      vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFISetupForm, vm.MFI);
-
-      if (vm.IsValidData) {
-          var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
-          myBlockUI.start();
-        if (_.isUndefined(vm.MFI._id)) {
-          MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
-              myBlockUI.stop();
-              AlertService.showSuccess("Created MFI successfully","MFI Information created successfully");
-              console.log("Create MFI", response);
-            }, function(error) {
-              myBlockUI.stop();
-              console.log("Create MFI Error", error);
-              var message = error.data.error.message;
-            AlertService.showError("Failed to create MFI!", message);
-
-            });
-        } else {
-          
-          MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
-              myBlockUI.stop();
-              AlertService.showSuccess("MFI Info updated successfully","MFI Information updated successfully");
-              console.log("Update MFI", response);
-            }, function(error) {
-              myBlockUI.stop();
-              console.log("UpdateMFI Error", error);
-              var message = error.data.error.message;
-              AlertService.showError("MFI Information update failed",message);
-            });
-        }
-      } else {
-          AlertService.showWarning("Warning","Please fill the required fields and try again.");
-      }
-    }
-
-    function init() {
-        var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
-        myBlockUI.start();
-      MainService.GetMFI().then(
-        function(response) {
-            myBlockUI.stop();
-          if (response.data.length > 0) {
-            vm.MFI = response.data[0];
-            var dt = new Date(vm.MFI.establishment_year);
-            vm.MFI.establishment_year = dt;
-          }
-          console.log("Get MFI", response);
-        },
-        function(error) {
-            myBlockUI.stop();
-          console.log("Get MFI Error", error);
-        }
-      );
-
-      $scope.clear = function() {
-        $scope.dt = null;
-      };
-
-      $scope.dateOptions = {
-        dateDisabled: false,
-        formatYear: "yy",
-        maxDate: new Date(2020, 5, 22),
-        startingDay: 1
-      };
-
-      $scope.open1 = function() {
-        $scope.popup1.opened = true;
-      };
-
-      $scope.format = "dd-MMMM-yyyy";
-      $scope.altInputFormats = ["M!/d!/yyyy"];
-
-      $scope.popup1 = {
-        opened: false
-      };
-    }
-  }
-})(window.angular);
-
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -8304,6 +8202,108 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
 
 })(window.angular);
+(function(angular) {
+  "use strict";
+
+  angular.module("app.mfi").controller("MFIController", MFIController);
+
+  MFIController.$inject = ['AlertService', '$scope','MainService','CommonService','blockUI'];
+
+  function MFIController(AlertService,$scope,MainService,CommonService,blockUI)
+
+  {
+    var vm = this;
+    vm.saveChanges = saveChanges;
+
+    vm.MFISetupForm = {
+      IsnameValid: true,
+      IslocationValid: true,
+      Isestablishment_yearValid: true
+  };
+
+    init();
+
+    function saveChanges() {
+
+      vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFISetupForm, vm.MFI);
+
+      if (vm.IsValidData) {
+          var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
+          myBlockUI.start();
+        if (_.isUndefined(vm.MFI._id)) {
+          MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
+              myBlockUI.stop();
+              AlertService.showSuccess("Created MFI successfully","MFI Information created successfully");
+              console.log("Create MFI", response);
+            }, function(error) {
+              myBlockUI.stop();
+              console.log("Create MFI Error", error);
+              var message = error.data.error.message;
+            AlertService.showError("Failed to create MFI!", message);
+
+            });
+        } else {
+          
+          MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
+              myBlockUI.stop();
+              AlertService.showSuccess("MFI Info updated successfully","MFI Information updated successfully");
+              console.log("Update MFI", response);
+            }, function(error) {
+              myBlockUI.stop();
+              console.log("UpdateMFI Error", error);
+              var message = error.data.error.message;
+              AlertService.showError("MFI Information update failed",message);
+            });
+        }
+      } else {
+          AlertService.showWarning("Warning","Please fill the required fields and try again.");
+      }
+    }
+
+    function init() {
+        var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
+        myBlockUI.start();
+      MainService.GetMFI().then(
+        function(response) {
+            myBlockUI.stop();
+          if (response.data.length > 0) {
+            vm.MFI = response.data[0];
+            var dt = new Date(vm.MFI.establishment_year);
+            vm.MFI.establishment_year = dt;
+          }
+          console.log("Get MFI", response);
+        },
+        function(error) {
+            myBlockUI.stop();
+          console.log("Get MFI Error", error);
+        }
+      );
+
+      $scope.clear = function() {
+        $scope.dt = null;
+      };
+
+      $scope.dateOptions = {
+        dateDisabled: false,
+        formatYear: "yy",
+        maxDate: new Date(2020, 5, 22),
+        startingDay: 1
+      };
+
+      $scope.open1 = function() {
+        $scope.popup1.opened = true;
+      };
+
+      $scope.format = "dd-MMMM-yyyy";
+      $scope.altInputFormats = ["M!/d!/yyyy"];
+
+      $scope.popup1 = {
+        opened: false
+      };
+    }
+  }
+})(window.angular);
+
 /**
  * Created by Yonas on 4/27/2018.
  */

@@ -237,9 +237,142 @@
 
         <!-- START Wizard Step inputs-->
         <div ng-show="wizard.active(3)">
-            <legend>3. Estimated Yield</legend>
+            <legend>3. Revenue</legend>
             <fieldset>
-                <h1> All the content here are related to Revenue</h1>
+                <div class="row">
+                    <div class="col-sm-2 background-white">
+                        <md-list flex>
+                            <div ng-repeat="sub_section in vm.clientAcat.sections[1].sub_sections">
+                                <md-list-item class="border-primary" ng-click="vm.onSubsectionClick(sub_section)">
+                                    <span flex>{{sub_section.title}}</span>
+                                    <i class="fa fa-angle-right" ng-show="sub_section.sub_sections.length > 0 && !vm.toggle[sub_section._id]"></i>
+                                    <i class="fa fa-angle-down" ng-show="sub_section.sub_sections.length > 0 && vm.toggle[sub_section._id]"></i>
+                                </md-list-item>
+                                <md-list-item class="m-xs"
+                                              ng-repeat="sb in sub_section.sub_sections"
+                                              ng-click="vm.onSubsectionClick(sb)"
+                                              ng-class="{'bg-gray': sb._id === vm.selectedSubsection._id}"
+                                              ng-show="vm.toggle[sub_section._id]">
+                                    <span flex-offset="5">{{sb.title}}</span>
+                                </md-list-item>
+                            </div>
+
+                        </md-list>
+                    </div>
+                    <div class="col-sm-10 pr0 background-white">
+                        <div class="row mr0">
+
+
+                            <div class="col-md-3">
+                                <!--EXPECTED-->
+                                <div class="panel mt">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">Expected</h4>
+                                    </div>
+                                    <table class="table">
+                                        <tbody>
+                                        <tr>
+                                            <td>Quantity</td>
+                                            <td>
+                                                <input class="form-control" type="number" ng-model="costListData.estimated.value">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Price</td>
+                                            <td>
+                                                <input class="form-control" type="number" ng-model="costListData.estimated.unit_price">
+                                            </td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                    <div class="panel-body">
+                                        <div class="clearfix">
+                                            <div class="pull-right text-right">
+                                                <div class="text-bold">{{costListData.estimated.total_price|number}}</div>
+                                            </div>
+                                            <div class="pull-left text-bold text-dark">TOTAL </div>
+                                        </div>
+                                    </div>
+                                    <table class="table">
+                                        <tbody>
+                                        <tr>
+                                            <td>Own Cons.</td>
+                                            <td>
+                                                <input class="form-control" type="number" ng-model="costListData.achieved.value">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Seed Res.</td>
+                                            <td>
+                                                <input class="form-control" type="number" ng-model="costListData.achieved.unit_price">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>For Market</td>
+                                            <td>
+                                                <input class="form-control" type="number" ng-model="costListData.achieved.unit_price">
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                            <div class="col-md-9">
+                                <div class="form-group text-center text-uppercase">
+                                    <div class="col-sm-12 col-md-2">
+                                    </div>
+                                    <div class="col-sm-12 col-md-5">
+                                        <strong class="form-label">Expected</strong>
+                                    </div>
+                                    <div class="col-sm-12 col-md-5">
+                                        <strong class="form-label">Actual</strong>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-repeat="month in vm.months">
+                                    <div class="col-sm-12 col-md-2 text-right">
+                                        <small class="form-label">{{month.name | titleCase}}</small>
+                                    </div>
+                                    <div class="col-sm-12 col-md-5">
+                                        <input class="form-control" type="number" ng-model="costListData.estimated.cash_flow[month.short]">
+                                    </div>
+                                    <div class="col-sm-12 col-md-5">
+                                        <input class="form-control" type="number" ng-model="costListData.achieved.cash_flow[month.short]">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row mr0">
+                            <div class="col-sm-12 col-md-9 panel-body">
+                                <div class="pull-left text-bold text-dark col-md-2 ">Remark</div>
+                                <textarea class="form-control col-md-10 " cols="2" ng-model="costListData.remark"></textarea>
+                            </div>
+                            <div class="col-sm-12 col-md-3 panel-body">
+                                <br/>
+                                <a class="btn btn-primary pull-left" ng-click="save()"> <i class="fa fa-book"> </i> Detail</a>
+                            </div>
+                        </div>
+
+                        <div class="row mr0">
+                            <div class="col-sm-12 col-md-4">
+                                <strong class="form-label">Probable Revenue</strong>
+                                <input class="form-control" type="number" ng-model="costListData.estimated.cash_flow[month.short]">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <strong class="form-label">Minimum Revenue</strong>
+                                <input class="form-control" type="number" ng-model="costListData.estimated.cash_flow[month.short]">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <strong class="form-label">Maximum Revenue</strong>
+                                <input class="form-control" type="number" ng-model="costListData.estimated.cash_flow[month.short]">
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
             </fieldset>
 
             <ul class="pager">

@@ -24,7 +24,7 @@
                 first_name : user.first_name,
                 last_name:user.last_name,
                 grandfather_name:user.grandfather_name,
-                phone:user.phone,
+                phone:user.phone
                 // picture:""
             };
             var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
