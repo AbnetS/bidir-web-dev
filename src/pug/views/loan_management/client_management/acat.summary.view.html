@@ -291,43 +291,43 @@
                     <tr>
                         <td>Loan Requested</td>
                         <td>
-                            <div class="text-right text-bold">0.00</div>
+                            <div class="text-right text-bold">{{vm.clientLoanProposals.loan_requested | number}}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>Loan Proposed</td>
                         <td>
-                            <div class="text-right text-bold">0.00</div>
+                            <div class="text-right text-bold">{{vm.clientLoanProposals.loan_proposed | number}}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>Loan Approved</td>
                         <td>
-                            <div class="text-right text-bold">0.00</div>
+                            <div class="text-right text-bold">{{vm.clientLoanProposals.loan_approved | number}}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>Total Deductibles</td>
                         <td>
-                            <div class="text-right text-bold">0.00</div>
+                            <div class="text-right text-bold">{{vm.clientLoanProposals.loan_detail.total_deductibles | number}}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>Total Loan Costs</td>
                         <td>
-                            <div class="text-right text-bold">0.00</div>
+                            <div class="text-right text-bold">{{vm.clientLoanProposals.loan_detail.total_cost_of_loan | number}}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>Cash at hand</td>
                         <td>
-                            <div class="text-right text-bold">0.00</div>
+                            <div class="text-right text-bold">{{vm.clientLoanProposals.loan_approved - (vm.clientLoanProposals.loan_detail.total_deductibles + vm.clientLoanProposals.loan_detail.total_cost_of_loan) | number}}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>Repayable</td>
                         <td>
-                            <div class="text-right text-bold">0.00</div>
+                            <div class="text-right text-bold">{{vm.clientLoanProposals.repayable | number}}</div>
                         </td>
                     </tr>
                     </tbody>

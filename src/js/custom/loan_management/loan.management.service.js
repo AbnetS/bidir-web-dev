@@ -28,6 +28,7 @@
 
             GetACATCollections: _getACATCollections,
             GetClientACAT:_getClientACAT,
+            GetClientLoanProposals:_getClientLoanProposals,
             GetCrops:_getCrops,
 
             StyleLabelByStatus: _styleLabelByStatus
@@ -119,6 +120,10 @@
         function _getClientACAT(clientId) {
             return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Clients,clientId));
         }
+        function _getClientLoanProposals(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProposals,clientId));
+        }
+
         function _getCrops() {
             return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
         }

@@ -63,10 +63,10 @@
                     TemplateUrl: "app/views/loan_management/client_management/printables/client.acat.total.html",
                     IsCommon: false,
                     IsSelected: false,
-                    Data: angular.extend({ Title: "ACAT Summary for " +
+                    Data: angular.extend({ Title: "ACAT And Loan Proposal Summary for " +
                     vm.clientACATs.client.first_name + " " +
                     vm.clientACATs.client.last_name + " " +
-                    vm.clientACATs.client.grandfather_name}, vm.clientACATs)
+                    vm.clientACATs.client.grandfather_name}, vm.clientACATs,{loanProposals: vm.clientLoanProposals})
                 }];
                 PrintPreviewService.show(preview);
             } else{
@@ -75,7 +75,7 @@
                     TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
                     IsCommon: false,
                     IsSelected: false,
-                    Data: angular.extend({ Title: "Loan Application Formm Result for " +
+                    Data: angular.extend({ Title: "Loan Application Form Result for " +
                     vm.client.loan_application.client.first_name + " " +
                     vm.client.loan_application.client.last_name + " " +
                     vm.client.loan_application.client.grandfather_name}, vm.client.loan_application)
@@ -145,6 +145,15 @@
                     myBlockUI.stop();
                     console.log("error getting client acat ",error);
                 });
+
+            LoanManagementService.GetClientLoanProposals(vm.clientId)
+                .then(function(response){
+                    vm.clientLoanProposals = response.data;
+                    console.log("clientLoanProposals",vm.clientLoanProposals);
+                },function(error){
+                    console.log("error getting  clientLoanProposals ",error);
+                });
+
         }
 
         function _onTabSelected(type) {
