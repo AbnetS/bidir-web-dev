@@ -107,7 +107,7 @@
                         <td>Cash at hand</td>
                         <td>
                            <div class="text-right text-bold">
-                              {{vm.loanProposals.loan_proposed - (vm.loanProposals.loan_detail.total_deductibles + vm.loanProposals.loan_detail.total_cost_of_loan) | number}}
+                              {{vm.loanProposals.loan_proposed - vm.loanProposals.loan_detail.total_deductibles | number}}
                            </div>
                         </td>
                      </tr>
