@@ -35,7 +35,7 @@
   },
   {
     "text": "Loan Management",
-    "module": "LOAN_PROCESSING",
+    "module": "CLIENT_MANAGEMENT",
     "sref": "#",
     "icon": "fa fa-spinner",
     "submenu": [
