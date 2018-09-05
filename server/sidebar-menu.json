@@ -40,7 +40,7 @@
     "icon": "fa fa-spinner",
     "submenu": [
       {"text": "Clients List",     "sref": "app.clients" ,   "permission": "CLIENT_MANAGEMENT_CLIENT"},
-      {"text": "Loan Processing",     "sref": "app.loan_processing.clients" ,   "permission": "CLIENT_MANAGEMENT_LOAN_APPLICATION"}
+      {"text": "Loan Processing",     "sref": "app.loan_processing.clients" ,   "permission": "SCREENING_MODULE_SCREENING"}
     ]
   },
   {
