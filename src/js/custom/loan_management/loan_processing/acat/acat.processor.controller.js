@@ -27,6 +27,7 @@
         initialize();
 
         function initialize() {
+            vm.isEditAcat = false;
             vm.visibility = {
                 showClientACAT:false,
                 showCropACAT:false
@@ -96,7 +97,7 @@
             vm.visibility.showCropACAT = true;//show client acat
             console.log("Client ACAT Detail Clicked",clientAcat);
             vm.clientAcat = clientAcat;
-            vm.clientAcat.loan_product = vm.acats.loan_product;
+            // vm.clientAcat.loan_product = vm.acats.loan_product;
 
             vm.selectedSubsection = vm.clientAcat.sections[0].sub_sections[0].sub_sections[1];
 
