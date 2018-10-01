@@ -38,8 +38,9 @@
 
             vm.query = { search:'',   page:1,  per_page:10 };
             vm.months = MONTHS_CONST;
+            fetchCropsList();//Fetch Crops first
             callAPI();
-            fetchCropsList();
+
         }
 
         function callAPI() {
@@ -72,6 +73,16 @@
             vm.visibility.showClientACAT = true;//show client acat
             vm.visibility.showCropACAT = false;
             vm.acats = acat;
+            vm.acats.crops = [];
+            // set client acat crops for UI purpose
+            _.each(acat.ACATs,function (acat) {
+                debugger
+                _.each(vm.crops,function (crp) {
+                    if(acat.crop._id === crp._id){
+                        vm.acats.crops.push(crp);
+                    }
+                })
+            })
         }
 
 
@@ -107,7 +118,6 @@
         function fetchCropsList() {
             LoanManagementService.GetCrops().then(
                 function (response) {
-                    console.log("vm.crops", response.data.docs);
                     vm.crops = response.data.docs;
                 }
             )
