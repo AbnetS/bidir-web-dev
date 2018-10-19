@@ -26,6 +26,7 @@
         vm.onAccordionClick = _onAccordionClick;
 
         vm.addGeoLocation = _addGeoLocation;
+        vm.estimatedYieldDetail = _estimatedYieldDetail;
 
         initialize();
 
@@ -140,6 +141,22 @@
                 console.log("_addNonFinancialResource cancel ",response);
             });
 
+        }
+        function _estimatedYieldDetail(data, ev) {
+            $mdDialog.show({
+                locals: {data: data },
+                templateUrl: RouteHelpers.basepath('loan_management/loan_processing/tabs/acat.estimated.yield.detail.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                escapeToClose: true,
+                controller: 'EstimatedYieldDetailController',
+                controllerAs: 'vm'
+            }).then(function (response) {
+                console.log("EstimatedYieldDetailController ok ",response);
+            }, function (response) {
+                console.log("EstimatedYieldDetailController cancel ",response);
+            });
         }
 
     }
