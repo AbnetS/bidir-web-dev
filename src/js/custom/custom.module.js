@@ -15,7 +15,8 @@
             'app.clients',
             'app.forms',
             'app.acat',
-            'app.loan_management'
+            'app.loan_management',
+            'app.report'
 
         ]).config(customConfig)
         .run(customRun);

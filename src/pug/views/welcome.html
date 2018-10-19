@@ -90,11 +90,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-2"></div>
         <div class="col-md-4" userpermission="'USER_MANAGEMENT_ROLE_CREATE'">
             <div class="panel b">
                 <div class="panel-body text-center">
-                    <a class="link-unstyled text-dark" ui-sref="app.manage_role">
+                    <a class="link-unstyled text-success" ui-sref="app.manage_role">
                         <em class="fa fa-5x fa-tasks mb-lg"></em>
                         <br/>
                         <span class="h4">Role Management</span>
@@ -107,10 +106,23 @@
         <div class="col-md-4" userpermission="'USER_MANAGEMENT_USER_CREATE'">
             <div class="panel b">
                 <div class="panel-body text-center">
-                    <a class="link-unstyled text-dark" ui-sref="app.manage_user">
+                    <a class="link-unstyled text-success" ui-sref="app.manage_user">
                         <em class="fa fa-5x fa-street-view mb-lg"></em>
                         <br/>
                         <span class="h4">User Management</span>
+                        <br/>
+                        <small class="text-muted">View &rarr;</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" userpermission="'REPORT_REPORT'">
+            <div class="panel b">
+                <div class="panel-body text-center">
+                    <a class="link-unstyled text-success" ui-sref="app.report">
+                        <em class="fa fa-5x fa-bar-chart mb-lg"></em>
+                        <br/>
+                        <span class="h4">Reports</span>
                         <br/>
                         <small class="text-muted">View &rarr;</small>
                     </a>

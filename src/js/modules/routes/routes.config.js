@@ -241,6 +241,18 @@
                 }
 
             })
+            .state("app.report", {
+                url: "/report",
+                title: "Report",
+                templateUrl:helper.basepath('report/report.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select','moment','filestyle'),
+                controller: "ReportController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+
+            })
 
           // CUSTOM RESOLVES
           //   Add your own resolves properties

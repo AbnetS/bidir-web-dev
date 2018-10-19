@@ -9,7 +9,8 @@
                 <div class="col-md-10 controls">
                     <ui-select ng-model="vm.acats.loan_product"
                                theme="bootstrap"
-                               title="Choose Loan Product">
+                               title="Choose Loan Product"
+                               disabled="vm.acats.ACATs.length > 0">
                         <ui-select-match placeholder="Select loan product from the list...">
                             {{$select.selected.name}}
                         </ui-select-match>
@@ -25,7 +26,7 @@
                 <div class="col-md-10 controls">
                     <ui-select multiple ng-model="vm.acats.crops"
                                theme="bootstrap"
-                               title="Choose Crops">
+                               title="Choose Crops" disabled="vm.acats.ACATs.length > 0">
                         <ui-select-match placeholder="Select crops from the list...">
                             {{$item.name}}  - {{$item.category}}
                         </ui-select-match>
@@ -37,7 +38,7 @@
             </div>
             <br>
             <div  class="form-group pull-right">
-                <a class="btn btn-sm btn-success" ng-click="vm.saveAcat()"> <i class="fa fa-save"> </i> {{vm.isEditAcat ? 'Save': 'Update'}}</a>
+                <a ng-if="vm.acats.ACATs.length <= 0" class="btn btn-sm btn-success" ng-click="vm.saveAcat()"> <i class="fa fa-save"> </i> Save</a>
             </div>
 
         </fieldset>

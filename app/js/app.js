@@ -1846,6 +1846,18 @@
                 }
 
             })
+            .state("app.report", {
+                url: "/report",
+                title: "Report",
+                templateUrl:helper.basepath('report/report.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select','moment','filestyle'),
+                controller: "ReportController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+
+            })
 
           // CUSTOM RESOLVES
           //   Add your own resolves properties
@@ -2920,7 +2932,8 @@
             'app.clients',
             'app.forms',
             'app.acat',
-            'app.loan_management'
+            'app.loan_management',
+            'app.report'
 
         ]).config(customConfig)
         .run(customRun);
@@ -3068,6 +3081,14 @@ function runBlock() {
 
     angular
         .module('app.profile', []);
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.report', []);
 
 })();
 /**
@@ -5099,6 +5120,35 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
         function _updateProfile(account){
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
         }
+
+    }
+
+})(window.angular);
+(function(angular) {
+    "use strict";
+
+
+    angular
+        .module('app.report')
+        .controller('ReportController', ReportController);
+
+    ReportController.$inject = ['ReportService', 'blockUI','AlertService'];
+
+    function ReportController( ReportService,blockUI,AlertService )
+    {
+        console.log("Report controller");
+    }
+
+})(window.angular);
+(function(angular) {
+    'use strict';
+    angular.module('app.report')
+
+        .service('ReportService', ReportService);
+
+    ReportService.$inject = ['$http','CommonService','AuthService'];
+
+    function ReportService($http, CommonService, AuthService) {
 
     }
 
