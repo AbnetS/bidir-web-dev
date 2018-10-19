@@ -29,28 +29,25 @@
                <label class="col-md-2 control-label">GPS Location</label>
 
                <div class="col-md-6">
-                  <table class="table table-bordered table-condensed">
+                  <span ng-if="vm.clientAcat.gps_location.polygon.length === 0">
+                     <span>({{vm.clientAcat.gps_location.single_point.latitude}},{{vm.clientAcat.gps_location.single_point.longtude}})</span>
+                  </span>
+                  <table ng-if="vm.clientAcat.gps_location.polygon.length > 0" class="table table-bordered table-condensed">
                      <thead>
                         <tr>
                            <th>(Latitude,Longitude)</th>
-                           <th></th>
-                           <th></th>
+                           <th>
+                              <a ng-click="vm.addGeoLocation(vm.clientAcat.gps_location,$event)" class="btn btn-success btn-xs pull-right">
+                                 <i class="fa fa-plus"></i> Add
+                              </a>
+                           </th>
                         </tr>
                      </thead>
                      <tbody>
-                        <tr>
+                        <tr ng-repeat="location in vm.clientAcat.gps_location.polygon">
                            <td>
-                              <span>({{vm.clientAcat.client.geolocation.latitude}},{{vm.clientAcat.client.geolocation.longitude}})</span>
+                              <span>({{location.latitude}},{{location.longtude}})</span>
                            </td>
-                           <td>
-                              <button class="btn btn-info btn-xs">
-                                 <i class="fa fa-edit"></i> Edit
-                              </button>
-                           </td>
-                           <td>
-                              <button class="btn btn-danger btn-xs">
-                                 <i class="fa fa-times"></i> Remove
-                              </button>
                            </td>
                         </tr>
                      </tbody>
@@ -62,10 +59,10 @@
                   <div class="controls">
                      <ui-select ng-model="vm.clientAcat.non_financial_resources" theme="bootstrap" title="Select non financial resources" multiple>
                         <ui-select-match placeholder="Select non financial resources from the list...">
-                           {{$item}}
+                           {{$item | uppercase}}
                         </ui-select-match>
                         <ui-select-choices repeat="resource in vm.non_financial_resources | filter: $select.search">
-                           {{resource}}
+                           {{resource | uppercase}}
                         </ui-select-choices>
                      </ui-select>
                   </div>

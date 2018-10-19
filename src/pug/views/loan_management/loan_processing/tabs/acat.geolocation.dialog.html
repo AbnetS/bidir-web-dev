@@ -1,0 +1,90 @@
+<md-dialog flex="50">
+    <form role="form" name="vm.geolocationForm" novalidate  >
+        <md-toolbar class="small">
+            <div class="md-toolbar-tools small">
+                <h2> Cropping Area GPS Locations</h2>
+                <span flex></span>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <md-content class="md-padding">
+
+                <div class="col-xs-10 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Latitude</label>
+                            <input class="form-control"
+                                   ng-model="vm.selectedGeolocation.latitude"
+                                   type="text"
+                                   name="geolocation_latitude" id="geolocation_latitude" placeholder="00.000" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Longitude</label>
+                            <input class="form-control"
+                                   ng-model="vm.selectedGeolocation.longitude"
+                                   type="text"
+                                   name="geolocation_longitude" id="geolocation_longitude" placeholder="00.000" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <br/>
+                        <button ng-show="vm.isEdit" class="btn btn-inverse btn-outline"
+                                ng-click="vm.cancelEdit()">
+                            <i class="fa fa-times"></i> Cancel
+                        </button>
+                        <button class="btn btn-success btn-outline"
+                                event-focus='click'
+                                event-focus-id='geolocation_longitude'
+                                ng-click="vm.addCropGeolocation(vm.selectedGeolocation)">
+                            <i ng-class="vm.isEdit?'fa fa-refresh':'fa fa-plus'" class="fa fa-plus"></i>
+                            {{vm.isEdit?'Update':'Add'}}</button>
+                    </div>
+                </div>
+
+
+
+                <table class="table table-bordered table-condensed">
+                    <thead>
+                    <tr>
+                        <th>(Latitude,Longitude)</th>
+                        <th>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <span>({{vm.clientAcat.client.geolocation.latitude}},{{vm.clientAcat.client.geolocation.longitude}})</span>
+                        </td>
+                        <td>
+                            <button class="btn btn-info btn-xs">
+                                <i class="fa fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-danger btn-xs">
+                                <i class="fa fa-times"></i> Remove
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </md-content>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+
+            <div layout="row" layout-align="start" flex>
+                <md-button class="md-raised md-button-small md-ink-ripple" ng-click="vm.cancel()">
+                    Cancel
+                </md-button>
+            </div>
+            <md-button class="md-raised md-primary md-button-small pull-right"
+                       ng-click="vm.saveNonFinancialResource()">
+                <i class="fa fa-save"></i> Ok
+            </md-button>
+
+        </md-dialog-actions>
+    </form>
+</md-dialog>

@@ -24,7 +24,8 @@
         vm.onClientACATClick = _onClientACATClick;
         vm.onSubsectionClick = _onSubsectionClick;
         vm.onAccordionClick = _onAccordionClick;
-        vm.addNonFinancialResource = _addNonFinancialResource;
+
+        vm.addGeoLocation = _addGeoLocation;
 
         initialize();
 
@@ -109,7 +110,7 @@
             vm.visibility.showCropACAT = true;//show client acat
             vm.clientAcat = clientAcat;
             vm.selectedSubsection = vm.clientAcat.sections[0].sub_sections[0].sub_sections[1];
-
+            debugger
         }
 
 
@@ -122,24 +123,22 @@
         }
 
 
-        function _addNonFinancialResource(non_financial_resources,ev) {
-            // $mdDialog.show({
-            //     locals: {data: non_financial_resources },
-            //     templateUrl: RouteHelpers.basepath('loan_management/loan_processing/tabs/acat.non.financial.resource.dialog.html'),
-            //     parent: angular.element(document.body),
-            //     targetEvent: ev,
-            //     clickOutsideToClose: false,
-            //     hasBackdrop: false,
-            //     escapeToClose: true,
-            //     controller: 'ACATNonFinancialResourceController',
-            //     controllerAs: 'vm'
-            // }).then(function (response) {
-            //
-            //     vm.clientAcat.non_financial_resources = response;
-            //     console.log("_addNonFinancialResource ok ",vm.clientAcat);
-            // }, function (response) {
-            //     console.log("_addNonFinancialResource cancel ",response);
-            // });
+        function _addGeoLocation(data,ev) {
+            $mdDialog.show({
+                locals: {data: data },
+                templateUrl: RouteHelpers.basepath('loan_management/loan_processing/tabs/acat.geolocation.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'GeoLocationController',
+                controllerAs: 'vm'
+            }).then(function (response) {
+                console.log("_addNonFinancialResource ok ",response);
+            }, function (response) {
+                console.log("_addNonFinancialResource cancel ",response);
+            });
 
         }
 
