@@ -2,7 +2,7 @@
    <div class="form-wizard">
       <!-- START Wizard Step inputs-->
       <div ng-show="wizard.active(1)">
-         <legend>Preliminary Information For {{vm.clientAcat.crop.name}}</legend>
+         <legend>Preliminary Information for {{vm.clientAcat.crop.name}}</legend>
          <fieldset>
             <div class="form-group clearfix">
                <label class="col-md-2 control-label">Cropping Area</label>
@@ -40,7 +40,7 @@
                      <tbody>
                         <tr>
                            <td>
-                              <span>10000,10000</span>
+                              <span>({{vm.clientAcat.client.geolocation.latitude}},{{vm.clientAcat.client.geolocation.longitude}})</span>
                            </td>
                            <td>
                               <button class="btn btn-info btn-xs">
@@ -57,10 +57,18 @@
                   </table>
                </div>
 
-               <div class="col-md-4 controls">
-                  <md-checkbox ng-model="isChecked" aria-label="Finished?">
-                     Access to non financial resources ?
-                  </md-checkbox>
+               <div class="col-md-4">
+                  <label class=" control-label">Access to non financial resources ?</label>
+                  <div class="controls">
+                     <ui-select ng-model="vm.clientAcat.non_financial_resources" theme="bootstrap" title="Select non financial resources" multiple>
+                        <ui-select-match placeholder="Select non financial resources from the list...">
+                           {{$item}}
+                        </ui-select-match>
+                        <ui-select-choices repeat="resource in vm.non_financial_resources | filter: $select.search">
+                           {{resource}}
+                        </ui-select-choices>
+                     </ui-select>
+                  </div>
                </div>
 
             </div>

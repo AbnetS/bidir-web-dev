@@ -1,0 +1,48 @@
+<md-dialog flex="20">
+   <form role="form" name="vm.NonFinancialResourceForm" novalidate>
+      <md-toolbar class="small">
+         <div class="md-toolbar-tools small">
+            <h2>Non Financial Resources</h2>
+            <span flex></span>
+         </div>
+      </md-toolbar>
+
+      <md-dialog-content>
+         <md-content class="md-padding">
+            <md-input-container class="md-block">
+               <md-checkbox class="md-primary" ng-model="vm.non_financial_resources.training" flex>
+                  <span>Training</span>
+               </md-checkbox>
+            </md-input-container>
+            <md-input-container class="md-block">
+               <md-checkbox class="md-primary" ng-model="vm.non_financial_resources.advisory" flex>
+                  <span>Advisory</span>
+               </md-checkbox>
+            </md-input-container>
+            <md-input-container class="md-block">
+               <md-checkbox class="md-primary" ng-model="vm.non_financial_resources.technical_support" flex>
+                  <span>Technical Support</span>
+               </md-checkbox>
+            </md-input-container>
+            <md-input-container class="md-block">
+               <md-checkbox class="md-primary" ng-model="vm.non_financial_resources.access_to_inputs" flex>
+                  <span>Access to inputs</span>
+               </md-checkbox>
+            </md-input-container>
+         </md-content>
+      </md-dialog-content>
+
+      <md-dialog-actions layout="row">
+
+         <div layout="row" layout-align="start" flex>
+            <md-button class="md-raised md-button-small md-ink-ripple" ng-click="vm.cancel()">
+               Cancel
+            </md-button>
+         </div>
+         <md-button class="md-raised md-primary md-button-small pull-right" ng-click="vm.saveNonFinancialResource()">
+            <i class="fa fa-save"></i> Ok
+         </md-button>
+
+      </md-dialog-actions>
+   </form>
+</md-dialog>

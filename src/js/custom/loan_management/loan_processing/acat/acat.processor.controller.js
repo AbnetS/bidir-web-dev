@@ -7,13 +7,14 @@
     angular.module("app.processing")
         .controller("ACATProcessorController", ACATProcessorController);
 
-    ACATProcessorController.$inject = ['LoanManagementService','$scope'];
+    ACATProcessorController.$inject = ['LoanManagementService','$scope','$mdDialog','RouteHelpers'];
 
-    function ACATProcessorController(LoanManagementService,$scope ) {
+    function ACATProcessorController(LoanManagementService,$scope,$mdDialog ,RouteHelpers) {
         var vm = this;
         vm.selectedSubsection = {};
         vm.toggle = {};
         vm.accordionToggle = {};
+        vm.non_financial_resources = ["training","advisory","technical support","access to inputs"];
 
         vm.paginate = _paginate;
         vm.clearSearchText = _clearSearchText;
@@ -23,6 +24,7 @@
         vm.onClientACATClick = _onClientACATClick;
         vm.onSubsectionClick = _onSubsectionClick;
         vm.onAccordionClick = _onAccordionClick;
+        vm.addNonFinancialResource = _addNonFinancialResource;
 
         initialize();
 
@@ -76,7 +78,6 @@
             vm.acats.crops = [];
             // set client acat crops for UI purpose
             _.each(acat.ACATs,function (acat) {
-                debugger
                 _.each(vm.crops,function (crp) {
                     if(acat.crop._id === crp._id){
                         vm.acats.crops.push(crp);
@@ -106,10 +107,7 @@
 
         function _addEditClientACAT(clientAcat) {
             vm.visibility.showCropACAT = true;//show client acat
-            console.log("Client ACAT Detail Clicked",clientAcat);
             vm.clientAcat = clientAcat;
-            // vm.clientAcat.loan_product = vm.acats.loan_product;
-
             vm.selectedSubsection = vm.clientAcat.sections[0].sub_sections[0].sub_sections[1];
 
         }
@@ -124,7 +122,26 @@
         }
 
 
+        function _addNonFinancialResource(non_financial_resources,ev) {
+            // $mdDialog.show({
+            //     locals: {data: non_financial_resources },
+            //     templateUrl: RouteHelpers.basepath('loan_management/loan_processing/tabs/acat.non.financial.resource.dialog.html'),
+            //     parent: angular.element(document.body),
+            //     targetEvent: ev,
+            //     clickOutsideToClose: false,
+            //     hasBackdrop: false,
+            //     escapeToClose: true,
+            //     controller: 'ACATNonFinancialResourceController',
+            //     controllerAs: 'vm'
+            // }).then(function (response) {
+            //
+            //     vm.clientAcat.non_financial_resources = response;
+            //     console.log("_addNonFinancialResource ok ",vm.clientAcat);
+            // }, function (response) {
+            //     console.log("_addNonFinancialResource cancel ",response);
+            // });
 
+        }
 
     }
 

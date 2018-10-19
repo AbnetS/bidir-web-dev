@@ -7850,95 +7850,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
 
 })(window.angular);
-(function(angular) {
-  "use strict";
-
-    angular.module("app.mfi").controller("BranchController", BranchController);
-
-    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
-
-  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
-    var vm = this;
-
-    vm.addBranch = addBranch;
-    vm.editBranch = _editBranch;
-    vm.changeStatus = _changeStatus;
-
-     getBranches();
-
-    function getBranches() {
-      MainService.GetBranches().then(
-        function(response) {
-          vm.branches = response.data.docs;
-        },
-        function(error) {
-          console.log("error", error);
-        }
-      );
-
-    }
-
-    function addBranch(ev) {
-        $mdDialog.show({
-            locals: {items: null},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-
-    }
-
-    function _editBranch(selectedBranch,ev) {
-        $mdDialog.show({
-            locals: {items: selectedBranch},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-    }
-
-    function _changeStatus(ChangeStatus) {
-      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
-      MainService.UpdateBranch(ChangeStatus).then(
-        function(response) {
-
-          AlertService.showSuccess(
-              "Updated branch status",
-              "Updated Status successfully."
-          );
-          // console.log("updated successfully", response);
-
-        },
-        function(error) {
-          // console.log("could not be updated", error);
-          AlertService.showError(
-            "Status not changed. Please try again.",
-            "ERROR"
-          );
-        }
-      );
-
-    }
-
-  }
-})(window.angular);
-
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -8270,6 +8181,95 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 (function(angular) {
   "use strict";
 
+    angular.module("app.mfi").controller("BranchController", BranchController);
+
+    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
+
+  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
+    var vm = this;
+
+    vm.addBranch = addBranch;
+    vm.editBranch = _editBranch;
+    vm.changeStatus = _changeStatus;
+
+     getBranches();
+
+    function getBranches() {
+      MainService.GetBranches().then(
+        function(response) {
+          vm.branches = response.data.docs;
+        },
+        function(error) {
+          console.log("error", error);
+        }
+      );
+
+    }
+
+    function addBranch(ev) {
+        $mdDialog.show({
+            locals: {items: null},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+
+    }
+
+    function _editBranch(selectedBranch,ev) {
+        $mdDialog.show({
+            locals: {items: selectedBranch},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+    }
+
+    function _changeStatus(ChangeStatus) {
+      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
+      MainService.UpdateBranch(ChangeStatus).then(
+        function(response) {
+
+          AlertService.showSuccess(
+              "Updated branch status",
+              "Updated Status successfully."
+          );
+          // console.log("updated successfully", response);
+
+        },
+        function(error) {
+          // console.log("could not be updated", error);
+          AlertService.showError(
+            "Status not changed. Please try again.",
+            "ERROR"
+          );
+        }
+      );
+
+    }
+
+  }
+})(window.angular);
+
+(function(angular) {
+  "use strict";
+
   angular.module("app.mfi").controller("MFIController", MFIController);
 
   MFIController.$inject = ['AlertService', '$scope','MainService','CommonService','blockUI'];
@@ -8369,6 +8369,73 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
   }
 })(window.angular);
 
+(function (angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("ACATNonFinancialResourceController", ACATNonFinancialResourceController);
+
+    ACATNonFinancialResourceController.$inject = ['$mdDialog','data'];
+
+    function ACATNonFinancialResourceController($mdDialog,data) {
+        var vm = this;
+        vm.resources = [];
+        console.log("data",data);
+        vm.non_financial_resources = {
+            training: false,
+            advisory: false,
+            technical_support: false,
+            access_to_inputs: false
+        };
+        data = ["training","advisory","technical support","access to inputs"];
+
+        vm.cancel = _cancel;
+        vm.onNonFinancialResourcesChange = _onNonFinancialResourcesChange;
+        vm.saveNonFinancialResource = _saveNonFinancialResource;
+
+        //SET SELECTED NON FINANCIAL RESOURCES
+        setDefaultNonFinancialResource(data);
+
+
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+
+        function _saveNonFinancialResource() {
+            _onNonFinancialResourcesChange();
+            $mdDialog.hide(vm.resources);
+        }
+        function _onNonFinancialResourcesChange() {
+            console.log(vm.non_financial_resources)
+            if (vm.non_financial_resources.advisory)
+                vm.resources.push("advisory");
+            else if (vm.non_financial_resources.training)
+                vm.resources.push("training");
+            else if (vm.non_financial_resources.technical_support)
+                vm.resources.push("technical support");
+            else if (vm.non_financial_resources.access_to_inputs)
+                vm.resources.push("access to inputs");
+        }
+
+
+
+        function setDefaultNonFinancialResource(data) {
+
+            _.each(data,function (resource) {
+                if (resource === "training")
+                    vm.non_financial_resources.training = true;
+                else if (resource === "advisory")
+                    vm.non_financial_resources.advisory = true;
+                else if (resource === "technical support")
+                    vm.non_financial_resources.technical_support = true;
+                else if (resource === "access to inputs")
+                    vm.non_financial_resources.access_to_inputs = true;
+            });
+
+        }
+    }
+})(window.angular);
 /**
  * Created by Yonas on 4/27/2018.
  */
@@ -8378,13 +8445,14 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
     angular.module("app.processing")
         .controller("ACATProcessorController", ACATProcessorController);
 
-    ACATProcessorController.$inject = ['LoanManagementService','$scope'];
+    ACATProcessorController.$inject = ['LoanManagementService','$scope','$mdDialog','RouteHelpers'];
 
-    function ACATProcessorController(LoanManagementService,$scope ) {
+    function ACATProcessorController(LoanManagementService,$scope,$mdDialog ,RouteHelpers) {
         var vm = this;
         vm.selectedSubsection = {};
         vm.toggle = {};
         vm.accordionToggle = {};
+        vm.non_financial_resources = ["training","advisory","technical support","access to inputs"];
 
         vm.paginate = _paginate;
         vm.clearSearchText = _clearSearchText;
@@ -8394,6 +8462,7 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
         vm.onClientACATClick = _onClientACATClick;
         vm.onSubsectionClick = _onSubsectionClick;
         vm.onAccordionClick = _onAccordionClick;
+        vm.addNonFinancialResource = _addNonFinancialResource;
 
         initialize();
 
@@ -8447,7 +8516,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
             vm.acats.crops = [];
             // set client acat crops for UI purpose
             _.each(acat.ACATs,function (acat) {
-                debugger
                 _.each(vm.crops,function (crp) {
                     if(acat.crop._id === crp._id){
                         vm.acats.crops.push(crp);
@@ -8477,10 +8545,7 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
         function _addEditClientACAT(clientAcat) {
             vm.visibility.showCropACAT = true;//show client acat
-            console.log("Client ACAT Detail Clicked",clientAcat);
             vm.clientAcat = clientAcat;
-            // vm.clientAcat.loan_product = vm.acats.loan_product;
-
             vm.selectedSubsection = vm.clientAcat.sections[0].sub_sections[0].sub_sections[1];
 
         }
@@ -8495,7 +8560,26 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
         }
 
 
+        function _addNonFinancialResource(non_financial_resources,ev) {
+            // $mdDialog.show({
+            //     locals: {data: non_financial_resources },
+            //     templateUrl: RouteHelpers.basepath('loan_management/loan_processing/tabs/acat.non.financial.resource.dialog.html'),
+            //     parent: angular.element(document.body),
+            //     targetEvent: ev,
+            //     clickOutsideToClose: false,
+            //     hasBackdrop: false,
+            //     escapeToClose: true,
+            //     controller: 'ACATNonFinancialResourceController',
+            //     controllerAs: 'vm'
+            // }).then(function (response) {
+            //
+            //     vm.clientAcat.non_financial_resources = response;
+            //     console.log("_addNonFinancialResource ok ",vm.clientAcat);
+            // }, function (response) {
+            //     console.log("_addNonFinancialResource cancel ",response);
+            // });
 
+        }
 
     }
 
