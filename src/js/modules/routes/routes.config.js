@@ -253,6 +253,18 @@
                 }
 
             })
+            .state("app.geospatial", {
+                url: "/geospatial",
+                title: "Geospatial",
+                templateUrl:helper.basepath('geospatial/geospatial.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select','moment','filestyle'),
+                controller: "GeospatialController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+
+            })
 
           // CUSTOM RESOLVES
           //   Add your own resolves properties

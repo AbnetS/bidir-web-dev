@@ -1858,6 +1858,18 @@
                 }
 
             })
+            .state("app.geospatial", {
+                url: "/geospatial",
+                title: "Geospatial",
+                templateUrl:helper.basepath('geospatial/geospatial.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select','moment','filestyle'),
+                controller: "GeospatialController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+
+            })
 
           // CUSTOM RESOLVES
           //   Add your own resolves properties
@@ -2933,7 +2945,8 @@
             'app.forms',
             'app.acat',
             'app.loan_management',
-            'app.report'
+            'app.report',
+            'app.geospatial'
 
         ]).config(customConfig)
         .run(customRun);
@@ -3017,6 +3030,14 @@
     function config($mdIconProvider) {
         $mdIconProvider.iconSet("avatars", 'app/img/icons/avatar-icons.svg',128);
     };
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.geospatial', []);
 
 })();
 /**
@@ -4129,6 +4150,35 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
         }
     }
 
+
+})(window.angular);
+(function(angular) {
+    "use strict";
+
+
+    angular
+        .module('app.geospatial')
+        .controller('GeospatialController', GeoSpatialController);
+
+    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI','AlertService'];
+
+    function GeoSpatialController( GeoSpatialService,blockUI,AlertService )
+    {
+        console.log("GeoSpatialController controller");
+    }
+
+})(window.angular);
+(function(angular) {
+    'use strict';
+    angular.module('app.geospatial')
+
+        .service('GeoSpatialService', GeoSpatialService);
+
+    GeoSpatialService.$inject = ['$http','CommonService','AuthService'];
+
+    function GeoSpatialService($http, CommonService, AuthService) {
+
+    }
 
 })(window.angular);
 /**

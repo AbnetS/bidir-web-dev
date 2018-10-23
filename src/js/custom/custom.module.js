@@ -16,7 +16,8 @@
             'app.forms',
             'app.acat',
             'app.loan_management',
-            'app.report'
+            'app.report',
+            'app.geospatial'
 
         ]).config(customConfig)
         .run(customRun);
