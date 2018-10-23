@@ -114,7 +114,6 @@
             debugger
         }
 
-
         function fetchCropsList() {
             LoanManagementService.GetCrops().then(
                 function (response) {
@@ -122,7 +121,6 @@
                 }
             )
         }
-
 
         function _addGeoLocation(data,ev) {
             $mdDialog.show({
@@ -142,6 +140,7 @@
             });
 
         }
+
         function _estimatedYieldDetail(data, ev) {
             $mdDialog.show({
                 locals: {data: data },
@@ -158,6 +157,15 @@
                 console.log("EstimatedYieldDetailController cancel ",response);
             });
         }
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.clientAcat;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("old value  ",oldValue);
+                console.log("new value  ",newValue);
+            }
+        });
 
     }
 

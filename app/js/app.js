@@ -8537,7 +8537,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
             debugger
         }
 
-
         function fetchCropsList() {
             LoanManagementService.GetCrops().then(
                 function (response) {
@@ -8545,7 +8544,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
                 }
             )
         }
-
 
         function _addGeoLocation(data,ev) {
             $mdDialog.show({
@@ -8565,6 +8563,7 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
             });
 
         }
+
         function _estimatedYieldDetail(data, ev) {
             $mdDialog.show({
                 locals: {data: data },
@@ -8581,6 +8580,15 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
                 console.log("EstimatedYieldDetailController cancel ",response);
             });
         }
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.clientAcat;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("old value  ",oldValue);
+                console.log("new value  ",newValue);
+            }
+        });
 
     }
 

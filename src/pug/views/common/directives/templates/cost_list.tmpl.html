@@ -1,7 +1,8 @@
 <form name="costListForm">
+
     <div class="col-md-3">
         <!--EXPECTED-->
-        <div class="panel mt">
+        <div class="panel panel-success mt">
             <div class="panel-heading">
                 <h4 class="panel-title">Expected</h4>
             </div>
@@ -67,14 +68,17 @@
 
         <!--UNIT-->
         <div class="panel">
-            <div class="panel-body">
-                <div class="clearfix">
-                    <div class="pull-right text-right">
-                        <div class="text-bold">{{costListData.unit }}</div>
-                    </div>
-                    <div class="pull-left text-bold text-dark">Unit</div>
-                </div>
-            </div>
+            <table class="table">
+                <tbody>
+                <tr>
+                    <td>Unit</td>
+                    <td>
+                        <input class="form-control" type="text" ng-model="costListData.unit">
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
         </div>
     </div>
     <div class="col-md-9">
@@ -106,7 +110,6 @@
         <div class=" col-md-8 col-md-offset-2">
             <div class="pull-left text-bold text-dark col-md-2 ">Remark</div>
             <textarea class="form-control col-md-10 " cols="2" ng-model="costListData.remark"></textarea>
-
         </div>
     </div>
 
