@@ -257,13 +257,23 @@
                 url: "/geospatial",
                 title: "Geospatial",
                 templateUrl:helper.basepath('geospatial/geospatial.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select','moment','filestyle'),
+                resolve:helper.resolveFor('md.data.table'),
                 controller: "GeospatialController",
                 controllerAs: 'vm',
                 data: {
                     authenticate: true
                 }
-
+            })
+            .state("app.banking", {
+                url: "/core_banking",
+                title: "Core Banking",
+                templateUrl:helper.basepath('core_banking/core.banking.html'),
+                resolve:helper.resolveFor('md.data.table','moment'),
+                controller: "CoreBankingController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
             })
 
           // CUSTOM RESOLVES

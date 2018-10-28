@@ -17,7 +17,8 @@
             'app.acat',
             'app.loan_management',
             'app.report',
-            'app.geospatial'
+            'app.geospatial',
+            'app.banking'
 
         ]).config(customConfig)
         .run(customRun);

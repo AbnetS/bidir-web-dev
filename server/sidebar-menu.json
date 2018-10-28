@@ -73,5 +73,11 @@
     "module": "GEOSPATIAL",
     "sref": "app.geospatial",
     "icon": "fa fa-file"
+  },
+  {
+    "text": "Core Banking",
+    "module": "CORE_BANKING",
+    "sref": "app.banking",
+    "icon": "fa fa-university"
   }
 ]
