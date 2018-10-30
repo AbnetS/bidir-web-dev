@@ -41,6 +41,12 @@
     'use strict';
 
     angular
+        .module('app.colors', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.core', [
             'ngRoute',
             'ngAnimate',
@@ -69,18 +75,6 @@
     'use strict';
 
     angular
-        .module('app.colors', []);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar', []);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.maps', []);
 })();
 (function() {
@@ -95,18 +89,16 @@
     'use strict';
 
     angular
-        .module('app.preloader', []);
+        .module('app.loadingbar', []);
 })();
-
-
 (function() {
     'use strict';
 
     angular
-        .module('app.routes', [
-            'app.lazyload'
-        ]);
+        .module('app.preloader', []);
 })();
+
+
 (function() {
     'use strict';
 
@@ -132,6 +124,64 @@
         .module('app.utils', [
           'app.colors'
           ]);
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.routes', [
+            'app.lazyload'
+        ]);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
 })();
 
 (function() {
@@ -433,100 +483,6 @@
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
-
-})();
 /**=========================================================
  * Module: modals.js
  * Provides a simple way to implement bootstrap modals from templates
@@ -1430,6 +1386,50 @@
     'use strict';
 
     angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.preloader')
         .directive('preloader', preloader);
 
@@ -1519,425 +1519,6 @@
     }
 
 })();
-/**=========================================================
- * Module: helpers.js
- * Provides helper functions for routes definition
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.routes')
-        .provider('RouteHelpers', RouteHelpersProvider)
-        ;
-
-    RouteHelpersProvider.$inject = ['APP_REQUIRES'];
-    function RouteHelpersProvider(APP_REQUIRES) {
-
-      /* jshint validthis:true */
-      return {
-        // provider access level
-        basepath: basepath,
-        resolveFor: resolveFor,
-        // controller access level
-        $get: function() {
-          return {
-            basepath: basepath,
-            resolveFor: resolveFor
-          };
-        }
-      };
-
-      // Set here the base of the relative path
-      // for all app views
-      function basepath(uri) {
-        return 'app/views/' + uri;
-      }
-
-      // Generates a resolve object by passing script names
-      // previously configured in constant.APP_REQUIRES
-      function resolveFor() {
-        var _args = arguments;
-        return {
-          deps: ['$ocLazyLoad','$q', function ($ocLL, $q) {
-            // Creates a promise chain for each argument
-            var promise = $q.when(1); // empty promise
-            for(var i=0, len=_args.length; i < len; i ++){
-              promise = andThen(_args[i]);
-            }
-            return promise;
-
-            // creates promise to chain dynamically
-            function andThen(_arg) {
-              // also support a function that returns a promise
-              if(typeof _arg === 'function')
-                  return promise.then(_arg);
-              else
-                  return promise.then(function() {
-                    // if is a module, pass the name. If not, pass the array
-                    var whatToLoad = getRequired(_arg);
-                    // simple error check
-                    if(!whatToLoad) return $.error('Route resolve: Bad resource name [' + _arg + ']');
-                    // finally, return a promise
-                    return $ocLL.load( whatToLoad );
-                  });
-            }
-            // check and returns required data
-            // analyze module items with the form [name: '', files: []]
-            // and also simple array of script files (for not angular js)
-            function getRequired(name) {
-              if (APP_REQUIRES.modules)
-                  for(var m in APP_REQUIRES.modules)
-                      if(APP_REQUIRES.modules[m].name && APP_REQUIRES.modules[m].name === name)
-                          return APP_REQUIRES.modules[m];
-              return APP_REQUIRES.scripts && APP_REQUIRES.scripts[name];
-            }
-
-          }]};
-      } // resolveFor
-
-    }
-
-
-})();
-
-
-/**=========================================================
- * Module: config.js
- * App routes and resources configuration
- =========================================================*/
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.routes')
-        .config(routesConfig);
-
-    routesConfig.$inject = ['$stateProvider', '$locationProvider', '$urlRouterProvider', 'RouteHelpersProvider'];
-    function routesConfig($stateProvider, $locationProvider, $urlRouterProvider, helper){
-        
-        // Set the following to true to enable the HTML5 Mode
-        // You may have to set <base> tag in index and a routing configuration in your server
-        $locationProvider.html5Mode(false);
-
-        // defaults to login
-        $urlRouterProvider.otherwise('/app/welcome');
-
-        // 
-        // Application Routes
-        // -----------------------------------   
-        $stateProvider
-          .state('app', {
-              url: '/app',
-              abstract: true,
-              templateUrl: helper.basepath('app.html'),
-              resolve: helper.resolveFor('fastclick','modernizr','sparklines', 'icons','animo','underscore',
-                        'sparklines','slimscroll','oitozero.ngSweetAlert','toaster','blockUI'),
-              data: {
-                  authenticate: true
-              }
-          })
-          .state('app.welcome', {
-              url: '/welcome',
-              title: 'Welcome',
-              templateUrl: helper.basepath('welcome.html'),
-              controller: 'WelcomeController',
-              controllerAs: 'vm',
-              data: {
-                  authenticate: true
-              }
-          })
-            .state('app.profile', {
-                url: '/profile',
-                title: 'Profile',
-                templateUrl: helper.basepath('profile.html'),
-                controller: 'ProfileController',
-                controllerAs: 'vm',
-                data: {
-                    authenticate: true
-                }
-            })
-           .state('app.manage_user', {
-                url: '/manage_user',
-                title: 'manage users',
-                templateUrl: helper.basepath('manageusers/manage.users.html'),
-               resolve: angular.extend(helper.resolveFor('datatables','ui.select'),{}),
-               controller: 'ManageUsersController',
-               controllerAs: 'vm',
-               data: {
-                   authenticate: true
-               }
-            })
-            .state('app.manage_role', {
-                url: '/manage_role',
-                title: 'manage roles',
-                templateUrl: helper.basepath('manageroles/manage.roles.html'),
-                resolve:helper.resolveFor('datatables','ui.select'),
-                controller: 'ManageRoleController',
-                controllerAs: 'vm',
-                data: {
-                    authenticate: true
-                }
-            })
-            .state('app.mfi_setting', {
-                url: '/mfi_setup',
-                title: 'MFI Setting',
-                templateUrl:helper.basepath('mfisetup/mfi.html'),
-                resolve:helper.resolveFor('datatables','ui.select','moment','inputmask','ngFileUpload'),
-                controller: 'MFIController',
-                controllerAs: 'vm',
-                data: {
-                    authenticate: true
-                }
-            })
-
-            .state("app.manage_branch", {
-                url: "/branches",
-                title: "branches",
-                templateUrl:helper.basepath('mfisetup/branches/branches.html'),
-                controller: "BranchController",
-                controllerAs: 'vm',
-                data: {
-                    authenticate: true
-                }
-            })
-            .state("app.forms", {
-                url: "/forms",
-                title: "forms",
-                templateUrl:helper.basepath('forms/forms.list.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "FormsController",
-                controllerAs: 'vm',
-                data: {
-                    authenticate: true
-                }
-            })
-            .state("app.builder", {
-                url: "/forms/builder/:id",
-                title: 'Form Builder',
-                templateUrl:helper.basepath('forms/builder.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select','ui.sortable'),
-                controller: 'FormBuilderController',
-                controllerAs: 'vm',
-                data: {
-                    authenticate: true
-                }
-            })
-            .state("app.acat", {
-                url: "/acat",
-                title: "acat",
-                templateUrl:helper.basepath('acat/builder/acat.list.html'),
-                resolve:helper.resolveFor('md.data.table'),
-                controller: "ACATListController",
-                controllerAs: 'vm',
-                data: {
-                    authenticate: true
-                }
-            })
-            .state("app.acatbuilder", {
-                url: "/acat/builder/:id",
-                title: 'ACAT Builder',
-                templateUrl:helper.basepath('acat/builder/acat.builder.html'),
-                controller: 'ACATController',
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controllerAs: 'vm',
-                data: {
-                    authenticate: true
-                }
-            })
-            .state("app.crop", {
-                url: "/crops",
-                title: "crops",
-                templateUrl:helper.basepath('acat/crop/crops.html'),
-                resolve:helper.resolveFor('md.data.table'),
-                controller: "CropsController",
-                controllerAs: 'vm',
-                data: {
-                    authenticate: true
-                }
-            })
-            .state("app.loanproduct", {
-                url: "/loanproducts",
-                title: "loan product",
-                templateUrl:helper.basepath('mfisetup/loanproduct/loan.products.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "LoanProductsController",
-                controllerAs: 'vm',
-                data: {
-                    authenticate: true
-                }
-            })
-            .state("app.clients", {
-                url: "/clients",
-                title: "Client Management",
-                templateUrl:helper.basepath('loan_management/client_management/client.management.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "ClientManagementController",
-                controllerAs: 'vm',
-                data: {
-                    authenticate: true
-                }
-            })
-            .state("app.client_detail", {
-                url: "/clients/:id",
-                title: "clients detail",
-                templateUrl:helper.basepath('loan_management/client_management/client.detail.html'),
-                controller: "ClientDetailController",
-                controllerAs: 'vm',
-                data: {
-                    authenticate: true
-                }
-            })
-
-            .state("app.loan_processing", {
-                url: "/loan_processing",
-                title: "Loan Processing",
-                templateUrl:helper.basepath('loan_management/loan_processing/loan.processing.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select','moment','filestyle'),
-                controller: "LoanProcessingController",
-                controllerAs: 'vm',
-                abstract: true,
-                data: {
-                    authenticate: true
-                }
-            })
-            .state("app.loan_processing.clients", {
-                url: "/clients",
-                views: {
-                    "tabContent": {
-                        templateUrl: helper.basepath('loan_management/loan_processing/tabs/clients.html'),
-                        controller: "ClientsController",
-                        controllerAs: "vm"
-                    }
-                }})
-            .state("app.loan_processing.screenings", {
-                url: "/screenings",
-                 views: {
-                     "tabContent": {
-                         templateUrl: helper.basepath('loan_management/loan_processing/tabs/screenings.html'),
-                         controller: 'ScreeningProcessorController',
-                         controllerAs:'vm'
-                     }
-                 }
-                }
-                )
-            .state("app.loan_processing.loan_applications", {
-                url: "/loan_application",
-                views: {
-                    "tabContent": {
-                        templateUrl: helper.basepath('loan_management/loan_processing/tabs/loan_applications.html'),
-                        controller: 'LoanApplicationProcessorController',
-                        controllerAs:'vm'
-                    }
-                }
-
-            })
-            .state("app.loan_processing.acat", {
-                url: "/acat_processor",
-                views: {
-                    "tabContent": {
-                        templateUrl: helper.basepath('loan_management/loan_processing/tabs/acat.processor.html'),
-                        controller: 'ACATProcessorController',
-                        controllerAs:'vm'
-                    }
-                }
-
-            })
-            .state("app.report", {
-                url: "/report",
-                title: "Report",
-                templateUrl:helper.basepath('report/report.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select','moment','filestyle'),
-                controller: "ReportController",
-                controllerAs: 'vm',
-                data: {
-                    authenticate: true
-                }
-
-            })
-            .state("app.geospatial", {
-                url: "/geospatial",
-                title: "Geospatial",
-                templateUrl:helper.basepath('geospatial/geospatial.html'),
-                resolve:helper.resolveFor('md.data.table'),
-                controller: "GeospatialController",
-                controllerAs: 'vm',
-                data: {
-                    authenticate: true
-                }
-            })
-            .state("app.banking", {
-                url: "/core_banking",
-                title: "Core Banking",
-                templateUrl:helper.basepath('core_banking/core.banking.html'),
-                resolve:helper.resolveFor('md.data.table','moment'),
-                controller: "CoreBankingController",
-                controllerAs: 'vm',
-                data: {
-                    authenticate: true
-                }
-            })
-
-          // CUSTOM RESOLVES
-          //   Add your own resolves properties
-          //   following this object extend
-          //   method
-          // -----------------------------------
-            .state('page', {
-                url: '/page',
-                templateUrl: 'app/pages/page.html',
-                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert','toaster','blockUI'),
-                controller: ['$rootScope', function($rootScope) {
-                    $rootScope.app.layout.isBoxed = false;
-                }],
-                data: {
-                    authenticate: false
-                }
-            })
-            .state('page.login', {
-                url: '/login',
-                title: 'Login',
-                templateUrl: 'app/pages/login.html',
-                controller: 'LoginFormController',
-                controllerAs: 'login',
-                data: {
-                    authenticate: false
-                }
-            })
-            .state('page.404', {
-                url: '/404',
-                title: 'Not Found',
-                templateUrl: 'app/pages/404.html',
-                data: {
-                    authenticate: false
-                }
-            })
-            .state('page.500', {
-                url: '/500',
-                title: 'Server error',
-                templateUrl: 'app/pages/500.html',
-                data: {
-                    authenticate: false
-                }
-            })
-            .state('page.maintenance', {
-                url: '/maintenance',
-                title: 'Maintenance',
-                templateUrl: 'app/pages/maintenance.html',
-                data: {
-                    authenticate: false
-                }
-            })
-          ;
-
-    } // routesConfig
-
-})();
-
-
 (function() {
     'use strict';
 
@@ -2911,6 +2492,436 @@
     }
 })();
 
+/**=========================================================
+ * Module: helpers.js
+ * Provides helper functions for routes definition
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.routes')
+        .provider('RouteHelpers', RouteHelpersProvider)
+        ;
+
+    RouteHelpersProvider.$inject = ['APP_REQUIRES'];
+    function RouteHelpersProvider(APP_REQUIRES) {
+
+      /* jshint validthis:true */
+      return {
+        // provider access level
+        basepath: basepath,
+        resolveFor: resolveFor,
+        // controller access level
+        $get: function() {
+          return {
+            basepath: basepath,
+            resolveFor: resolveFor
+          };
+        }
+      };
+
+      // Set here the base of the relative path
+      // for all app views
+      function basepath(uri) {
+        return 'app/views/' + uri;
+      }
+
+      // Generates a resolve object by passing script names
+      // previously configured in constant.APP_REQUIRES
+      function resolveFor() {
+        var _args = arguments;
+        return {
+          deps: ['$ocLazyLoad','$q', function ($ocLL, $q) {
+            // Creates a promise chain for each argument
+            var promise = $q.when(1); // empty promise
+            for(var i=0, len=_args.length; i < len; i ++){
+              promise = andThen(_args[i]);
+            }
+            return promise;
+
+            // creates promise to chain dynamically
+            function andThen(_arg) {
+              // also support a function that returns a promise
+              if(typeof _arg === 'function')
+                  return promise.then(_arg);
+              else
+                  return promise.then(function() {
+                    // if is a module, pass the name. If not, pass the array
+                    var whatToLoad = getRequired(_arg);
+                    // simple error check
+                    if(!whatToLoad) return $.error('Route resolve: Bad resource name [' + _arg + ']');
+                    // finally, return a promise
+                    return $ocLL.load( whatToLoad );
+                  });
+            }
+            // check and returns required data
+            // analyze module items with the form [name: '', files: []]
+            // and also simple array of script files (for not angular js)
+            function getRequired(name) {
+              if (APP_REQUIRES.modules)
+                  for(var m in APP_REQUIRES.modules)
+                      if(APP_REQUIRES.modules[m].name && APP_REQUIRES.modules[m].name === name)
+                          return APP_REQUIRES.modules[m];
+              return APP_REQUIRES.scripts && APP_REQUIRES.scripts[name];
+            }
+
+          }]};
+      } // resolveFor
+
+    }
+
+
+})();
+
+
+/**=========================================================
+ * Module: config.js
+ * App routes and resources configuration
+ =========================================================*/
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.routes')
+        .config(routesConfig);
+
+    routesConfig.$inject = ['$stateProvider', '$locationProvider', '$urlRouterProvider', 'RouteHelpersProvider'];
+    function routesConfig($stateProvider, $locationProvider, $urlRouterProvider, helper){
+        
+        // Set the following to true to enable the HTML5 Mode
+        // You may have to set <base> tag in index and a routing configuration in your server
+        $locationProvider.html5Mode(false);
+
+        // defaults to login
+        $urlRouterProvider.otherwise('/app/welcome');
+
+        // 
+        // Application Routes
+        // -----------------------------------   
+        $stateProvider
+          .state('app', {
+              url: '/app',
+              abstract: true,
+              templateUrl: helper.basepath('app.html'),
+              resolve: helper.resolveFor('fastclick','modernizr','sparklines', 'icons','animo','underscore',
+                        'sparklines','slimscroll','oitozero.ngSweetAlert','toaster','blockUI'),
+              data: {
+                  authenticate: true
+              }
+          })
+          .state('app.welcome', {
+              url: '/welcome',
+              title: 'Welcome',
+              templateUrl: helper.basepath('welcome.html'),
+              controller: 'WelcomeController',
+              controllerAs: 'vm',
+              data: {
+                  authenticate: true
+              }
+          })
+            .state('app.profile', {
+                url: '/profile',
+                title: 'Profile',
+                templateUrl: helper.basepath('profile.html'),
+                controller: 'ProfileController',
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+           .state('app.manage_user', {
+                url: '/manage_user',
+                title: 'manage users',
+                templateUrl: helper.basepath('manageusers/manage.users.html'),
+               resolve: angular.extend(helper.resolveFor('datatables','ui.select'),{}),
+               controller: 'ManageUsersController',
+               controllerAs: 'vm',
+               data: {
+                   authenticate: true
+               }
+            })
+            .state('app.manage_role', {
+                url: '/manage_role',
+                title: 'manage roles',
+                templateUrl: helper.basepath('manageroles/manage.roles.html'),
+                resolve:helper.resolveFor('datatables','ui.select'),
+                controller: 'ManageRoleController',
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+            .state('app.mfi_setting', {
+                url: '/mfi_setup',
+                title: 'MFI Setting',
+                templateUrl:helper.basepath('mfisetup/mfi.html'),
+                resolve:helper.resolveFor('datatables','ui.select','moment','inputmask','ngFileUpload'),
+                controller: 'MFIController',
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+
+            .state("app.manage_branch", {
+                url: "/branches",
+                title: "branches",
+                templateUrl:helper.basepath('mfisetup/branches/branches.html'),
+                controller: "BranchController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+            .state("app.forms", {
+                url: "/forms",
+                title: "forms",
+                templateUrl:helper.basepath('forms/forms.list.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "FormsController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+            .state("app.builder", {
+                url: "/forms/builder/:id",
+                title: 'Form Builder',
+                templateUrl:helper.basepath('forms/builder.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select','ui.sortable'),
+                controller: 'FormBuilderController',
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+            .state("app.acat", {
+                url: "/acat",
+                title: "acat",
+                templateUrl:helper.basepath('acat/builder/acat.list.html'),
+                resolve:helper.resolveFor('md.data.table'),
+                controller: "ACATListController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+            .state("app.acatbuilder", {
+                url: "/acat/builder/:id",
+                title: 'ACAT Builder',
+                templateUrl:helper.basepath('acat/builder/acat.builder.html'),
+                controller: 'ACATController',
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+            .state("app.crop", {
+                url: "/crops",
+                title: "crops",
+                templateUrl:helper.basepath('acat/crop/crops.html'),
+                resolve:helper.resolveFor('md.data.table'),
+                controller: "CropsController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+            .state("app.loanproduct", {
+                url: "/loanproducts",
+                title: "loan product",
+                templateUrl:helper.basepath('mfisetup/loanproduct/loan.products.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "LoanProductsController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+            .state("app.clients", {
+                url: "/clients",
+                title: "Client Management",
+                templateUrl:helper.basepath('loan_management/client_management/client.management.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "ClientManagementController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+            .state("app.client_detail", {
+                url: "/clients/:id",
+                title: "clients detail",
+                templateUrl:helper.basepath('loan_management/client_management/client.detail.html'),
+                controller: "ClientDetailController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+
+            .state("app.loan_processing", {
+                url: "/loan_processing",
+                title: "Loan Processing",
+                templateUrl:helper.basepath('loan_management/loan_processing/loan.processing.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select','moment','filestyle'),
+                controller: "LoanProcessingController",
+                controllerAs: 'vm',
+                abstract: true,
+                data: {
+                    authenticate: true
+                }
+            })
+            .state("app.loan_processing.clients", {
+                url: "/clients",
+                views: {
+                    "tabContent": {
+                        templateUrl: helper.basepath('loan_management/loan_processing/tabs/clients.html'),
+                        controller: "ClientsController",
+                        controllerAs: "vm"
+                    }
+                }})
+            .state("app.loan_processing.screenings", {
+                url: "/screenings",
+                 views: {
+                     "tabContent": {
+                         templateUrl: helper.basepath('loan_management/loan_processing/tabs/screenings.html'),
+                         controller: 'ScreeningProcessorController',
+                         controllerAs:'vm'
+                     }
+                 }
+                }
+                )
+            .state("app.loan_processing.loan_applications", {
+                url: "/loan_application",
+                views: {
+                    "tabContent": {
+                        templateUrl: helper.basepath('loan_management/loan_processing/tabs/loan_applications.html'),
+                        controller: 'LoanApplicationProcessorController',
+                        controllerAs:'vm'
+                    }
+                }
+
+            })
+            .state("app.loan_processing.acat", {
+                url: "/acat_processor",
+                views: {
+                    "tabContent": {
+                        templateUrl: helper.basepath('loan_management/loan_processing/tabs/acat.processor.html'),
+                        controller: 'ACATProcessorController',
+                        controllerAs:'vm'
+                    }
+                }
+
+            })
+            .state("app.report", {
+                url: "/report",
+                title: "Report",
+                templateUrl:helper.basepath('report/report.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select','moment','filestyle'),
+                controller: "ReportController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+
+            })
+            .state("app.rainfall", {
+                url: "/rainfall",
+                title: "Rainfall",
+                templateUrl:helper.basepath('geospatial/rainfall.geospatial.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "GeospatialController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+            .state("app.vegetation", {
+                url: "/vegetation",
+                title: "Vegetation",
+                templateUrl:helper.basepath('geospatial/vegetation.index.geospatial.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "GeospatialController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+            .state("app.banking", {
+                url: "/core_banking",
+                title: "Core Banking",
+                templateUrl:helper.basepath('core_banking/core.banking.html'),
+                resolve:helper.resolveFor('md.data.table','moment'),
+                controller: "CoreBankingController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+
+          // CUSTOM RESOLVES
+          //   Add your own resolves properties
+          //   following this object extend
+          //   method
+          // -----------------------------------
+            .state('page', {
+                url: '/page',
+                templateUrl: 'app/pages/page.html',
+                resolve: helper.resolveFor('modernizr', 'icons','oitozero.ngSweetAlert','toaster','blockUI'),
+                controller: ['$rootScope', function($rootScope) {
+                    $rootScope.app.layout.isBoxed = false;
+                }],
+                data: {
+                    authenticate: false
+                }
+            })
+            .state('page.login', {
+                url: '/login',
+                title: 'Login',
+                templateUrl: 'app/pages/login.html',
+                controller: 'LoginFormController',
+                controllerAs: 'login',
+                data: {
+                    authenticate: false
+                }
+            })
+            .state('page.404', {
+                url: '/404',
+                title: 'Not Found',
+                templateUrl: 'app/pages/404.html',
+                data: {
+                    authenticate: false
+                }
+            })
+            .state('page.500', {
+                url: '/500',
+                title: 'Server error',
+                templateUrl: 'app/pages/500.html',
+                data: {
+                    authenticate: false
+                }
+            })
+            .state('page.maintenance', {
+                url: '/maintenance',
+                title: 'Maintenance',
+                templateUrl: 'app/pages/maintenance.html',
+                data: {
+                    authenticate: false
+                }
+            })
+          ;
+
+    } // routesConfig
+
+})();
+
+
 /**
  * Created by Yoni on 1/8/2018.
  */
@@ -3007,13 +3018,6 @@
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.authentication', []);
-
-})();
 (function(angular) {
   "use strict";
 
@@ -3049,6 +3053,13 @@
     function config($mdIconProvider) {
         $mdIconProvider.iconSet("avatars", 'app/img/icons/avatar-icons.svg',128);
     };
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.authentication', []);
 
 })();
 
@@ -3274,142 +3285,6 @@ function runBlock() {
 
 
 })(window.angular);
-(function(angular) {
-    'use strict';
-    angular.module('app.authentication')
-
-    .service('AuthService', AuthService);
-
-     AuthService.$inject = ['$http', 'StorageService', 'CommonService', 'APP_CONSTANTS', '$rootScope', '$state','$location'];
-
-    function AuthService($http, StorageService, CommonService, APP_CONSTANTS, $rootScope, $state,$location) {
-        this.authorized = false;
-
-        return {
-            login: _login,
-            Logout: logout,
-            GetCredentials: getCredentials,
-            SetCredentials: setCredentials,
-            GetToken: getToken,
-            GetCurrentUser:_getCurrentUser,
-            GetAccessBranches:_getAccessBranches,
-            IsSuperuser:isSuper,
-            SaveAttemptUrl: _saveAttemptUrl,
-            RedirectToAttemptedUrl:_redirectToAttemptedUrl,
-            IsAuthenticated: _isAuthenticated
-        };
-
-
-        function _saveAttemptUrl() {
-
-            if($location.path().toLowerCase() !== '/page/login') {
-                StorageService.Set(APP_CONSTANTS.REDIRECT_TO_URL,$location.path());
-            }
-            else {
-                StorageService.Set(APP_CONSTANTS.REDIRECT_TO_URL,'/');
-            }
-        }
-        function _redirectToAttemptedUrl() {
-            var url = StorageService.Get(APP_CONSTANTS.REDIRECT_TO_URL);
-            $location.path(url);
-        }
-
-        function getCredentials() {
-            return !angular.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.SESSION)) ? StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) : null;
-        }
-        function _isAuthenticated() {
-            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) !== null;
-        }
-        function setCredentials(session) {
-            StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
-        }
-
-        function getToken() {
-            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION).token;
-        }
-
-
-        function _getCurrentUser(){
-          var credential = getCredentials();
-          return credential !== null? credential.user: null;
-        }
-        function _getAccessBranches() {
-            var credential = getCredentials();
-            return credential !== null ?  !isSuper()? credential.user.account.access_branches : [] :null;
-        }
-
-        function isSuper() {
-            var credential = getCredentials();
-            return credential !== null && credential.user.username === 'super@bidir.com';
-        }
-
-        function _login(user) {
-          return $http.post(CommonService.buildUrl(API.Service.Auth,API.Methods.Auth.Login), user);
-        }
-
-        function logout() {
-            StorageService.Reset();
-            $rootScope.currentUser = null;
-            $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
-            $state.go('page.login');
-        }
-
-    }
-
-})(window.angular);
-
-/**=========================================================
- * Module: access-login.js
- * Demo for login api
- =========================================================*/
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.authentication')
-        .controller('LoginFormController', LoginFormController);
-
-    LoginFormController.$inject = ['AuthService', '$state',  '$rootScope',  'APP_CONSTANTS',  'blockUI', 'AlertService'];
-
-    function LoginFormController( AuthService,  $state, $rootScope,  APP_CONSTANTS, blockUI,AlertService
-    ) {
-        var vm = this;
-        vm.userValidator = {
-            usernameMin: 4,
-            usernameMax: 20,
-            passwordMin: 6
-        };
-
-        vm.login = function() {
-            var myBlockUI = blockUI.instances.get('loginFormBlockUI');
-            myBlockUI.start("Logging in");
-
-            AuthService.login(vm.user).then(
-                function(response) {
-                    console.log("login user",response);
-                    var result = response.data;
-                    vm.user = result.user;
-                    $rootScope.currentUser = vm.user;
-                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
-                    AuthService.SetCredentials(result);
-                    myBlockUI.stop();
-                    AuthService.RedirectToAttemptedUrl();
-                },
-                function(error) {
-                    myBlockUI.stop();
-                    console.log("error", error);
-                    AlertService.showError("Error on Login", "The username or password is incorrect! Please try again.");
-                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
-                }
-            );
-
-
-        };
-    }
-})(window.angular);
-
-
 (function(angular) {
   "use strict";
 
@@ -4291,6 +4166,142 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
 })(window.angular);
 (function(angular) {
+    'use strict';
+    angular.module('app.authentication')
+
+    .service('AuthService', AuthService);
+
+     AuthService.$inject = ['$http', 'StorageService', 'CommonService', 'APP_CONSTANTS', '$rootScope', '$state','$location'];
+
+    function AuthService($http, StorageService, CommonService, APP_CONSTANTS, $rootScope, $state,$location) {
+        this.authorized = false;
+
+        return {
+            login: _login,
+            Logout: logout,
+            GetCredentials: getCredentials,
+            SetCredentials: setCredentials,
+            GetToken: getToken,
+            GetCurrentUser:_getCurrentUser,
+            GetAccessBranches:_getAccessBranches,
+            IsSuperuser:isSuper,
+            SaveAttemptUrl: _saveAttemptUrl,
+            RedirectToAttemptedUrl:_redirectToAttemptedUrl,
+            IsAuthenticated: _isAuthenticated
+        };
+
+
+        function _saveAttemptUrl() {
+
+            if($location.path().toLowerCase() !== '/page/login') {
+                StorageService.Set(APP_CONSTANTS.REDIRECT_TO_URL,$location.path());
+            }
+            else {
+                StorageService.Set(APP_CONSTANTS.REDIRECT_TO_URL,'/');
+            }
+        }
+        function _redirectToAttemptedUrl() {
+            var url = StorageService.Get(APP_CONSTANTS.REDIRECT_TO_URL);
+            $location.path(url);
+        }
+
+        function getCredentials() {
+            return !angular.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.SESSION)) ? StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) : null;
+        }
+        function _isAuthenticated() {
+            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) !== null;
+        }
+        function setCredentials(session) {
+            StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
+        }
+
+        function getToken() {
+            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION).token;
+        }
+
+
+        function _getCurrentUser(){
+          var credential = getCredentials();
+          return credential !== null? credential.user: null;
+        }
+        function _getAccessBranches() {
+            var credential = getCredentials();
+            return credential !== null ?  !isSuper()? credential.user.account.access_branches : [] :null;
+        }
+
+        function isSuper() {
+            var credential = getCredentials();
+            return credential !== null && credential.user.username === 'super@bidir.com';
+        }
+
+        function _login(user) {
+          return $http.post(CommonService.buildUrl(API.Service.Auth,API.Methods.Auth.Login), user);
+        }
+
+        function logout() {
+            StorageService.Reset();
+            $rootScope.currentUser = null;
+            $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
+            $state.go('page.login');
+        }
+
+    }
+
+})(window.angular);
+
+/**=========================================================
+ * Module: access-login.js
+ * Demo for login api
+ =========================================================*/
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.authentication')
+        .controller('LoginFormController', LoginFormController);
+
+    LoginFormController.$inject = ['AuthService', '$state',  '$rootScope',  'APP_CONSTANTS',  'blockUI', 'AlertService'];
+
+    function LoginFormController( AuthService,  $state, $rootScope,  APP_CONSTANTS, blockUI,AlertService
+    ) {
+        var vm = this;
+        vm.userValidator = {
+            usernameMin: 4,
+            usernameMax: 20,
+            passwordMin: 6
+        };
+
+        vm.login = function() {
+            var myBlockUI = blockUI.instances.get('loginFormBlockUI');
+            myBlockUI.start("Logging in");
+
+            AuthService.login(vm.user).then(
+                function(response) {
+                    console.log("login user",response);
+                    var result = response.data;
+                    vm.user = result.user;
+                    $rootScope.currentUser = vm.user;
+                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
+                    AuthService.SetCredentials(result);
+                    myBlockUI.stop();
+                    AuthService.RedirectToAttemptedUrl();
+                },
+                function(error) {
+                    myBlockUI.stop();
+                    console.log("error", error);
+                    AlertService.showError("Error on Login", "The username or password is incorrect! Please try again.");
+                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
+                }
+            );
+
+
+        };
+    }
+})(window.angular);
+
+
+(function(angular) {
     "use strict";
 
 
@@ -4298,11 +4309,23 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
         .module('app.geospatial')
         .controller('GeospatialController', GeoSpatialController);
 
-    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI','AlertService'];
+    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI','$http'];
 
-    function GeoSpatialController( GeoSpatialService,blockUI,AlertService )
+    function GeoSpatialController( GeoSpatialService,blockUI,$http )
     {
-        console.log("GeoSpatialController controller");
+        //
+        // $http({
+        //     method: 'POST',
+        //     url: 'http://146.148.123.23:8080/geoserver/ows?service=WPS&version=1.0.0&request=GetCapabilities',
+        //     data: '<searchKey id="whatever"/>',
+        //     headers: { "Content-Type": 'application/xml' }
+        // }).success(function(data, status, headers, config) {
+        //     console.log(data);  // XML document object
+        //
+        // }).error(function(data, status, headers, config) {
+        //     console.log("error",data)
+        // });
+
     }
 
 })(window.angular);
@@ -8557,175 +8580,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
   }
 })(window.angular);
 
-/**
- * Created by Yonas on 7/2/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("ClientsController", ClientsController);
-
-    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
-
-    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
-        var vm = this;
-        vm.clientDetailEdit = _clientDetailEdit;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearchText;
-        vm.saveClient = _saveClient;
-        vm.backToClientList = _backToClientList;
-
-
-
-        initialize();
-
-        function initialize() {
-            initializeDatePicker();
-            vm.visibility = { showClientDetail: false };
-            vm.civilStatuses = CIVIL_STATUSES;
-            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
-            vm.filter = {show : false};
-            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
-
-            vm.query = { search:'',   page:1,  per_page:10 };
-            vm.months = MONTHS_CONST;
-            callAPI();
-            getBranches();
-        }
-
-        function callAPI() {
-            var myBlockUI = blockUI.instances.get('clientsBlockUI');
-            myBlockUI.start();
-
-            vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
-                vm.clients = response.data.docs;
-                vm.query.total_pages = response.data.total_pages;
-                vm.query.total_docs_count = response.data.total_docs_count;
-                myBlockUI.stop();
-                console.log("clients",vm.clients);
-            });
-        }
-
-        function _clientDetailEdit(client,ev) {
-            console.log("client detail",client);
-            vm.visibility.showClientDetail = true;
-            //data set
-            vm.selectedClient = client;
-            var dt = new Date(client.date_of_birth);
-            vm.selectedClient.date_of_birth = dt;
-            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
-            vm.selectedClient.gender = client.gender.toLowerCase();
-            vm.selected_branch = client.branch;
-        }
-
-        function _backToClientList() {
-            vm.visibility = { showClientDetail: false };
-        }
-        function _saveClient() {
-
-            if(_.isUndefined(vm.selected_branch)){
-                AlertService.showWarning("Warning!","Please Select Branch....");
-            }else{
-                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
-                myBlockUI.start();
-                var client = vm.selectedClient;
-                client.branch = vm.selected_branch._id;
-                client.created_by =  undefined;
-
-
-                if( _.isUndefined(vm.selectedClient._id)){
-                    //ADD NEW CLIENT INFORMATION
-                    LoanManagementService.SaveClient(client).then(function (response) {
-                        console.log("save client",response);
-                        myBlockUI.stop();
-                        vm.visibility = { showClientDetail: false };
-                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
-
-                    },function (error) {
-                        console.log("save client error",error);
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to save client",message);
-
-                    });
-                }else{
-                    //UPDATE CLIENT INFORMATION
-                    LoanManagementService.UpdateClient(client).then(function (response) {
-                        console.log("save client",response);
-                        myBlockUI.stop();
-                        vm.visibility = { showClientDetail: false };
-                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
-                    },function (error) {
-                        console.log("Updated client error",error);
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to update Client",message);
-
-                    });
-                }
-
-
-            }
-
-        }
-
-        function getBranches() {
-            SharedService.GetBranches().then(function(response){
-                vm.branches = response.data.docs;
-                console.log("vm.branches",vm.branches);
-            },function(error){
-                console.log("error",error);
-            });
-        }
-
-        /**
-         *
-         *  Paging parameters and methods
-         */
-        function _paginate(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
-        }
-        function _clearSearchText() {
-            vm.query.search = '';
-            vm.filter.show = false;
-        }
-        function initializeDatePicker() {
-            vm.clear = function() {
-                vm.dt = null;
-            };
-
-            vm.dateOptions = {
-                dateDisabled: false,
-                formatYear: "yy",
-                maxDate: new Date(2020, 5, 22),
-                startingDay: 1
-            };
-
-            vm.openPopup = function() {
-                vm.popup1.opened = true;
-            };
-
-            vm.dateFormat = "dd-MMMM-yyyy";
-            vm.altInputFormats = ["M!/d!/yyyy"];
-
-            vm.popup1 = {
-                opened: false
-            };
-        }
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("searching clients for ",newValue);
-            }
-        });
-
-    }
-
-})(window.angular);
 (function (angular) {
     "use strict";
 
@@ -8950,6 +8804,175 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
     }
 
 
+
+})(window.angular);
+/**
+ * Created by Yonas on 7/2/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("ClientsController", ClientsController);
+
+    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
+
+    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
+        var vm = this;
+        vm.clientDetailEdit = _clientDetailEdit;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearchText;
+        vm.saveClient = _saveClient;
+        vm.backToClientList = _backToClientList;
+
+
+
+        initialize();
+
+        function initialize() {
+            initializeDatePicker();
+            vm.visibility = { showClientDetail: false };
+            vm.civilStatuses = CIVIL_STATUSES;
+            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
+            vm.filter = {show : false};
+            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
+
+            vm.query = { search:'',   page:1,  per_page:10 };
+            vm.months = MONTHS_CONST;
+            callAPI();
+            getBranches();
+        }
+
+        function callAPI() {
+            var myBlockUI = blockUI.instances.get('clientsBlockUI');
+            myBlockUI.start();
+
+            vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
+                vm.clients = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+                myBlockUI.stop();
+                console.log("clients",vm.clients);
+            });
+        }
+
+        function _clientDetailEdit(client,ev) {
+            console.log("client detail",client);
+            vm.visibility.showClientDetail = true;
+            //data set
+            vm.selectedClient = client;
+            var dt = new Date(client.date_of_birth);
+            vm.selectedClient.date_of_birth = dt;
+            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
+            vm.selectedClient.gender = client.gender.toLowerCase();
+            vm.selected_branch = client.branch;
+        }
+
+        function _backToClientList() {
+            vm.visibility = { showClientDetail: false };
+        }
+        function _saveClient() {
+
+            if(_.isUndefined(vm.selected_branch)){
+                AlertService.showWarning("Warning!","Please Select Branch....");
+            }else{
+                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
+                myBlockUI.start();
+                var client = vm.selectedClient;
+                client.branch = vm.selected_branch._id;
+                client.created_by =  undefined;
+
+
+                if( _.isUndefined(vm.selectedClient._id)){
+                    //ADD NEW CLIENT INFORMATION
+                    LoanManagementService.SaveClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
+                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
+
+                    },function (error) {
+                        console.log("save client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to save client",message);
+
+                    });
+                }else{
+                    //UPDATE CLIENT INFORMATION
+                    LoanManagementService.UpdateClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
+                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
+                    },function (error) {
+                        console.log("Updated client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to update Client",message);
+
+                    });
+                }
+
+
+            }
+
+        }
+
+        function getBranches() {
+            SharedService.GetBranches().then(function(response){
+                vm.branches = response.data.docs;
+                console.log("vm.branches",vm.branches);
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        /**
+         *
+         *  Paging parameters and methods
+         */
+        function _paginate(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        }
+        function _clearSearchText() {
+            vm.query.search = '';
+            vm.filter.show = false;
+        }
+        function initializeDatePicker() {
+            vm.clear = function() {
+                vm.dt = null;
+            };
+
+            vm.dateOptions = {
+                dateDisabled: false,
+                formatYear: "yy",
+                maxDate: new Date(2020, 5, 22),
+                startingDay: 1
+            };
+
+            vm.openPopup = function() {
+                vm.popup1.opened = true;
+            };
+
+            vm.dateFormat = "dd-MMMM-yyyy";
+            vm.altInputFormats = ["M!/d!/yyyy"];
+
+            vm.popup1 = {
+                opened: false
+            };
+        }
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("searching clients for ",newValue);
+            }
+        });
+
+    }
 
 })(window.angular);
 /**

@@ -253,11 +253,22 @@
                 }
 
             })
-            .state("app.geospatial", {
-                url: "/geospatial",
-                title: "Geospatial",
-                templateUrl:helper.basepath('geospatial/geospatial.html'),
-                resolve:helper.resolveFor('md.data.table'),
+            .state("app.rainfall", {
+                url: "/rainfall",
+                title: "Rainfall",
+                templateUrl:helper.basepath('geospatial/rainfall.geospatial.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
+                controller: "GeospatialController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+            .state("app.vegetation", {
+                url: "/vegetation",
+                title: "Vegetation",
+                templateUrl:helper.basepath('geospatial/vegetation.index.geospatial.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select'),
                 controller: "GeospatialController",
                 controllerAs: 'vm',
                 data: {

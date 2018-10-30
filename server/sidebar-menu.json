@@ -63,16 +63,20 @@
     ]
   },
   {
+    "text": "Geo Spatial",
+    "module": "GEOSPATIAL",
+    "sref": "#",
+    "icon": "fa fa-globe",
+    "submenu": [
+      {"text": "Rainfall Report",     "sref": "app.rainfall" },
+      {"text": "Vegetation Index Report",     "sref": "app.vegetation"}
+    ]
+  },
+  {
     "text": "Report",
     "module": "REPORT",
     "sref": "app.report",
     "icon": "fa fa-bar-chart"
-  },
-  {
-    "text": "Geo Spatial",
-    "module": "GEOSPATIAL",
-    "sref": "app.geospatial",
-    "icon": "fa fa-file"
   },
   {
     "text": "Core Banking",
