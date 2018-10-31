@@ -1,1 +1,85 @@
-<h1>Report Page</h1>
+<h3>Report
+   <p></p>
+   <small>List all types of information.</small>
+</h3>
+
+<div class="panel panel-default ng-scope">
+   <div class="panel-body">
+      <div class="col-xs-10 col-lg-5">
+         <label class="control-label">Select Report Types</label>
+         <ui-select ng-model="vm.report" theme="bootstrap" on-select="vm.onSelectedReport()" title="select report" style="width: 100%;">
+            <ui-select-match allow-clear="true" placeholder="Select report...">
+               {{$select.selected.name}}
+            </ui-select-match>
+            <ui-select-choices repeat="report in vm.reports | filter: $select.search">
+               <div ng-bind-html="report.name | highlight: $select.search"></div>
+            </ui-select-choices>
+         </ui-select>
+      </div>
+
+   </div>
+</div>
+
+<div ng-show="!vm.report" class="col-lg-12">
+   <h4 class="centerPageText-lg">
+      PLEASE!
+      <strong>Select the report from the list above.
+         <i class="fa fa-arrow-circle-up"></i>
+      </strong>
+      <a></a>
+   </h4>
+</div>
+
+<div ng-show="vm.report" class="panel panel-default">
+   <div class="panel-heading">{{vm.report.name}}</div>
+   <div class="panel-body">
+      <md-table-container>
+         <table md-table md-progress="vm.clientPromise" class="table-hover">
+            <thead md-head class="bg-grey md-head">
+               <tr md-row>
+                  <th md-column style="width:3%;">
+                     <span>No</span>
+                  </th>
+                  <th md-column>
+                     <span>Full Name</span>
+                  </th>
+                  <th md-column>
+                     <span>Gender</span>
+                  </th>
+                  <th md-column>
+                     <span>DOB</span>
+                  </th>
+                  <th md-column>
+                     <span>Civil Status</span>
+                  </th>
+                  <th md-column>Branch</th>
+               </tr>
+            </thead>
+
+            <tbody md-body>
+               <tr md-row ng-repeat="client in vm.clients">
+                  <td md-cell>{{vm.query.per_page * (vm.query.page - 1) + $index + 1}}</td>
+                  <td md-cell>{{ client.first_name }} {{ client.last_name }} {{client.grandfather_name}}</td>
+                  <td md-cell>{{client.gender}}</td>
+                  <td md-cell>{{client.date_of_birth | date }}</td>
+                  <td md-cell>{{client.civil_status}}</td>
+                  <td md-cell>
+                     <div class="input-group">
+                        <input class="form-control" type="text" ng-model="client.branch_id" name="client_branch_id" placeholder="Branch id here" />
+                        <span class="input-group-btn">
+                           <button class="btn btn-success" ng-click="vm.saveBranchId()" type="button">
+                              <i class="fa fa-paper-plane"></i> 
+                           </button>
+                        </span>
+                     </div>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+      </md-table-container>
+
+      <md-table-pagination md-limit="vm.query.per_page" md-limit-options="vm.pageSizes" md-page="vm.query.page" md-total="{{vm.query.total_docs_count}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" md-on-paginate="vm.paginate">
+      </md-table-pagination>
+   </div>
+</div>
+

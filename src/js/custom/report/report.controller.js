@@ -10,7 +10,27 @@
 
     function ReportController( ReportService,blockUI,AlertService )
     {
-        console.log("Report controller");
+        var vm = this;
+        vm.onSelectedReport = _onSelectedReport;
+        vm.reports = [
+            {
+                name: 'report 1',
+                data: []
+            },
+            {
+                name: 'report 2',
+                data: []
+            },
+            {
+                name: 'report 3',
+                data: []
+            }
+        ];
+
+        function _onSelectedReport() {
+            console.log("report ",vm.report);
+        }
+
     }
 
 })(window.angular);
