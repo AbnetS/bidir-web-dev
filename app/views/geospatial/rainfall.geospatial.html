@@ -30,9 +30,10 @@
                   <div class="form-group">
                      <label>From Date</label>
                      <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="vm.MFI.establishment_year" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+                        <input class="form-control" type="text" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.filter.fromDate" is-open="vm.dtOption.fromPopup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close" alt-input-formats="vm.dtOption.altInputFormats"
+                        />
                         <span class="input-group-btn">
-                           <button type="button" class="btn btn-default" ng-click="open1()">
+                           <button type="button" class="btn btn-default" ng-click="vm.dtOption.fromOpen()">
                               <i class="fa fa-calendar"></i>
                            </button>
                         </span>
@@ -43,9 +44,10 @@
                   <div class="form-group">
                      <label>To Date</label>
                      <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="vm.MFI.establishment_year" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+                        <input class="form-control" type="text" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.filter.toDate" is-open="vm.dtOption.popup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close" alt-input-formats="vm.dtOption.altInputFormats"
+                        />
                         <span class="input-group-btn">
-                           <button type="button" class="btn btn-default" ng-click="open1()">
+                           <button type="button" class="btn btn-default" ng-click="vm.dtOption.open()">
                               <i class="fa fa-calendar"></i>
                            </button>
                         </span>
@@ -103,96 +105,11 @@
          <div class="panel-heading bb">
             <h4 class="panel-title">Plot Level</h4>
          </div>
-         <div class="panel-body">
-            <div class="clearfix">
-               <div class="pull-right text-right">
-                  <ui-select ng-model="vm.currentUser.selected_access_branch" theme="bootstrap" on-select="vm.onSelectedBranch(branch)" title="select branch" style="width: 100%;">
-                     <ui-select-match allow-clear="true" placeholder="Select access branch to filter...">
-                        {{$select.selected.name}} - {{$select.selected.location}}
-                     </ui-select-match>
-                     <ui-select-choices repeat="branch in vm.currentUser.user_access_branches | filter: $select.search">
-                        <div ng-bind-html="branch.name | highlight: $select.search"></div>
-                        <small>
-                           <strong>location:</strong>{{branch.location}}
-                        </small>
-                     </ui-select-choices>
-                  </ui-select>
-               </div>
-               <div class="pull-left text-bold text-dark">Branch</div>
-            </div>
-         </div>
-         <div class="panel-body">
-            <div class="pull-left text-bold text-dark">Time Range</div>
-            <br/>
-            <div class="row">
-               <div class="col-lg-5 col-lg-offset-2">
-                  <div class="form-group">
-                     <label>From Date</label>
-                     <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="vm.MFI.establishment_year" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
-                        <span class="input-group-btn">
-                           <button type="button" class="btn btn-default" ng-click="open1()">
-                              <i class="fa fa-calendar"></i>
-                           </button>
-                        </span>
-                     </p>
-                  </div>
-               </div>
-               <div class="col-lg-5">
-                  <div class="form-group">
-                     <label>To Date</label>
-                     <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="vm.MFI.establishment_year" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
-                        <span class="input-group-btn">
-                           <button type="button" class="btn btn-default" ng-click="open1()">
-                              <i class="fa fa-calendar"></i>
-                           </button>
-                        </span>
-                     </p>
-                  </div>
-               </div>
-            </div>
-            <div class="row">
-               <div class="col-lg-5 col-lg-offset-2">
-                  <div class="form-group">
-                     <label>From Year</label>
-                     <select class="form-control" name="checkout-cc-exp-year" required="">
-                        <option value="">Year</option>
-                        <option value="2016">2016</option>
-                        <option value="2017">2017</option>
-                        <option value="2018">2018</option>
-                        <option value="2019">2019</option>
-                        <option value="2020">2020</option>
-                        <option value="2021">2021</option>
-                        <option value="2022">2022</option>
-                        <option value="2023">2023</option>
-                     </select>
-                  </div>
-               </div>
-               <div class="col-lg-5">
-                  <div class="form-group">
-                     <label>To Year</label>
-                     <select class="form-control" name="checkout-cc-exp-year" required="">
-                        <option value="">Year</option>
-                        <option value="2016">2016</option>
-                        <option value="2017">2017</option>
-                        <option value="2018">2018</option>
-                        <option value="2019">2019</option>
-                        <option value="2020">2020</option>
-                        <option value="2021">2021</option>
-                        <option value="2022">2022</option>
-                        <option value="2023">2023</option>
-                     </select>
-                  </div>
-               </div>
-            </div>
-         </div>
 
          <div class="panel-body">
             <p class="col-md-4 pull-right">
                <button class="btn btn-primary btn-block" type="button">OK</button>
             </p>
-            <!--<small class="text-muted">* To use this method you must be registered first</small>-->
          </div>
       </div>
    </div>

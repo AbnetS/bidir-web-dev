@@ -22,7 +22,18 @@
         // }).error(function(data, status, headers, config) {
         //     console.log("error",data)
         // });
-
+        var vm = this;
+        vm.dtOption = {};
+        vm.dtOption.dateOptions = {
+            dateDisabled: false, formatYear: "yy",
+            maxDate: new Date(2020, 5, 22),  startingDay: 1 };
+        vm.dtOption.format = "shortDate";
+        vm.dtOption.altInputFormats = ["M!/d!/yyyy"];
+        vm.dtOption.popup = { opened: false };
+        vm.dtOption.fromPopup = { opened: false };
+        vm.dtOption.open = function()  { vm.dtOption.popup.opened = true; };
+        vm.dtOption.fromOpen = function()  { vm.dtOption.fromPopup.opened = true; };
+        vm.dtOption.clear = function() { vm.dtOption.dt = null; };
     }
 
 })(window.angular);
