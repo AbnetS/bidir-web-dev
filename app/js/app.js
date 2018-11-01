@@ -8672,14 +8672,16 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
     angular.module("app.processing")
         .controller("ACATProcessorController", ACATProcessorController);
 
-    ACATProcessorController.$inject = ['LoanManagementService','$scope','$mdDialog','RouteHelpers'];
+    ACATProcessorController.$inject = ['LoanManagementService','$scope','$mdDialog','RouteHelpers','$rootScope'];
 
-    function ACATProcessorController(LoanManagementService,$scope,$mdDialog ,RouteHelpers) {
+    function ACATProcessorController(LoanManagementService,$scope,$mdDialog ,RouteHelpers,$rootScope) {
         var vm = this;
         vm.selectedSubsection = {};
         vm.toggle = {};
         vm.accordionToggle = {};
         vm.non_financial_resources = ["training","advisory","technical support","access to inputs"];
+        //collapse sub menu to give the UI space
+        $rootScope.app.layout.isCollapsed = true;
 
         vm.paginate = _paginate;
         vm.clearSearchText = _clearSearchText;

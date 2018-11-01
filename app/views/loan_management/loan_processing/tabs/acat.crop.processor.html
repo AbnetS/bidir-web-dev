@@ -4,16 +4,15 @@
       <div ng-show="wizard.active(1)">
          <legend>Preliminary Information for {{vm.clientAcat.crop.name}}</legend>
          <fieldset>
-            <div class="form-group clearfix">
-               <label class="col-md-2 control-label">Cropping Area</label>
-               <div class="col-md-10 controls">
+            <div class="col-md-5 form-group">
+               <label class="control-label">Cropping Area</label>
+               <div class="controls">
                   <input class=" form-control" ng-model="vm.clientAcat.cropping_area_size" type="text" name="cropping_area" placeholder="cropping area per ha.." />
                </div>
             </div>
-            <br>
-            <div class="form-group clearfix">
-               <label class="col-md-2 control-label">First Expense Month</label>
-               <div class="col-md-10 controls">
+            <div class="col-md-7 form-group">
+               <label class="control-label">First Expense Month</label>
+               <div class="controls">
                   <ui-select ng-model="vm.clientAcat.first_expense_month" theme="bootstrap" title="Choose month">
                      <ui-select-match placeholder="Select month from the list...">
                         {{$select.selected.name}}
@@ -24,11 +23,10 @@
                   </ui-select>
                </div>
             </div>
-            <br/>
-            <div class="form-group clearfix">
-               <label class="col-md-2 control-label">GPS Location</label>
-
-               <div class="col-md-6">
+            <div class="vertical-splitter"></div>
+            <div class="col-md-5 form-group">
+               <label class="control-label">GPS Location</label>
+               <div class="controls">
                   <span ng-if="vm.clientAcat.gps_location.polygon.length === 0">
                      <span>({{vm.clientAcat.gps_location.single_point.latitude}},{{vm.clientAcat.gps_location.single_point.longtude}})</span>
                   </span>
@@ -52,21 +50,19 @@
                      </tbody>
                   </table>
                </div>
-
-               <div class="col-md-4">
-                  <label class=" control-label">Access to non financial resources ?</label>
-                  <div class="controls">
-                     <ui-select ng-model="vm.clientAcat.non_financial_resources" theme="bootstrap" title="Select non financial resources" multiple>
-                        <ui-select-match placeholder="Select non financial resources from the list...">
-                           {{$item | uppercase}}
-                        </ui-select-match>
-                        <ui-select-choices repeat="resource in vm.non_financial_resources | filter: $select.search">
-                           {{resource | uppercase}}
-                        </ui-select-choices>
-                     </ui-select>
-                  </div>
+            </div>
+            <div class="col-md-7 form-group">
+               <label class="control-label">Access to non financial resources ?</label>
+               <div class="controls">
+                  <ui-select ng-model="vm.clientAcat.non_financial_resources" theme="bootstrap" title="Select non financial resources" multiple>
+                     <ui-select-match placeholder="Select non financial resources from the list...">
+                        {{$item | uppercase}}
+                     </ui-select-match>
+                     <ui-select-choices repeat="resource in vm.non_financial_resources | filter: $select.search">
+                        {{resource | uppercase}}
+                     </ui-select-choices>
+                  </ui-select>
                </div>
-
             </div>
 
          </fieldset>
