@@ -16,6 +16,7 @@
         vm.accordionToggle = {};
         vm.non_financial_resources = ["training","advisory","technical support","access to inputs"];
         //collapse sub menu to give the UI space
+
         $rootScope.app.layout.isCollapsed = true;
 
         vm.paginate = _paginate;

@@ -5531,6 +5531,149 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 /**
  * Created by Yoni on 3/5/2018.
  */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+        }
+
+
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+       function callApi(){
+        vm.promise =   ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
 (function(angular) {
     "use strict";
 
@@ -6376,149 +6519,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
         }
 
 
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearch;
-
-        initialize();
-
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-
-            callApi();
-        }
-
-
-        function _paginate (page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-
-       function callApi(){
-        vm.promise =   ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
 
     }
 
@@ -8611,234 +8611,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
   }
 })(window.angular);
 
-(function (angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("EstimatedYieldDetailController", EstimatedYieldDetailController);
-
-    EstimatedYieldDetailController.$inject = ['$mdDialog','data'];
-
-    function EstimatedYieldDetailController($mdDialog,data) {
-        var vm = this;
-        console.log("data",data);
-
-        vm.cancel = _cancel;
-        vm.saveProductForMarket = _saveProductForMarket;
-
-
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-
-        function _saveProductForMarket() {
-            $mdDialog.hide("hello");
-        }
-    }
-})(window.angular);
-(function (angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("GeoLocationController", GeoLocationController);
-
-    GeoLocationController.$inject = ['$mdDialog','data'];
-
-    function GeoLocationController($mdDialog,data) {
-        var vm = this;
-        vm.gps_location.polygon = [];
-        vm.gps_location.single_point = {};
-        console.log("data",data);
-
-        vm.cancel = _cancel;
-        vm.updateGeoLocation = _updateGeoLocation;
-
-
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-
-        function _updateGeoLocation() {
-            $mdDialog.hide("hello");
-        }
-    }
-})(window.angular);
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("ACATProcessorController", ACATProcessorController);
-
-    ACATProcessorController.$inject = ['LoanManagementService','$scope','$mdDialog','RouteHelpers','$rootScope'];
-
-    function ACATProcessorController(LoanManagementService,$scope,$mdDialog ,RouteHelpers,$rootScope) {
-        var vm = this;
-        vm.selectedSubsection = {};
-        vm.toggle = {};
-        vm.accordionToggle = {};
-        vm.non_financial_resources = ["training","advisory","technical support","access to inputs"];
-        //collapse sub menu to give the UI space
-        $rootScope.app.layout.isCollapsed = true;
-
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearchText;
-
-        vm.addEditClientACAT = _addEditClientACAT;
-        //CLIENT ACAT
-        vm.onClientACATClick = _onClientACATClick;
-        vm.onSubsectionClick = _onSubsectionClick;
-        vm.onAccordionClick = _onAccordionClick;
-
-        vm.addGeoLocation = _addGeoLocation;
-        vm.estimatedYieldDetail = _estimatedYieldDetail;
-
-        initialize();
-
-        function initialize() {
-            vm.isEditAcat = false;
-            vm.visibility = {
-                showClientACAT:false,
-                showCropACAT:false
-            };
-            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
-            vm.filter = {show : false};
-            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
-
-            vm.query = { search:'',   page:1,  per_page:10 };
-            vm.months = MONTHS_CONST;
-            fetchCropsList();//Fetch Crops first
-            callAPI();
-
-        }
-
-        function callAPI() {
-            vm.acatCollectionPromise = LoanManagementService
-                .GetACATCollections(vm.query).then(
-                function (response) {
-                    vm.acatCollection = response.data.docs;
-                    vm.query.total_docs_count = response.data.total_docs_count;
-                },function (error) {
-                        console.log("error",error);
-                    });
-        }
-
-
-
-        function _onSubsectionClick(subsection) {
-            vm.toggle[subsection._id] = !vm.toggle[subsection._id];
-            if (subsection.sub_sections.length === 0) {
-                vm.selectedSubsection = subsection;
-            }
-        }
-
-
-        function _onAccordionClick(acc) {
-            vm.toggle[acc._id] = !vm.toggle[acc._id];
-        }
-
-
-        function _onClientACATClick(acat, ev) {
-            vm.visibility.showClientACAT = true;//show client acat
-            vm.visibility.showCropACAT = false;
-            vm.acats = acat;
-            vm.acats.crops = [];
-            // set client acat crops for UI purpose
-            _.each(acat.ACATs,function (acat) {
-                _.each(vm.crops,function (crp) {
-                    if(acat.crop._id === crp._id){
-                        vm.acats.crops.push(crp);
-                    }
-                })
-            })
-        }
-
-
-        function _paginate(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
-        }
-        function _clearSearchText() {
-            vm.query.search = '';
-            vm.filter.show = false;
-        }
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("search for ",newValue);
-            }
-        });
-
-        function _addEditClientACAT(clientAcat) {
-            vm.visibility.showCropACAT = true;//show client acat
-            vm.clientAcat = clientAcat;
-            vm.selectedSubsection = vm.clientAcat.sections[0].sub_sections[0].sub_sections[1];
-            debugger
-        }
-
-        function fetchCropsList() {
-            LoanManagementService.GetCrops().then(
-                function (response) {
-                    vm.crops = response.data.docs;
-                }
-            )
-        }
-
-        function _addGeoLocation(data,ev) {
-            $mdDialog.show({
-                locals: {data: data },
-                templateUrl: RouteHelpers.basepath('loan_management/loan_processing/tabs/acat.geolocation.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'GeoLocationController',
-                controllerAs: 'vm'
-            }).then(function (response) {
-                console.log("_addNonFinancialResource ok ",response);
-            }, function (response) {
-                console.log("_addNonFinancialResource cancel ",response);
-            });
-
-        }
-
-        function _estimatedYieldDetail(data, ev) {
-            $mdDialog.show({
-                locals: {data: data },
-                templateUrl: RouteHelpers.basepath('loan_management/loan_processing/tabs/acat.estimated.yield.detail.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                escapeToClose: true,
-                controller: 'EstimatedYieldDetailController',
-                controllerAs: 'vm'
-            }).then(function (response) {
-                console.log("EstimatedYieldDetailController ok ",response);
-            }, function (response) {
-                console.log("EstimatedYieldDetailController cancel ",response);
-            });
-        }
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.clientAcat;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("old value  ",oldValue);
-                console.log("new value  ",newValue);
-            }
-        });
-
-    }
-
-
-
-})(window.angular);
 /**
  * Created by Yonas on 7/2/2018.
  */
@@ -9328,6 +9100,240 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
             return prQue;
         }
+
+    }
+
+
+
+})(window.angular);
+(function (angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("EstimatedYieldDetailController", EstimatedYieldDetailController);
+
+    EstimatedYieldDetailController.$inject = ['$mdDialog','data'];
+
+    function EstimatedYieldDetailController($mdDialog,data) {
+        var vm = this;
+        console.log("data",data);
+
+        vm.cancel = _cancel;
+        vm.saveProductForMarket = _saveProductForMarket;
+
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+
+        function _saveProductForMarket() {
+            $mdDialog.hide("hello");
+        }
+    }
+})(window.angular);
+(function (angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("GeoLocationController", GeoLocationController);
+
+    GeoLocationController.$inject = ['$mdDialog','data'];
+
+    function GeoLocationController($mdDialog,data) {
+        var vm = this;
+        vm.gps_location = { polygon: [],single_point:{}};
+        console.log("data",data);
+
+        vm.cancel = _cancel;
+        vm.updateGeoLocation = _updateGeoLocation;
+        vm.addEditGeoLocation = _addEditGeoLocation;
+
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+
+        function _updateGeoLocation(geolocation) {
+            $mdDialog.hide("hello");
+        }
+
+        function _addEditGeoLocation(geolocation) {
+            vm.gps_location.polygon.push(angular.copy(geolocation));
+            // $mdDialog.hide("hello");
+        }
+    }
+})(window.angular);
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("ACATProcessorController", ACATProcessorController);
+
+    ACATProcessorController.$inject = ['LoanManagementService','$scope','$mdDialog','RouteHelpers','$rootScope'];
+
+    function ACATProcessorController(LoanManagementService,$scope,$mdDialog ,RouteHelpers,$rootScope) {
+        var vm = this;
+        vm.selectedSubsection = {};
+        vm.toggle = {};
+        vm.accordionToggle = {};
+        vm.non_financial_resources = ["training","advisory","technical support","access to inputs"];
+        //collapse sub menu to give the UI space
+
+        $rootScope.app.layout.isCollapsed = true;
+
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearchText;
+
+        vm.addEditClientACAT = _addEditClientACAT;
+        //CLIENT ACAT
+        vm.onClientACATClick = _onClientACATClick;
+        vm.onSubsectionClick = _onSubsectionClick;
+        vm.onAccordionClick = _onAccordionClick;
+
+        vm.addGeoLocation = _addGeoLocation;
+        vm.estimatedYieldDetail = _estimatedYieldDetail;
+
+        initialize();
+
+        function initialize() {
+            vm.isEditAcat = false;
+            vm.visibility = {
+                showClientACAT:false,
+                showCropACAT:false
+            };
+            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
+            vm.filter = {show : false};
+            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
+
+            vm.query = { search:'',   page:1,  per_page:10 };
+            vm.months = MONTHS_CONST;
+            fetchCropsList();//Fetch Crops first
+            callAPI();
+
+        }
+
+        function callAPI() {
+            vm.acatCollectionPromise = LoanManagementService
+                .GetACATCollections(vm.query).then(
+                function (response) {
+                    vm.acatCollection = response.data.docs;
+                    vm.query.total_docs_count = response.data.total_docs_count;
+                },function (error) {
+                        console.log("error",error);
+                    });
+        }
+
+
+
+        function _onSubsectionClick(subsection) {
+            vm.toggle[subsection._id] = !vm.toggle[subsection._id];
+            if (subsection.sub_sections.length === 0) {
+                vm.selectedSubsection = subsection;
+            }
+        }
+
+
+        function _onAccordionClick(acc) {
+            vm.toggle[acc._id] = !vm.toggle[acc._id];
+        }
+
+
+        function _onClientACATClick(acat, ev) {
+            vm.visibility.showClientACAT = true;//show client acat
+            vm.visibility.showCropACAT = false;
+            vm.acats = acat;
+            vm.acats.crops = [];
+            // set client acat crops for UI purpose
+            _.each(acat.ACATs,function (acat) {
+                _.each(vm.crops,function (crp) {
+                    if(acat.crop._id === crp._id){
+                        vm.acats.crops.push(crp);
+                    }
+                })
+            })
+        }
+
+
+        function _paginate(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        }
+        function _clearSearchText() {
+            vm.query.search = '';
+            vm.filter.show = false;
+        }
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("search for ",newValue);
+            }
+        });
+
+        function _addEditClientACAT(clientAcat) {
+            vm.visibility.showCropACAT = true;//show client acat
+            vm.clientAcat = clientAcat;
+            vm.selectedSubsection = vm.clientAcat.sections[0].sub_sections[0].sub_sections[1];
+            debugger
+        }
+
+        function fetchCropsList() {
+            LoanManagementService.GetCrops().then(
+                function (response) {
+                    vm.crops = response.data.docs;
+                }
+            )
+        }
+
+        function _addGeoLocation(data,ev) {
+            $mdDialog.show({
+                locals: {data: data },
+                templateUrl: RouteHelpers.basepath('loan_management/loan_processing/tabs/acat.geolocation.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'GeoLocationController',
+                controllerAs: 'vm'
+            }).then(function (response) {
+                console.log("_addNonFinancialResource ok ",response);
+            }, function (response) {
+                console.log("_addNonFinancialResource cancel ",response);
+            });
+
+        }
+
+        function _estimatedYieldDetail(data, ev) {
+            $mdDialog.show({
+                locals: {data: data },
+                templateUrl: RouteHelpers.basepath('loan_management/loan_processing/tabs/acat.estimated.yield.detail.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                escapeToClose: true,
+                controller: 'EstimatedYieldDetailController',
+                controllerAs: 'vm'
+            }).then(function (response) {
+                console.log("EstimatedYieldDetailController ok ",response);
+            }, function (response) {
+                console.log("EstimatedYieldDetailController cancel ",response);
+            });
+        }
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.clientAcat;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("old value  ",oldValue);
+                console.log("new value  ",newValue);
+            }
+        });
 
     }
 

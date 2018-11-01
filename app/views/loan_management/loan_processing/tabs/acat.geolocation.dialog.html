@@ -14,13 +14,13 @@
                <div class="col-md-4">
                   <div class="form-group">
                      <label>Latitude</label>
-                     <input class="form-control" ng-model="vm.selectedGeolocation.latitude" type="text" name="geolocation_latitude" id="geolocation_latitude" placeholder="00.000" />
+                     <input class="form-control" ng-model="vm.geolocation.latitude" type="text" name="geolocation_latitude" id="geolocation_latitude" placeholder="00.000" />
                   </div>
                </div>
                <div class="col-md-4">
                   <div class="form-group">
                      <label>Longitude</label>
-                     <input class="form-control" ng-model="vm.selectedGeolocation.longitude" type="text" name="geolocation_longitude" id="geolocation_longitude" placeholder="00.000" />
+                     <input class="form-control" ng-model="vm.geolocation.longitude" type="text" name="geolocation_longitude" id="geolocation_longitude" placeholder="00.000" />
                   </div>
                </div>
                <div class="col-md-4">
@@ -28,7 +28,7 @@
                   <button ng-show="vm.isEdit" class="btn btn-inverse btn-outline" ng-click="vm.cancelEdit()">
                      <i class="fa fa-times"></i> Cancel
                   </button>
-                  <button class="btn btn-success btn-outline" event-focus='click' event-focus-id='geolocation_longitude' ng-click="vm.addCropGeolocation(vm.selectedGeolocation)">
+                  <button class="btn btn-success btn-outline" event-focus='click' event-focus-id='geolocation_longitude' ng-click="vm.addEditGeoLocation(vm.geolocation)">
                      <i ng-class="vm.isEdit?'fa fa-refresh':'fa fa-plus'" class="fa fa-plus"></i>{{vm.isEdit?'Update':'Add'}}
                   </button>
                </div>
@@ -40,14 +40,13 @@
                <thead>
                   <tr>
                      <th>(Latitude,Longitude)</th>
-                     <th>
-                     </th>
+                     <th></th>
                   </tr>
                </thead>
                <tbody>
-                  <tr>
+                  <tr ng-repeat="geo in vm.gps_location.polygon">
                      <td>
-                        <span>({{vm.clientAcat.client.geolocation.latitude}},{{vm.clientAcat.client.geolocation.longitude}})</span>
+                        <span>({{geo.latitude}},{{geo.longitude}})</span>
                      </td>
                      <td>
                         <button class="btn btn-info btn-xs">
