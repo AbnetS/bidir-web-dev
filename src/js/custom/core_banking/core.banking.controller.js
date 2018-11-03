@@ -10,9 +10,50 @@
 
     function CoreBankingController(CoreBankingService,$scope) {
         var vm = this;
+        vm.titles = ["Obo","Ato","W/rt","W/ro","Mr","Mrs","Miss","Dr."];
         vm.paginate = _paginate;
         vm.clearSearch = _clearSearch;
         vm.saveBranchId = _saveBranchId;
+
+        vm.refreshResults = refreshResults;
+        vm.clear = clear;
+        vm.onSelectedTitle = _onSelectedTitle;
+
+        function _onSelectedTitle(client) {
+            console.log("updated client",client);
+        }
+
+        function refreshResults($select){
+            var search = $select.search,
+                list = angular.copy($select.items),
+                FLAG = -1;
+            //remove last user input
+            list = list.filter(function(item) {
+                return item.id !== FLAG;
+            });
+
+            if (!search) {
+                //use the predefined list
+                $select.items = list;
+            }
+            else {
+                //manually add user input and set selection
+                var userInputItem = search;
+                $select.items = [userInputItem].concat(list);
+                $select.selected = userInputItem;
+            }
+        }
+
+        function clear($event, $select){
+            $event.stopPropagation();
+            //to allow empty field, in order to force a selection remove the following line
+            $select.selected = undefined;
+            //reset search query
+            $select.search = undefined;
+            //focus and open dropdown
+            $select.activate();
+        }
+
 
         function _saveBranchId(){}
 
@@ -25,17 +66,17 @@
             vm.options = {
                 rowSelection: true,
                 multiSelect: true,
-                autoSelect: true,
+                autoSelect: false,
                 decapitate: true,
                 largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
+                boundaryLinks: false,
+                limitSelect: false,
                 pageSelect: false
             };
             vm.query = {
                 search:'',
                 page:1,
-                per_page:30
+                per_page:500
             };
 
             callApi();

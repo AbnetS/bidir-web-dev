@@ -279,7 +279,7 @@
                 url: "/core_banking",
                 title: "Core Banking",
                 templateUrl:helper.basepath('core_banking/core.banking.html'),
-                resolve:helper.resolveFor('md.data.table','moment'),
+                resolve:helper.resolveFor('md.data.table','moment','ui.select'),
                 controller: "CoreBankingController",
                 controllerAs: 'vm',
                 data: {
