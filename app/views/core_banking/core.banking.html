@@ -40,7 +40,6 @@
             <md-table-container>
                <table md-table md-progress="vm.clientPromise" class="table-striped">
                   <thead md-head class="bg-grey md-head">
-
                      <tr md-row>
                         <th md-column style="width:3%;">
                            <span>No</span>
@@ -52,16 +51,15 @@
                            <span>Gender</span>
                         </th>
                         <th md-column>
-                           <span>DOB</span>
+                           <span>Date Of Birth</span>
                         </th>
                         <th md-column>
-                           <span>Civil Status</span>
+                           <span>Status</span>
                         </th>
-                        <th md-column>Branch</th>
-                        <th></th>
-                        <th>
+                        <th md-column style="width: 30%">Branch ID</th>
+                        <th colspan="2" md-column>
                            <span class="input-group-btn">
-                              <button class="btn btn-success" ng-click="vm.saveBranchId()">
+                              <button class="btn btn-success" ng-click="vm.saveAllClients()">
                                  <i class="fa fa-paper-plane">  </i> Send All</button>
                            </span>
                         </th>
@@ -74,9 +72,11 @@
                         <td md-cell>{{ client.first_name }} {{ client.last_name }} {{client.grandfather_name}}</td>
                         <td md-cell>{{client.gender}}</td>
                         <td md-cell>{{client.date_of_birth | date }}</td>
-                        <td md-cell>{{client.civil_status}}</td>
                         <td md-cell>
-                           <input class="form-control" type="text" ng-model="client.branch_id" name="client_branch_id" placeholder="Branch id here" />
+                           <label ng-class="vm.statusStyle(client.civil_status)">{{client.civil_status}}</label>
+                        </td>
+                        <td md-cell>
+                           <input class="form-control" type="text" ng-model="client.branchId" name="client_branch_id" placeholder="Branch ID Here" />
                         </td>
                         <td md-cell>
                            <ui-select ng-model="client.title" theme="bootstrap" on-select="vm.onSelectedTitle(client)" title="Choose Title" reset-search-input="false" required="true" ng-maxlength="40">
@@ -89,10 +89,11 @@
                               </ui-select-choices>
                            </ui-select>
                         </td>
-                        <td>
+                        <td md-cell>
                            <span class="input-group-btn">
-                              <button class="btn btn-success" ng-click="vm.saveBranchId()" type="button">
-                                 <i class="fa fa-paper-plane"></i> Send</button>
+                              <button class="btn btn-success" ng-click="vm.saveSingleClient(client)" type="button">
+                                 <i class="fa fa-paper-plane"></i> 
+                              </button>
                            </span>
                         </td>
                      </tr>

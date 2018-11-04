@@ -76,6 +76,11 @@ var API = {
         LOANS:{
             Loans:'',
             Clients:'clients'
+        },
+        CBS:{
+            Clients: 'clients/status?status=loan_granted',
+            CBS:'clients/cbs'
+
         }
     }
 };

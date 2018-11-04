@@ -9,15 +9,20 @@
     function CoreBankingService($http, CommonService, AuthService) {
         return {
             GetClients: _getClients,
-            SearchClient:_searchClient
+            SearchClient:_searchClient,
+            PostClientToCBS:_postClientToCBS
         };
 
         function _getClients(parameters){
-            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,parameters));
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.CBS.Clients,parameters));
+        }
+
+        function _postClientToCBS(client){
+            return $http.post(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.CBS.CBS,client));
         }
 
         function _searchClient(searchText) {
-            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
+            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.CBS.Clients,searchText));
         }
     }
 

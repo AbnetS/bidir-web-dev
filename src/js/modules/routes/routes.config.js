@@ -286,6 +286,17 @@
                     authenticate: true
                 }
             })
+            .state("app.banking.detail", {
+                url: "/core_banking/:id",
+                title: "Core Banking",
+                templateUrl:helper.basepath('core_banking/core.banking.detail.html'),
+                resolve:helper.resolveFor('moment','ui.select'),
+                controller: "CoreBankingController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
 
           // CUSTOM RESOLVES
           //   Add your own resolves properties

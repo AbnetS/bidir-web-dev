@@ -6,57 +6,60 @@
         .module('app.banking')
         .controller('CoreBankingController', CoreBankingController);
 
-    CoreBankingController.$inject = ['CoreBankingService','$scope'];
+    CoreBankingController.$inject = ['CoreBankingService','$scope','$rootScope','AlertService'];
 
-    function CoreBankingController(CoreBankingService,$scope) {
+    function CoreBankingController(CoreBankingService,$scope,$rootScope,AlertService) {
         var vm = this;
         vm.titles = ["Obo","Ato","W/rt","W/ro","Mr","Mrs","Miss","Dr."];
+        $rootScope.app.layout.isCollapsed = true;
+
         vm.paginate = _paginate;
         vm.clearSearch = _clearSearch;
-        vm.saveBranchId = _saveBranchId;
+        vm.saveSingleClient = _saveSingleClient;
+        vm.saveAllClients = _saveSingleClient;
 
         vm.refreshResults = refreshResults;
         vm.clear = clear;
-        vm.onSelectedTitle = _onSelectedTitle;
+        vm.statusStyle = _statusStyle;
 
-        function _onSelectedTitle(client) {
-            console.log("updated client",client);
-        }
-
-        function refreshResults($select){
-            var search = $select.search,
-                list = angular.copy($select.items),
-                FLAG = -1;
-            //remove last user input
-            list = list.filter(function(item) {
-                return item.id !== FLAG;
-            });
-
-            if (!search) {
-                //use the predefined list
-                $select.items = list;
+        function _statusStyle(status){
+            var style = '';
+            switch (status){
+                case 'accepted':
+                    style =  'label label-success';
+                    break;
+                case 'denied':
+                    style =  'label label-danger';
+                    break;
+                case 'draft':
+                    style =  'label label-default';
+                    break;
+                default:
+                    style =  'label label-warning';
             }
-            else {
-                //manually add user input and set selection
-                var userInputItem = search;
-                $select.items = [userInputItem].concat(list);
-                $select.selected = userInputItem;
-            }
+            return style;
         }
 
-        function clear($event, $select){
-            $event.stopPropagation();
-            //to allow empty field, in order to force a selection remove the following line
-            $select.selected = undefined;
-            //reset search query
-            $select.search = undefined;
-            //focus and open dropdown
-            $select.activate();
+        function _saveSingleClient(client){
+            console.log("client info to send",client);
+
+            var clientFormatted = {
+                branchId: client.branchId,
+                title : client.title,
+                client: client._id
+            };
+
+            CoreBankingService.PostClientToCBS(clientFormatted).then(
+                 function (response) {
+                     AlertService.showSuccess('Client Info sent to CBS!',response);
+                     console.log("response",response);
+                 }
+                ,function (error) {
+                    console.log('error',error);
+                    var message = error.data.error.message;
+                    AlertService.showError( 'Oops... Something went wrong', message);
+                })
         }
-
-
-        function _saveBranchId(){}
-
 
         initialize();
 
@@ -93,10 +96,9 @@
             vm.query.per_page = pageSize;
             callApi();
         }
-
-
         function callApi(){
             vm.clientPromise = CoreBankingService.GetClients(vm.query).then(function(response){
+                console.log(" callApi vm.clients",response);
                 vm.clients = response.data.docs;
                 vm.clientsCopy = angular.copy(vm.clients);
                 vm.query.total_docs_count =  response.data.total_docs_count;
@@ -104,7 +106,6 @@
                 console.log("error callApi vm.clients",error);
             });
         }
-
         function SearchApi(SearchText){
             $scope.promise = CoreBankingService.SearchClient(SearchText)
                 .then(function(response){
@@ -115,6 +116,37 @@
                     vm.clients = vm.clientsCopy;
                     console.log("error",error);
                 });
+        }
+
+
+        function refreshResults($select){
+            var search = $select.search,
+                list = angular.copy($select.items),
+                FLAG = -1;
+            //remove last user input
+            list = list.filter(function(item) {
+                return item.id !== FLAG;
+            });
+
+            if (!search) {
+                //use the predefined list
+                $select.items = list;
+            }
+            else {
+                //manually add user input and set selection
+                var userInputItem = search;
+                $select.items = [userInputItem].concat(list);
+                $select.selected = userInputItem;
+            }
+        }
+        function clear($event, $select){
+            $event.stopPropagation();
+            //to allow empty field, in order to force a selection remove the following line
+            $select.selected = undefined;
+            //reset search query
+            $select.search = undefined;
+            //focus and open dropdown
+            $select.activate();
         }
 
         $scope.$watch(angular.bind(vm, function () {

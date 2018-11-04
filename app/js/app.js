@@ -103,21 +103,15 @@
     'use strict';
 
     angular
-        .module('app.routes', [
-            'app.lazyload'
-        ]);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.settings', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.sidebar', []);
+        .module('app.routes', [
+            'app.lazyload'
+        ]);
 })();
 (function() {
     'use strict';
@@ -134,6 +128,12 @@
           ]);
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.sidebar', []);
+})();
 (function() {
     'use strict';
 
@@ -1519,6 +1519,82 @@
     }
 
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.settings')
+        .run(settingsRun);
+
+    settingsRun.$inject = ['$rootScope', 'AuthService'];
+
+    function settingsRun($rootScope, AuthService){
+
+
+      // User Settings
+      // -----------------------------------
+      $rootScope.user = {
+        name:     'Yonas',
+        job:      'System Admin',
+        picture:  'app/img/user/02.jpg'
+      };
+
+      // Hides/show user avatar on sidebar from any element
+      $rootScope.toggleUserBlock = function(){
+        $rootScope.$broadcast('toggleUserBlock');
+      };
+      $rootScope.logoutUser = function (){
+            AuthService.Logout();
+      };
+
+      // Global Settings
+      // -----------------------------------
+      $rootScope.app = {
+        name: 'Bidir Web',
+        description: 'Bidir Web App',
+        year: ((new Date()).getFullYear()),
+        layout: {
+          isFixed: true,
+          isCollapsed: false,
+          isBoxed: false,
+          isRTL: false,
+          horizontal: false,
+          isFloat: false,
+          asideHover: false,
+          theme: 'app/css/theme-d.css',
+          asideScrollbar: false,
+          isCollapsedText: false
+        },
+        useFullLayout: false,
+        hiddenFooter: false,
+        offsidebarOpen: false,
+        asideToggled: false,
+        viewAnimation: 'ng-fadeInUp'
+      };
+
+      // Setup the layout mode
+      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
+
+      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
+      // if( angular.isDefined($localStorage.layout) )
+      //   $rootScope.app.layout = $localStorage.layout;
+      // else
+      //   $localStorage.layout = $rootScope.app.layout;
+      //
+      // $rootScope.$watch('app.layout', function () {
+      //   $localStorage.layout = $rootScope.app.layout;
+      // }, true);
+
+      // Close submenu when sidebar change from collapsed to normal
+      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
+        if( newValue === false )
+          $rootScope.$broadcast('closeSidebarMenu');
+      });
+
+    }
+
+})();
+
 /**=========================================================
  * Module: helpers.js
  * Provides helper functions for routes definition
@@ -1891,6 +1967,17 @@
                     authenticate: true
                 }
             })
+            .state("app.banking.detail", {
+                url: "/core_banking/:id",
+                title: "Core Banking",
+                templateUrl:helper.basepath('core_banking/core.banking.detail.html'),
+                resolve:helper.resolveFor('moment','ui.select'),
+                controller: "CoreBankingController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
 
           // CUSTOM RESOLVES
           //   Add your own resolves properties
@@ -1948,485 +2035,6 @@
 
 })();
 
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.settings')
-        .run(settingsRun);
-
-    settingsRun.$inject = ['$rootScope', 'AuthService'];
-
-    function settingsRun($rootScope, AuthService){
-
-
-      // User Settings
-      // -----------------------------------
-      $rootScope.user = {
-        name:     'Yonas',
-        job:      'System Admin',
-        picture:  'app/img/user/02.jpg'
-      };
-
-      // Hides/show user avatar on sidebar from any element
-      $rootScope.toggleUserBlock = function(){
-        $rootScope.$broadcast('toggleUserBlock');
-      };
-      $rootScope.logoutUser = function (){
-            AuthService.Logout();
-      };
-
-      // Global Settings
-      // -----------------------------------
-      $rootScope.app = {
-        name: 'Bidir Web',
-        description: 'Bidir Web App',
-        year: ((new Date()).getFullYear()),
-        layout: {
-          isFixed: true,
-          isCollapsed: false,
-          isBoxed: false,
-          isRTL: false,
-          horizontal: false,
-          isFloat: false,
-          asideHover: false,
-          theme: 'app/css/theme-d.css',
-          asideScrollbar: false,
-          isCollapsedText: false
-        },
-        useFullLayout: false,
-        hiddenFooter: false,
-        offsidebarOpen: false,
-        asideToggled: false,
-        viewAnimation: 'ng-fadeInUp'
-      };
-
-      // Setup the layout mode
-      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
-
-      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
-      // if( angular.isDefined($localStorage.layout) )
-      //   $rootScope.app.layout = $localStorage.layout;
-      // else
-      //   $localStorage.layout = $rootScope.app.layout;
-      //
-      // $rootScope.$watch('app.layout', function () {
-      //   $localStorage.layout = $rootScope.app.layout;
-      // }, true);
-
-      // Close submenu when sidebar change from collapsed to normal
-      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
-        if( newValue === false )
-          $rootScope.$broadcast('closeSidebarMenu');
-      });
-
-    }
-
-})();
-
-/**=========================================================
- * Module: sidebar-menu.js
- * Handle sidebar collapsible elements
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.sidebar')
-        .controller('SidebarController', SidebarController);
-
-    SidebarController.$inject = ['$rootScope', '$scope', '$state', 'SidebarLoader', 'Utils','PermissionService'];
-    function SidebarController($rootScope, $scope, $state, SidebarLoader,  Utils,PermissionService) {
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-          var collapseList = [];
-
-          // demo: when switch from collapse to hover, close all items
-          var watchOff1 = $rootScope.$watch('app.layout.asideHover', function(oldVal, newVal){
-            if ( newVal === false && oldVal === true) {
-              closeAllBut(-1);
-            }
-          });
-
-
-          // Load menu from json file
-          // -----------------------------------
-
-          SidebarLoader.getMenu(sidebarReady);
-
-          function sidebarReady(items) {
-              $scope.menuItems = items.data;
-              SetMenuItemsVisibility($scope.menuItems);
-          }
-
-          function SetMenuItemsVisibility(menuItems){
-              var isSuper = false;
-              if(!_.isUndefined($rootScope.currentUser) && $rootScope.currentUser !== null ){
-                  isSuper = $rootScope.currentUser.username === 'super@bidir.com';
-              }
-              _.each(menuItems, function(menuItem) {
-                  if(isSuper){
-                      menuItem.showMenuItem = true;
-                      validateSubMenus(menuItem);
-                  }
-                  else {
-                      menuItem.showMenuItem = PermissionService.hasThisModule(menuItem.module);
-                      validateSubMenus(menuItem);
-                  }
-
-              });
-          }
-
-          function validateSubMenus(menuItem){
-              var permissions = PermissionService.validateSubModules();
-              if(!_.isUndefined(menuItem.submenu)){
-                  _.each(menuItem.submenu,function(sub){
-                      var isSuper = false;
-                      if(!_.isUndefined($rootScope.currentUser)){
-                          isSuper = $rootScope.currentUser.username === 'super@bidir.com';
-                          if(isSuper){
-                              sub.showsubmenu = true;
-                          }else{
-                              if(!_.isUndefined(sub.permission)){
-                                  sub.showsubmenu = _.contains(permissions,sub.permission);
-                              }else {
-                                  sub.showsubmenu = false;
-                              }
-                          }
-                      }else {
-                          sub.showsubmenu = false;
-                      }
-
-                  });
-              }
-          }
-
-
-          // Handle sidebar and collapse items
-          // ----------------------------------
-          $scope.getMenuItemPropClasses = function(item) {
-            return (item.heading ? 'nav-heading' : '') +
-                   (isActive(item) ? ' active' : '') ;
-          };
-
-          $scope.addCollapse = function($index, item) {
-            collapseList[$index] = $rootScope.app.layout.asideHover ? true : !isActive(item);
-          };
-
-          $scope.isCollapse = function($index) {
-            return (collapseList[$index]);
-          };
-
-          $scope.toggleCollapse = function($index, isParentItem) {
-
-            // collapsed sidebar doesn't toggle drodopwn
-            if( Utils.isSidebarCollapsed() || $rootScope.app.layout.asideHover ) return true;
-
-            // make sure the item index exists
-            if( angular.isDefined( collapseList[$index] ) ) {
-              if ( ! $scope.lastEventFromChild ) {
-                collapseList[$index] = !collapseList[$index];
-                closeAllBut($index);
-              }
-            }
-            else if ( isParentItem ) {
-              closeAllBut(-1);
-            }
-
-            $scope.lastEventFromChild = isChild($index);
-
-            return true;
-
-          };
-
-          // Controller helpers
-          // -----------------------------------
-
-            // Check item and children active state
-            function isActive(item) {
-              if(!item) return;
-
-              if( !item.sref || item.sref === '#') {
-                var foundActive = false;
-                angular.forEach(item.submenu, function(value) {
-                  if(isActive(value)) foundActive = true;
-                });
-                return foundActive;
-              }
-              else
-                return $state.is(item.sref) || $state.includes(item.sref);
-            }
-
-            function closeAllBut(index) {
-              index += '';
-              for(var i in collapseList) {
-                if(index < 0 || index.indexOf(i) < 0)
-                  collapseList[i] = true;
-              }
-            }
-
-            function isChild($index) {
-              /*jshint -W018*/
-              return (typeof $index === 'string') && !($index.indexOf('-') < 0);
-            }
-
-            $scope.$on('$destroy', function() {
-                watchOff1();
-            });
-
-        } // activate
-    }
-
-})();
-
-/**=========================================================
- * Module: sidebar.js
- * Wraps the sidebar and handles collapsed state
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.sidebar')
-        .directive('sidebar', sidebar);
-
-    sidebar.$inject = ['$rootScope', '$timeout', '$window', 'Utils'];
-    function sidebar ($rootScope, $timeout, $window, Utils) {
-        var $win = angular.element($window);
-        var directive = {
-            // bindToController: true,
-            // controller: Controller,
-            // controllerAs: 'vm',
-            link: link,
-            restrict: 'EA',
-            template: '<nav class="sidebar" ng-transclude></nav>',
-            transclude: true,
-            replace: true
-            // scope: {}
-        };
-        return directive;
-
-        function link(scope, element, attrs) {
-
-          var currentState = $rootScope.$state.current.name;
-          var $sidebar = element;
-
-          var eventName = Utils.isTouch() ? 'click' : 'mouseenter' ;
-          var subNav = $();
-
-          $sidebar.on( eventName, '.nav > li', function() {
-
-            if( Utils.isSidebarCollapsed() || $rootScope.app.layout.asideHover ) {
-
-              subNav.trigger('mouseleave');
-              subNav = toggleMenuItem( $(this), $sidebar);
-
-              // Used to detect click and touch events outside the sidebar
-              sidebarAddBackdrop();
-
-            }
-
-          });
-
-          var eventOff1 = scope.$on('closeSidebarMenu', function() {
-            removeFloatingNav();
-          });
-
-          // Normalize state when resize to mobile
-          $win.on('resize.sidebar', function() {
-            if( ! Utils.isMobile() )
-          	asideToggleOff();
-          });
-
-          // Adjustment on route changes
-          var eventOff2 = $rootScope.$on('$stateChangeStart', function(event, toState) {
-            currentState = toState.name;
-            // Hide sidebar automatically on mobile
-            asideToggleOff();
-
-            $rootScope.$broadcast('closeSidebarMenu');
-          });
-
-      	  // Autoclose when click outside the sidebar
-          if ( angular.isDefined(attrs.sidebarAnyclickClose) ) {
-
-            var wrapper = $('.wrapper');
-            var sbclickEvent = 'click.sidebar';
-
-            var watchOff1 = $rootScope.$watch('app.asideToggled', watchExternalClicks);
-
-          }
-
-          //////
-
-          function watchExternalClicks(newVal) {
-            // if sidebar becomes visible
-            if ( newVal === true ) {
-              $timeout(function(){ // render after current digest cycle
-                wrapper.on(sbclickEvent, function(e){
-                  // if not child of sidebar
-                  if( ! $(e.target).parents('.aside').length ) {
-                    asideToggleOff();
-                  }
-                });
-              });
-            }
-            else {
-              // dettach event
-              wrapper.off(sbclickEvent);
-            }
-          }
-
-          function asideToggleOff() {
-            $rootScope.app.asideToggled = false;
-            if(!scope.$$phase) scope.$apply(); // anti-pattern but sometimes necessary
-      	  }
-
-          scope.$on('$destroy', function() {
-            // detach scope events
-            eventOff1();
-            eventOff2();
-            watchOff1();
-            // detach dom events
-            $sidebar.off(eventName);
-            $win.off('resize.sidebar');
-            wrapper.off(sbclickEvent);
-          });
-
-        }
-
-        ///////
-
-        function sidebarAddBackdrop() {
-          var $backdrop = $('<div/>', { 'class': 'dropdown-backdrop'} );
-          $backdrop.insertAfter('.aside-inner').on('click mouseenter', function () {
-            removeFloatingNav();
-          });
-        }
-
-        // Open the collapse sidebar submenu items when on touch devices
-        // - desktop only opens on hover
-        function toggleTouchItem($element){
-          $element
-            .siblings('li')
-            .removeClass('open')
-            .end()
-            .toggleClass('open');
-        }
-
-        // Handles hover to open items under collapsed menu
-        // -----------------------------------
-        function toggleMenuItem($listItem, $sidebar) {
-
-          removeFloatingNav();
-
-          var ul = $listItem.children('ul');
-
-          if( !ul.length ) return $();
-          if( $listItem.hasClass('open') ) {
-            toggleTouchItem($listItem);
-            return $();
-          }
-
-          var $aside = $('.aside');
-          var $asideInner = $('.aside-inner'); // for top offset calculation
-          // float aside uses extra padding on aside
-          var mar = parseInt( $asideInner.css('padding-top'), 0) + parseInt( $aside.css('padding-top'), 0);
-          var subNav = ul.clone().appendTo( $aside );
-
-          toggleTouchItem($listItem);
-
-          var itemTop = ($listItem.position().top + mar) - $sidebar.scrollTop();
-          var vwHeight = $win.height();
-
-          subNav
-            .addClass('nav-floating')
-            .css({
-              position: $rootScope.app.layout.isFixed ? 'fixed' : 'absolute',
-              top:      itemTop,
-              bottom:   (subNav.outerHeight(true) + itemTop > vwHeight) ? 0 : 'auto'
-            });
-
-          subNav.on('mouseleave', function() {
-            toggleTouchItem($listItem);
-            subNav.remove();
-          });
-
-          return subNav;
-        }
-
-        function removeFloatingNav() {
-          $('.dropdown-backdrop').remove();
-          $('.sidebar-subnav.nav-floating').remove();
-          $('.sidebar li.open').removeClass('open');
-        }
-    }
-
-
-})();
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.sidebar')
-        .service('SidebarLoader', SidebarLoader);
-
-    SidebarLoader.$inject = ['$http'];
-    function SidebarLoader($http) {
-        this.getMenu = getMenu;
-
-        ////////////////
-
-        function getMenu(onReady, onError) {
-          var menuJson = 'server/sidebar-menu.json',
-              menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
-
-          onError = onError || function() { alert('Failure loading menu'); };
-
-          $http
-            .get(menuURL)
-            .then(onReady, onError);
-        }
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.sidebar')
-        .controller('UserBlockController', UserBlockController);
-
-    UserBlockController.$inject = ['$scope','AuthService'];
-    function UserBlockController($scope,AuthService) {
-        var vm = this;
-        activate();
-
-        vm.user = AuthService.GetCurrentUser();
-
-        ////////////////
-        function activate() {
-
-          $scope.userBlockVisible = false;
-
-          var detach = $scope.$on('toggleUserBlock', function(/*event, args*/) {
-
-            $scope.userBlockVisible = ! $scope.userBlockVisible;
-
-          });
-
-          $scope.$on('$destroy', detach);
-        }
-    }
-})();
 
 (function() {
     'use strict';
@@ -2922,6 +2530,409 @@
     }
 })();
 
+/**=========================================================
+ * Module: sidebar-menu.js
+ * Handle sidebar collapsible elements
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.sidebar')
+        .controller('SidebarController', SidebarController);
+
+    SidebarController.$inject = ['$rootScope', '$scope', '$state', 'SidebarLoader', 'Utils','PermissionService'];
+    function SidebarController($rootScope, $scope, $state, SidebarLoader,  Utils,PermissionService) {
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+          var collapseList = [];
+
+          // demo: when switch from collapse to hover, close all items
+          var watchOff1 = $rootScope.$watch('app.layout.asideHover', function(oldVal, newVal){
+            if ( newVal === false && oldVal === true) {
+              closeAllBut(-1);
+            }
+          });
+
+
+          // Load menu from json file
+          // -----------------------------------
+
+          SidebarLoader.getMenu(sidebarReady);
+
+          function sidebarReady(items) {
+              $scope.menuItems = items.data;
+              SetMenuItemsVisibility($scope.menuItems);
+          }
+
+          function SetMenuItemsVisibility(menuItems){
+              var isSuper = false;
+              if(!_.isUndefined($rootScope.currentUser) && $rootScope.currentUser !== null ){
+                  isSuper = $rootScope.currentUser.username === 'super@bidir.com';
+              }
+              _.each(menuItems, function(menuItem) {
+                  if(isSuper){
+                      menuItem.showMenuItem = true;
+                      validateSubMenus(menuItem);
+                  }
+                  else {
+                      menuItem.showMenuItem = PermissionService.hasThisModule(menuItem.module);
+                      validateSubMenus(menuItem);
+                  }
+
+              });
+          }
+
+          function validateSubMenus(menuItem){
+              var permissions = PermissionService.validateSubModules();
+              if(!_.isUndefined(menuItem.submenu)){
+                  _.each(menuItem.submenu,function(sub){
+                      var isSuper = false;
+                      if(!_.isUndefined($rootScope.currentUser)){
+                          isSuper = $rootScope.currentUser.username === 'super@bidir.com';
+                          if(isSuper){
+                              sub.showsubmenu = true;
+                          }else{
+                              if(!_.isUndefined(sub.permission)){
+                                  sub.showsubmenu = _.contains(permissions,sub.permission);
+                              }else {
+                                  sub.showsubmenu = false;
+                              }
+                          }
+                      }else {
+                          sub.showsubmenu = false;
+                      }
+
+                  });
+              }
+          }
+
+
+          // Handle sidebar and collapse items
+          // ----------------------------------
+          $scope.getMenuItemPropClasses = function(item) {
+            return (item.heading ? 'nav-heading' : '') +
+                   (isActive(item) ? ' active' : '') ;
+          };
+
+          $scope.addCollapse = function($index, item) {
+            collapseList[$index] = $rootScope.app.layout.asideHover ? true : !isActive(item);
+          };
+
+          $scope.isCollapse = function($index) {
+            return (collapseList[$index]);
+          };
+
+          $scope.toggleCollapse = function($index, isParentItem) {
+
+            // collapsed sidebar doesn't toggle drodopwn
+            if( Utils.isSidebarCollapsed() || $rootScope.app.layout.asideHover ) return true;
+
+            // make sure the item index exists
+            if( angular.isDefined( collapseList[$index] ) ) {
+              if ( ! $scope.lastEventFromChild ) {
+                collapseList[$index] = !collapseList[$index];
+                closeAllBut($index);
+              }
+            }
+            else if ( isParentItem ) {
+              closeAllBut(-1);
+            }
+
+            $scope.lastEventFromChild = isChild($index);
+
+            return true;
+
+          };
+
+          // Controller helpers
+          // -----------------------------------
+
+            // Check item and children active state
+            function isActive(item) {
+              if(!item) return;
+
+              if( !item.sref || item.sref === '#') {
+                var foundActive = false;
+                angular.forEach(item.submenu, function(value) {
+                  if(isActive(value)) foundActive = true;
+                });
+                return foundActive;
+              }
+              else
+                return $state.is(item.sref) || $state.includes(item.sref);
+            }
+
+            function closeAllBut(index) {
+              index += '';
+              for(var i in collapseList) {
+                if(index < 0 || index.indexOf(i) < 0)
+                  collapseList[i] = true;
+              }
+            }
+
+            function isChild($index) {
+              /*jshint -W018*/
+              return (typeof $index === 'string') && !($index.indexOf('-') < 0);
+            }
+
+            $scope.$on('$destroy', function() {
+                watchOff1();
+            });
+
+        } // activate
+    }
+
+})();
+
+/**=========================================================
+ * Module: sidebar.js
+ * Wraps the sidebar and handles collapsed state
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.sidebar')
+        .directive('sidebar', sidebar);
+
+    sidebar.$inject = ['$rootScope', '$timeout', '$window', 'Utils'];
+    function sidebar ($rootScope, $timeout, $window, Utils) {
+        var $win = angular.element($window);
+        var directive = {
+            // bindToController: true,
+            // controller: Controller,
+            // controllerAs: 'vm',
+            link: link,
+            restrict: 'EA',
+            template: '<nav class="sidebar" ng-transclude></nav>',
+            transclude: true,
+            replace: true
+            // scope: {}
+        };
+        return directive;
+
+        function link(scope, element, attrs) {
+
+          var currentState = $rootScope.$state.current.name;
+          var $sidebar = element;
+
+          var eventName = Utils.isTouch() ? 'click' : 'mouseenter' ;
+          var subNav = $();
+
+          $sidebar.on( eventName, '.nav > li', function() {
+
+            if( Utils.isSidebarCollapsed() || $rootScope.app.layout.asideHover ) {
+
+              subNav.trigger('mouseleave');
+              subNav = toggleMenuItem( $(this), $sidebar);
+
+              // Used to detect click and touch events outside the sidebar
+              sidebarAddBackdrop();
+
+            }
+
+          });
+
+          var eventOff1 = scope.$on('closeSidebarMenu', function() {
+            removeFloatingNav();
+          });
+
+          // Normalize state when resize to mobile
+          $win.on('resize.sidebar', function() {
+            if( ! Utils.isMobile() )
+          	asideToggleOff();
+          });
+
+          // Adjustment on route changes
+          var eventOff2 = $rootScope.$on('$stateChangeStart', function(event, toState) {
+            currentState = toState.name;
+            // Hide sidebar automatically on mobile
+            asideToggleOff();
+
+            $rootScope.$broadcast('closeSidebarMenu');
+          });
+
+      	  // Autoclose when click outside the sidebar
+          if ( angular.isDefined(attrs.sidebarAnyclickClose) ) {
+
+            var wrapper = $('.wrapper');
+            var sbclickEvent = 'click.sidebar';
+
+            var watchOff1 = $rootScope.$watch('app.asideToggled', watchExternalClicks);
+
+          }
+
+          //////
+
+          function watchExternalClicks(newVal) {
+            // if sidebar becomes visible
+            if ( newVal === true ) {
+              $timeout(function(){ // render after current digest cycle
+                wrapper.on(sbclickEvent, function(e){
+                  // if not child of sidebar
+                  if( ! $(e.target).parents('.aside').length ) {
+                    asideToggleOff();
+                  }
+                });
+              });
+            }
+            else {
+              // dettach event
+              wrapper.off(sbclickEvent);
+            }
+          }
+
+          function asideToggleOff() {
+            $rootScope.app.asideToggled = false;
+            if(!scope.$$phase) scope.$apply(); // anti-pattern but sometimes necessary
+      	  }
+
+          scope.$on('$destroy', function() {
+            // detach scope events
+            eventOff1();
+            eventOff2();
+            watchOff1();
+            // detach dom events
+            $sidebar.off(eventName);
+            $win.off('resize.sidebar');
+            wrapper.off(sbclickEvent);
+          });
+
+        }
+
+        ///////
+
+        function sidebarAddBackdrop() {
+          var $backdrop = $('<div/>', { 'class': 'dropdown-backdrop'} );
+          $backdrop.insertAfter('.aside-inner').on('click mouseenter', function () {
+            removeFloatingNav();
+          });
+        }
+
+        // Open the collapse sidebar submenu items when on touch devices
+        // - desktop only opens on hover
+        function toggleTouchItem($element){
+          $element
+            .siblings('li')
+            .removeClass('open')
+            .end()
+            .toggleClass('open');
+        }
+
+        // Handles hover to open items under collapsed menu
+        // -----------------------------------
+        function toggleMenuItem($listItem, $sidebar) {
+
+          removeFloatingNav();
+
+          var ul = $listItem.children('ul');
+
+          if( !ul.length ) return $();
+          if( $listItem.hasClass('open') ) {
+            toggleTouchItem($listItem);
+            return $();
+          }
+
+          var $aside = $('.aside');
+          var $asideInner = $('.aside-inner'); // for top offset calculation
+          // float aside uses extra padding on aside
+          var mar = parseInt( $asideInner.css('padding-top'), 0) + parseInt( $aside.css('padding-top'), 0);
+          var subNav = ul.clone().appendTo( $aside );
+
+          toggleTouchItem($listItem);
+
+          var itemTop = ($listItem.position().top + mar) - $sidebar.scrollTop();
+          var vwHeight = $win.height();
+
+          subNav
+            .addClass('nav-floating')
+            .css({
+              position: $rootScope.app.layout.isFixed ? 'fixed' : 'absolute',
+              top:      itemTop,
+              bottom:   (subNav.outerHeight(true) + itemTop > vwHeight) ? 0 : 'auto'
+            });
+
+          subNav.on('mouseleave', function() {
+            toggleTouchItem($listItem);
+            subNav.remove();
+          });
+
+          return subNav;
+        }
+
+        function removeFloatingNav() {
+          $('.dropdown-backdrop').remove();
+          $('.sidebar-subnav.nav-floating').remove();
+          $('.sidebar li.open').removeClass('open');
+        }
+    }
+
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.sidebar')
+        .service('SidebarLoader', SidebarLoader);
+
+    SidebarLoader.$inject = ['$http'];
+    function SidebarLoader($http) {
+        this.getMenu = getMenu;
+
+        ////////////////
+
+        function getMenu(onReady, onError) {
+          var menuJson = 'server/sidebar-menu.json',
+              menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
+
+          onError = onError || function() { alert('Failure loading menu'); };
+
+          $http
+            .get(menuURL)
+            .then(onReady, onError);
+        }
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.sidebar')
+        .controller('UserBlockController', UserBlockController);
+
+    UserBlockController.$inject = ['$scope','AuthService'];
+    function UserBlockController($scope,AuthService) {
+        var vm = this;
+        activate();
+
+        vm.user = AuthService.GetCurrentUser();
+
+        ////////////////
+        function activate() {
+
+          $scope.userBlockVisible = false;
+
+          var detach = $scope.$on('toggleUserBlock', function(/*event, args*/) {
+
+            $scope.userBlockVisible = ! $scope.userBlockVisible;
+
+          });
+
+          $scope.$on('$destroy', detach);
+        }
+    }
+})();
+
 /**
  * Created by Yoni on 1/8/2018.
  */
@@ -3002,6 +3013,13 @@
             .primaryPalette('blue');
     }
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.authentication', []);
+
+})();
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -3018,13 +3036,6 @@
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.authentication', []);
-
-})();
 (function(angular) {
   "use strict";
 
@@ -3124,14 +3135,6 @@ function runBlock() {
 
 })();
 
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.report', []);
-
-})();
 /**
  * Created by Yonas on 8/16/2018.
  */
@@ -3140,6 +3143,14 @@ function runBlock() {
 
     angular
         .module('app.profile', []);
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.report', []);
 
 })();
 /**
@@ -3200,89 +3211,6 @@ function runBlock() {
         }
 
     }
-
-})(window.angular);
-/**
- * Created by Yoni on 3/11/2018.
- */
-
-(function(angular) {
-    'use strict';
-    angular.module('app.forms')
-
-        .service('ACATService', ACATService);
-
-    ACATService.$inject = ['$http','CommonService'];
-
-    function ACATService($http, CommonService) {
-        return {
-            GetCrops:_getCrops,
-            SaveCrop:_createCrop,
-            UpdateCrop:_updateCrop,
-            GetAllACATList: _getAllACAT,
-            GetACATById: _getACATById,
-            CreateACAT:_createACAT,
-            UpdateACAT:_updateACAT,
-            AddCostList:_addCostList,
-            UpdateCostList:_updateCostList,
-            RemoveCostListLinear:_removeCostListLinear,
-            RemoveCostListGroup:_removeCostGroupList,
-            RemoveCostGroup:_removeCostGroup,
-            UpdateCostGroup:_updateCostGroup,
-            ResetCostList:_resetCostList
-        };
-
-
-        function _getCrops() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
-        }
-        function _createCrop(crop){
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateCrop), crop);
-        }
-        function _updateCrop(crop){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Crop,crop._id), crop);
-        }
-        function _getACATById(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,id));
-        }
-        function _getAllACAT() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
-        }
-        function _addCostList(cost) {
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
-        }
-
-        function _updateCostList(cost){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
-        }
-        function _createACAT(acat) {
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
-        }
-        function _updateACAT(acat) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,acat._id), acat);
-        }
-
-        function _removeCostListLinear(cost_list){
-            var item = {  item_id: cost_list.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + ACAT_COST_LIST_TYPE.LINEAR, item);
-        }
-        function _removeCostGroupList(group_cost_list){
-            var item = {  item_id: group_cost_list.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,group_cost_list._id) +'/items', item);
-        }
-        function _removeCostGroup(group){
-            var item = {  item_id: group.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group._id) +'/group', item);
-        }
-
-        function _updateCostGroup(group) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,'grouped') +'/' +group._id, group);
-        }
-        function _resetCostList(cost_list) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
-        }
-    }
-
 
 })(window.angular);
 (function(angular) {
@@ -3421,6 +3349,89 @@ function runBlock() {
 })(window.angular);
 
 
+/**
+ * Created by Yoni on 3/11/2018.
+ */
+
+(function(angular) {
+    'use strict';
+    angular.module('app.forms')
+
+        .service('ACATService', ACATService);
+
+    ACATService.$inject = ['$http','CommonService'];
+
+    function ACATService($http, CommonService) {
+        return {
+            GetCrops:_getCrops,
+            SaveCrop:_createCrop,
+            UpdateCrop:_updateCrop,
+            GetAllACATList: _getAllACAT,
+            GetACATById: _getACATById,
+            CreateACAT:_createACAT,
+            UpdateACAT:_updateACAT,
+            AddCostList:_addCostList,
+            UpdateCostList:_updateCostList,
+            RemoveCostListLinear:_removeCostListLinear,
+            RemoveCostListGroup:_removeCostGroupList,
+            RemoveCostGroup:_removeCostGroup,
+            UpdateCostGroup:_updateCostGroup,
+            ResetCostList:_resetCostList
+        };
+
+
+        function _getCrops() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
+        }
+        function _createCrop(crop){
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateCrop), crop);
+        }
+        function _updateCrop(crop){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Crop,crop._id), crop);
+        }
+        function _getACATById(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,id));
+        }
+        function _getAllACAT() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
+        }
+        function _addCostList(cost) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
+        }
+
+        function _updateCostList(cost){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
+        }
+        function _createACAT(acat) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
+        }
+        function _updateACAT(acat) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,acat._id), acat);
+        }
+
+        function _removeCostListLinear(cost_list){
+            var item = {  item_id: cost_list.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + ACAT_COST_LIST_TYPE.LINEAR, item);
+        }
+        function _removeCostGroupList(group_cost_list){
+            var item = {  item_id: group_cost_list.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,group_cost_list._id) +'/items', item);
+        }
+        function _removeCostGroup(group){
+            var item = {  item_id: group.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group._id) +'/group', item);
+        }
+
+        function _updateCostGroup(group) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,'grouped') +'/' +group._id, group);
+        }
+        function _resetCostList(cost_list) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
+        }
+    }
+
+
+})(window.angular);
 (function(angular) {
   "use strict";
 
@@ -3892,6 +3903,11 @@ var API = {
         LOANS:{
             Loans:'',
             Clients:'clients'
+        },
+        CBS:{
+            Clients: 'clients/status?status=loan_granted',
+            CBS:'clients/cbs'
+
         }
     }
 };
@@ -4020,57 +4036,60 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
         .module('app.banking')
         .controller('CoreBankingController', CoreBankingController);
 
-    CoreBankingController.$inject = ['CoreBankingService','$scope'];
+    CoreBankingController.$inject = ['CoreBankingService','$scope','$rootScope','AlertService'];
 
-    function CoreBankingController(CoreBankingService,$scope) {
+    function CoreBankingController(CoreBankingService,$scope,$rootScope,AlertService) {
         var vm = this;
         vm.titles = ["Obo","Ato","W/rt","W/ro","Mr","Mrs","Miss","Dr."];
+        $rootScope.app.layout.isCollapsed = true;
+
         vm.paginate = _paginate;
         vm.clearSearch = _clearSearch;
-        vm.saveBranchId = _saveBranchId;
+        vm.saveSingleClient = _saveSingleClient;
+        vm.saveAllClients = _saveSingleClient;
 
         vm.refreshResults = refreshResults;
         vm.clear = clear;
-        vm.onSelectedTitle = _onSelectedTitle;
+        vm.statusStyle = _statusStyle;
 
-        function _onSelectedTitle(client) {
-            console.log("updated client",client);
-        }
-
-        function refreshResults($select){
-            var search = $select.search,
-                list = angular.copy($select.items),
-                FLAG = -1;
-            //remove last user input
-            list = list.filter(function(item) {
-                return item.id !== FLAG;
-            });
-
-            if (!search) {
-                //use the predefined list
-                $select.items = list;
+        function _statusStyle(status){
+            var style = '';
+            switch (status){
+                case 'accepted':
+                    style =  'label label-success';
+                    break;
+                case 'denied':
+                    style =  'label label-danger';
+                    break;
+                case 'draft':
+                    style =  'label label-default';
+                    break;
+                default:
+                    style =  'label label-warning';
             }
-            else {
-                //manually add user input and set selection
-                var userInputItem = search;
-                $select.items = [userInputItem].concat(list);
-                $select.selected = userInputItem;
-            }
+            return style;
         }
 
-        function clear($event, $select){
-            $event.stopPropagation();
-            //to allow empty field, in order to force a selection remove the following line
-            $select.selected = undefined;
-            //reset search query
-            $select.search = undefined;
-            //focus and open dropdown
-            $select.activate();
+        function _saveSingleClient(client){
+            console.log("client info to send",client);
+
+            var clientFormatted = {
+                branchId: client.branchId,
+                title : client.title,
+                client: client._id
+            };
+
+            CoreBankingService.PostClientToCBS(clientFormatted).then(
+                 function (response) {
+                     AlertService.showSuccess('Client Info sent to CBS!',response);
+                     console.log("response",response);
+                 }
+                ,function (error) {
+                    console.log('error',error);
+                    var message = error.data.error.message;
+                    AlertService.showError( 'Oops... Something went wrong', message);
+                })
         }
-
-
-        function _saveBranchId(){}
-
 
         initialize();
 
@@ -4107,10 +4126,9 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
             vm.query.per_page = pageSize;
             callApi();
         }
-
-
         function callApi(){
             vm.clientPromise = CoreBankingService.GetClients(vm.query).then(function(response){
+                console.log(" callApi vm.clients",response);
                 vm.clients = response.data.docs;
                 vm.clientsCopy = angular.copy(vm.clients);
                 vm.query.total_docs_count =  response.data.total_docs_count;
@@ -4118,7 +4136,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
                 console.log("error callApi vm.clients",error);
             });
         }
-
         function SearchApi(SearchText){
             $scope.promise = CoreBankingService.SearchClient(SearchText)
                 .then(function(response){
@@ -4129,6 +4146,37 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
                     vm.clients = vm.clientsCopy;
                     console.log("error",error);
                 });
+        }
+
+
+        function refreshResults($select){
+            var search = $select.search,
+                list = angular.copy($select.items),
+                FLAG = -1;
+            //remove last user input
+            list = list.filter(function(item) {
+                return item.id !== FLAG;
+            });
+
+            if (!search) {
+                //use the predefined list
+                $select.items = list;
+            }
+            else {
+                //manually add user input and set selection
+                var userInputItem = search;
+                $select.items = [userInputItem].concat(list);
+                $select.selected = userInputItem;
+            }
+        }
+        function clear($event, $select){
+            $event.stopPropagation();
+            //to allow empty field, in order to force a selection remove the following line
+            $select.selected = undefined;
+            //reset search query
+            $select.search = undefined;
+            //focus and open dropdown
+            $select.activate();
         }
 
         $scope.$watch(angular.bind(vm, function () {
@@ -4159,15 +4207,20 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
     function CoreBankingService($http, CommonService, AuthService) {
         return {
             GetClients: _getClients,
-            SearchClient:_searchClient
+            SearchClient:_searchClient,
+            PostClientToCBS:_postClientToCBS
         };
 
         function _getClients(parameters){
-            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,parameters));
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.CBS.Clients,parameters));
+        }
+
+        function _postClientToCBS(client){
+            return $http.post(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.CBS.CBS,client));
         }
 
         function _searchClient(searchText) {
-            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
+            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.CBS.Clients,searchText));
         }
     }
 
@@ -5313,55 +5366,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
 })(window.angular);
 
-(function(angular) {
-    "use strict";
-
-
-    angular
-        .module('app.report')
-        .controller('ReportController', ReportController);
-
-    ReportController.$inject = ['ReportService', 'blockUI','AlertService'];
-
-    function ReportController( ReportService,blockUI,AlertService )
-    {
-        var vm = this;
-        vm.onSelectedReport = _onSelectedReport;
-        vm.reports = [
-            {
-                name: 'report 1',
-                data: []
-            },
-            {
-                name: 'report 2',
-                data: []
-            },
-            {
-                name: 'report 3',
-                data: []
-            }
-        ];
-
-        function _onSelectedReport() {
-            console.log("report ",vm.report);
-        }
-
-    }
-
-})(window.angular);
-(function(angular) {
-    'use strict';
-    angular.module('app.report')
-
-        .service('ReportService', ReportService);
-
-    ReportService.$inject = ['$http','CommonService','AuthService'];
-
-    function ReportService($http, CommonService, AuthService) {
-
-    }
-
-})(window.angular);
 /**
  * Created by Yonas on 8/16/2018.
  */
@@ -5432,6 +5436,55 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
         function _updateProfile(account){
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
         }
+
+    }
+
+})(window.angular);
+(function(angular) {
+    "use strict";
+
+
+    angular
+        .module('app.report')
+        .controller('ReportController', ReportController);
+
+    ReportController.$inject = ['ReportService', 'blockUI','AlertService'];
+
+    function ReportController( ReportService,blockUI,AlertService )
+    {
+        var vm = this;
+        vm.onSelectedReport = _onSelectedReport;
+        vm.reports = [
+            {
+                name: 'report 1',
+                data: []
+            },
+            {
+                name: 'report 2',
+                data: []
+            },
+            {
+                name: 'report 3',
+                data: []
+            }
+        ];
+
+        function _onSelectedReport() {
+            console.log("report ",vm.report);
+        }
+
+    }
+
+})(window.angular);
+(function(angular) {
+    'use strict';
+    angular.module('app.report')
+
+        .service('ReportService', ReportService);
+
+    ReportService.$inject = ['$http','CommonService','AuthService'];
+
+    function ReportService($http, CommonService, AuthService) {
 
     }
 
@@ -8652,6 +8705,175 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
   }
 })(window.angular);
 
+/**
+ * Created by Yonas on 7/2/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("ClientsController", ClientsController);
+
+    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
+
+    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
+        var vm = this;
+        vm.clientDetailEdit = _clientDetailEdit;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearchText;
+        vm.saveClient = _saveClient;
+        vm.backToClientList = _backToClientList;
+
+
+
+        initialize();
+
+        function initialize() {
+            initializeDatePicker();
+            vm.visibility = { showClientDetail: false };
+            vm.civilStatuses = CIVIL_STATUSES;
+            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
+            vm.filter = {show : false};
+            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
+
+            vm.query = { search:'',   page:1,  per_page:10 };
+            vm.months = MONTHS_CONST;
+            callAPI();
+            getBranches();
+        }
+
+        function callAPI() {
+            var myBlockUI = blockUI.instances.get('clientsBlockUI');
+            myBlockUI.start();
+
+            vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
+                vm.clients = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+                myBlockUI.stop();
+                console.log("clients",vm.clients);
+            });
+        }
+
+        function _clientDetailEdit(client,ev) {
+            console.log("client detail",client);
+            vm.visibility.showClientDetail = true;
+            //data set
+            vm.selectedClient = client;
+            var dt = new Date(client.date_of_birth);
+            vm.selectedClient.date_of_birth = dt;
+            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
+            vm.selectedClient.gender = client.gender.toLowerCase();
+            vm.selected_branch = client.branch;
+        }
+
+        function _backToClientList() {
+            vm.visibility = { showClientDetail: false };
+        }
+        function _saveClient() {
+
+            if(_.isUndefined(vm.selected_branch)){
+                AlertService.showWarning("Warning!","Please Select Branch....");
+            }else{
+                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
+                myBlockUI.start();
+                var client = vm.selectedClient;
+                client.branch = vm.selected_branch._id;
+                client.created_by =  undefined;
+
+
+                if( _.isUndefined(vm.selectedClient._id)){
+                    //ADD NEW CLIENT INFORMATION
+                    LoanManagementService.SaveClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
+                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
+
+                    },function (error) {
+                        console.log("save client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to save client",message);
+
+                    });
+                }else{
+                    //UPDATE CLIENT INFORMATION
+                    LoanManagementService.UpdateClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
+                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
+                    },function (error) {
+                        console.log("Updated client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to update Client",message);
+
+                    });
+                }
+
+
+            }
+
+        }
+
+        function getBranches() {
+            SharedService.GetBranches().then(function(response){
+                vm.branches = response.data.docs;
+                console.log("vm.branches",vm.branches);
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        /**
+         *
+         *  Paging parameters and methods
+         */
+        function _paginate(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        }
+        function _clearSearchText() {
+            vm.query.search = '';
+            vm.filter.show = false;
+        }
+        function initializeDatePicker() {
+            vm.clear = function() {
+                vm.dt = null;
+            };
+
+            vm.dateOptions = {
+                dateDisabled: false,
+                formatYear: "yy",
+                maxDate: new Date(2020, 5, 22),
+                startingDay: 1
+            };
+
+            vm.openPopup = function() {
+                vm.popup1.opened = true;
+            };
+
+            vm.dateFormat = "dd-MMMM-yyyy";
+            vm.altInputFormats = ["M!/d!/yyyy"];
+
+            vm.popup1 = {
+                opened: false
+            };
+        }
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("searching clients for ",newValue);
+            }
+        });
+
+    }
+
+})(window.angular);
 (function (angular) {
     "use strict";
 
@@ -8884,175 +9106,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
     }
 
 
-
-})(window.angular);
-/**
- * Created by Yonas on 7/2/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("ClientsController", ClientsController);
-
-    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
-
-    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
-        var vm = this;
-        vm.clientDetailEdit = _clientDetailEdit;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearchText;
-        vm.saveClient = _saveClient;
-        vm.backToClientList = _backToClientList;
-
-
-
-        initialize();
-
-        function initialize() {
-            initializeDatePicker();
-            vm.visibility = { showClientDetail: false };
-            vm.civilStatuses = CIVIL_STATUSES;
-            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
-            vm.filter = {show : false};
-            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
-
-            vm.query = { search:'',   page:1,  per_page:10 };
-            vm.months = MONTHS_CONST;
-            callAPI();
-            getBranches();
-        }
-
-        function callAPI() {
-            var myBlockUI = blockUI.instances.get('clientsBlockUI');
-            myBlockUI.start();
-
-            vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
-                vm.clients = response.data.docs;
-                vm.query.total_pages = response.data.total_pages;
-                vm.query.total_docs_count = response.data.total_docs_count;
-                myBlockUI.stop();
-                console.log("clients",vm.clients);
-            });
-        }
-
-        function _clientDetailEdit(client,ev) {
-            console.log("client detail",client);
-            vm.visibility.showClientDetail = true;
-            //data set
-            vm.selectedClient = client;
-            var dt = new Date(client.date_of_birth);
-            vm.selectedClient.date_of_birth = dt;
-            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
-            vm.selectedClient.gender = client.gender.toLowerCase();
-            vm.selected_branch = client.branch;
-        }
-
-        function _backToClientList() {
-            vm.visibility = { showClientDetail: false };
-        }
-        function _saveClient() {
-
-            if(_.isUndefined(vm.selected_branch)){
-                AlertService.showWarning("Warning!","Please Select Branch....");
-            }else{
-                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
-                myBlockUI.start();
-                var client = vm.selectedClient;
-                client.branch = vm.selected_branch._id;
-                client.created_by =  undefined;
-
-
-                if( _.isUndefined(vm.selectedClient._id)){
-                    //ADD NEW CLIENT INFORMATION
-                    LoanManagementService.SaveClient(client).then(function (response) {
-                        console.log("save client",response);
-                        myBlockUI.stop();
-                        vm.visibility = { showClientDetail: false };
-                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
-
-                    },function (error) {
-                        console.log("save client error",error);
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to save client",message);
-
-                    });
-                }else{
-                    //UPDATE CLIENT INFORMATION
-                    LoanManagementService.UpdateClient(client).then(function (response) {
-                        console.log("save client",response);
-                        myBlockUI.stop();
-                        vm.visibility = { showClientDetail: false };
-                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
-                    },function (error) {
-                        console.log("Updated client error",error);
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to update Client",message);
-
-                    });
-                }
-
-
-            }
-
-        }
-
-        function getBranches() {
-            SharedService.GetBranches().then(function(response){
-                vm.branches = response.data.docs;
-                console.log("vm.branches",vm.branches);
-            },function(error){
-                console.log("error",error);
-            });
-        }
-
-        /**
-         *
-         *  Paging parameters and methods
-         */
-        function _paginate(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
-        }
-        function _clearSearchText() {
-            vm.query.search = '';
-            vm.filter.show = false;
-        }
-        function initializeDatePicker() {
-            vm.clear = function() {
-                vm.dt = null;
-            };
-
-            vm.dateOptions = {
-                dateDisabled: false,
-                formatYear: "yy",
-                maxDate: new Date(2020, 5, 22),
-                startingDay: 1
-            };
-
-            vm.openPopup = function() {
-                vm.popup1.opened = true;
-            };
-
-            vm.dateFormat = "dd-MMMM-yyyy";
-            vm.altInputFormats = ["M!/d!/yyyy"];
-
-            vm.popup1 = {
-                opened: false
-            };
-        }
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("searching clients for ",newValue);
-            }
-        });
-
-    }
 
 })(window.angular);
 /**
