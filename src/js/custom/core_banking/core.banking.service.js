@@ -7,14 +7,24 @@
     CoreBankingService.$inject = ['$http','CommonService','AuthService'];
 
     function CoreBankingService($http, CommonService, AuthService) {
+        var Client = {};
         return {
             GetClients: _getClients,
             SearchClient:_searchClient,
-            PostClientToCBS:_postClientToCBS
+            PostClientToCBS:_postClientToCBS,
+            setClientInfo: _setClientInfo,
+            getClientInfo: _getClientInfo
         };
 
+        function _setClientInfo(client) {
+            Client = client;
+        }
+        function _getClientInfo() {
+            return Client;
+        }
+
         function _getClients(parameters){
-            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.CBS.Clients,parameters));
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,parameters));
         }
 
         function _postClientToCBS(client){

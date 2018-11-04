@@ -6,9 +6,9 @@
         .module('app.banking')
         .controller('CoreBankingController', CoreBankingController);
 
-    CoreBankingController.$inject = ['CoreBankingService','$scope','$rootScope','AlertService'];
+    CoreBankingController.$inject = ['CoreBankingService','$scope','$rootScope','AlertService','$state'];
 
-    function CoreBankingController(CoreBankingService,$scope,$rootScope,AlertService) {
+    function CoreBankingController(CoreBankingService,$scope,$rootScope,AlertService,$state) {
         var vm = this;
         vm.titles = ["Obo","Ato","W/rt","W/ro","Mr","Mrs","Miss","Dr."];
         $rootScope.app.layout.isCollapsed = true;
@@ -17,6 +17,12 @@
         vm.clearSearch = _clearSearch;
         vm.saveSingleClient = _saveSingleClient;
         vm.saveAllClients = _saveSingleClient;
+        vm.cbs_clientDetail = _clientDetail;
+
+        function _clientDetail(client){
+            CoreBankingService.setClientInfo(client);
+            $state.go('app.cbs_detail',{id:client._id});
+        }
 
         vm.refreshResults = refreshResults;
         vm.clear = clear;
@@ -58,7 +64,7 @@
                     console.log('error',error);
                     var message = error.data.error.message;
                     AlertService.showError( 'Oops... Something went wrong', message);
-                })
+                });
         }
 
         initialize();

@@ -275,9 +275,9 @@
                     authenticate: true
                 }
             })
-            .state("app.banking", {
-                url: "/core_banking",
-                title: "Core Banking",
+            .state("app.cbs", {
+                url: "/cbs",
+                title: "Core Banking Solution",
                 templateUrl:helper.basepath('core_banking/core.banking.html'),
                 resolve:helper.resolveFor('md.data.table','moment','ui.select'),
                 controller: "CoreBankingController",
@@ -286,12 +286,12 @@
                     authenticate: true
                 }
             })
-            .state("app.banking.detail", {
-                url: "/core_banking/:id",
-                title: "Core Banking",
+            .state("app.cbs_detail", {
+                url: "/cbs/:id",
+                title: "Core Banking Solution",
                 templateUrl:helper.basepath('core_banking/core.banking.detail.html'),
                 resolve:helper.resolveFor('moment','ui.select'),
-                controller: "CoreBankingController",
+                controller: "CoreBankingDetailController",
                 controllerAs: 'vm',
                 data: {
                     authenticate: true

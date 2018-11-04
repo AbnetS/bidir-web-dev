@@ -38,7 +38,7 @@
             </md-toolbar>
 
             <md-table-container>
-               <table md-table md-progress="vm.clientPromise" class="table-striped">
+               <table md-table md-progress="vm.clientPromise" class="table-hover">
                   <thead md-head class="bg-grey md-head">
                      <tr md-row>
                         <th md-column style="width:3%;">
@@ -50,14 +50,13 @@
                         <th md-column>
                            <span>Gender</span>
                         </th>
-                        <th md-column>
-                           <span>Date Of Birth</span>
-                        </th>
+                        <!--<th md-column><span>Date Of Birth</span></th>-->
                         <th md-column>
                            <span>Status</span>
                         </th>
                         <th md-column style="width: 30%">Branch ID</th>
-                        <th colspan="2" md-column>
+                        <th md-colors>Title</th>
+                        <th md-column class="pull-right">
                            <span class="input-group-btn">
                               <button class="btn btn-success" ng-click="vm.saveAllClients()">
                                  <i class="fa fa-paper-plane">  </i> Send All</button>
@@ -67,11 +66,11 @@
                   </thead>
 
                   <tbody md-body>
-                     <tr md-row ng-repeat="client in vm.clients">
+                     <tr md-row ng-repeat="client in vm.clients" ng-class="client.in_cbs?'':'active'">
                         <td md-cell>{{vm.query.per_page * (vm.query.page - 1) + $index + 1}}</td>
                         <td md-cell>{{ client.first_name }} {{ client.last_name }} {{client.grandfather_name}}</td>
                         <td md-cell>{{client.gender}}</td>
-                        <td md-cell>{{client.date_of_birth | date }}</td>
+                        <!--<td md-cell>{{client.date_of_birth | date }}</td>-->
                         <td md-cell>
                            <label ng-class="vm.statusStyle(client.civil_status)">{{client.civil_status}}</label>
                         </td>
@@ -95,6 +94,11 @@
                                  <i class="fa fa-paper-plane"></i> 
                               </button>
                            </span>
+                           <span class="input-group-btn">
+                              <button class="btn btn-link" ng-click="vm.cbs_clientDetail(client)" type="button">
+                                 <i class="fa fa-eye"></i> 
+                              </button>
+
                         </td>
                      </tr>
                   </tbody>

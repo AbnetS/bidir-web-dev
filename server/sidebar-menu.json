@@ -73,15 +73,15 @@
     ]
   },
   {
+    "text": "Core Banking",
+    "module": "CORE_BANKING",
+    "sref": "app.cbs",
+    "icon": "fa fa-university"
+  },
+  {
     "text": "Report",
     "module": "REPORT",
     "sref": "app.report",
     "icon": "fa fa-bar-chart"
-  },
-  {
-    "text": "Core Banking",
-    "module": "CORE_BANKING",
-    "sref": "app.banking",
-    "icon": "fa fa-university"
   }
 ]
