@@ -47,13 +47,13 @@
         }
 
         function _saveSingleClient(client){
+
             console.log("client info to send",client);
 
             var clientFormatted = {
                 branchId: client.branchId,
                 title : client.title,
-                client: client._id
-            };
+                client: client._id };
 
             CoreBankingService.PostClientToCBS(clientFormatted).then(
                  function (response) {

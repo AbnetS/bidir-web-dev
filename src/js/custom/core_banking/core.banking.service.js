@@ -28,7 +28,7 @@
         }
 
         function _postClientToCBS(client){
-            return $http.post(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.CBS.CBS,client));
+            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.CBS.CBS),client);
         }
 
         function _searchClient(searchText) {
