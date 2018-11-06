@@ -10,10 +10,13 @@
         var Client = {};
         return {
             GetClients: _getClients,
+            GetTitles: ["Obo","Ato","W/rt","W/ro","Mr","Mrs","Miss","Dr."],
             SearchClient:_searchClient,
             PostClientToCBS:_postClientToCBS,
             setClientInfo: _setClientInfo,
-            getClientInfo: _getClientInfo
+            getClientInfo: _getClientInfo,
+            UpdateClient: _updateClient,
+            GetClientById:_getClientById
         };
 
         function _setClientInfo(client) {
@@ -34,6 +37,15 @@
         function _searchClient(searchText) {
             return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.CBS.Clients,searchText));
         }
+
+        function _updateClient(client) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,client._id),client);
+        }
+        function _getClientById(id){
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
+        }
+
+
     }
 
 })(window.angular);

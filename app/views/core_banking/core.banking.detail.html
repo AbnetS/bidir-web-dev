@@ -10,178 +10,209 @@
       <small>
          <a ui-sref="app.cbs"><i class="fa fa-arrow-left"></i> Back </a>
       </small>
+
+      <label class="pull-right" ng-class="vm.client.in_cbs?'label label-success':'label label-danger'">{{vm.client.in_cbs? 'In CBS': 'NOT IN CBS'}}</label>
    </div>
-   <div class="panel-body" block-ui="ClientBlockUI">
-      <!--BASIC CLIENT INFORMATION-->
-      <div class="row">
-         <!--DETAIL-->
-         <div class="col-md-6">
-            <p class="lead bb">Details</p>
-            <form class="form-horizontal p-20">
-
+   <!-- CLIENT FORM-->
+   <form action="" method="post" novalidate="novalidate" block-ui="CBSClientDetailBlockUI">
+      <fieldset class="m0">
+         <legend class="p-lg">Personal Information</legend>
+         <!--FULL NAME-->
+         <div class="row m0">
+            <div class="col-lg-4">
                <div class="form-group">
-                  <div class="col-sm-4">Name:</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.first_name}} {{vm.client.last_name}} {{vm.client.grandfather_name}}</strong>
-                  </div>
+                  <label>First Name
+                     <span class="text-danger">*</span>
+                  </label>
+                  <input class="form-control" type="text" ng-model="vm.client.first_name" name="first-name" required/>
                </div>
+            </div>
+            <div class="col-lg-4">
                <div class="form-group">
-                  <div class="col-sm-4">Date Of Birth:</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.date_of_birth | date }}</strong>
-                  </div>
+                  <label>Middle Name
+                     <span class="text-danger">*</span>
+                  </label>
+                  <input class="form-control" type="text" ng-model="vm.client.last_name" name="middle-name" required/>
                </div>
+            </div>
+            <div class="col-lg-4">
                <div class="form-group">
-                  <div class="col-sm-4">Gender:</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.gender}}</strong>
-                  </div>
+                  <label>Last Name*</label>
+                  <input class="form-control" type="text" ng-model="vm.client.grandfather_name" name="grand-father-name" required/>
                </div>
-               <div class="form-group">
-                  <div class="col-sm-4">National Id No:</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.national_id_no}}</strong>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <div class="col-sm-4">Phone:</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.phone}}</strong>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <div class="col-sm-4">Status:</div>
-                  <div class="col-sm-8">
-                     <!--<div ng-class="vm.labelBasedOnStatusStyle(vm.client.status)"> {{vm.client.status | ReplaceUnderscore }}</div>-->
-                  </div>
-               </div>
-            </form>
+            </div>
          </div>
-         <!--EXTRA-->
-         <div class="col-md-6">
-            <p class="lead bb">Extra</p>
-            <form class="form-horizontal p-20">
+         <!--PERSONAL INFO-->
+         <div class="row m0">
+            <div class="col-lg-4">
                <div class="form-group">
-                  <div class="col-sm-4">Branch:</div>
-                  <div class="col-sm-8">
-                     <strong>
-                        {{vm.client.branch.name}}
-                     </strong>
-                  </div>
+                  <label>Date of Birth
+                     <span class="text-danger">*</span>
+                  </label>
+                  <p class="input-group">
+                     <input type="text" class="form-control" uib-datepicker-popup="{{vm.dateFormat}}" ng-model="vm.client.date_of_birth" is-open="vm.popup1.opened" datepicker-options="vm.dateOptions" close-text="Close" alt-input-formats="vm.altInputFormats" />
+                     <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="vm.openPopup()">
+                           <i class="fa fa-calendar"></i>
+                        </button>
+                     </span>
+                  </p>
                </div>
+            </div>
+
+            <div class="col-lg-4">
                <div class="form-group">
-                  <div class="col-sm-4">Created By:</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.created_by.username}}</strong>
-                  </div>
+                  <label>Civil Status</label>
+                  <select class="form-control" name="civil_status" ng-options="status for status in vm.civilStatuses" ng-model="vm.client.civil_status">
+                  </select>
                </div>
-               <div class="form-group">
-                  <div class="col-sm-4">Created Date:</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.date_created | date:'medium'}}</strong>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <div class="col-sm-4">Last Updated:</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.last_modified | date:'medium'}}</strong>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <div class="col-sm-4">Created By:</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.created_by.username}}</strong>
-                  </div>
-               </div>
-               <!--<div class="form-group">-->
-               <!--<div class="col-sm-4">-->
-               <!--<a ng-show="!vm.visibility.showMoreClientDetail" ng-click="vm.visibility.showMoreClientDetail = !vm.visibility.showMoreClientDetail">-->
-               <!--{{vm.visibility.showMoreClientDetail?'Hide':'Show'}} Detail-->
-               <!--</a>-->
-               <!--</div>-->
-               <!--</div>-->
-            </form>
+            </div>
+            <div class="col-lg-4">
+               <md-input-container class="md-block">
+                  <p class="text-bold">Gender</p>
+                  <md-radio-group layout="row" ng-model="vm.client.gender">
+                     <md-radio-button value=male class="md-primary">Male</md-radio-button>
+                     <md-radio-button value=female class="md-primary">Female</md-radio-button>
+                  </md-radio-group>
+               </md-input-container>
+            </div>
          </div>
-      </div>
-      <!--Show More ClientDetail-->
-      <div class="row">
-         <div class="col-md-6">
-            <p class="lead bb">Address</p>
-            <form class="form-horizontal p-20">
+         <!--ADDRESS-->
+         <legend class="p-lg">Address</legend>
+         <div class="row m0">
+            <div class="col-lg-4">
                <div class="form-group">
-                  <div class="col-sm-4">House Number:</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.house_no}}</strong>
-                  </div>
+                  <label>National ID
+                     <span class="text-danger">*</span>
+                  </label>
+                  <input class="form-control" ng-model="vm.client.national_id_no" type="text" name="checkout-zip" required="" />
                </div>
+            </div>
+            <div class="col-lg-4">
                <div class="form-group">
-                  <div class="col-sm-4">kebele:</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.kebele}}</strong>
-                  </div>
+                  <label>Woreda</label>
+                  <input class="form-control" ng-model="vm.client.woreda" type="text" name="checkout-woreda" required="" />
                </div>
+            </div>
+            <div class="col-lg-4">
                <div class="form-group">
-                  <div class="col-sm-4">Woreda:</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.woreda}}</strong>
-                  </div>
+                  <label>Kebele</label>
+                  <input class="form-control" ng-model="vm.client.kebele" type="text" name="checkout-address" required="" />
                </div>
-               <div class="form-group">
-                  <div class="col-sm-4">National Id Card:</div>
-                  <div class="col-sm-8">
-                     <div class="media">
-                        <img class="img-responsive thumb32" ng-src="{{vm.client.national_id_card}}" src="/app/img/user/02.jpg" alt="Client Picture">
-                     </div>
-                  </div>
-               </div>
+            </div>
 
-               <div class="form-group">
-                  <div class="col-sm-4">Phone:</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.phone}}</strong>
-                  </div>
-               </div>
-            </form>
          </div>
-         <div class="col-md-6">
-            <p class="lead bb">Spouse</p>
-            <form class="form-horizontal p-20">
-               <div class="form-group">
-                  <div class="col-sm-4">First Name</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.spouse.first_name}}</strong>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <div class="col-sm-4">Last Name:</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.spouse.last_name}}</strong>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <div class="col-sm-4">Grand Father Name:</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.spouse.grandfather_name}}</strong>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <div class="col-sm-4">National Id No:</div>
-                  <div class="col-sm-8">
-                     <strong>{{vm.client.spouse.national_id_no}}</strong>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <div class="col-sm-4">
-                     <a ng-show="vm.visibility.showMoreClientDetail" ng-click="vm.visibility.showMoreClientDetail = !vm.visibility.showMoreClientDetail">
 
-                                {{vm.visibility.showMoreClientDetail?'Hide':'Show'}} Detail
-
-                            </a>
-                  </div>
+         <!--National ID-->
+         <div class="row m0">
+            <div class="col-lg-4">
+               <div class="form-group">
+                  <label>House Number</label>
+                  <input class="form-control" ng-model="vm.client.house_no" type="text" name="checkout-address" required="" />
                </div>
-            </form>
+            </div>
+            <div class="col-lg-4">
+               <div class="form-group">
+                  <label>Phone Number</label>
+                  <input class="form-control" ng-model="vm.client.phone" type="text" name="checkout-phone" required="" />
+               </div>
+            </div>
+
+            <div class="col-lg-4">
+               <div class="form-group">
+                  <label>Email</label>
+                  <input class="form-control" ng-model="vm.client.email" type="email" name="checkout-zip" required="" />
+               </div>
+            </div>
          </div>
-      </div>
+         <div class="row m0">
+            <div class="col-lg-4">
+               <div class="form-group">
+                  <label>House Hold Members</label>
+                  <input class="form-control" ng-model="vm.client.household_members_count" type="text" name="checkout-zip" required="" />
+               </div>
+            </div>
+            <div class="col-lg-4">
+               <div class="form-group">
 
-   </div>
+               </div>
+            </div>
+         </div>
+
+
+         <!--ADDRESS-->
+         <legend class="p-lg">Spouse</legend>
+         <div class="row m0">
+            <div class="col-lg-3">
+               <div class="form-group">
+                  <label>First Name
+                     <span class="text-danger">*</span>
+                  </label>
+                  <input class="form-control" type="text" ng-model="vm.client.spouse.first_name" name="first-name" required/>
+               </div>
+            </div>
+            <div class="col-lg-3">
+               <div class="form-group">
+                  <label>Middle Name
+                     <span class="text-danger">*</span>
+                  </label>
+                  <input class="form-control" type="text" ng-model="vm.client.spouse.last_name" name="middle-name" required/>
+               </div>
+            </div>
+            <div class="col-lg-3">
+               <div class="form-group">
+                  <label>Last Name</label>
+                  <input class="form-control" type="text" ng-model="vm.client.spouse.grandfather_name" name="grand-father-name" required/>
+               </div>
+            </div>
+            <div class="col-lg-3">
+               <div class="form-group">
+                  <label>National ID Number</label>
+                  <input class="form-control" type="text" ng-model="vm.client.spouse.national_id_no" name="grand-father-name" required/>
+               </div>
+            </div>
+
+         </div>
+
+         <legend class="p-lg">Core Banking Information</legend>
+         <div class="row m0">
+            <div class="col-lg-3">
+               <div class="form-group">
+                  <label>Branch
+                     <span class="text-danger">*</span>
+                  </label>
+                  <input class="form-control" type="text" ng-model="vm.client.branchId" name="client-branchId" required/>
+               </div>
+            </div>
+            <div class="col-lg-3">
+               <div class="form-group">
+                  <label>Title
+                     <span class="text-danger">*</span>
+                  </label>
+                  <ui-select ng-model="vm.client.title" theme="bootstrap" on-select="vm.onSelectedTitle(client)" title="Choose Title" reset-search-input="false" required="true" ng-maxlength="40">
+                     <ui-select-match placeholder="Select title from the list or add...">
+                        <span>{{$select.selected || $select.search}}</span>
+                        <a class="btn btn-xs btn-link pull-right" ng-click="vm.clear($event, $select)"></a>
+                     </ui-select-match>
+                     <ui-select-choices repeat="title in vm.titles | filter: $select.search" refresh="vm.refreshResults($select)" refresh-delay="0">
+                        <span ng-bind-html="title | highlight: $select.search"></span>
+                     </ui-select-choices>
+                  </ui-select>
+               </div>
+            </div>
+
+         </div>
+         <!--save button area-->
+
+         <div class="pt p-lg clearfix">
+            <p class="pull-left text-sm"><i>Fields marked with (<span class="text-danger">*</span>) are required</i>
+            </p>
+            <div class="pull-right">
+               <button class="btn btn-info" type="button" ng-click="vm.updateClient()">Update Client</button>
+               <button class="btn btn-primary" type="button" ng-click="vm.updateClientAndSendToCBS()">Update and Send to CBS</button>
+            </div>
+         </div>
+      </fieldset>
+   </form>
+
 </div>

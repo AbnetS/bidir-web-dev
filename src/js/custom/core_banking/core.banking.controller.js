@@ -10,7 +10,7 @@
 
     function CoreBankingController(CoreBankingService,$scope,$rootScope,AlertService,$state) {
         var vm = this;
-        vm.titles = ["Obo","Ato","W/rt","W/ro","Mr","Mrs","Miss","Dr."];
+        vm.titles = CoreBankingService.GetTitles;
         $rootScope.app.layout.isCollapsed = true;
 
         vm.paginate = _paginate;
@@ -47,8 +47,6 @@
         }
 
         function _saveSingleClient(client){
-
-            console.log("client info to send",client);
 
             var clientFormatted = {
                 branchId: client.branchId,
