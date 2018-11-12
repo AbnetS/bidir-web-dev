@@ -6,22 +6,43 @@
         .module('app.geospatial')
         .controller('GeospatialController', GeoSpatialController);
 
-    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI','SharedService','$sce'];
+    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI','SharedService','CommonService'];
 
-    function GeoSpatialController( GeoSpatialService,blockUI,SharedService,$sce )
+    function GeoSpatialController( GeoSpatialService,blockUI,SharedService,CommonService )
     {
         var vm = this;
+        vm.filter = {};
         vm.generateSeasonalReport = _generateSeasonalReport;
         vm.visibility = {
-           showSmiley: false
+           showSmiley: false,
+           showInfoText: true
         };
+
+        vm.seasonalFilterForm = {
+            IsfromDateValid: true,
+            IstoDateValid: true,
+            IsbranchValid: true
+        };
+
         init();
 
         function _generateSeasonalReport() {
-            vm.filter.fromDateString = GeoSpatialService.formatDateForRequest(vm.filter.fromDate);
-            vm.filter.toDateString = GeoSpatialService.formatDateForRequest(vm.filter.toDate);
 
-            vm.visibility.showSmiley = true;
+            vm.IsValidData = CommonService.Validation.ValidateForm(vm.seasonalFilterForm, vm.filter);
+
+           if(vm.IsValidData)
+           {
+               vm.filter.fromDateString = GeoSpatialService.formatDateForRequest(vm.filter.fromDate);
+               vm.filter.toDateString = GeoSpatialService.formatDateForRequest(vm.filter.toDate);
+
+               vm.visibility.showSmiley = true;
+               vm.visibility.showInfoText = false;
+               vm.visibility.showWarning = false;
+           }else
+               {
+               vm.visibility.showWarning = true;
+               vm.visibility.showInfoText = false;
+               }
 
             console.log("date picked", vm.filter);
         }

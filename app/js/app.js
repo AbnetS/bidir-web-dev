@@ -47,6 +47,18 @@
     'use strict';
 
     angular
+        .module('app.lazyload', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.core', [
             'ngRoute',
             'ngAnimate',
@@ -64,18 +76,6 @@
             'ngMessages',
             'angularMoment'
         ]);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.lazyload', []);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar', []);
 })();
 (function() {
     'use strict';
@@ -183,123 +183,6 @@
     }
 
 })();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .config(coreConfig);
-
-    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
-    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
-
-      var core = angular.module('app.core');
-      // registering components after bootstrap
-      core.controller = $controllerProvider.register;
-      core.directive  = $compileProvider.directive;
-      core.filter     = $filterProvider.register;
-      core.factory    = $provide.factory;
-      core.service    = $provide.service;
-      core.constant   = $provide.constant;
-      core.value      = $provide.value;
-
-      // Disables animation on items with class .ng-no-animation
-      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
-
-      // Improve performance disabling debugging features
-      // $compileProvider.debugInfoEnabled(false);
-
-    }
-
-})();
-/**=========================================================
- * Module: constants.js
- * Define constants to inject across the application
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .constant('APP_MEDIAQUERY', {
-          'desktopLG':             1200,
-          'desktop':                992,
-          'tablet':                 768,
-          'mobile':                 480
-        })
-      ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .run(appRun);
-
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
-
-      // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });*/
-
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
-
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Hooks Example
-      // ----------------------------------- 
-
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
-
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
-
-    }
-
-})();
-
 
 (function() {
     'use strict';
@@ -527,6 +410,123 @@
     }
 
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
+
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+      // Disables animation on items with class .ng-no-animation
+      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
+
+      // Improve performance disabling debugging features
+      // $compileProvider.debugInfoEnabled(false);
+
+    }
+
+})();
+/**=========================================================
+ * Module: constants.js
+ * Define constants to inject across the application
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .run(appRun);
+
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });*/
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
+    }
+
+})();
+
+
 /**=========================================================
  * Module: modals.js
  * Provides a simple way to implement bootstrap modals from templates
@@ -3029,6 +3029,13 @@
 
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.authentication', []);
+
+})();
 (function(angular) {
   "use strict";
 
@@ -3076,14 +3083,6 @@
         'app.clients',
         'app.processing'
     ]);
-
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.geospatial', ['ngSanitize']);
 
 })();
 /**
@@ -3157,11 +3156,12 @@ function runBlock() {
         .module('app.welcomePage', []);
 
 })();
+
 (function() {
     'use strict';
 
     angular
-        .module('app.authentication', []);
+        .module('app.geospatial', ['ngSanitize']);
 
 })();
 
@@ -3296,6 +3296,142 @@ function runBlock() {
 
 
 })(window.angular);
+(function(angular) {
+    'use strict';
+    angular.module('app.authentication')
+
+    .service('AuthService', AuthService);
+
+     AuthService.$inject = ['$http', 'StorageService', 'CommonService', 'APP_CONSTANTS', '$rootScope', '$state','$location'];
+
+    function AuthService($http, StorageService, CommonService, APP_CONSTANTS, $rootScope, $state,$location) {
+        this.authorized = false;
+
+        return {
+            login: _login,
+            Logout: logout,
+            GetCredentials: getCredentials,
+            SetCredentials: setCredentials,
+            GetToken: getToken,
+            GetCurrentUser:_getCurrentUser,
+            GetAccessBranches:_getAccessBranches,
+            IsSuperuser:isSuper,
+            SaveAttemptUrl: _saveAttemptUrl,
+            RedirectToAttemptedUrl:_redirectToAttemptedUrl,
+            IsAuthenticated: _isAuthenticated
+        };
+
+
+        function _saveAttemptUrl() {
+
+            if($location.path().toLowerCase() !== '/page/login') {
+                StorageService.Set(APP_CONSTANTS.REDIRECT_TO_URL,$location.path());
+            }
+            else {
+                StorageService.Set(APP_CONSTANTS.REDIRECT_TO_URL,'/');
+            }
+        }
+        function _redirectToAttemptedUrl() {
+            var url = StorageService.Get(APP_CONSTANTS.REDIRECT_TO_URL);
+            $location.path(url);
+        }
+
+        function getCredentials() {
+            return !angular.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.SESSION)) ? StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) : null;
+        }
+        function _isAuthenticated() {
+            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) !== null;
+        }
+        function setCredentials(session) {
+            StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
+        }
+
+        function getToken() {
+            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION).token;
+        }
+
+
+        function _getCurrentUser(){
+          var credential = getCredentials();
+          return credential !== null? credential.user: null;
+        }
+        function _getAccessBranches() {
+            var credential = getCredentials();
+            return credential !== null ?  !isSuper()? credential.user.account.access_branches : [] :null;
+        }
+
+        function isSuper() {
+            var credential = getCredentials();
+            return credential !== null && credential.user.username === 'super@bidir.com';
+        }
+
+        function _login(user) {
+          return $http.post(CommonService.buildUrl(API.Service.Auth,API.Methods.Auth.Login), user);
+        }
+
+        function logout() {
+            StorageService.Reset();
+            $rootScope.currentUser = null;
+            $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
+            $state.go('page.login');
+        }
+
+    }
+
+})(window.angular);
+
+/**=========================================================
+ * Module: access-login.js
+ * Demo for login api
+ =========================================================*/
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.authentication')
+        .controller('LoginFormController', LoginFormController);
+
+    LoginFormController.$inject = ['AuthService', '$state',  '$rootScope',  'APP_CONSTANTS',  'blockUI', 'AlertService'];
+
+    function LoginFormController( AuthService,  $state, $rootScope,  APP_CONSTANTS, blockUI,AlertService
+    ) {
+        var vm = this;
+        vm.userValidator = {
+            usernameMin: 4,
+            usernameMax: 20,
+            passwordMin: 6
+        };
+
+        vm.login = function() {
+            var myBlockUI = blockUI.instances.get('loginFormBlockUI');
+            myBlockUI.start("Logging in");
+
+            AuthService.login(vm.user).then(
+                function(response) {
+                    console.log("login user",response);
+                    var result = response.data;
+                    vm.user = result.user;
+                    $rootScope.currentUser = vm.user;
+                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
+                    AuthService.SetCredentials(result);
+                    myBlockUI.stop();
+                    AuthService.RedirectToAttemptedUrl();
+                },
+                function(error) {
+                    myBlockUI.stop();
+                    console.log("error", error);
+                    AlertService.showError("Error on Login", "The username or password is incorrect! Please try again.");
+                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
+                }
+            );
+
+
+        };
+    }
+})(window.angular);
+
+
 (function(angular) {
   "use strict";
 
@@ -4562,88 +4698,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
 
 })(window.angular);
-(function(angular) {
-    "use strict";
-
-
-    angular
-        .module('app.geospatial')
-        .controller('GeospatialController', GeoSpatialController);
-
-    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI','SharedService','$sce'];
-
-    function GeoSpatialController( GeoSpatialService,blockUI,SharedService,$sce )
-    {
-        var vm = this;
-        vm.generateSeasonalReport = _generateSeasonalReport;
-        vm.visibility = {
-           showSmiley: false
-        };
-        init();
-
-        function _generateSeasonalReport() {
-            vm.filter.fromDateString = GeoSpatialService.formatDateForRequest(vm.filter.fromDate);
-            vm.filter.toDateString = GeoSpatialService.formatDateForRequest(vm.filter.toDate);
-
-            vm.visibility.showSmiley = true;
-
-            console.log("date picked", vm.filter);
-        }
-
-        function init(){
-            vm.dtOption = {};
-            vm.dtOption.dateOptions = {
-                dateDisabled: false, formatYear: "yy",
-                maxDate: new Date(2020, 5, 22),  startingDay: 1 };
-            vm.dtOption.format = "shortDate";
-            vm.dtOption.altInputFormats = ["M!/d!/yyyy"];
-            vm.dtOption.popup = { opened: false };
-            vm.dtOption.fromPopup = { opened: false };
-            vm.dtOption.open = function()  { vm.dtOption.popup.opened = true; };
-            vm.dtOption.fromOpen = function()  { vm.dtOption.fromPopup.opened = true; };
-            vm.dtOption.clear = function() { vm.dtOption.dt = null; };
-
-            SharedService.GetBranches().then(
-                function(response) {
-                    vm.branches = response.data.docs;
-                },
-                function(error) {
-                    console.log("error fetching branches", error);
-                }
-            );
-        }
-    }
-
-})(window.angular);
-(function(angular) {
-    'use strict';
-    angular.module('app.geospatial')
-
-        .service('GeoSpatialService', GeoSpatialService);
-
-    GeoSpatialService.$inject = ['$http','CommonService','AuthService'];
-
-    function GeoSpatialService($http, CommonService, AuthService) {
-        return {
-            formatDateForRequest:_formatDateForRequest
-        };
-
-        function _formatDateForRequest(date) {
-            var d = new Date(date),
-                month = '' + (d.getMonth() + 1),
-                day = '' + d.getDate(),
-                year = d.getFullYear();
-
-            if (month.length < 2) month = '0' + month;
-            if (day.length < 2) day = '0' + day;
-
-            return [year, month, day].join('');
-        }
-
-    }
-
-
-})(window.angular);
 /**
  * Created by Yoni on 12/10/2017.
  */
@@ -5686,281 +5740,105 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
 })(window.angular);
 (function(angular) {
-    'use strict';
-    angular.module('app.authentication')
-
-    .service('AuthService', AuthService);
-
-     AuthService.$inject = ['$http', 'StorageService', 'CommonService', 'APP_CONSTANTS', '$rootScope', '$state','$location'];
-
-    function AuthService($http, StorageService, CommonService, APP_CONSTANTS, $rootScope, $state,$location) {
-        this.authorized = false;
-
-        return {
-            login: _login,
-            Logout: logout,
-            GetCredentials: getCredentials,
-            SetCredentials: setCredentials,
-            GetToken: getToken,
-            GetCurrentUser:_getCurrentUser,
-            GetAccessBranches:_getAccessBranches,
-            IsSuperuser:isSuper,
-            SaveAttemptUrl: _saveAttemptUrl,
-            RedirectToAttemptedUrl:_redirectToAttemptedUrl,
-            IsAuthenticated: _isAuthenticated
-        };
-
-
-        function _saveAttemptUrl() {
-
-            if($location.path().toLowerCase() !== '/page/login') {
-                StorageService.Set(APP_CONSTANTS.REDIRECT_TO_URL,$location.path());
-            }
-            else {
-                StorageService.Set(APP_CONSTANTS.REDIRECT_TO_URL,'/');
-            }
-        }
-        function _redirectToAttemptedUrl() {
-            var url = StorageService.Get(APP_CONSTANTS.REDIRECT_TO_URL);
-            $location.path(url);
-        }
-
-        function getCredentials() {
-            return !angular.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.SESSION)) ? StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) : null;
-        }
-        function _isAuthenticated() {
-            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) !== null;
-        }
-        function setCredentials(session) {
-            StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
-        }
-
-        function getToken() {
-            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION).token;
-        }
-
-
-        function _getCurrentUser(){
-          var credential = getCredentials();
-          return credential !== null? credential.user: null;
-        }
-        function _getAccessBranches() {
-            var credential = getCredentials();
-            return credential !== null ?  !isSuper()? credential.user.account.access_branches : [] :null;
-        }
-
-        function isSuper() {
-            var credential = getCredentials();
-            return credential !== null && credential.user.username === 'super@bidir.com';
-        }
-
-        function _login(user) {
-          return $http.post(CommonService.buildUrl(API.Service.Auth,API.Methods.Auth.Login), user);
-        }
-
-        function logout() {
-            StorageService.Reset();
-            $rootScope.currentUser = null;
-            $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
-            $state.go('page.login');
-        }
-
-    }
-
-})(window.angular);
-
-/**=========================================================
- * Module: access-login.js
- * Demo for login api
- =========================================================*/
-
-(function(angular) {
     "use strict";
+
 
     angular
-        .module('app.authentication')
-        .controller('LoginFormController', LoginFormController);
+        .module('app.geospatial')
+        .controller('GeospatialController', GeoSpatialController);
 
-    LoginFormController.$inject = ['AuthService', '$state',  '$rootScope',  'APP_CONSTANTS',  'blockUI', 'AlertService'];
+    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI','SharedService','CommonService'];
 
-    function LoginFormController( AuthService,  $state, $rootScope,  APP_CONSTANTS, blockUI,AlertService
-    ) {
+    function GeoSpatialController( GeoSpatialService,blockUI,SharedService,CommonService )
+    {
         var vm = this;
-        vm.userValidator = {
-            usernameMin: 4,
-            usernameMax: 20,
-            passwordMin: 6
+        vm.filter = {};
+        vm.generateSeasonalReport = _generateSeasonalReport;
+        vm.visibility = {
+           showSmiley: false,
+           showInfoText: true
         };
 
-        vm.login = function() {
-            var myBlockUI = blockUI.instances.get('loginFormBlockUI');
-            myBlockUI.start("Logging in");
+        vm.seasonalFilterForm = {
+            IsfromDateValid: true,
+            IstoDateValid: true,
+            IsbranchValid: true
+        };
 
-            AuthService.login(vm.user).then(
+        init();
+
+        function _generateSeasonalReport() {
+
+            vm.IsValidData = CommonService.Validation.ValidateForm(vm.seasonalFilterForm, vm.filter);
+
+           if(vm.IsValidData)
+           {
+               vm.filter.fromDateString = GeoSpatialService.formatDateForRequest(vm.filter.fromDate);
+               vm.filter.toDateString = GeoSpatialService.formatDateForRequest(vm.filter.toDate);
+
+               vm.visibility.showSmiley = true;
+               vm.visibility.showInfoText = false;
+               vm.visibility.showWarning = false;
+           }else
+               {
+               vm.visibility.showWarning = true;
+               vm.visibility.showInfoText = false;
+               }
+
+            console.log("date picked", vm.filter);
+        }
+
+        function init(){
+            vm.dtOption = {};
+            vm.dtOption.dateOptions = {
+                dateDisabled: false, formatYear: "yy",
+                maxDate: new Date(2020, 5, 22),  startingDay: 1 };
+            vm.dtOption.format = "shortDate";
+            vm.dtOption.altInputFormats = ["M!/d!/yyyy"];
+            vm.dtOption.popup = { opened: false };
+            vm.dtOption.fromPopup = { opened: false };
+            vm.dtOption.open = function()  { vm.dtOption.popup.opened = true; };
+            vm.dtOption.fromOpen = function()  { vm.dtOption.fromPopup.opened = true; };
+            vm.dtOption.clear = function() { vm.dtOption.dt = null; };
+
+            SharedService.GetBranches().then(
                 function(response) {
-                    console.log("login user",response);
-                    var result = response.data;
-                    vm.user = result.user;
-                    $rootScope.currentUser = vm.user;
-                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
-                    AuthService.SetCredentials(result);
-                    myBlockUI.stop();
-                    AuthService.RedirectToAttemptedUrl();
+                    vm.branches = response.data.docs;
                 },
                 function(error) {
-                    myBlockUI.stop();
-                    console.log("error", error);
-                    AlertService.showError("Error on Login", "The username or password is incorrect! Please try again.");
-                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
+                    console.log("error fetching branches", error);
                 }
             );
-
-
-        };
+        }
     }
+
 })(window.angular);
-
-
-/**
- * Created by Yoni on 3/5/2018.
- */
-
 (function(angular) {
-    "use strict";
+    'use strict';
+    angular.module('app.geospatial')
 
-    angular.module("app.acat").controller("CropsController", CropsController);
+        .service('GeoSpatialService', GeoSpatialService);
 
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
+    GeoSpatialService.$inject = ['$http','CommonService','AuthService'];
 
-    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearch;
+    function GeoSpatialService($http, CommonService, AuthService) {
+        return {
+            formatDateForRequest:_formatDateForRequest
+        };
 
-        initialize();
+        function _formatDateForRequest(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
 
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
 
-            callApi();
-        }
-
-
-        function _paginate (page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-
-       function callApi(){
-        vm.promise =   ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
+            return [year, month, day].join('');
         }
 
     }
-
 
 
 })(window.angular);
@@ -6812,6 +6690,149 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
         }
 
 
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+        }
+
+
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+       function callApi(){
+        vm.promise =   ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
 
     }
 
@@ -8385,6 +8406,95 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
 
 })(window.angular);
+(function(angular) {
+  "use strict";
+
+    angular.module("app.mfi").controller("BranchController", BranchController);
+
+    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
+
+  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
+    var vm = this;
+
+    vm.addBranch = addBranch;
+    vm.editBranch = _editBranch;
+    vm.changeStatus = _changeStatus;
+
+     getBranches();
+
+    function getBranches() {
+      MainService.GetBranches().then(
+        function(response) {
+          vm.branches = response.data.docs;
+        },
+        function(error) {
+          console.log("error", error);
+        }
+      );
+
+    }
+
+    function addBranch(ev) {
+        $mdDialog.show({
+            locals: {items: null},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+
+    }
+
+    function _editBranch(selectedBranch,ev) {
+        $mdDialog.show({
+            locals: {items: selectedBranch},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+    }
+
+    function _changeStatus(ChangeStatus) {
+      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
+      MainService.UpdateBranch(ChangeStatus).then(
+        function(response) {
+
+          AlertService.showSuccess(
+              "Updated branch status",
+              "Updated Status successfully."
+          );
+          // console.log("updated successfully", response);
+
+        },
+        function(error) {
+          // console.log("could not be updated", error);
+          AlertService.showError(
+            "Status not changed. Please try again.",
+            "ERROR"
+          );
+        }
+      );
+
+    }
+
+  }
+})(window.angular);
+
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -8713,95 +8823,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
 
 })(window.angular);
-(function(angular) {
-  "use strict";
-
-    angular.module("app.mfi").controller("BranchController", BranchController);
-
-    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
-
-  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
-    var vm = this;
-
-    vm.addBranch = addBranch;
-    vm.editBranch = _editBranch;
-    vm.changeStatus = _changeStatus;
-
-     getBranches();
-
-    function getBranches() {
-      MainService.GetBranches().then(
-        function(response) {
-          vm.branches = response.data.docs;
-        },
-        function(error) {
-          console.log("error", error);
-        }
-      );
-
-    }
-
-    function addBranch(ev) {
-        $mdDialog.show({
-            locals: {items: null},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-
-    }
-
-    function _editBranch(selectedBranch,ev) {
-        $mdDialog.show({
-            locals: {items: selectedBranch},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-    }
-
-    function _changeStatus(ChangeStatus) {
-      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
-      MainService.UpdateBranch(ChangeStatus).then(
-        function(response) {
-
-          AlertService.showSuccess(
-              "Updated branch status",
-              "Updated Status successfully."
-          );
-          // console.log("updated successfully", response);
-
-        },
-        function(error) {
-          // console.log("could not be updated", error);
-          AlertService.showError(
-            "Status not changed. Please try again.",
-            "ERROR"
-          );
-        }
-      );
-
-    }
-
-  }
-})(window.angular);
-
 (function(angular) {
   "use strict";
 

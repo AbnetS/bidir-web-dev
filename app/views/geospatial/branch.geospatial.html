@@ -1,73 +1,86 @@
 <div class="row">
    <div class="col-md-6">
-      <div class="panel b">
-         <div class="panel-heading bb">
-            <h4 class="panel-title">Seasonal Monitoring Filter</h4>
-         </div>
-         <div class="panel-body">
-            <div class="col-md-2 text-bold text-dark">Branch</div>
-            <div class="col-md-10">
-               <ui-select ng-model="vm.filter.branch" theme="select2" on-select="vm.onSelectedBranch(branch)" title="select branch" style="width: 100%;">
-                  <ui-select-match allow-clear="true" placeholder="Select access branch to filter...">
-                     {{$select.selected.name}} - {{$select.selected.location}}
-                  </ui-select-match>
-                  <ui-select-choices repeat="branch in vm.branches | filter: $select.search">
-                     <div ng-bind-html="branch.name | highlight: $select.search"></div>
-                     <small>
-                        <strong>location:</strong>{{branch.location}}
-                     </small>
-                  </ui-select-choices>
-               </ui-select>
+      <form name="filteringForm">
+         <div class="panel b">
+            <div class="panel-heading bb">
+               <h4 class="panel-title">Seasonal Monitoring Filter</h4>
             </div>
-         </div>
-         <div class="panel-body">
-            <div class="col-md-2 pull-left text-bold text-dark">Time Range</div>
-            <div class="col-lg-5">
-               <div class="form-group">
-                  <label>From Date</label>
-                  <p class="input-group">
-                     <input class="form-control" type="text" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.filter.fromDate" is-open="vm.dtOption.fromPopup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close" alt-input-formats="vm.dtOption.altInputFormats"
-                     />
-                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-click="vm.dtOption.fromOpen()">
-                           <i class="fa fa-calendar"></i>
-                        </button>
-                     </span>
-                  </p>
+            <div class="panel-body">
+               <div class="form-group" ng-class="{false:'has-error'}[vm.seasonalFilterForm.IsbranchValid]">
+                  <div class="col-md-2 text-bold text-dark">Branch
+                     <span ng-show="vm.visibility.showWarning" class="control-label required" aria-required="true">*</span>
+                  </div>
+                  <div class="col-md-10">
+                     <ui-select name="branch-select" ng-model="vm.filter.branch" theme="select2" on-select="vm.onSelectedBranch(branch)" title="select branch" style="width: 100%;" ng-required="true">
+                        <ui-select-match allow-clear="true" placeholder="Select access branch to filter...">
+                           {{$select.selected.name}} - {{$select.selected.location}}
+                        </ui-select-match>
+                        <ui-select-choices repeat="branch in vm.branches | filter: $select.search">
+                           <div ng-bind-html="branch.name | highlight: $select.search"></div>
+                           <small>
+                              <strong>location:</strong>{{branch.location}}
+                           </small>
+                        </ui-select-choices>
+                     </ui-select>
+                     <small ng-show="!vm.seasonalFilterForm.IsbranchValid" class="help-block">Branch is required.</small>
+                  </div>
                </div>
+
             </div>
-            <div class="col-lg-5">
-               <div class="form-group">
-                  <label>To Date</label>
-                  <p class="input-group">
-                     <input class="form-control" type="text" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.filter.toDate" is-open="vm.dtOption.popup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close" alt-input-formats="vm.dtOption.altInputFormats"
-                     />
-                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-click="vm.dtOption.open()">
-                           <i class="fa fa-calendar"></i>
-                        </button>
-                     </span>
-                  </p>
+            <div class="panel-body">
+               <div class="col-md-2 pull-left text-bold text-dark">Time Range</div>
+               <div class="col-lg-5">
+                  <div class="form-group" ng-class="{false:'has-error'}[vm.seasonalFilterForm.IsfromDateValid]">
+                     <label>From Date</label>
+                     <span ng-show="vm.visibility.showWarning" class="control-label required" aria-required="true">*</span>
+                     <p class="input-group">
+                        <input class="form-control" type="text" ng-required="true" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.filter.fromDate" is-open="vm.dtOption.fromPopup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close" alt-input-formats="vm.dtOption.altInputFormats"
+                        />
+                        <span class="input-group-btn">
+                           <button type="button" class="btn btn-default" ng-click="vm.dtOption.fromOpen()">
+                              <i class="fa fa-calendar"></i>
+                           </button>
+                        </span>
+                     </p>
+                     <small ng-show="!vm.seasonalFilterForm.IsfromDateValid" class="help-block">From Date is required.</small>
+                  </div>
                </div>
+               <div class="col-lg-5">
+                  <div class="form-group" ng-class="{false:'has-error'}[vm.seasonalFilterForm.IstoDateValid]">
+                     <label>To Date</label>
+                     <span ng-show="vm.visibility.showWarning" class="control-label required" aria-required="true">*</span>
+                     <p class="input-group">
+                        <input class="form-control" type="text" ng-required="true" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.filter.toDate" is-open="vm.dtOption.popup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close" alt-input-formats="vm.dtOption.altInputFormats"
+                        />
+                        <span class="input-group-btn">
+                           <button type="button" class="btn btn-default" ng-click="vm.dtOption.open()">
+                              <i class="fa fa-calendar"></i>
+                           </button>
+                        </span>
+                     </p>
+                     <small ng-show="!vm.seasonalFilterForm.IstoDateValid" class="help-block">To Date is required.</small>
+                  </div>
+               </div>
+
             </div>
 
+            <div class="panel-body">
+               <p class="col-md-4 pull-right">
+                  <button class="btn btn-primary btn-block" ng-click="vm.generateSeasonalReport()" type="button">Ok</button>
+               </p>
+               <small ng-show="vm.visibility.showInfoText" class="text-muted">
+                  * Please pick branch and dates to see branch level reports</small>
+            </div>
          </div>
-
-         <div class="panel-body">
-            <p class="col-md-4 pull-right">
-               <button class="btn btn-primary btn-block" ng-click="vm.generateSeasonalReport()" type="button">OK</button>
-            </p>
-         </div>
-      </div>
+      </form>
    </div>
 </div>
 
 <div ng-show="vm.visibility.showSmiley" class="row">
    <div class="col-lg-4 col-md-6">
-      <!-- Team Panel-->
       <div class="panel panel-default">
          <div class="panel-heading">
-            <div class="panel-title">Branch Name #1</div>
+            <div class="panel-title">Branch Name #2</div>
          </div>
          <div class="panel-body bb">
             <div class="row text-center">
@@ -91,10 +104,8 @@
             <em>Description about this report</em>
          </div>
       </div>
-      <!-- end Team Panel-->
    </div>
    <div class="col-lg-4 col-md-6">
-      <!-- Team Panel-->
       <div class="panel panel-default">
          <div class="panel-heading">
             <div class="panel-title">Branch Name #2</div>
@@ -120,10 +131,8 @@
             <em>Description about this report</em>
          </div>
       </div>
-      <!-- end Team Panel-->
    </div>
    <div class="col-lg-4 col-md-6">
-      <!-- Team Panel-->
       <div class="panel panel-default">
          <div class="panel-heading">
             <div class="panel-title">Branch Name #3</div>
@@ -150,7 +159,6 @@
             <em>Description about this report</em>
          </div>
       </div>
-      <!-- end Team Panel-->
    </div>
 </div>
 
