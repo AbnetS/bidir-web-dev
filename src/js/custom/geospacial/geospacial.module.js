@@ -3,6 +3,6 @@
     'use strict';
 
     angular
-        .module('app.geospatial', []);
+        .module('app.geospatial', ['ngSanitize']);
 
 })();

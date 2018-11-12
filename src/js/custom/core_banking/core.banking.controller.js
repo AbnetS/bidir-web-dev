@@ -12,6 +12,17 @@
         var vm = this;
         vm.titles = CoreBankingService.GetTitles;
         $rootScope.app.layout.isCollapsed = true;
+        vm.checkedClients = [];
+
+        vm.checkAll = _checkAll;
+        vm.uncheckAll = _uncheckAll;
+
+        function _uncheckAll() {
+            vm.checkedClients = [];
+        }
+        function _checkAll() {
+            vm.checkedClients = angular.copy(vm.clients);
+        }
 
         vm.paginate = _paginate;
         vm.clearSearch = _clearSearch;
@@ -19,14 +30,36 @@
         vm.saveAllClients = _saveSingleClient;
         vm.cbs_clientDetail = _clientDetail;
 
+        vm.refreshResults = refreshResults;
+        vm.statusStyle = _statusStyle;
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: false,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: false,
+                limitSelect: false,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:500
+            };
+            callApi();
+        }
+
         function _clientDetail(client){
             CoreBankingService.setClientInfo(client);
             $state.go('app.cbs_detail',{id:client._id});
         }
-
-        vm.refreshResults = refreshResults;
-        vm.clear = clear;
-        vm.statusStyle = _statusStyle;
 
         function _statusStyle(status){
             var style = '';
@@ -54,39 +87,15 @@
                 client: client._id };
 
             CoreBankingService.PostClientToCBS(clientFormatted).then(
-                 function (response) {
-                     AlertService.showSuccess('Client Info sent to CBS!',response);
-                     console.log("response",response);
-                 }
+                function (response) {
+                    AlertService.showSuccess('Client Info sent to CBS!',response);
+                    console.log("response",response);
+                }
                 ,function (error) {
                     console.log('error',error);
                     var message = error.data.error.message;
                     AlertService.showError( 'Oops... Something went wrong', message);
                 });
-        }
-
-        initialize();
-
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: false,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: false,
-                limitSelect: false,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:500
-            };
-
-            callApi();
         }
 
         function _clearSearch(){
@@ -122,7 +131,6 @@
                 });
         }
 
-
         function refreshResults($select){
             var search = $select.search,
                 list = angular.copy($select.items),
@@ -142,15 +150,6 @@
                 $select.items = [userInputItem].concat(list);
                 $select.selected = userInputItem;
             }
-        }
-        function clear($event, $select){
-            $event.stopPropagation();
-            //to allow empty field, in order to force a selection remove the following line
-            $select.selected = undefined;
-            //reset search query
-            $select.search = undefined;
-            //focus and open dropdown
-            $select.activate();
         }
 
         $scope.$watch(angular.bind(vm, function () {

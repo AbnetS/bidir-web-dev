@@ -6,9 +6,9 @@
     angular.module('custom')
 
         .service('SharedService', SharedService);
-    SharedService.$inject = ['$http', 'CommonService'];
+    SharedService.$inject = ['$http', 'CommonService','$sce'];
 
-    function SharedService($http, CommonService) {
+    function SharedService($http, CommonService,$sce) {
         return {
             GetBranches: _getBranches
         };

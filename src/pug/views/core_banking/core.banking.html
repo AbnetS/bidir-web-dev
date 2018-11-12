@@ -41,15 +41,17 @@
                 <md-table-container>
                     <table md-table md-progress="vm.clientPromise" class="table-hover">
                         <thead md-head class="bg-grey md-head">
+
                         <tr md-row>
-                            <th md-column style="width:3%;"><span> No</span></th>
-                            <th md-column><span>Full Name</span></th>
-                            <th md-column><span>Gender</span></th>
-                            <!--<th md-column><span>Date Of Birth</span></th>-->
-                            <th md-column><span>Status</span></th>
-                            <th md-column style="width: 30%">Branch ID</th>
-                            <th md-colors> Title </th>
-                            <th md-column class="pull-right">
+                            <th md-column></th>
+                            <th md-column></th>
+                            <th md-column></th>
+                            <th md-column></th>
+                            <th md-column></th>
+                            <th md-column>
+                                <input class="form-control" type="text" ng-model="vm.clientsBranchId" placeholder="Set Branch for all" />
+                            </th>
+                            <th md-column >
                                      <span class="input-group-btn">
                                             <button class="btn btn-success"
                                                     ng-click="vm.saveAllClients()">
@@ -57,15 +59,28 @@
                                      </span>
                             </th>
                         </tr>
+
+                        <tr md-row>
+                            <th md-column></th>
+                            <th md-column style="width:3%;"><span> No</span></th>
+                            <th md-column><span>Full Name</span></th>
+                            <th md-column><span>Gender</span></th>
+                            <th md-column><span>Status</span></th>
+                            <th md-column style="width: 30%">Branch ID</th>
+                            <th md-colors> Title </th>
+                        </tr>
+
                         </thead>
 
                         <tbody md-body>
                             <tr md-row ng-repeat="client in vm.clients" ng-class="client.in_cbs?'':'active'">
+                                <td md-cell>
+                                    <input type="checkbox" checklist-model="client.isChecked" checklist-value="role">
+                                </td>
                                 <td md-cell>{{vm.query.per_page * (vm.query.page - 1) + $index + 1}}</td>
                                 <td md-cell> {{ client.first_name }} {{ client.last_name }} {{client.grandfather_name}}</td>
                                 <td md-cell>{{client.gender}}</td>
-                                <!--<td md-cell>{{client.date_of_birth | date }}</td>-->
-                                <td md-cell >
+                                <td md-cell>
                                     <label ng-class="vm.statusStyle(client.civil_status)">{{client.civil_status}}</label>
                                 </td>
                                 <td md-cell>

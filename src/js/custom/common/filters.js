@@ -9,6 +9,11 @@
                 return typeof input === "string" ? input.replace(/_/g, ' ') : input;
             };
         })
+        .filter('trusted', ['$sce', function ($sce) {
+            return function(url) {
+                return $sce.trustAsResourceUrl(url);
+            };
+        }])
         .filter('titleCase', function () {
         return function (input) {
             input = input || '';

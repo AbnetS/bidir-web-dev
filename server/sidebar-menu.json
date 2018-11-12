@@ -68,8 +68,8 @@
     "sref": "#",
     "icon": "fa fa-globe",
     "submenu": [
-      {"text": "Rainfall Report",     "sref": "app.rainfall" },
-      {"text": "Vegetation Index Report",     "sref": "app.vegetation"}
+      {"text": "Branch Report",     "sref": "app.branch-report" },
+      {"text": "Plot Report",     "sref": "app.plot-report"}
     ]
   },
   {
