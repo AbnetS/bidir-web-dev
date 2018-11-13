@@ -21,8 +21,13 @@
         vm.seasonalFilterForm = {
             IsfromDateValid: true,
             IstoDateValid: true,
-            IsbranchValid: true
+            IsnameValid: true
         };
+
+        vm.resetConfig = _resetConfig;
+        function _resetConfig(){
+          vm.filter = undefined;
+        }
 
         init();
 
