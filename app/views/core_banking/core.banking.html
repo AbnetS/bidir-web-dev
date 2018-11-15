@@ -42,24 +42,12 @@
                   <thead md-head class="bg-grey md-head">
 
                      <tr md-row>
-                        <th md-column></th>
-                        <th md-column></th>
-                        <th md-column></th>
-                        <th md-column></th>
-                        <th md-column></th>
                         <th md-column>
-                           <input class="form-control" type="text" ng-model="vm.clientsBranchId" placeholder="Set Branch for all" />
+                           <label class="mda-checkbox">
+                              <input type="checkbox" ng-model="vm.IsAllChecked" ng-change="vm.CheckUncheckAll()" />
+                              <em class="bg-green-500"></em>{{vm.IsAllChecked ? 'Uncheck All':'Check All'}}
+                           </label>
                         </th>
-                        <th md-column>
-                           <span class="input-group-btn">
-                              <button class="btn btn-success" ng-click="vm.saveAllClients()">
-                                 <i class="fa fa-paper-plane">  </i> Send All</button>
-                           </span>
-                        </th>
-                     </tr>
-
-                     <tr md-row>
-                        <th md-column></th>
                         <th md-column style="width:3%;">
                            <span>No</span>
                         </th>
@@ -76,14 +64,32 @@
                         <th md-colors>Title</th>
                      </tr>
 
+                     <tr ng-show="vm.IsAllChecked" md-row>
+                        <th colspan="4" md-column>
+                           <input class="form-control" type="text" ng-model="vm.allBranchId" placeholder="Set Branch for all" />
+                        </th>
+                        <th md-column>
+                           <span class="input-group-btn">
+                              <button class="btn btn-success" ng-click="vm.saveAllClients(vm.clients)">
+                                 <i class="fa fa-paper-plane">  </i> Send</button>
+                           </span>
+                        </th>
+                        <th md-column></th>
+                     </tr>
+
                   </thead>
 
                   <tbody md-body>
                      <tr md-row ng-repeat="client in vm.clients" ng-class="client.in_cbs?'':'active'">
                         <td md-cell>
-                           <input type="checkbox" checklist-model="client.isChecked" checklist-value="role">
+                           <label class="mda-checkbox" for="chkClient_{{client._id}}">
+                              <input id="chkClient_{{client._id}}" type="checkbox" ng-model="client.Selected" ng-change="CheckUncheckHeader()" />
+                              <em class="bg-green-500"></em>
+                           </label>
                         </td>
-                        <td md-cell>{{vm.query.per_page * (vm.query.page - 1) + $index + 1}}</td>
+                        <td md-cell>
+                           {{vm.query.per_page * (vm.query.page - 1) + $index + 1}}
+                        </td>
                         <td md-cell>{{ client.first_name }} {{ client.last_name }} {{client.grandfather_name}}</td>
                         <td md-cell>{{client.gender}}</td>
                         <td md-cell>

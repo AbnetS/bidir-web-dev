@@ -10,27 +10,23 @@
 
     function CoreBankingController(CoreBankingService,$scope,$rootScope,AlertService,$state) {
         var vm = this;
+        //GET TITLES LIST
         vm.titles = CoreBankingService.GetTitles;
         $rootScope.app.layout.isCollapsed = true;
-        vm.checkedClients = [];
-
-        vm.checkAll = _checkAll;
-        vm.uncheckAll = _uncheckAll;
-
-        function _uncheckAll() {
-            vm.checkedClients = [];
-        }
-        function _checkAll() {
-            vm.checkedClients = angular.copy(vm.clients);
-        }
-
+        //CHECK ALL/UNCHECK ALL OPTIONS
+        vm.IsAllChecked = false;
+        vm.CheckUncheckAll = _checkUncheckAll;
+        vm.CheckUncheckHeader = _checkUncheckHeader;
+        //Paging and filter related
         vm.paginate = _paginate;
         vm.clearSearch = _clearSearch;
+        //Client Related
         vm.saveSingleClient = _saveSingleClient;
-        vm.saveAllClients = _saveSingleClient;
+        vm.saveAllClients = _saveAllClients;
         vm.cbs_clientDetail = _clientDetail;
-
+        //UI SELECT Option for adding new titles
         vm.refreshResults = refreshResults;
+
         vm.statusStyle = _statusStyle;
 
         initialize();
@@ -54,6 +50,22 @@
                 per_page:500
             };
             callApi();
+        }
+
+        function _checkUncheckHeader() {
+            vm.IsAllChecked = true;
+            for (var i = 0; i < vm.clients.length; i++) {
+                if (!vm.clients[i].Selected) {
+                    vm.IsAllChecked = false;
+                    break;
+                }
+            }
+        }
+
+        function _checkUncheckAll() {
+            for (var i = 0; i < vm.clients.length; i++) {
+                vm.clients[i].Selected = vm.IsAllChecked;
+            }
         }
 
         function _clientDetail(client){
@@ -98,6 +110,29 @@
                 });
         }
 
+        function _saveAllClients(clients) {
+            var totalClient = 0;
+            _.each(clients, function (client) {
+                if (client.Selected) {
+                    var tempClient = {
+                        branchId: vm.allBranchId,
+                        title: client.title ? client.title : " - ",
+                        client: client._id
+                    };
+
+                    CoreBankingService.PostClientToCBS(tempClient).then(
+                        function (response) {
+                            totalClient++;
+                            console.log("response", response);
+                        }
+                        , function (error) {
+                            console.log('error', error);
+                        })
+                }
+            });
+            AlertService.showInfo('Clients data sent to CBS!', "Total number of clients information sent to CBS is " + vm.clients.length);
+        }
+
         function _clearSearch(){
             vm.query.search = "";
             vm.filter.show = false;
@@ -115,6 +150,7 @@
                 vm.clients = response.data.docs;
                 vm.clientsCopy = angular.copy(vm.clients);
                 vm.query.total_docs_count =  response.data.total_docs_count;
+                vm.CheckUncheckHeader();
             },function (error) {
                 console.log("error callApi vm.clients",error);
             });
