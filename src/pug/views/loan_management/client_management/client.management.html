@@ -5,8 +5,8 @@
 <!-- ngRepeat + ngResource-->
 <div class="panel panel-default">
     <div class="panel-heading">
-        <div class="col-xs-10 col-lg-5">
-            <label class="control-label small">Filter By Branches</label>
+        <div class="col-xs-12 col-lg-5">
+            <label class="control-label">Filter By Branches</label>
             <ui-select ng-model="vm.currentUser.selected_access_branch"
                        theme="select2"  on-select="vm.onSelectedBranch()"
                        title="select branch" style="width: 100%;">
@@ -21,7 +21,13 @@
                 </ui-select-choices>
             </ui-select>
         </div>
-        <div class="col-xs-12 col-lg-7"></div>
+        <div class="col-xs-12 col-lg-4"></div>
+        <div class="col-xs-12 col-lg-3">
+            <label class="control-label">Loan Cycle</label>
+            <select  name="LoanCycleSelect" id="LoanCycleSelectId" ng-change="vm.onSelectedLoanCycle()" ng-model="vm.currentUser.loanCycle">
+                <option  ng-repeat="lc in vm.loanCycles" value="{{lc.id}}">{{lc.name}}</option>
+            </select>
+        </div>
         <br/>
     </div>
     <div class="panel-body">

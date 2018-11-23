@@ -12,22 +12,23 @@
         var vm = this;
         vm.clientId =  $stateParams.id;
         vm.visibility = {showMoreClientDetail: false};
-        vm.labelBasedOnStatusStyle = LoanManagementService.StyleLabelByStatus;
-        vm.visibility = {
-            showCropPanel:false,
-            showSummaryPanel:false
-        };
-        vm.query = {
-            search:'',
-            page:1,
-            per_page:10
-        };
+        vm.labelBasedOnStatus = LoanManagementService.StyleLabelByStatus;
+        //LOAN CYCLE RELATED
+        vm.loanCycles = LoanManagementService.loanCycles;
+        vm.onSelectedLoanCycle = _onSelectedLoanCycle;
 
         vm.onTabSelected = _onTabSelected;
         vm.printLaonProcess = _print;
 
         vm.ACATGroupOnClick = _aCATGroupOnClick;
         vm.onLoanProposalClick = _onLoanProposalClick;
+
+        function _onSelectedLoanCycle(){
+
+         console.log("level selected", vm.currentUser)
+
+        }
+
 
         initialize();
 
@@ -87,7 +88,15 @@
         }
 
         function initialize() {
-
+            vm.visibility = {
+                showCropPanel:false,
+                showSummaryPanel:false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
 
             var myBlockUI = blockUI.instances.get('ClientBlockUI');
             myBlockUI.start();

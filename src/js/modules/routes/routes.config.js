@@ -180,6 +180,7 @@
                 url: "/clients/:id",
                 title: "clients detail",
                 templateUrl:helper.basepath('loan_management/client_management/client.detail.html'),
+                resolve:helper.resolveFor('ui.select'),
                 controller: "ClientDetailController",
                 controllerAs: 'vm',
                 data: {

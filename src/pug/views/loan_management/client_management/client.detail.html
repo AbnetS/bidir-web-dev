@@ -10,6 +10,12 @@
         <small>
             <a ui-sref="app.clients"><i class="fa fa-arrow-left"></i> Back </a>
         </small>
+        <div class="pull-right">
+            <label class="control-label">Loan Cycle</label>
+            <select  name="LoanCycleSelect" id="LoanCycleSelectId" ng-change="vm.onSelectedLoanCycle()" ng-model="vm.currentUser.loanCycle">
+                <option  ng-repeat="lc in vm.loanCycles" value="{{lc.id}}">{{lc.name}}</option>
+            </select>
+        </div>
     </div>
 <div class="panel-body" block-ui="ClientBlockUI">
     <!--BASIC CLIENT INFORMATION-->
@@ -52,7 +58,7 @@
                 <div class="form-group">
                     <div class="col-sm-4">Status:</div>
                     <div class="col-sm-8">
-                        <!--<div ng-class="vm.labelBasedOnStatusStyle(vm.client.status)"> {{vm.client.status | ReplaceUnderscore }}</div>-->
+                        <span ng-class="vm.labelBasedOnStatus(vm.client.status)"> {{vm.client.status  | ReplaceUnderscore}}</span>
                     </div>
                 </div>
             </form>

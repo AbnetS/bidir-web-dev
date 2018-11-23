@@ -18,12 +18,15 @@
         //CLIENT RELATED
         vm.clientDetail = _clientDetail;
         vm.onSelectedBranch = _onSelectedBranch;
+        vm.onSelectedLoanCycle = _onSelectedLoanCycle;
+
 
 
         initialize();
 
         function initialize() {
             vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.loanCycles = LoanManagementService.loanCycles;
             vm.filter = {show : false};
             vm.options = {
                 rowSelection: true,
@@ -72,7 +75,7 @@
             }
         }
 
-        function callApi(){
+        function callApi(loanCycle){
             vm.clientPromise = LoanManagementService.GetClients(vm.query).then(function(response){
                 vm.clients = response.data.docs;
                 vm.clientsCopy = angular.copy(vm.clients);
@@ -106,6 +109,11 @@
                     return client.branch._id === vm.currentUser.selected_access_branch._id;
                 }
             });
+
+        }
+        function _onSelectedLoanCycle(){
+
+            vm.clients = angular.copy(vm.clientsCopy);
 
         }
 

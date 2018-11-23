@@ -31,7 +31,8 @@
             GetClientLoanProposals:_getClientLoanProposals,
             GetCrops:_getCrops,
 
-            StyleLabelByStatus: _styleLabelByStatus
+            StyleLabelByStatus: _styleLabelByStatus,
+            loanCycles: [{id:1,name:'1st Loan Cycle'},{id:2,name:'2nd Loan Cycle'},{id:3,name:'3rd Loan Cycle'},{id:4,name:'4th Loan Cycle'},{id:5,name:'5th Loan Cycle'}]
         };
 
         function _getScreenings(parameters) {
@@ -81,6 +82,8 @@
 
         function _styleLabelByStatus(clientStatus) {
             var style = '';
+            if(_.isUndefined(clientStatus))
+                return '';
             switch (clientStatus.toLowerCase()){
                 case  'new':
                     style =  'label bg-gray';
