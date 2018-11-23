@@ -25,7 +25,7 @@
 
         function _onSelectedLoanCycle(){
 
-         console.log("level selected", vm.currentUser)
+         GetClientApplicationByLoanCycle('screening');
 
         }
 
@@ -105,7 +105,13 @@
                 .then(function(response){
                     myBlockUI.stop();
                     vm.client = response.data;
-                    CallClientScreeningAPI();
+
+                    if(_.isUndefined(vm.loanCycle)){
+                        CallClientScreeningAPI();
+                    }else{
+                        GetClientApplicationByLoanCycle('screening');
+                    }
+
                     console.log("client detail",response);
                 },function(error){
                     myBlockUI.stop();
@@ -124,6 +130,34 @@
             },function (error) {
                 myBlockUI.stop();
                 console.log("error fetching screening",error);
+            });
+        }
+
+        function GetClientApplicationByLoanCycle(application) {
+            var blockUIName = '';
+            if(application ==='screening'){
+                blockUIName = 'ClientScreeningBlockUI';
+            } else if(application ==='loan_application'){
+                blockUIName = 'ClientLoanApplicationBlockUI';
+            } else if(application ==='acat'){
+                blockUIName = 'ClientACATBlockUI';
+            }
+            var myBlockUI = blockUI.instances.get(blockUIName);
+            myBlockUI.start();
+            LoanManagementService.GetClientApplicationByLoanCycle(vm.clientId,application,vm.loanCycle).then(function (response) {
+                myBlockUI.stop();
+                console.log("response.data",response.data);
+                if(application ==='screening'){
+                    vm.clientScreening = response.data;
+                } else if(application ==='loan_application'){
+                    vm.client.loan_application = response.data;
+                } else if(application ==='acat'){
+                    vm.clientACATs = response.data;
+                }
+
+            },function (error) {
+                myBlockUI.stop();
+                console.log("error fetching data by loan cycle",error);
             });
         }
 
@@ -168,17 +202,28 @@
         function _onTabSelected(type) {
             console.log("tab name clicked",type);
             switch (type){
-                case 'CLIENT':
-                    console.log("tab name clicked",type);
-                    break;
                 case 'SCREENING':
-                    CallClientScreeningAPI();
+                    if(_.isUndefined(vm.loanCycle)){
+                        CallClientScreeningAPI();
+                    }else{
+                        GetClientApplicationByLoanCycle('screening');
+                    }
                     break;
                 case 'LOAN_APPLICATION':
-                    CallClientLoanApplicationAPI();
+                    if(_.isUndefined(vm.loanCycle)){
+                        CallClientLoanApplicationAPI();
+                    }else{
+                        GetClientApplicationByLoanCycle('loan_application');
+                    }
+
                     break;
                 case 'ACAT':
-                    CallClientACAT();
+
+                    if(_.isUndefined(vm.loanCycle)){
+                        CallClientACAT();
+                    }else{
+                        GetClientApplicationByLoanCycle('acat');
+                    }
                     break;
                 default:
                     console.log("tab name clicked",type);

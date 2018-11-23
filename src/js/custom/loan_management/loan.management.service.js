@@ -17,6 +17,8 @@
 
             GetScreenings: _getScreenings,
             GetClientScreening:_getClientScreening,
+            GetClientApplicationByLoanCycle:_getClientApplicationByLoanCycle,
+
             SaveClientScreening:_saveClientScreening,
             //CLIENT MANAGEMENT RELATED SERVICES DECLARATION
             GetClients: _getClients,
@@ -46,6 +48,9 @@
 
         function _getClientScreening(clientId) {
             return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
+        }
+        function _getClientApplicationByLoanCycle(clientId,application,loanCycle) {
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Histories) + 'application='+application+'&client='+clientId+'&loanCycle='+loanCycle);
         }
         function _getLoanApplications(parameters) {
             return $http.get(CommonService.buildPerPageUrl(API.Service.LOANS,API.Methods.LOANS.Loans,parameters));

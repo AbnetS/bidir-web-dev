@@ -71,7 +71,8 @@ var API = {
         },
         SCREENING:{
             Screening:'',
-            Clients:'clients'
+            Clients:'clients',
+            Histories: 'histories/search?'
         },
         LOANS:{
             Loans:'',

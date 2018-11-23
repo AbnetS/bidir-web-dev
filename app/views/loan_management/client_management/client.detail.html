@@ -12,7 +12,7 @@
       </small>
       <div class="pull-right">
          <label class="control-label">Loan Cycle</label>
-         <select name="LoanCycleSelect" id="LoanCycleSelectId" ng-change="vm.onSelectedLoanCycle()" ng-model="vm.currentUser.loanCycle">
+         <select name="LoanCycleSelect" id="LoanCycleSelectId" ng-change="vm.onSelectedLoanCycle()" ng-model="vm.loanCycle">
             <option ng-repeat="lc in vm.loanCycles" value="{{lc.id}}">{{lc.name}}</option>
          </select>
       </div>
@@ -200,6 +200,7 @@
                <div class="row" block-ui="ClientScreeningBlockUI">
                   <div class="col-lg-12">
                      <div class="pull-left">
+                        <span class="badge bg-danger">Loan Cycle {{vm.clientScreening.client.loan_cycle_number}}</span>
                         <a ng-click="vm.printLaonProcess('SCREENING')" class="btn btn-default hidden-print">
                            <i class="icon-printer"></i>
                         </a>
@@ -241,6 +242,7 @@
                <div class="row" block-ui="ClientLoanApplicationBlockUI">
                   <div class="col-lg-12">
                      <div class="pull-left">
+                        <span class="badge bg-danger">Loan Cycle {{vm.clientScreening.client.loan_cycle_number}}</span>
                         <a ng-click="vm.printLaonProcess('LOAN_APPLICATION')" class="btn btn-default hidden-print">
                            <i class="icon-printer"></i>
                         </a>

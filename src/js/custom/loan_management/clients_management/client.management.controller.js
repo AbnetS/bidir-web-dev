@@ -86,7 +86,7 @@
         }
 
         function SearchApi(SearchText){
-            $scope.promise = LoanManagementService.SearchClient(SearchText)
+            vm.clientPromise = LoanManagementService.SearchClient(SearchText)
                 .then(function(response){
                     vm.clients = response.data.docs;
                     vm.clientsCount = response.data.total_docs_count;
@@ -113,7 +113,7 @@
         }
         function _onSelectedLoanCycle(){
 
-            $scope.promise = LoanManagementService.GetClientByLoanCycle(vm.currentUser.loanCycle)
+            vm.clientPromise = LoanManagementService.GetClientByLoanCycle(vm.currentUser.loanCycle)
                 .then(function(response){
                     vm.clients = response.data.docs;
                     vm.clientsCount = response.data.total_docs_count;
