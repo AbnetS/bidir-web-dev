@@ -137,7 +137,7 @@
             var blockUIName = '';
             if(application ==='screening'){
                 blockUIName = 'ClientScreeningBlockUI';
-            } else if(application ==='loan_application'){
+            } else if(application ==='loan'){
                 blockUIName = 'ClientLoanApplicationBlockUI';
             } else if(application ==='acat'){
                 blockUIName = 'ClientACATBlockUI';
@@ -149,7 +149,7 @@
                 console.log("response.data",response.data);
                 if(application ==='screening'){
                     vm.clientScreening = response.data;
-                } else if(application ==='loan_application'){
+                } else if(application ==='loan'){
                     vm.client.loan_application = response.data;
                 } else if(application ==='acat'){
                     vm.clientACATs = response.data;
@@ -213,7 +213,7 @@
                     if(_.isUndefined(vm.loanCycle)){
                         CallClientLoanApplicationAPI();
                     }else{
-                        GetClientApplicationByLoanCycle('loan_application');
+                        GetClientApplicationByLoanCycle('loan');
                     }
 
                     break;
