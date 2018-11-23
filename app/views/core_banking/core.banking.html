@@ -45,8 +45,7 @@
                         <th md-column>
                            <label class="mda-checkbox">
                               <input type="checkbox" ng-model="vm.IsAllChecked" ng-change="vm.CheckUncheckAll()" />
-                              <em class="bg-green-500"></em>{{vm.IsAllChecked ? 'Uncheck All':'Check All'}}
-                           </label>
+                              <em class="bg-green-500"></em>{{vm.IsAllChecked ? 'Uncheck All':'Check All'}}</label>
                         </th>
                         <th md-column style="width:3%;">
                            <span>No</span>
@@ -64,7 +63,7 @@
                         <th md-colors>Title</th>
                      </tr>
 
-                     <tr ng-show="vm.IsAllChecked" md-row>
+                     <tr md-row>
                         <th colspan="4" md-column>
                            <input class="form-control" type="text" ng-model="vm.allBranchId" placeholder="Set Branch for all" />
                         </th>
@@ -76,7 +75,6 @@
                         </th>
                         <th md-column></th>
                      </tr>
-
                   </thead>
 
                   <tbody md-body>
