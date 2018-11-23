@@ -113,8 +113,15 @@
         }
         function _onSelectedLoanCycle(){
 
-            vm.clients = angular.copy(vm.clientsCopy);
-
+            $scope.promise = LoanManagementService.GetClientByLoanCycle(vm.currentUser.loanCycle)
+                .then(function(response){
+                    vm.clients = response.data.docs;
+                    vm.clientsCount = response.data.total_docs_count;
+                    console.log(response);
+                },function (error) {
+                    vm.clients = vm.clientsCopy;
+                    console.log("error",error);
+                });
         }
 
         $scope.$watch(angular.bind(vm, function () {

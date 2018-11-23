@@ -3058,14 +3058,6 @@
         .module('app.banking', []);
 
 })();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.geospatial', ['ngSanitize']);
-
-})();
 /**
  * Created by Yoni on 1/29/2018.
  */
@@ -3092,6 +3084,14 @@
         'app.clients',
         'app.processing'
     ]);
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.geospatial', ['ngSanitize']);
 
 })();
 /**
@@ -4431,114 +4431,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
     }
 
 })(window.angular);
-(function(angular) {
-    "use strict";
-
-
-    angular
-        .module('app.geospatial')
-        .controller('GeospatialController', GeoSpatialController);
-
-    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI','SharedService','CommonService'];
-
-    function GeoSpatialController( GeoSpatialService,blockUI,SharedService,CommonService )
-    {
-        var vm = this;
-        vm.filter = {};
-        vm.generateSeasonalReport = _generateSeasonalReport;
-        vm.visibility = {
-           showSmiley: false,
-           showInfoText: true
-        };
-
-        vm.seasonalFilterForm = {
-            IsfromDateValid: true,
-            IstoDateValid: true,
-            IsnameValid: true
-        };
-
-        vm.resetConfig = _resetConfig;
-        function _resetConfig(){
-          vm.filter = undefined;
-        }
-
-        init();
-
-        function _generateSeasonalReport() {
-
-            vm.IsValidData = CommonService.Validation.ValidateForm(vm.seasonalFilterForm, vm.filter);
-
-           if(vm.IsValidData)
-           {
-               vm.filter.fromDateString = GeoSpatialService.formatDateForRequest(vm.filter.fromDate);
-               vm.filter.toDateString = GeoSpatialService.formatDateForRequest(vm.filter.toDate);
-
-               vm.visibility.showSmiley = true;
-               vm.visibility.showInfoText = false;
-               vm.visibility.showWarning = false;
-           }else
-               {
-               vm.visibility.showWarning = true;
-               vm.visibility.showInfoText = false;
-               }
-
-            console.log("date picked", vm.filter);
-        }
-
-        function init(){
-            vm.dtOption = {};
-            vm.dtOption.dateOptions = {
-                dateDisabled: false, formatYear: "yy",
-                maxDate: new Date(2020, 5, 22),  startingDay: 1 };
-            vm.dtOption.format = "shortDate";
-            vm.dtOption.altInputFormats = ["M!/d!/yyyy"];
-            vm.dtOption.popup = { opened: false };
-            vm.dtOption.fromPopup = { opened: false };
-            vm.dtOption.open = function()  { vm.dtOption.popup.opened = true; };
-            vm.dtOption.fromOpen = function()  { vm.dtOption.fromPopup.opened = true; };
-            vm.dtOption.clear = function() { vm.dtOption.dt = null; };
-
-            SharedService.GetBranches().then(
-                function(response) {
-                    vm.branches = response.data.docs;
-                },
-                function(error) {
-                    console.log("error fetching branches", error);
-                }
-            );
-        }
-    }
-
-})(window.angular);
-(function(angular) {
-    'use strict';
-    angular.module('app.geospatial')
-
-        .service('GeoSpatialService', GeoSpatialService);
-
-    GeoSpatialService.$inject = ['$http','CommonService','AuthService'];
-
-    function GeoSpatialService($http, CommonService, AuthService) {
-        return {
-            formatDateForRequest:_formatDateForRequest
-        };
-
-        function _formatDateForRequest(date) {
-            var d = new Date(date),
-                month = '' + (d.getMonth() + 1),
-                day = '' + d.getDate(),
-                year = d.getFullYear();
-
-            if (month.length < 2) month = '0' + month;
-            if (day.length < 2) day = '0' + day;
-
-            return [year, month, day].join('');
-        }
-
-    }
-
-
-})(window.angular);
 /**
  * Created by Yoni on 2/9/2018.
  */
@@ -4735,6 +4627,7 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
             UpdateClient: _updateClient,
             GetClientDetail:_getClientDetail,
             SearchClient:_searchClient,
+            GetClientByLoanCycle:_getClientByLoanCycle,
             GetBranches: _getBranches,
 
             GetACATCollections: _getACATCollections,
@@ -4772,6 +4665,9 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
         //CLIENT MANAGEMENT RELATED SERVICES
         function _searchClient(searchText) {
             return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
+        }
+        function _getClientByLoanCycle(loanCycle) {
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.Client) + '/search?loanCycle=' + loanCycle);
         }
 
         function _getClientDetail(id){
@@ -4840,6 +4736,114 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
         function _getCrops() {
             return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
+        }
+
+    }
+
+
+})(window.angular);
+(function(angular) {
+    "use strict";
+
+
+    angular
+        .module('app.geospatial')
+        .controller('GeospatialController', GeoSpatialController);
+
+    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI','SharedService','CommonService'];
+
+    function GeoSpatialController( GeoSpatialService,blockUI,SharedService,CommonService )
+    {
+        var vm = this;
+        vm.filter = {};
+        vm.generateSeasonalReport = _generateSeasonalReport;
+        vm.visibility = {
+           showSmiley: false,
+           showInfoText: true
+        };
+
+        vm.seasonalFilterForm = {
+            IsfromDateValid: true,
+            IstoDateValid: true,
+            IsnameValid: true
+        };
+
+        vm.resetConfig = _resetConfig;
+        function _resetConfig(){
+          vm.filter = undefined;
+        }
+
+        init();
+
+        function _generateSeasonalReport() {
+
+            vm.IsValidData = CommonService.Validation.ValidateForm(vm.seasonalFilterForm, vm.filter);
+
+           if(vm.IsValidData)
+           {
+               vm.filter.fromDateString = GeoSpatialService.formatDateForRequest(vm.filter.fromDate);
+               vm.filter.toDateString = GeoSpatialService.formatDateForRequest(vm.filter.toDate);
+
+               vm.visibility.showSmiley = true;
+               vm.visibility.showInfoText = false;
+               vm.visibility.showWarning = false;
+           }else
+               {
+               vm.visibility.showWarning = true;
+               vm.visibility.showInfoText = false;
+               }
+
+            console.log("date picked", vm.filter);
+        }
+
+        function init(){
+            vm.dtOption = {};
+            vm.dtOption.dateOptions = {
+                dateDisabled: false, formatYear: "yy",
+                maxDate: new Date(2020, 5, 22),  startingDay: 1 };
+            vm.dtOption.format = "shortDate";
+            vm.dtOption.altInputFormats = ["M!/d!/yyyy"];
+            vm.dtOption.popup = { opened: false };
+            vm.dtOption.fromPopup = { opened: false };
+            vm.dtOption.open = function()  { vm.dtOption.popup.opened = true; };
+            vm.dtOption.fromOpen = function()  { vm.dtOption.fromPopup.opened = true; };
+            vm.dtOption.clear = function() { vm.dtOption.dt = null; };
+
+            SharedService.GetBranches().then(
+                function(response) {
+                    vm.branches = response.data.docs;
+                },
+                function(error) {
+                    console.log("error fetching branches", error);
+                }
+            );
+        }
+    }
+
+})(window.angular);
+(function(angular) {
+    'use strict';
+    angular.module('app.geospatial')
+
+        .service('GeoSpatialService', GeoSpatialService);
+
+    GeoSpatialService.$inject = ['$http','CommonService','AuthService'];
+
+    function GeoSpatialService($http, CommonService, AuthService) {
+        return {
+            formatDateForRequest:_formatDateForRequest
+        };
+
+        function _formatDateForRequest(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('');
         }
 
     }
@@ -8397,8 +8401,15 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
         }
         function _onSelectedLoanCycle(){
 
-            vm.clients = angular.copy(vm.clientsCopy);
-
+            $scope.promise = LoanManagementService.GetClientByLoanCycle(vm.currentUser.loanCycle)
+                .then(function(response){
+                    vm.clients = response.data.docs;
+                    vm.clientsCount = response.data.total_docs_count;
+                    console.log(response);
+                },function (error) {
+                    vm.clients = vm.clientsCopy;
+                    console.log("error",error);
+                });
         }
 
         $scope.$watch(angular.bind(vm, function () {

@@ -24,6 +24,7 @@
             UpdateClient: _updateClient,
             GetClientDetail:_getClientDetail,
             SearchClient:_searchClient,
+            GetClientByLoanCycle:_getClientByLoanCycle,
             GetBranches: _getBranches,
 
             GetACATCollections: _getACATCollections,
@@ -61,6 +62,9 @@
         //CLIENT MANAGEMENT RELATED SERVICES
         function _searchClient(searchText) {
             return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
+        }
+        function _getClientByLoanCycle(loanCycle) {
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.Client) + '/search?loanCycle=' + loanCycle);
         }
 
         function _getClientDetail(id){
