@@ -7,6 +7,7 @@
           // jQuery based and standalone scripts
           scripts: {
             'whirl':              ['vendor/whirl/dist/whirl.css'],
+            'ngmap':              ['vendor/ngmap/build/scripts/ng-map.min.js'],
             'animo':              ['vendor/animo.js/animo.js'],
             'fastclick':          ['vendor/fastclick/lib/fastclick.js'],
             'modernizr':          ['vendor/modernizr/modernizr.custom.js'],

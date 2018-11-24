@@ -269,8 +269,8 @@
                 url: "/plot-report",
                 title: "Plot Report",
                 templateUrl:helper.basepath('geospatial/plot.geospatial.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select'),
-                controller: "GeospatialController",
+                resolve:helper.resolveFor('ngmap','ui.select'),
+                controller: "PlotReportController",
                 controllerAs: 'vm',
                 data: {
                     authenticate: true
