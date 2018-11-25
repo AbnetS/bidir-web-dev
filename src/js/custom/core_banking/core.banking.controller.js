@@ -79,11 +79,11 @@
                 case 'accepted':
                     style =  'label label-success';
                     break;
-                case 'denied':
+                case 'DENIED':
                     style =  'label label-danger';
                     break;
-                case 'draft':
-                    style =  'label label-default';
+                case 'NO ATTEMPT':
+                    style =  'label label-inverse';
                     break;
                 default:
                     style =  'label label-warning';

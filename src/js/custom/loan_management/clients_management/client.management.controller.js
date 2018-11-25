@@ -75,7 +75,7 @@
             }
         }
 
-        function callApi(loanCycle){
+        function callApi(){
             vm.clientPromise = LoanManagementService.GetClients(vm.query).then(function(response){
                 vm.clients = response.data.docs;
                 vm.clientsCopy = angular.copy(vm.clients);
@@ -90,6 +90,7 @@
                 .then(function(response){
                     vm.clients = response.data.docs;
                     vm.clientsCount = response.data.total_docs_count;
+                    vm.query.total_docs_count =  response.data.total_docs_count;
                     console.log(response);
                 },function (error) {
                     vm.clients = vm.clientsCopy;

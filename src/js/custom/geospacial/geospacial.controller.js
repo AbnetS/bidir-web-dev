@@ -73,6 +73,10 @@
                     console.log("error fetching branches", error);
                 }
             );
+            GeoSpatialService.getIndicatorsData().then(
+                function (response) {
+                console.log("data",response);
+            });
         }
     }
 
