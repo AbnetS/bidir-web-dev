@@ -6,9 +6,9 @@
         .module('app.geospatial')
         .controller('GeospatialController', GeoSpatialController);
 
-    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI','SharedService','CommonService'];
+    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI','SharedService','CommonService','$http'];
 
-    function GeoSpatialController( GeoSpatialService,blockUI,SharedService,CommonService )
+    function GeoSpatialController( GeoSpatialService,blockUI,SharedService,CommonService ,$http)
     {
         var vm = this;
         vm.filter = {};
@@ -73,7 +73,7 @@
                     console.log("error fetching branches", error);
                 }
             );
-            GeoSpatialService.getIndicatorsData().then(
+            $http.get("https://seasmon.wenr.wur.nl/cgi-bin/register.py?indicator=VI&start_date=2018-07-01&end_date=2018-12-05&regions=10212:10213:10301").then(
                 function (response) {
                 console.log("data",response);
             });

@@ -85,7 +85,7 @@
                   <tbody md-body>
                      <tr md-row ng-repeat="client in vm.clients" ng-class="client.in_cbs?'':'active'">
                         <td md-cell>
-                           {{vm.query.per_page * (vm.query.page - 1) + $index + 1}}
+                           {{ $index + 1}}
                         </td>
                         <td md-cell>
                            <label class="mda-checkbox" for="chkClient_{{client._id}}">

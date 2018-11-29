@@ -18,7 +18,6 @@
         vm.CheckUncheckAll = _checkUncheckAll;
         vm.CheckUncheckHeader = _checkUncheckHeader;
         //Paging and filter related
-        vm.paginate = _paginate;
         vm.clearSearch = _clearSearch;
         //Client Related
         vm.saveSingleClient = _saveSingleClient;
@@ -32,22 +31,9 @@
         initialize();
 
         function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
             vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: false,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: false,
-                limitSelect: false,
-                pageSelect: false
-            };
             vm.query = {
-                search:'',
-                page:1,
-                per_page:500
+                search: ''
             };
             callApi();
         }
@@ -138,18 +124,22 @@
             vm.filter.show = false;
             callApi();
         }
-        function _paginate (page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-        }
+
         function callApi(){
-            vm.clientPromise = CoreBankingService.GetClients(vm.query).then(function(response){
+            vm.clientPromise = CoreBankingService.GetClients().then(function(response){
                 console.log(" callApi vm.clients",response);
                 vm.clients = response.data.docs;
                 vm.clientsCopy = angular.copy(vm.clients);
-                vm.query.total_docs_count =  response.data.total_docs_count;
+                vm.CheckUncheckHeader();
+            },function (error) {
+                console.log("error callApi vm.clients",error);
+            });
+        }
+        function getAllClientsApi(){
+            vm.clientPromise = CoreBankingService.GetAllClients().then(function(response){
+                console.log(" callApi vm.clients",response);
+                vm.clients = response.data.docs;
+                vm.clientsCopy = angular.copy(vm.clients);
                 vm.CheckUncheckHeader();
             },function (error) {
                 console.log("error callApi vm.clients",error);
@@ -159,7 +149,7 @@
             $scope.promise = CoreBankingService.SearchClient(SearchText)
                 .then(function(response){
                     vm.clients = response.data.docs;
-                    vm.clientsCount = response.data.total_docs_count;
+                    // vm.clientsCount = response.data.total_docs_count;
                     console.log(response);
                 },function (error) {
                     vm.clients = vm.clientsCopy;

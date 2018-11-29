@@ -13,7 +13,7 @@
         };
 
         function _getIndicatorData() {
-            return $http.get("https://seasmon.wenr.wur.nl/cgi-bin/register.py?indicator=PRECIP&start_date=2018-07-01&end_date=2018-12-05&regions=10212:10213:10301");
+            return $http.get("https://seasmon.wenr.wur.nl/cgi-bin/register.py?indicator=VI&start_date=2018-07-01&end_date=2018-12-05&regions=10212:10213:10301");
         }
         function _formatDateForRequest(date) {
             var d = new Date(date),
