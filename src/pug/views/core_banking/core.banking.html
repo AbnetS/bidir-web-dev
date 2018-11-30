@@ -3,20 +3,50 @@
 </h3>
 
 <!-- ngRepeat + ngResource-->
-<div class="panel panel-default">
+
+<div  class="panel panel-flat">
     <div class="panel-body">
-        <p></p>
+
         <div class="row">
-            <div class="col-lg-12">
-                <md-toolbar class="md-table-toolbar md-default" ng-show="vm.filter.show">
+
+            <!--CHECK BOX-->
+            <div class="col-xs-10 col-sm-4 col-md-4 col-lg-4">
+                <label>Filter By</label>
+                <md-input-container class="md-block">
+                    <md-radio-group layout="row" ng-model="vm.filter.allClient"
+                                    ng-change="vm.onAllClientChange()">
+                        <md-radio-button value="false" class="md-primary">CBS Ready</md-radio-button>
+                        <md-radio-button value="true" class="md-primary">All Client</md-radio-button>
+                    </md-radio-group>
+                </md-input-container>
+            </div>
+            <!--UI SELECT FOR BRANCH-->
+            <div class="col-xs-10 col-sm-4 col-md-4 col-lg-4">
+                <label>Branch</label>
+                <ui-select ng-model="vm.currentUser.selected_access_branch"
+                           theme="bootstrap" on-select="vm.onSelectedBranch()"
+                           title="select branch" style="width: 100%;">
+                    <ui-select-match allow-clear="true" placeholder="Select access branch to filter...">
+                        {{$select.selected.name}} - {{$select.selected.location}}
+                    </ui-select-match>
+                    <ui-select-choices
+                            repeat="branch in vm.currentUser.user_access_branches | filter: $select.search">
+                        <div ng-bind-html="branch.name | highlight: $select.search"></div>
+                        <small>
+                            <strong>location:</strong> {{branch.location}}
+                        </small>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+            <!--SEARCH BOX-->
+            <div class="col-xs-10 col-sm-4 col-md-4 col-lg-4">
+                <label>Client Info</label>
+                <md-toolbar class="md-table-toolbar md-default">
                     <div class="md-toolbar-tools">
-                        <md-button class="md-icon-button" ng-click="vm.search()">
-                            <i class="fa fa-search"></i>
-                        </md-button>
 
                         <!-- Input Text -->
                         <md-input-container flex>
-                            <input id="search-input" type="text" ng-model="vm.query.search"/>
+                            <input id="search-input" type="text" ng-model="vm.query.search" />
                         </md-input-container>
 
                         <md-button class="md-icon-button" ng-click="vm.clearSearch()">
@@ -25,69 +55,78 @@
                     </div>
                 </md-toolbar>
 
-                <md-toolbar class="md-table-toolbar md-default" ng-hide="vm.filter.show">
-                    <div class="md-toolbar-tools">
-                        <h2 class="md-title">Clients</h2>
+            </div>
 
-                        <div flex="" class="flex"></div>
-                        <button class="md-icon-button md-button md-ink-ripple" type="button"
-                                ng-click="vm.filter.show = true">
-                            <i class="fa fa-filter"></i>
-                            <div class="md-ripple-container"></div>
-                        </button>
-                    </div>
-                </md-toolbar>
+        </div>
+
+    </div>
+</div>
+
+<div class="vertical-splitter-xs"></div>
+
+<div class="panel panel-default ">
+    <div class="panel-body">
+                <!--<div  ng-hide="vm.filter.show" class="md-toolbar-tools">-->
+                    <!--<h2 class="md-title">Clients</h2>-->
+
+                    <!--<div flex="" class="flex"></div>-->
+                    <!--<button class="md-icon-button md-button md-ink-ripple" type="button"-->
+                            <!--ng-click="vm.filter.show = true">-->
+                        <!--<i class="fa fa-filter"></i>-->
+                        <!--<div class="md-ripple-container"></div>-->
+                    <!--</button>-->
+                <!--</div>-->
 
                 <md-table-container>
                     <table md-table md-progress="vm.clientPromise" class="table-hover">
                         <thead md-head class="bg-gray-lighter md-head">
-                            <tr md-row>
-                                <th md-column style="width:3%;"><span> No</span></th>
-                                <th md-column >
+                        <tr md-row>
+                            <th md-column style="width:3%;"><span> No</span></th>
+                            <th md-column>
                                     <span>
                                         {{vm.IsAllChecked ? 'Uncheck All':'Check All'}}
                                     </span>
-                                </th>
-                                <th md-column style="width:30%;"><span>Full Name</span></th>
-                                <th md-column style="width:10%;"><span>Status</span></th>
-                                <th md-column style="width:25%">Branch ID</th>
-                                <th md-column style="width:20%;"> Title</th>
-                                <th md-column></th>
-                            </tr>
+                            </th>
+                            <th md-column style="width:30%;"><span>Full Name</span></th>
+                            <th md-column style="width:10%;"><span>Status</span></th>
+                            <th md-column style="width:25%">Branch ID</th>
+                            <th md-column style="width:20%;"> Title</th>
+                            <th md-column></th>
+                        </tr>
 
-                            <tr md-row>
-                                <th md-column></th>
-                                <th md-column>
-                                    <label class="mda-checkbox">
-                                        <input type="checkbox" ng-model="vm.IsAllChecked" ng-change="vm.CheckUncheckAll()"/>
-                                        <em class="bg-green-500"></em>
-                                    </label>
-                                </th>
-                                <th md-column></th>
-                                <th md-column></th>
-                                <th colspan="2" md-column>
-                                    <input class="form-control" type="text" ng-model="vm.allBranchId"
-                                           placeholder="Set Branch for all"/>
-                                </th>
-                                <th md-column>
+                        <tr md-row>
+                            <th md-column></th>
+                            <th md-column>
+                                <label class="mda-checkbox">
+                                    <input type="checkbox" ng-model="vm.IsAllChecked" ng-change="vm.CheckUncheckAll()"/>
+                                    <em class="bg-green-500"></em>
+                                </label>
+                            </th>
+                            <th md-column></th>
+                            <th md-column></th>
+                            <th colspan="2" md-column>
+                                <input class="form-control" type="text" ng-model="vm.allBranchId"
+                                       placeholder="Set Branch for all"/>
+                            </th>
+                            <th md-column>
                                          <span class="input-group-btn">
                                                 <button class="btn btn-success"
                                                         ng-click="vm.saveAllClients(vm.clients)">
                                                     <i class="fa fa-paper-plane">  </i>  Send </button>
                                          </span>
-                                </th>
-                            </tr>
+                            </th>
+                        </tr>
                         </thead>
 
                         <tbody md-body>
-                        <tr md-row ng-repeat="client in vm.clients" ng-class="client.in_cbs?'':'active'">
+                        <tr md-row ng-repeat="client in vm.clients | filter : vm.query.search" ng-class="client.in_cbs?'':'active'" disabled="client.status !=='loan_granted'">
                             <td md-cell>
                                 {{ $index + 1}}
                             </td>
                             <td md-cell>
                                 <label class="mda-checkbox" for="chkClient_{{client._id}}">
-                                    <input id="chkClient_{{client._id}}" type="checkbox"
-                                           ng-model="client.Selected" ng-change="CheckUncheckHeader()"/>
+                                    <input ng-disabled="client.status !=='loan_granted'" id="chkClient_{{client._id}}" type="checkbox"
+                                           ng-model="client.Selected" ng-change="vm.CheckUncheckHeader()"/>
                                     <em class="bg-green-500"></em>
                                 </label>
                             </td>
@@ -95,16 +134,21 @@
                             <td md-cell>
                                 <i ng-class="client.gender === 'male' || client.gender === 'Male'?'fa fa-2x fa-border fa-male':'fa fa-border fa-2x fa-female'"></i>
                                 <span>{{ client.first_name }} {{ client.last_name }} {{client.grandfather_name}}</span>
+
+                                <span class="label bg-gray">{{ client.branch.name }}</span>
                             </td>
                             <td md-cell>
                                 <label ng-class="vm.statusStyle(client.cbs_status)">{{client.cbs_status}}</label>
                             </td>
                             <td md-cell>
-                                <input class="form-control" type="text" ng-model="client.branchId"
-                                       name="client_branch_id" placeholder="Branch ID Here"/>
+                                <input ng-show="client.status ==='loan_granted'" class="form-control" type="text" ng-model="client.branchId"
+                                       name="client_branch_id" placeholder="Branch Number Here"/>
+                                <span class="text-center text-muted" ng-show="client.status !=='loan_granted'">
+                                    NA
+                                </span>
                             </td>
                             <td md-cell>
-                                <ui-select ng-model="client.title" theme="bootstrap"
+                                <ui-select ng-show="client.status ==='loan_granted'"  ng-model="client.title" theme="bootstrap"
                                            on-select="vm.onSelectedTitle(client)"
                                            title="Choose Title" reset-search-input="false" required="true"
                                            ng-maxlength="40">
@@ -118,9 +162,12 @@
                                         <span ng-bind-html="title | highlight: $select.search"></span>
                                     </ui-select-choices>
                                 </ui-select>
+                                <span class="text-center text-muted" ng-show="client.status !=='loan_granted'">
+                                    NA
+                                </span>
                             </td>
-                            <td md-cell>
-                                     <span class="input-group-btn">
+                            <td md-cell >
+                                     <span ng-show="client.status ==='loan_granted'" class="input-group-btn">
                                             <button class="btn btn-success" ng-click="vm.saveSingleClient(client)"
                                                     type="button">
                                                 <i class="fa fa-paper-plane"></i> </button>
@@ -129,6 +176,7 @@
                                         <button class="btn btn-link" ng-click="vm.cbs_clientDetail(client)"
                                                 type="button">
                                                 <i class="fa fa-eye"></i> </button>
+                                </span>
 
                             </td>
                         </tr>
@@ -136,7 +184,5 @@
                     </table>
                 </md-table-container>
 
-            </div>
-        </div>
     </div>
 </div>

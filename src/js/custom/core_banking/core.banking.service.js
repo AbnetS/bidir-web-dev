@@ -17,7 +17,8 @@
             setClientInfo: _setClientInfo,
             getClientInfo: _getClientInfo,
             UpdateClient: _updateClient,
-            GetClientById:_getClientById
+            GetClientById:_getClientById,
+            GetBranches:_getBranches
         };
 
         function _setClientInfo(client) {
@@ -31,7 +32,7 @@
             return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.CBS.Clients));
         }
         function _getAllClients(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.SCREENING,API.Methods.CBS.Clients));
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients));
         }
 
         function _postClientToCBS(client){
@@ -39,7 +40,7 @@
         }
 
         function _searchClient(searchText) {
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients) + '/searchTerm=' + searchText);
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients) + '/search=' + searchText);
         }
 
         function _updateClient(client) {
@@ -47,6 +48,10 @@
         }
         function _getClientById(id){
             return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
+        }
+
+        function _getBranches(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
         }
 
 

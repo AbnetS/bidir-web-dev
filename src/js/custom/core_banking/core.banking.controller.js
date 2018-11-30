@@ -6,19 +6,19 @@
         .module('app.banking')
         .controller('CoreBankingController', CoreBankingController);
 
-    CoreBankingController.$inject = ['CoreBankingService','$scope','$rootScope','AlertService','$state'];
+    CoreBankingController.$inject = ['CoreBankingService','$scope','AuthService','$rootScope','AlertService','$state'];
 
-    function CoreBankingController(CoreBankingService,$scope,$rootScope,AlertService,$state) {
+    function CoreBankingController(CoreBankingService,$scope,AuthService,$rootScope,AlertService,$state) {
         var vm = this;
         //GET TITLES LIST
         vm.titles = CoreBankingService.GetTitles;
-        $rootScope.app.layout.isCollapsed = true;
         //CHECK ALL/UNCHECK ALL OPTIONS
-        vm.IsAllChecked = false;
+        vm.onAllClientChange = _onAllClientChange;
         vm.CheckUncheckAll = _checkUncheckAll;
         vm.CheckUncheckHeader = _checkUncheckHeader;
-        //Paging and filter related
+        //Filter related
         vm.clearSearch = _clearSearch;
+        vm.onSelectedBranch = _onSelectedBranch;
         //Client Related
         vm.saveSingleClient = _saveSingleClient;
         vm.saveAllClients = _saveAllClients;
@@ -31,11 +31,47 @@
         initialize();
 
         function initialize() {
-            vm.filter = {show : false};
-            vm.query = {
-                search: ''
-            };
-            callApi();
+            $rootScope.app.layout.isCollapsed = true;
+            vm.filter = {show : false , allClient: "false"};
+            vm.IsAllChecked = false;
+            vm.query = { search: '' };
+            vm.currentUser = {selected_access_branch:undefined};
+
+            callCBSReadyApi();
+            GetBranchFilter();
+        }
+
+        function _onAllClientChange() {
+            if(vm.filter.allClient === "true"){
+                GetAllClientsApi();
+            }else{
+                callCBSReadyApi();
+            }
+        }
+
+        function GetBranchFilter() {
+            if(AuthService.IsSuperuser()){
+                CoreBankingService.GetBranches().then(function(response){
+                    vm.currentUser.user_access_branches = response.data.docs;
+                },function(error){
+                    vm.currentUser.user_access_branches = [];
+                    console.log("error on GetBranchFilter",error);
+                });
+            }
+            else {
+                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
+            }
+        }
+
+        function _onSelectedBranch(){
+            vm.clients = vm.clientsCopy;
+
+            vm.clients = _.filter(vm.clients,function(client){
+                if(!_.isUndefined(client.branch) && client.branch !== null){
+                    return client.branch._id === vm.currentUser.selected_access_branch._id;
+                }
+            });
+
         }
 
         function _checkUncheckHeader() {
@@ -62,7 +98,7 @@
         function _statusStyle(status){
             var style = '';
             switch (status){
-                case 'accepted':
+                case 'ACCEPTED':
                     style =  'label label-success';
                     break;
                 case 'DENIED':
@@ -122,10 +158,10 @@
         function _clearSearch(){
             vm.query.search = "";
             vm.filter.show = false;
-            callApi();
+            callCBSReadyApi();
         }
 
-        function callApi(){
+        function callCBSReadyApi(){
             vm.clientPromise = CoreBankingService.GetClients().then(function(response){
                 console.log(" callApi vm.clients",response);
                 vm.clients = response.data.docs;
@@ -135,7 +171,8 @@
                 console.log("error callApi vm.clients",error);
             });
         }
-        function getAllClientsApi(){
+
+        function GetAllClientsApi(){
             vm.clientPromise = CoreBankingService.GetAllClients().then(function(response){
                 console.log(" callApi vm.clients",response);
                 vm.clients = response.data.docs;
@@ -145,17 +182,8 @@
                 console.log("error callApi vm.clients",error);
             });
         }
-        function SearchApi(SearchText){
-            $scope.promise = CoreBankingService.SearchClient(SearchText)
-                .then(function(response){
-                    vm.clients = response.data.docs;
-                    // vm.clientsCount = response.data.total_docs_count;
-                    console.log(response);
-                },function (error) {
-                    vm.clients = vm.clientsCopy;
-                    console.log("error",error);
-                });
-        }
+
+
 
         function refreshResults($select){
             var search = $select.search,
@@ -177,20 +205,6 @@
                 $select.selected = userInputItem;
             }
         }
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                //make sure at least two characters are entered
-                if(newValue.length > 2){
-                    SearchApi(newValue);
-                }else{
-                    vm.clients = vm.clientsCopy;
-                }
-
-            }
-        });
 
     }
 
