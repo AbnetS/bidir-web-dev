@@ -13,7 +13,9 @@
             GetAllClients: _getAllClients,
             GetTitles: ["Obo","Ato","W/rt","W/ro","Mr","Mrs","Miss","Dr."],
             SearchClient:_searchClient,
-            PostClientToCBS:_postClientToCBS,
+            ConnectToCBS:_connectToCBS,
+            SendClientToCBS:_postClientToCBS,
+            SendBulkClientsToCBS:_postBulkClientsToCBS,
             setClientInfo: _setClientInfo,
             getClientInfo: _getClientInfo,
             UpdateClient: _updateClient,
@@ -37,6 +39,13 @@
 
         function _postClientToCBS(client){
             return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.CBS.CBS),client);
+        }
+
+        function _postBulkClientsToCBS(clients){
+            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.CBS.CBSBulk),clients);
+        }
+        function _connectToCBS(){
+            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.CBS.Connect));
         }
 
         function _searchClient(searchText) {

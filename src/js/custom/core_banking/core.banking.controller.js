@@ -77,7 +77,7 @@
         function _checkUncheckHeader() {
             vm.IsAllChecked = true;
             for (var i = 0; i < vm.clients.length; i++) {
-                if (!vm.clients[i].Selected) {
+                if (!vm.clients[i].selected) {
                     vm.IsAllChecked = false;
                     break;
                 }
@@ -86,7 +86,12 @@
 
         function _checkUncheckAll() {
             for (var i = 0; i < vm.clients.length; i++) {
-                vm.clients[i].Selected = vm.IsAllChecked;
+                if(vm.clients[i].status === 'loan_granted' ){
+                    vm.clients[i].selected = vm.IsAllChecked;
+                }else{
+                    vm.clients[i].selected = false;
+                }
+
             }
         }
 
@@ -120,39 +125,56 @@
                 title : client.title,
                 client: client._id };
 
-            CoreBankingService.PostClientToCBS(clientFormatted).then(
-                function (response) {
-                    AlertService.showSuccess('Client Info sent to CBS!',response);
-                    console.log("response",response);
+            CoreBankingService.ConnectToCBS().then(function (value) {
+                CoreBankingService.SendClientToCBS(clientFormatted).then(
+                    function (response) {
+                        AlertService.showSuccess('Client Info sent to CBS!',response);
+                        console.log("response",response);
+                    }
+                    ,function (error) {
+                        console.log('error',error);
+                        var message = error.data.error.message;
+                        AlertService.showError( 'Oops... Something went wrong', message);
+                    });
+                },function (reason) {
+                    AlertService.showError( 'CAN NOT CONNECT TO CBS', reason);
                 }
-                ,function (error) {
-                    console.log('error',error);
-                    var message = error.data.error.message;
-                    AlertService.showError( 'Oops... Something went wrong', message);
-                });
+            );
+
+
         }
 
         function _saveAllClients(clients) {
-            var totalClient = 0;
+            var clientList = [];
             _.each(clients, function (client) {
-                if (client.Selected) {
-                    var tempClient = {
+                if (client.selected && client.status === 'loan_granted') {
+                    clientList.push({
                         branchId: vm.allBranchId,
-                        title: client.title ? client.title : " - ",
-                        client: client._id
-                    };
-
-                    CoreBankingService.PostClientToCBS(tempClient).then(
-                        function (response) {
-                            totalClient++;
-                            console.log("response", response);
-                        }
-                        , function (error) {
-                            console.log('error', error);
-                        })
+                        client: client._id,
+                        title: client.title ? client.title : " - "
+                    });
                 }
             });
-            AlertService.showInfo('Clients data sent to CBS!', "Total number of clients information sent to CBS is " + vm.clients.length);
+
+            CoreBankingService.ConnectToCBS().then(function () {
+                    CoreBankingService.SendBulkClientsToCBS(clientList).then(
+                        function (response) {
+                            AlertService.showSuccess(clientList.length + ' clients sent to CBS!',response);
+                            console.log("response",response);
+                        }
+                        ,function (error) {
+                            console.log('error',error);
+                            var message = error.data.error.message;
+                            AlertService.showError( 'Oops... Something went wrong', message);
+                        });
+                },function (reason) {
+                    AlertService.showError( 'CAN NOT CONNECT TO CBS', reason);
+                }
+            );
+
+
+
+            // AlertService.showInfo('Clients data sent to CBS!', "Total number of clients information sent to CBS is " + vm.clients.length);
         }
 
         function _clearSearch(){
@@ -164,7 +186,7 @@
         function callCBSReadyApi(){
             vm.clientPromise = CoreBankingService.GetClients().then(function(response){
                 console.log(" callApi vm.clients",response);
-                vm.clients = response.data.docs;
+                vm.clients =  response.data.docs;
                 vm.clientsCopy = angular.copy(vm.clients);
                 vm.CheckUncheckHeader();
             },function (error) {

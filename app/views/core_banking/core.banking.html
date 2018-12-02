@@ -62,17 +62,6 @@
 
 <div class="panel panel-default ">
    <div class="panel-body">
-      <!--<div  ng-hide="vm.filter.show" class="md-toolbar-tools">-->
-      <!--<h2 class="md-title">Clients</h2>-->
-
-      <!--<div flex="" class="flex"></div>-->
-      <!--<button class="md-icon-button md-button md-ink-ripple" type="button"-->
-      <!--ng-click="vm.filter.show = true">-->
-      <!--<i class="fa fa-filter"></i>-->
-      <!--<div class="md-ripple-container"></div>-->
-      <!--</button>-->
-      <!--</div>-->
-
       <md-table-container>
          <table md-table md-progress="vm.clientPromise" class="table-hover">
             <thead md-head class="bg-gray-lighter md-head">
@@ -99,7 +88,7 @@
                <tr md-row>
                   <th md-column></th>
                   <th md-column>
-                     <label class="mda-checkbox">
+                     <label ng-if="vm.clients.length>0" class="mda-checkbox">
                         <input type="checkbox" ng-model="vm.IsAllChecked" ng-change="vm.CheckUncheckAll()" />
                         <em class="bg-green-500"></em>
                      </label>
@@ -107,10 +96,10 @@
                   <th md-column></th>
                   <th md-column></th>
                   <th colspan="2" md-column>
-                     <input class="form-control" type="text" ng-model="vm.allBranchId" placeholder="Set Branch for all" />
+                     <input ng-if="vm.clients.length>0" class="form-control" type="text" ng-model="vm.allBranchId" placeholder="Set Branch for all" />
                   </th>
                   <th md-column>
-                     <span class="input-group-btn">
+                     <span ng-if="vm.clients.length>0" class="input-group-btn">
                         <button class="btn btn-success" ng-click="vm.saveAllClients(vm.clients)">
                            <i class="fa fa-paper-plane">  </i> Send</button>
                      </span>
@@ -125,7 +114,7 @@
                   </td>
                   <td md-cell>
                      <label class="mda-checkbox" for="chkClient_{{client._id}}">
-                        <input ng-disabled="client.status !=='loan_granted'" id="chkClient_{{client._id}}" type="checkbox" ng-model="client.Selected" ng-change="vm.CheckUncheckHeader()" />
+                        <input ng-disabled="client.status !=='loan_granted'" id="chkClient_{{client._id}}" type="checkbox" ng-model="client.selected" ng-change="vm.CheckUncheckHeader()" />
                         <em class="bg-green-500"></em>
                      </label>
                   </td>

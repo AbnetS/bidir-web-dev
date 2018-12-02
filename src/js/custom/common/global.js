@@ -1,7 +1,7 @@
 var API = {
     Config: {
-        BaseUrl: 'http://api.buusaa-bidir.local/' //REMOTE APIs
-        // BaseUrl: 'http://api.dev.bidir.gebeya.co/' //REMOTE API
+        // BaseUrl: 'http://api.buusaa-bidir.local/' //REMOTE APIs
+        BaseUrl: 'http://api.dev.bidir.gebeya.co/' //REMOTE API
     },
     Service: {
         NONE:'',
@@ -80,7 +80,9 @@ var API = {
         },
         CBS:{
             Clients: 'clients/status?status=loan_granted&loanCycle=1',
-            CBS:'clients/cbs'
+            CBS:    'clients/cbs',
+            CBSBulk:'clients/cbs/bulk',
+            Connect: 'cbs/connect'
 
         }
     }
