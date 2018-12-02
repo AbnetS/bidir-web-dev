@@ -3,13 +3,13 @@
       <form name="filteringForm">
          <div class="panel b">
             <div class="panel-heading bb">
-               <h4 class="panel-title">Seasonal Monitoring Filter</h4>
+               <h4 class="panel-title">Seasonal Monitoring config</h4>
             </div>
             <div class="panel-body">
                <div class="col-lg-12">
                   <div class="form-group" ng-class="{false:'has-error'}[vm.seasonalFilterForm.IsnameValid]">
                      <label class="control-label small">Name</label>
-                     <input name="inputName" ng-model="vm.filter.name" placeholder="Season name/ configuration name" type="text" class="form-control input-sm">
+                     <input name="inputName" ng-model="vm.config.name" placeholder="Season name/ configuration name" type="text" class="form-control input-sm">
                      <small ng-show="!vm.seasonalFilterForm.IsnameValid" class="help-block">Name is required.</small>
                   </div>
                </div>
@@ -20,7 +20,7 @@
                      <label>From Date</label>
                      <span ng-show="vm.visibility.showWarning" class="control-label required" aria-required="true">*</span>
                      <p class="input-group">
-                        <input class="form-control" type="text" ng-required="true" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.filter.fromDate" is-open="vm.dtOption.fromPopup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close" alt-input-formats="vm.dtOption.altInputFormats"
+                        <input class="form-control" type="text" ng-required="true" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.config.from_date" is-open="vm.dtOption.fromPopup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close" alt-input-formats="vm.dtOption.altInputFormats"
                         />
                         <span class="input-group-btn">
                            <button type="button" class="btn btn-default" ng-click="vm.dtOption.fromOpen()">
@@ -36,7 +36,7 @@
                      <label>To Date</label>
                      <span ng-show="vm.visibility.showWarning" class="control-label required" aria-required="true">*</span>
                      <p class="input-group">
-                        <input class="form-control" type="text" ng-required="true" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.filter.toDate" is-open="vm.dtOption.popup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close" alt-input-formats="vm.dtOption.altInputFormats"
+                        <input class="form-control" type="text" ng-required="true" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.config.to_date" is-open="vm.dtOption.popup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close" alt-input-formats="vm.dtOption.altInputFormats"
                         />
                         <span class="input-group-btn">
                            <button type="button" class="btn btn-default" ng-click="vm.dtOption.open()">

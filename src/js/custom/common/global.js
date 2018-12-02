@@ -11,7 +11,8 @@ var API = {
         SCREENING:'screenings',
         LOANS:'loans',
         FORM:'forms',
-        ACAT:'acat'
+        ACAT:'acat',
+        GEOSPATIAL: 'geospatial'
     },
     Methods: {
         Auth: {
@@ -83,7 +84,10 @@ var API = {
             CBS:    'clients/cbs',
             CBSBulk:'clients/cbs/bulk',
             Connect: 'cbs/connect'
-
+        },
+        GeoSpatial:{
+            SaveConfig: 'configs/create',
+            Config: 'configs'
         }
     }
 };

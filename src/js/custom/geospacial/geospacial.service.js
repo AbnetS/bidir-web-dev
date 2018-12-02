@@ -9,16 +9,22 @@
     function GeoSpatialService($http, CommonService, AuthService) {
         return {
             formatDateForRequest:_formatDateForRequest,
-            getIndicatorsData:_getIndicatorData
+            getIndicatorsData:_getIndicatorData,
+            CurrentUser: AuthService.GetCurrentUser(),
+            SaveConfig : _saveConfig
         };
+
+        function _saveConfig(config){
+            return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
+        }
 
         function _getIndicatorData() {
             return $http.get("https://seasmon.wenr.wur.nl/cgi-bin/register.py?indicator=VI&start_date=2018-07-01&end_date=2018-12-05&regions=10212:10213:10301");
         }
         function _formatDateForRequest(date) {
             var d = new Date(date),
-                month = '' + (d.getMonth() + 1),
-                day = '' + d.getDate(),
+                month = '-' + (d.getMonth() + 1),
+                day = '-' + d.getDate(),
                 year = d.getFullYear();
 
             if (month.length < 2) month = '0' + month;
