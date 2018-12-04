@@ -1,7 +1,8 @@
 var API = {
     Config: {
-        // BaseUrl: 'http://api.buusaa-bidir.local/' //REMOTE APIs
-        BaseUrl: 'http://api.dev.bidir.gebeya.co/' //REMOTE API
+        // BaseUrl: 'http://api.buusaa-bidir.local/' //LOCAL APIs
+        BaseUrl: 'http://api.dev.bidir.gebeya.co/', //REMOTE API
+        SeasonalMonitoringBaseUrl: 'http://seasmon.wenr.wur.nl/cgi-bin/register.py?'
     },
     Service: {
         NONE:'',
@@ -80,14 +81,15 @@ var API = {
             Clients:'clients'
         },
         CBS:{
-            Clients: 'clients/status?status=loan_granted&loanCycle=1',
+            Clients: 'clients/search?cbs_status=NO ATTEMPT&&cbs_status=DENIED&loan_cycle_number=1&status=loan_granted',
             CBS:    'clients/cbs',
             CBSBulk:'clients/cbs/bulk',
             Connect: 'cbs/connect'
         },
         GeoSpatial:{
             SaveConfig: 'configs/create',
-            Config: 'configs'
+            Config: 'configs',
+            UserConfig: 'configs/search?user=5bfe4f637018b800016e9af2'
         }
     }
 };

@@ -4,22 +4,41 @@
 
         .service('GeoSpatialService', GeoSpatialService);
 
-    GeoSpatialService.$inject = ['$http','CommonService','AuthService'];
+    GeoSpatialService.$inject = ['$http','CommonService','AuthService','$rootScope'];
 
-    function GeoSpatialService($http, CommonService, AuthService) {
+    function GeoSpatialService($http, CommonService, AuthService,$rootScope) {
         return {
             formatDateForRequest:_formatDateForRequest,
             getIndicatorsData:_getIndicatorData,
-            CurrentUser: AuthService.GetCurrentUser(),
-            SaveConfig : _saveConfig
+            CurrentUser: _getUser,
+            SaveConfig : _saveConfig,
+            GetUserConfig:_getUserConfig
         };
 
-        function _saveConfig(config){
-            return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
+        function _getUser() {
+            return  AuthService.GetCurrentUser();
         }
 
-        function _getIndicatorData() {
-            return $http.get("https://seasmon.wenr.wur.nl/cgi-bin/register.py?indicator=VI&start_date=2018-07-01&end_date=2018-12-05&regions=10212:10213:10301");
+        function _getUserConfig(){
+            var user = $rootScope.currentUser._id;// AuthService.GetCurrentUser();
+            return $http.get(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config, 'search?user=' + user));
+        }
+
+        function _saveConfig(config){
+            return $http.get(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
+        }
+
+        function _getIndicatorData(config) {
+            var request = {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': undefined
+                },
+                url: API.Config.SeasonalMonitoringBaseUrl +  'indicator='+config.indicator+'&start_date='+config.start_date+'&end_date='+config.end_date+'&regions=' +config.regions};
+
+
+            return $http(request);
         }
         function _formatDateForRequest(date) {
             var d = new Date(date),

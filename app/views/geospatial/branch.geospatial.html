@@ -1,5 +1,5 @@
 <div class="row">
-   <div class="col-md-8">
+   <div ng-show="!vm.isEditConfig" class="col-md-8">
       <form name="filteringForm">
          <div class="panel b">
             <div class="panel-heading bb">
@@ -20,7 +20,7 @@
                      <label>From Date</label>
                      <span ng-show="vm.visibility.showWarning" class="control-label required" aria-required="true">*</span>
                      <p class="input-group">
-                        <input class="form-control" type="text" ng-required="true" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.config.from_date" is-open="vm.dtOption.fromPopup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close" alt-input-formats="vm.dtOption.altInputFormats"
+                        <input class="form-control" type="text" ng-required="true" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.config.fromDate" is-open="vm.dtOption.fromPopup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close" alt-input-formats="vm.dtOption.altInputFormats"
                         />
                         <span class="input-group-btn">
                            <button type="button" class="btn btn-default" ng-click="vm.dtOption.fromOpen()">
@@ -36,7 +36,7 @@
                      <label>To Date</label>
                      <span ng-show="vm.visibility.showWarning" class="control-label required" aria-required="true">*</span>
                      <p class="input-group">
-                        <input class="form-control" type="text" ng-required="true" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.config.to_date" is-open="vm.dtOption.popup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close" alt-input-formats="vm.dtOption.altInputFormats"
+                        <input class="form-control" type="text" ng-required="true" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.config.toDate" is-open="vm.dtOption.popup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close" alt-input-formats="vm.dtOption.altInputFormats"
                         />
                         <span class="input-group-btn">
                            <button type="button" class="btn btn-default" ng-click="vm.dtOption.open()">
@@ -62,9 +62,50 @@
          </div>
       </form>
    </div>
+   <div ng-show="vm.isEditConfig" class="col-sm-8 col-md-6 col-lg-4">
+
+      <div class="list-group-item">
+         <table>
+            <tbody>
+               <tr>
+                  <td>
+                     <div class="ph">
+                        <h4 class="media-box-heading">User Config</h4>
+                        <small class="text-muted">{{vm.config.name}}</small>
+                     </div>
+                  </td>
+                  <td></td>
+                  <td>
+                     <div class="ph">
+                        <p class="m0">From Date</p>
+                        <small class="text-muted">
+                           <em class="fa fa-calendar mr fa-lg"></em>{{vm.config.from_date | date}}</small>
+                     </div>
+                  </td>
+                  <td></td>
+                  <td>
+                     <div class="ph">
+                        <p class="m0">To Date</p>
+                        <small class="text-muted">
+                           <em class="fa fa-calendar mr fa-lg"></em>{{vm.config.to_date | date}}</small>
+                     </div>
+                  </td>
+                  <td></td>
+                  <td>
+                     <div class="ph">
+                        <button ng-click="vm.isEditConfig = true" class="btn btn-info" type="button">
+                           <i class="fa fa-edit fa-lg"></i> Edit
+                        </button>
+                     </div>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+      </div>
+   </div>
 </div>
 
-<div ng-show="vm.visibility.showSmiley" class="row">
+<div ng-show="vm.visibility.showSmiley" class="row clearfix">
    <div class="col-lg-4 col-md-6">
       <div class="panel panel-default">
          <div class="panel-heading">

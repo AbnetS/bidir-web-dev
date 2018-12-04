@@ -12,12 +12,13 @@
         var vm = this;
 
         vm.generateSeasonalReport = _generateSeasonalReport;
-        vm.currentUser = GeoSpatialService.CurrentUser;
+        vm.currentUser = GeoSpatialService.CurrentUser();
         vm.config = {};
         vm.visibility = {
-            showSmiley: false,
+            showSmiley: true,
             showInfoText: true
         };
+        vm.isEditConfig = false;
 
         vm.seasonalFilterForm = {
             IsfromDateValid: true,
@@ -27,11 +28,27 @@
 
         vm.resetConfig = _resetConfig;
 
+        init();
+
         function _resetConfig() {
             vm.config = undefined;
         }
 
-        init();
+
+
+function getGeoSpatialData() {
+    GeoSpatialService.getIndicatorsData({
+        indicator:'VI',
+        start_date:'2018-07-01',
+        end_date:'2018-12-05',
+        regions:'10212:10213:10301'
+    })
+        .then(function(response){
+            console.log("response",response);
+        },function(error){
+            console.log("error",error);
+        });
+}
 
         function _generateSeasonalReport() {
 
@@ -39,21 +56,28 @@
 
             if (vm.IsValidData) {
                 vm.config.user = vm.currentUser._id;
-                // vm.config.from_date = GeoSpatialService.formatDateForRequest(vm.config.fromDate);
-                // vm.config.to_date = GeoSpatialService.formatDateForRequest(vm.config.toDate);
+                vm.config.from_date = GeoSpatialService.formatDateForRequest(vm.config.fromDate);
+                vm.config.to_date = GeoSpatialService.formatDateForRequest(vm.config.toDate);
 
                 vm.visibility.showSmiley = true;
                 vm.visibility.showInfoText = false;
                 vm.visibility.showWarning = false;
+
+
+                GeoSpatialService.SaveConfig(vm.config).then(function (response) {
+                        AlertService.showSuccess('Configuration Saved Successfully',response);
+                        console.log("response",response);
+                    }
+                    ,function (error) {
+                        console.log('error',error);
+                        var message = error.data.error.message;
+                        AlertService.showError( 'Oops... Something went wrong', message);
+                    });
             } else {
                 vm.visibility.showWarning = true;
                 vm.visibility.showInfoText = false;
             }
-            GeoSpatialService.SaveConfig(vm.config).then(function (value) {
-                console.log("value", value)
-            }, function (reason) {
-                console.log(reason)
-            });
+
         }
 
         function init() {
@@ -85,10 +109,18 @@
                 }
             );
 
-            // $http.get("https://seasmon.wenr.wur.nl/cgi-bin/register.py?indicator=VI&start_date=2018-07-01&end_date=2018-12-05&regions=10212:10213:10301").then(
-            //     function (response) {
-            //     console.log("data",response);
-            // });
+            GeoSpatialService.GetUserConfig().then(function (response) {
+                vm.config = response.data[0];
+                vm.config.fromDate = new Date(vm.config.from_date);
+                vm.config.toDate = new Date(vm.config.to_date);
+                vm.isEditConfig = true;
+                getGeoSpatialData();
+                console.log(" vm.config",  vm.config);
+            },function (reason) { console.log(reason) });
+
+
+
+
         }
     }
 
