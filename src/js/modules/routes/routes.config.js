@@ -93,6 +93,7 @@
                 url: "/branches",
                 title: "branches",
                 templateUrl:helper.basepath('mfisetup/branches/branches.html'),
+                resolve:helper.resolveFor('ui.select'),
                 controller: "BranchController",
                 controllerAs: 'vm',
                 data: {

@@ -10,11 +10,15 @@
 
     function SharedService($http, CommonService,$sce) {
         return {
-            GetBranches: _getBranches
+            GetBranches: _getBranches,
+            GetWoredas:_getWoredas
         };
 
         function _getBranches(){
             return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+        }
+        function _getWoredas(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Woredas));
         }
 
     }

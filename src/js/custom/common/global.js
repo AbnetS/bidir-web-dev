@@ -89,7 +89,8 @@ var API = {
         GeoSpatial:{
             SaveConfig: 'configs/create',
             Config: 'configs',
-            UserConfig: 'configs/search?user=5bfe4f637018b800016e9af2'
+            UserConfig: 'configs/search?user=',
+            Woredas: 'weredas'
         }
     }
 };

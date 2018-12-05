@@ -4,9 +4,9 @@
     angular.module('app.mfi')
         .controller('CreateBranchController', CreateBranchController);
 
-    CreateBranchController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService','blockUI'];
+    CreateBranchController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService','blockUI','SharedService'];
 
-  function CreateBranchController($mdDialog, items,AlertService,CommonService,MainService,blockUI) {
+  function CreateBranchController($mdDialog, items,AlertService,CommonService,MainService,blockUI,SharedService) {
       var vm = this;
       vm.cancel = _cancel;
       vm.saveBranch = _saveBranch;
@@ -19,6 +19,12 @@
 
       init();
 
+      function GetWoredas() {
+          SharedService.GetWoredas().then(function (response) {
+              vm.woredas = response.data.docs;
+              },function (reason) { console.log("reason",reason) });
+      }
+
       function _saveBranch() {
           vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFIBranchForm, vm.branch);
 
@@ -27,6 +33,7 @@
           }else if(vm.IsValidData){
               var myBlockUI = blockUI.instances.get('CreateBranchBlockUI')
               myBlockUI.start();
+              vm.branch.weredas = _.pluck(vm.branch.selectedWoredas, '_id');
               if(!vm.isEdit){
                   //Save new branch API
                   MainService.CreateBranch(vm.branch).then(
@@ -57,6 +64,7 @@
                       branch_type: vm.branch.branch_type,
                       opening_date: vm.branch.opening_date
                   };
+                  upBranch.weredas = _.pluck(vm.branch.selectedWoredas, '_id');
 
                       if(!_.isUndefined(vm.branch.email)){
                         upBranch.email =vm.branch.email;
@@ -116,11 +124,12 @@
 
       function init(){
           vm.branchTypes =['Select Branch Type','Satellite office','Rural Service','Regional office','Urban office'];
-
+          GetWoredas();
           if(vm.isEdit)
           {
               var dt =_.isUndefined(vm.branch.opening_date)?undefined: new Date(vm.branch.opening_date);
               vm.branch.opening_date = dt;
+              vm.branch.selectedWoredas = vm.branch.weredas;
           }else{
               vm.branch = { branch_type : vm.branchTypes[0] }; //SET DEFAULT SELECT OPTION FOR BRANCH TYPE
           }

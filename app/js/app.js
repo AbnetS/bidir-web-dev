@@ -41,6 +41,12 @@
     'use strict';
 
     angular
+        .module('app.colors', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.core', [
             'ngRoute',
             'ngAnimate',
@@ -58,12 +64,6 @@
             'ngMessages',
             'angularMoment'
         ]);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
 })();
 (function() {
     'use strict';
@@ -103,15 +103,15 @@
     'use strict';
 
     angular
-        .module('app.settings', []);
+        .module('app.routes', [
+            'app.lazyload'
+        ]);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.routes', [
-            'app.lazyload'
-        ]);
+        .module('app.settings', []);
 })();
 (function() {
     'use strict';
@@ -132,6 +132,56 @@
         .module('app.utils', [
           'app.colors'
           ]);
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
 })();
 
 (function() {
@@ -250,56 +300,6 @@
 
 })();
 
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
 
 (function() {
     'use strict';
@@ -1520,82 +1520,6 @@
     }
 
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.settings')
-        .run(settingsRun);
-
-    settingsRun.$inject = ['$rootScope', 'AuthService'];
-
-    function settingsRun($rootScope, AuthService){
-
-
-      // User Settings
-      // -----------------------------------
-      $rootScope.user = {
-        name:     'Yonas',
-        job:      'System Admin',
-        picture:  'app/img/user/02.jpg'
-      };
-
-      // Hides/show user avatar on sidebar from any element
-      $rootScope.toggleUserBlock = function(){
-        $rootScope.$broadcast('toggleUserBlock');
-      };
-      $rootScope.logoutUser = function (){
-            AuthService.Logout();
-      };
-
-      // Global Settings
-      // -----------------------------------
-      $rootScope.app = {
-        name: 'Bidir Web',
-        description: 'Bidir Web App',
-        year: ((new Date()).getFullYear()),
-        layout: {
-          isFixed: true,
-          isCollapsed: false,
-          isBoxed: false,
-          isRTL: false,
-          horizontal: false,
-          isFloat: false,
-          asideHover: false,
-          theme: 'app/css/theme-d.css',
-          asideScrollbar: false,
-          isCollapsedText: false
-        },
-        useFullLayout: false,
-        hiddenFooter: false,
-        offsidebarOpen: false,
-        asideToggled: false,
-        viewAnimation: 'ng-fadeInUp'
-      };
-
-      // Setup the layout mode
-      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
-
-      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
-      // if( angular.isDefined($localStorage.layout) )
-      //   $rootScope.app.layout = $localStorage.layout;
-      // else
-      //   $localStorage.layout = $rootScope.app.layout;
-      //
-      // $rootScope.$watch('app.layout', function () {
-      //   $localStorage.layout = $rootScope.app.layout;
-      // }, true);
-
-      // Close submenu when sidebar change from collapsed to normal
-      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
-        if( newValue === false )
-          $rootScope.$broadcast('closeSidebarMenu');
-      });
-
-    }
-
-})();
-
 /**=========================================================
  * Module: helpers.js
  * Provides helper functions for routes definition
@@ -1775,6 +1699,7 @@
                 url: "/branches",
                 title: "branches",
                 templateUrl:helper.basepath('mfisetup/branches/branches.html'),
+                resolve:helper.resolveFor('ui.select'),
                 controller: "BranchController",
                 controllerAs: 'vm',
                 data: {
@@ -2037,6 +1962,82 @@
 
 })();
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.settings')
+        .run(settingsRun);
+
+    settingsRun.$inject = ['$rootScope', 'AuthService'];
+
+    function settingsRun($rootScope, AuthService){
+
+
+      // User Settings
+      // -----------------------------------
+      $rootScope.user = {
+        name:     'Yonas',
+        job:      'System Admin',
+        picture:  'app/img/user/02.jpg'
+      };
+
+      // Hides/show user avatar on sidebar from any element
+      $rootScope.toggleUserBlock = function(){
+        $rootScope.$broadcast('toggleUserBlock');
+      };
+      $rootScope.logoutUser = function (){
+            AuthService.Logout();
+      };
+
+      // Global Settings
+      // -----------------------------------
+      $rootScope.app = {
+        name: 'Bidir Web',
+        description: 'Bidir Web App',
+        year: ((new Date()).getFullYear()),
+        layout: {
+          isFixed: true,
+          isCollapsed: false,
+          isBoxed: false,
+          isRTL: false,
+          horizontal: false,
+          isFloat: false,
+          asideHover: false,
+          theme: 'app/css/theme-d.css',
+          asideScrollbar: false,
+          isCollapsedText: false
+        },
+        useFullLayout: false,
+        hiddenFooter: false,
+        offsidebarOpen: false,
+        asideToggled: false,
+        viewAnimation: 'ng-fadeInUp'
+      };
+
+      // Setup the layout mode
+      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
+
+      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
+      // if( angular.isDefined($localStorage.layout) )
+      //   $rootScope.app.layout = $localStorage.layout;
+      // else
+      //   $localStorage.layout = $rootScope.app.layout;
+      //
+      // $rootScope.$watch('app.layout', function () {
+      //   $localStorage.layout = $rootScope.app.layout;
+      // }, true);
+
+      // Close submenu when sidebar change from collapsed to normal
+      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
+        if( newValue === false )
+          $rootScope.$broadcast('closeSidebarMenu');
+      });
+
+    }
+
+})();
 
 /**=========================================================
  * Module: sidebar-menu.js
@@ -3075,6 +3076,14 @@
     };
 
 })();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.geospatial', ['ngSanitize']);
+
+})();
 /**
  * Created by Yonas on 4/27/2018.
  */
@@ -3085,14 +3094,6 @@
         'app.clients',
         'app.processing'
     ]);
-
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.geospatial', ['ngSanitize']);
 
 })();
 /**
@@ -3205,11 +3206,15 @@ function runBlock() {
 
     function SharedService($http, CommonService,$sce) {
         return {
-            GetBranches: _getBranches
+            GetBranches: _getBranches,
+            GetWoredas:_getWoredas
         };
 
         function _getBranches(){
             return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+        }
+        function _getWoredas(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Woredas));
         }
 
     }
@@ -3923,7 +3928,8 @@ var API = {
         GeoSpatial:{
             SaveConfig: 'configs/create',
             Config: 'configs',
-            UserConfig: 'configs/search?user=5bfe4f637018b800016e9af2'
+            UserConfig: 'configs/search?user=',
+            Woredas: 'weredas'
         }
     }
 };
@@ -4655,6 +4661,222 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
 
 })(window.angular);
+(function (angular) {
+    "use strict";
+    angular
+        .module('app.geospatial')
+        .controller('GeospatialController', GeoSpatialController);
+
+    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI', 'SharedService', 'CommonService', 'AlertService'];
+
+    function GeoSpatialController(GeoSpatialService, blockUI, SharedService, CommonService, AlertService) {
+        var vm = this;
+
+        vm.generateSeasonalReport = _generateSeasonalReport;
+        vm.currentUser = GeoSpatialService.CurrentUser();
+        vm.config = {};
+        vm.visibility = {
+            showSmiley: false,
+            showInfoText: true,
+            isEditConfig: false
+        };
+
+        vm.seasonalFilterForm = {
+            IsfromDateValid: true,
+            IstoDateValid: true,
+            IsnameValid: true
+        };
+
+        vm.resetConfig = _resetConfig;
+
+        init();
+
+        function _resetConfig() {
+            vm.config = undefined;
+        }
+
+
+        function getGeoSpatialData() {
+
+            GeoSpatialService.getIndicatorsData({
+                indicator: 'VI',
+                start_date: '2018-07-01',//vm.config.from_date,//'2018-07-01',
+                end_date:  '2018-12-05',//vm.config.to_date,
+                regions: '10212:10213:10301'
+            })
+                .then(function (response) {
+                    console.log("response", response);
+                }, function (error) {
+                    console.log("error", error);
+                });
+        }
+
+        function _generateSeasonalReport() {
+
+            vm.IsValidData = CommonService.Validation.ValidateForm(vm.seasonalFilterForm, vm.config);
+
+            if (vm.IsValidData) {
+                vm.config.user = vm.currentUser._id;
+                vm.config.from_date = GeoSpatialService.formatDateForRequest(vm.config.fromDate);
+                vm.config.to_date = GeoSpatialService.formatDateForRequest(vm.config.toDate);
+
+                vm.visibility.showSmiley = true;
+                vm.visibility.showInfoText = false;
+                vm.visibility.showWarning = false;
+
+
+                GeoSpatialService.SaveConfig({
+                    user: "5b925494b1cfc10001d80908",
+                    name : "Seasonal Monitoring for Belg",
+                    from_date: "2018-07-01",
+                    to_date:"2018-12-10"
+                }).then(function (response) {
+                        AlertService.showSuccess('Configuration Saved Successfully', response);
+                        console.log("response", response);
+                    }
+                    , function (error) {
+                        console.log('error', error);
+                        var message = error.data.error.message;
+                        AlertService.showError('Oops... Something went wrong', message);
+                    });
+            } else {
+                vm.visibility.showWarning = true;
+                vm.visibility.showInfoText = false;
+            }
+
+        }
+
+        function init() {
+            vm.dtOption = {};
+            vm.dtOption.dateOptions = {
+                dateDisabled: false, formatYear: "yy",
+                maxDate: new Date(2020, 5, 22), startingDay: 1
+            };
+            vm.dtOption.format = "shortDate";
+            vm.dtOption.altInputFormats = ["M!/d!/yyyy"];
+            vm.dtOption.popup = {opened: false};
+            vm.dtOption.fromPopup = {opened: false};
+            vm.dtOption.open = function () {
+                vm.dtOption.popup.opened = true;
+            };
+            vm.dtOption.fromOpen = function () {
+                vm.dtOption.fromPopup.opened = true;
+            };
+            vm.dtOption.clear = function () {
+                vm.dtOption.dt = null;
+            };
+
+            SharedService.GetBranches().then(
+                function (response) {
+                    vm.branches = response.data.docs;
+                },
+                function (error) {
+                    console.log("error fetching branches", error);
+                }
+            );
+
+            GeoSpatialService.GetUserConfig().then(function (response) {
+                if (response.data.length > 0) {
+                    vm.config = response.data[0];
+                    vm.config.fromDate = new Date(vm.config.from_date);
+                    vm.config.toDate = new Date(vm.config.to_date);
+                    vm.isEditConfig = true;
+                    getGeoSpatialData();
+                }
+                console.log(" vm.config", vm.config);
+            }, function (reason) {
+                console.log(reason)
+            });
+
+
+        }
+    }
+
+})(window.angular);
+(function(angular) {
+    "use strict";
+
+
+    angular
+        .module('app.geospatial')
+        .controller('PlotReportController', PlotReportController);
+
+    PlotReportController.$inject = ['NgMap', 'blockUI','SharedService','CommonService'];
+
+    function PlotReportController( NgMap,blockUI,SharedService,CommonService )
+    {
+        var vm = this;
+        NgMap.getMap().then(function(map) {
+            vm.showCustomMarker= function(evt) {
+                map.customMarkers.foo.setVisible(true);
+                map.customMarkers.foo.setPosition(this.getPosition());
+            };
+            vm.closeCustomMarker= function(evt) {
+                this.style.display = 'none';
+            };
+        });
+
+    }
+
+})(window.angular);
+(function(angular) {
+    'use strict';
+    angular.module('app.geospatial')
+
+        .service('GeoSpatialService', GeoSpatialService);
+
+    GeoSpatialService.$inject = ['$http','CommonService','AuthService','$rootScope'];
+
+    function GeoSpatialService($http, CommonService, AuthService,$rootScope) {
+        return {
+            formatDateForRequest:_formatDateForRequest,
+            getIndicatorsData:_getIndicatorData,
+            CurrentUser: _getUser,
+            SaveConfig : _saveConfig,
+            GetUserConfig:_getUserConfig
+        };
+
+        function _getUser() {
+            return  AuthService.GetCurrentUser();
+        }
+
+        function _getUserConfig(){
+            var user = $rootScope.currentUser._id;// AuthService.GetCurrentUser();
+            return $http.get(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config, 'search?user=' + user));
+        }
+
+        function _saveConfig(config){
+            return $http.get(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
+        }
+
+        function _getIndicatorData(config) {
+            var request = {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': undefined
+                },
+                url: API.Config.SeasonalMonitoringBaseUrl +  'indicator='+config.indicator+'&start_date='+config.start_date+'&end_date='+config.end_date+'&regions=' +config.regions};
+
+
+            return $http(request);
+        }
+        function _formatDateForRequest(date) {
+            var d = new Date(date),
+                month = '-' + (d.getMonth() + 1),
+                day = '-' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('');
+        }
+
+    }
+
+
+})(window.angular);
 /**
  * Created by Yonas on 4/27/2018.
  */
@@ -4795,217 +5017,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
         function _getCrops() {
             return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
-        }
-
-    }
-
-
-})(window.angular);
-(function (angular) {
-    "use strict";
-
-
-    angular
-        .module('app.geospatial')
-        .controller('GeospatialController', GeoSpatialController);
-
-    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI', 'SharedService', 'CommonService', '$http'];
-
-    function GeoSpatialController(GeoSpatialService, blockUI, SharedService, CommonService, $http) {
-        var vm = this;
-
-        vm.generateSeasonalReport = _generateSeasonalReport;
-        vm.currentUser = GeoSpatialService.CurrentUser();
-        vm.config = {};
-        vm.visibility = {
-            showSmiley: true,
-            showInfoText: true
-        };
-        vm.isEditConfig = false;
-
-        vm.seasonalFilterForm = {
-            IsfromDateValid: true,
-            IstoDateValid: true,
-            IsnameValid: true
-        };
-
-        vm.resetConfig = _resetConfig;
-
-        init();
-
-        function _resetConfig() {
-            vm.config = undefined;
-        }
-
-
-
-function getGeoSpatialData() {
-    GeoSpatialService.getIndicatorsData({
-        indicator:'VI',
-        start_date:'2018-07-01',
-        end_date:'2018-12-05',
-        regions:'10212:10213:10301'
-    })
-        .then(function(response){
-            console.log("response",response);
-        },function(error){
-            console.log("error",error);
-        });
-}
-
-        function _generateSeasonalReport() {
-
-            vm.IsValidData = CommonService.Validation.ValidateForm(vm.seasonalFilterForm, vm.config);
-
-            if (vm.IsValidData) {
-                vm.config.user = vm.currentUser._id;
-                vm.config.from_date = GeoSpatialService.formatDateForRequest(vm.config.fromDate);
-                vm.config.to_date = GeoSpatialService.formatDateForRequest(vm.config.toDate);
-
-                vm.visibility.showSmiley = true;
-                vm.visibility.showInfoText = false;
-                vm.visibility.showWarning = false;
-
-
-                GeoSpatialService.SaveConfig(vm.config).then(function (response) {
-                        AlertService.showSuccess('Configuration Saved Successfully',response);
-                        console.log("response",response);
-                    }
-                    ,function (error) {
-                        console.log('error',error);
-                        var message = error.data.error.message;
-                        AlertService.showError( 'Oops... Something went wrong', message);
-                    });
-            } else {
-                vm.visibility.showWarning = true;
-                vm.visibility.showInfoText = false;
-            }
-
-        }
-
-        function init() {
-            vm.dtOption = {};
-            vm.dtOption.dateOptions = {
-                dateDisabled: false, formatYear: "yy",
-                maxDate: new Date(2020, 5, 22), startingDay: 1
-            };
-            vm.dtOption.format = "shortDate";
-            vm.dtOption.altInputFormats = ["M!/d!/yyyy"];
-            vm.dtOption.popup = {opened: false};
-            vm.dtOption.fromPopup = {opened: false};
-            vm.dtOption.open = function () {
-                vm.dtOption.popup.opened = true;
-            };
-            vm.dtOption.fromOpen = function () {
-                vm.dtOption.fromPopup.opened = true;
-            };
-            vm.dtOption.clear = function () {
-                vm.dtOption.dt = null;
-            };
-
-            SharedService.GetBranches().then(
-                function (response) {
-                    vm.branches = response.data.docs;
-                },
-                function (error) {
-                    console.log("error fetching branches", error);
-                }
-            );
-
-            GeoSpatialService.GetUserConfig().then(function (response) {
-                vm.config = response.data[0];
-                vm.config.fromDate = new Date(vm.config.from_date);
-                vm.config.toDate = new Date(vm.config.to_date);
-                vm.isEditConfig = true;
-                getGeoSpatialData();
-                console.log(" vm.config",  vm.config);
-            },function (reason) { console.log(reason) });
-
-
-
-
-        }
-    }
-
-})(window.angular);
-(function(angular) {
-    "use strict";
-
-
-    angular
-        .module('app.geospatial')
-        .controller('PlotReportController', PlotReportController);
-
-    PlotReportController.$inject = ['NgMap', 'blockUI','SharedService','CommonService'];
-
-    function PlotReportController( NgMap,blockUI,SharedService,CommonService )
-    {
-        var vm = this;
-        NgMap.getMap().then(function(map) {
-            vm.showCustomMarker= function(evt) {
-                map.customMarkers.foo.setVisible(true);
-                map.customMarkers.foo.setPosition(this.getPosition());
-            };
-            vm.closeCustomMarker= function(evt) {
-                this.style.display = 'none';
-            };
-        });
-
-    }
-
-})(window.angular);
-(function(angular) {
-    'use strict';
-    angular.module('app.geospatial')
-
-        .service('GeoSpatialService', GeoSpatialService);
-
-    GeoSpatialService.$inject = ['$http','CommonService','AuthService','$rootScope'];
-
-    function GeoSpatialService($http, CommonService, AuthService,$rootScope) {
-        return {
-            formatDateForRequest:_formatDateForRequest,
-            getIndicatorsData:_getIndicatorData,
-            CurrentUser: _getUser,
-            SaveConfig : _saveConfig,
-            GetUserConfig:_getUserConfig
-        };
-
-        function _getUser() {
-            return  AuthService.GetCurrentUser();
-        }
-
-        function _getUserConfig(){
-            var user = $rootScope.currentUser._id;// AuthService.GetCurrentUser();
-            return $http.get(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config, 'search?user=' + user));
-        }
-
-        function _saveConfig(config){
-            return $http.get(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
-        }
-
-        function _getIndicatorData(config) {
-            var request = {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': undefined
-                },
-                url: API.Config.SeasonalMonitoringBaseUrl +  'indicator='+config.indicator+'&start_date='+config.start_date+'&end_date='+config.end_date+'&regions=' +config.regions};
-
-
-            return $http(request);
-        }
-        function _formatDateForRequest(date) {
-            var d = new Date(date),
-                month = '-' + (d.getMonth() + 1),
-                day = '-' + d.getDate(),
-                year = d.getFullYear();
-
-            if (month.length < 2) month = '0' + month;
-            if (day.length < 2) day = '0' + day;
-
-            return [year, month, day].join('');
         }
 
     }
@@ -9206,175 +9217,6 @@ function getGeoSpatialData() {
   }
 })(window.angular);
 
-/**
- * Created by Yonas on 7/2/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("ClientsController", ClientsController);
-
-    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
-
-    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
-        var vm = this;
-        vm.clientDetailEdit = _clientDetailEdit;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearchText;
-        vm.saveClient = _saveClient;
-        vm.backToClientList = _backToClientList;
-
-
-
-        initialize();
-
-        function initialize() {
-            initializeDatePicker();
-            vm.visibility = { showClientDetail: false };
-            vm.civilStatuses = CIVIL_STATUSES;
-            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
-            vm.filter = {show : false};
-            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
-
-            vm.query = { search:'',   page:1,  per_page:10 };
-            vm.months = MONTHS_CONST;
-            callAPI();
-            getBranches();
-        }
-
-        function callAPI() {
-            var myBlockUI = blockUI.instances.get('clientsBlockUI');
-            myBlockUI.start();
-
-            vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
-                vm.clients = response.data.docs;
-                vm.query.total_pages = response.data.total_pages;
-                vm.query.total_docs_count = response.data.total_docs_count;
-                myBlockUI.stop();
-                console.log("clients",vm.clients);
-            });
-        }
-
-        function _clientDetailEdit(client,ev) {
-            console.log("client detail",client);
-            vm.visibility.showClientDetail = true;
-            //data set
-            vm.selectedClient = client;
-            var dt = new Date(client.date_of_birth);
-            vm.selectedClient.date_of_birth = dt;
-            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
-            vm.selectedClient.gender = client.gender.toLowerCase();
-            vm.selected_branch = client.branch;
-        }
-
-        function _backToClientList() {
-            vm.visibility = { showClientDetail: false };
-        }
-        function _saveClient() {
-
-            if(_.isUndefined(vm.selected_branch)){
-                AlertService.showWarning("Warning!","Please Select Branch....");
-            }else{
-                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
-                myBlockUI.start();
-                var client = vm.selectedClient;
-                client.branch = vm.selected_branch._id;
-                client.created_by =  undefined;
-
-
-                if( _.isUndefined(vm.selectedClient._id)){
-                    //ADD NEW CLIENT INFORMATION
-                    LoanManagementService.SaveClient(client).then(function (response) {
-                        console.log("save client",response);
-                        myBlockUI.stop();
-                        vm.visibility = { showClientDetail: false };
-                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
-
-                    },function (error) {
-                        console.log("save client error",error);
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to save client",message);
-
-                    });
-                }else{
-                    //UPDATE CLIENT INFORMATION
-                    LoanManagementService.UpdateClient(client).then(function (response) {
-                        console.log("save client",response);
-                        myBlockUI.stop();
-                        vm.visibility = { showClientDetail: false };
-                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
-                    },function (error) {
-                        console.log("Updated client error",error);
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to update Client",message);
-
-                    });
-                }
-
-
-            }
-
-        }
-
-        function getBranches() {
-            SharedService.GetBranches().then(function(response){
-                vm.branches = response.data.docs;
-                console.log("vm.branches",vm.branches);
-            },function(error){
-                console.log("error",error);
-            });
-        }
-
-        /**
-         *
-         *  Paging parameters and methods
-         */
-        function _paginate(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
-        }
-        function _clearSearchText() {
-            vm.query.search = '';
-            vm.filter.show = false;
-        }
-        function initializeDatePicker() {
-            vm.clear = function() {
-                vm.dt = null;
-            };
-
-            vm.dateOptions = {
-                dateDisabled: false,
-                formatYear: "yy",
-                maxDate: new Date(2020, 5, 22),
-                startingDay: 1
-            };
-
-            vm.openPopup = function() {
-                vm.popup1.opened = true;
-            };
-
-            vm.dateFormat = "dd-MMMM-yyyy";
-            vm.altInputFormats = ["M!/d!/yyyy"];
-
-            vm.popup1 = {
-                opened: false
-            };
-        }
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("searching clients for ",newValue);
-            }
-        });
-
-    }
-
-})(window.angular);
 (function (angular) {
     "use strict";
 
@@ -9607,6 +9449,175 @@ function getGeoSpatialData() {
     }
 
 
+
+})(window.angular);
+/**
+ * Created by Yonas on 7/2/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("ClientsController", ClientsController);
+
+    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
+
+    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
+        var vm = this;
+        vm.clientDetailEdit = _clientDetailEdit;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearchText;
+        vm.saveClient = _saveClient;
+        vm.backToClientList = _backToClientList;
+
+
+
+        initialize();
+
+        function initialize() {
+            initializeDatePicker();
+            vm.visibility = { showClientDetail: false };
+            vm.civilStatuses = CIVIL_STATUSES;
+            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
+            vm.filter = {show : false};
+            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
+
+            vm.query = { search:'',   page:1,  per_page:10 };
+            vm.months = MONTHS_CONST;
+            callAPI();
+            getBranches();
+        }
+
+        function callAPI() {
+            var myBlockUI = blockUI.instances.get('clientsBlockUI');
+            myBlockUI.start();
+
+            vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
+                vm.clients = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+                myBlockUI.stop();
+                console.log("clients",vm.clients);
+            });
+        }
+
+        function _clientDetailEdit(client,ev) {
+            console.log("client detail",client);
+            vm.visibility.showClientDetail = true;
+            //data set
+            vm.selectedClient = client;
+            var dt = new Date(client.date_of_birth);
+            vm.selectedClient.date_of_birth = dt;
+            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
+            vm.selectedClient.gender = client.gender.toLowerCase();
+            vm.selected_branch = client.branch;
+        }
+
+        function _backToClientList() {
+            vm.visibility = { showClientDetail: false };
+        }
+        function _saveClient() {
+
+            if(_.isUndefined(vm.selected_branch)){
+                AlertService.showWarning("Warning!","Please Select Branch....");
+            }else{
+                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
+                myBlockUI.start();
+                var client = vm.selectedClient;
+                client.branch = vm.selected_branch._id;
+                client.created_by =  undefined;
+
+
+                if( _.isUndefined(vm.selectedClient._id)){
+                    //ADD NEW CLIENT INFORMATION
+                    LoanManagementService.SaveClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
+                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
+
+                    },function (error) {
+                        console.log("save client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to save client",message);
+
+                    });
+                }else{
+                    //UPDATE CLIENT INFORMATION
+                    LoanManagementService.UpdateClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
+                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
+                    },function (error) {
+                        console.log("Updated client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to update Client",message);
+
+                    });
+                }
+
+
+            }
+
+        }
+
+        function getBranches() {
+            SharedService.GetBranches().then(function(response){
+                vm.branches = response.data.docs;
+                console.log("vm.branches",vm.branches);
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        /**
+         *
+         *  Paging parameters and methods
+         */
+        function _paginate(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        }
+        function _clearSearchText() {
+            vm.query.search = '';
+            vm.filter.show = false;
+        }
+        function initializeDatePicker() {
+            vm.clear = function() {
+                vm.dt = null;
+            };
+
+            vm.dateOptions = {
+                dateDisabled: false,
+                formatYear: "yy",
+                maxDate: new Date(2020, 5, 22),
+                startingDay: 1
+            };
+
+            vm.openPopup = function() {
+                vm.popup1.opened = true;
+            };
+
+            vm.dateFormat = "dd-MMMM-yyyy";
+            vm.altInputFormats = ["M!/d!/yyyy"];
+
+            vm.popup1 = {
+                opened: false
+            };
+        }
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("searching clients for ",newValue);
+            }
+        });
+
+    }
 
 })(window.angular);
 /**
@@ -9941,9 +9952,9 @@ function getGeoSpatialData() {
     angular.module('app.mfi')
         .controller('CreateBranchController', CreateBranchController);
 
-    CreateBranchController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService','blockUI'];
+    CreateBranchController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService','blockUI','SharedService'];
 
-  function CreateBranchController($mdDialog, items,AlertService,CommonService,MainService,blockUI) {
+  function CreateBranchController($mdDialog, items,AlertService,CommonService,MainService,blockUI,SharedService) {
       var vm = this;
       vm.cancel = _cancel;
       vm.saveBranch = _saveBranch;
@@ -9956,6 +9967,12 @@ function getGeoSpatialData() {
 
       init();
 
+      function GetWoredas() {
+          SharedService.GetWoredas().then(function (response) {
+              vm.woredas = response.data.docs;
+              },function (reason) { console.log("reason",reason) });
+      }
+
       function _saveBranch() {
           vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFIBranchForm, vm.branch);
 
@@ -9964,6 +9981,7 @@ function getGeoSpatialData() {
           }else if(vm.IsValidData){
               var myBlockUI = blockUI.instances.get('CreateBranchBlockUI')
               myBlockUI.start();
+              vm.branch.weredas = _.pluck(vm.branch.selectedWoredas, '_id');
               if(!vm.isEdit){
                   //Save new branch API
                   MainService.CreateBranch(vm.branch).then(
@@ -9994,6 +10012,7 @@ function getGeoSpatialData() {
                       branch_type: vm.branch.branch_type,
                       opening_date: vm.branch.opening_date
                   };
+                  upBranch.weredas = _.pluck(vm.branch.selectedWoredas, '_id');
 
                       if(!_.isUndefined(vm.branch.email)){
                         upBranch.email =vm.branch.email;
@@ -10053,11 +10072,12 @@ function getGeoSpatialData() {
 
       function init(){
           vm.branchTypes =['Select Branch Type','Satellite office','Rural Service','Regional office','Urban office'];
-
+          GetWoredas();
           if(vm.isEdit)
           {
               var dt =_.isUndefined(vm.branch.opening_date)?undefined: new Date(vm.branch.opening_date);
               vm.branch.opening_date = dt;
+              vm.branch.selectedWoredas = vm.branch.weredas;
           }else{
               vm.branch = { branch_type : vm.branchTypes[0] }; //SET DEFAULT SELECT OPTION FOR BRANCH TYPE
           }
