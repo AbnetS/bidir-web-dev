@@ -62,12 +62,7 @@
                 vm.visibility.showWarning = false;
 
 
-                GeoSpatialService.SaveConfig({
-                    user: "5b925494b1cfc10001d80908",
-                    name : "Seasonal Monitoring for Belg",
-                    from_date: "2018-07-01",
-                    to_date:"2018-12-10"
-                }).then(function (response) {
+                GeoSpatialService.SaveConfig(vm.config).then(function (response) {
                         AlertService.showSuccess('Configuration Saved Successfully', response);
                         console.log("response", response);
                     }

@@ -42,8 +42,8 @@
         }
         function _formatDateForRequest(date) {
             var d = new Date(date),
-                month = '-' + (d.getMonth() + 1),
-                day = '-' + d.getDate(),
+                month = '-' +  ("0" + (d.getMonth() + 1)).slice(-2) ,
+                day = '-' + ("0" + d.getDate()).slice(-2),
                 year = d.getFullYear();
 
             if (month.length < 2) month = '0' + month;
