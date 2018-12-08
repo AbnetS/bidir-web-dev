@@ -128,8 +128,8 @@
             CoreBankingService.ConnectToCBS().then(function (value) {
                 CoreBankingService.SendClientToCBS(clientFormatted).then(
                     function (response) {
-                        AlertService.showSuccess('Client Info sent to CBS!',response);
-                        console.log("response",response);
+                        AlertService.showSuccess('Client Info sent to CBS!','Client Information sent to Core Banking Solution!');
+                        vm.onAllClientChange();
                     }
                     ,function (error) {
                         console.log('error',error);
