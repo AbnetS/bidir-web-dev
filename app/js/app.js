@@ -3052,14 +3052,6 @@
 
 })(window.angular);
 
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.banking', []);
-
-})();
 /**
  * Created by Yoni on 1/29/2018.
  */
@@ -3165,6 +3157,14 @@ function runBlock() {
 
     angular
         .module('app.welcomePage', []);
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.banking', []);
 
 })();
 
@@ -4050,447 +4050,6 @@ var MD_TABLE_GLOBAL_SETTINGS = {
     }
 };
 var CIVIL_STATUSES  = ["single","married","widowed","other"];
-(function(angular) {
-    "use strict";
-
-
-    angular
-        .module('app.banking')
-        .controller('CoreBankingController', CoreBankingController);
-
-    CoreBankingController.$inject = ['CoreBankingService','$scope','AuthService','$rootScope','AlertService','$state'];
-
-    function CoreBankingController(CoreBankingService,$scope,AuthService,$rootScope,AlertService,$state) {
-        var vm = this;
-        //GET TITLES LIST
-        vm.titles = CoreBankingService.GetTitles;
-        //CHECK ALL/UNCHECK ALL OPTIONS
-        vm.onAllClientChange = _onAllClientChange;
-        vm.CheckUncheckAll = _checkUncheckAll;
-        vm.CheckUncheckHeader = _checkUncheckHeader;
-        //Filter related
-        vm.clearSearch = _clearSearch;
-        vm.onSelectedBranch = _onSelectedBranch;
-        //Client Related
-        vm.saveSingleClient = _saveSingleClient;
-        vm.saveAllClients = _saveAllClients;
-        vm.cbs_clientDetail = _clientDetail;
-        //UI SELECT Option for adding new titles
-        vm.refreshResults = refreshResults;
-
-        vm.statusStyle = _statusStyle;
-
-        initialize();
-
-        function initialize() {
-            $rootScope.app.layout.isCollapsed = true;
-            vm.filter = {show : false , allClient: "false"};
-            vm.IsAllChecked = false;
-            vm.query = { search: '' };
-            vm.currentUser = {selected_access_branch:undefined};
-
-            callCBSReadyApi();
-            GetBranchFilter();
-        }
-
-        function _onAllClientChange() {
-            if(vm.filter.allClient === "true"){
-                GetAllClientsApi();
-            }else{
-                callCBSReadyApi();
-            }
-        }
-
-        function GetBranchFilter() {
-            if(AuthService.IsSuperuser()){
-                CoreBankingService.GetBranches().then(function(response){
-                    vm.currentUser.user_access_branches = response.data.docs;
-                },function(error){
-                    vm.currentUser.user_access_branches = [];
-                    console.log("error on GetBranchFilter",error);
-                });
-            }
-            else {
-                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
-            }
-        }
-
-        function _onSelectedBranch(){
-            vm.clients = vm.clientsCopy;
-
-            vm.clients = _.filter(vm.clients,function(client){
-                if(!_.isUndefined(client.branch) && client.branch !== null){
-                    return client.branch._id === vm.currentUser.selected_access_branch._id;
-                }
-            });
-
-        }
-
-        function _checkUncheckHeader() {
-            vm.IsAllChecked = true;
-            for (var i = 0; i < vm.clients.length; i++) {
-                if (!vm.clients[i].selected) {
-                    vm.IsAllChecked = false;
-                    break;
-                }
-            }
-        }
-
-        function _checkUncheckAll() {
-            for (var i = 0; i < vm.clients.length; i++) {
-                if(vm.clients[i].status === 'loan_granted' ){
-                    vm.clients[i].selected = vm.IsAllChecked;
-                }else{
-                    vm.clients[i].selected = false;
-                }
-
-            }
-        }
-
-        function _clientDetail(client){
-            CoreBankingService.setClientInfo(client);
-            $state.go('app.cbs_detail',{id:client._id});
-        }
-
-        function _statusStyle(status){
-            var style = '';
-            switch (status){
-                case 'ACCEPTED':
-                    style =  'label label-success';
-                    break;
-                case 'DENIED':
-                    style =  'label label-danger';
-                    break;
-                case 'NO ATTEMPT':
-                    style =  'label label-inverse';
-                    break;
-                default:
-                    style =  'label label-warning';
-            }
-            return style;
-        }
-
-        function _saveSingleClient(client){
-
-            var clientFormatted = {
-                branchId: client.branchId,
-                title : client.title,
-                client: client._id };
-
-            CoreBankingService.ConnectToCBS().then(function (value) {
-                CoreBankingService.SendClientToCBS(clientFormatted).then(
-                    function (response) {
-                        AlertService.showSuccess('Client Info sent to CBS!',response);
-                        console.log("response",response);
-                    }
-                    ,function (error) {
-                        console.log('error',error);
-                        var message = error.data.error.message;
-                        AlertService.showError( 'Oops... Something went wrong', message);
-                    });
-                },function (reason) {
-                    AlertService.showError( 'CAN NOT CONNECT TO CBS', reason);
-                }
-            );
-
-
-        }
-
-        function _saveAllClients(clients) {
-            var clientList = [];
-            _.each(clients, function (client) {
-                if (client.selected && client.status === 'loan_granted') {
-                    clientList.push({
-                        branchId: vm.allBranchId,
-                        client: client._id,
-                        title: client.title ? client.title : " - "
-                    });
-                }
-            });
-
-            CoreBankingService.ConnectToCBS().then(function () {
-                    CoreBankingService.SendBulkClientsToCBS(clientList).then(
-                        function (response) {
-                            AlertService.showSuccess(clientList.length + ' clients sent to CBS!',response);
-                            console.log("response",response);
-                        }
-                        ,function (error) {
-                            console.log('error',error);
-                            var message = error.data.error.message;
-                            AlertService.showError( 'Oops... Something went wrong', message);
-                        });
-                },function (reason) {
-                    AlertService.showError( 'CAN NOT CONNECT TO CBS', reason);
-                }
-            );
-
-
-
-            // AlertService.showInfo('Clients data sent to CBS!', "Total number of clients information sent to CBS is " + vm.clients.length);
-        }
-
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callCBSReadyApi();
-        }
-
-        function callCBSReadyApi(){
-            vm.clientPromise = CoreBankingService.GetClients().then(function(response){
-                console.log(" callApi vm.clients",response);
-                vm.clients =  response.data.docs;
-                vm.clientsCopy = angular.copy(vm.clients);
-                vm.CheckUncheckHeader();
-            },function (error) {
-                console.log("error callApi vm.clients",error);
-            });
-        }
-
-        function GetAllClientsApi(){
-            vm.clientPromise = CoreBankingService.GetAllClients().then(function(response){
-                console.log(" callApi vm.clients",response);
-                vm.clients = response.data.docs;
-                vm.clientsCopy = angular.copy(vm.clients);
-                vm.CheckUncheckHeader();
-            },function (error) {
-                console.log("error callApi vm.clients",error);
-            });
-        }
-
-
-
-        function refreshResults($select){
-            var search = $select.search,
-                list = angular.copy($select.items),
-                FLAG = -1;
-            //remove last user input
-            list = list.filter(function(item) {
-                return item.id !== FLAG;
-            });
-
-            if (!search) {
-                //use the predefined list
-                $select.items = list;
-            }
-            else {
-                //manually add user input and set selection
-                var userInputItem = search;
-                $select.items = [userInputItem].concat(list);
-                $select.selected = userInputItem;
-            }
-        }
-
-    }
-
-})(window.angular);
-(function(angular) {
-    "use strict";
-
-
-    angular
-        .module('app.banking')
-        .controller('CoreBankingDetailController', CoreBankingDetailController);
-
-    CoreBankingDetailController.$inject = ['CoreBankingService','$scope','$rootScope','blockUI','AlertService','$stateParams'];
-
-    function CoreBankingDetailController(CoreBankingService,$scope,$rootScope,blockUI,AlertService,$stateParams) {
-        var vm = this;
-        vm.client_id = $stateParams.id;
-        vm.titles = CoreBankingService.GetTitles;
-        vm.updateClient = _updateClient;
-        vm.updateClientAndSendToCBS = _updateClientAndSendToCBS;
-        $rootScope.app.layout.isCollapsed = true;
-
-        initialize();
-
-        function initialize() {
-
-            initializeDatePicker();
-            vm.civilStatuses = CIVIL_STATUSES;
-            vm.months = MONTHS_CONST;
-            callAPI();
-        }
-
-        function callAPI() {
-
-            CoreBankingService.GetClientById(vm.client_id).then(function (response) {
-                vm.client = response.data;
-                var clientCopy = angular.copy(vm.client);
-                var dt = new Date(clientCopy.date_of_birth);
-                vm.client.date_of_birth = dt;
-                vm.client.civil_status = clientCopy.civil_status.toLowerCase();
-                vm.client.gender = clientCopy.gender.toLowerCase();
-            },function (error) {
-                console.log("Updated client error",error);
-
-                var message = error.data.error.message;
-                AlertService.showError("Failed to update Client",message);
-
-            });
-
-
-
-
-        }
-
-        function _updateClient() {
-
-            var myBlockUI = blockUI.instances.get('CBSClientDetailBlockUI');
-            myBlockUI.start();
-            var client = vm.client;
-            client.branch = vm.client.branch._id;
-            client.created_by =  undefined;
-            //UPDATE CLIENT INFORMATION
-            CoreBankingService.UpdateClient(vm.client).then(function (response) {
-                console.log("save client",response);
-                myBlockUI.stop();
-                AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
-            },function (error) {
-                console.log("Updated client error",error);
-                myBlockUI.stop();
-                var message = error.data.error.message;
-                AlertService.showError("Failed to update Client",message);
-
-            });
-
-
-
-        }
-
-        function _updateClientAndSendToCBS() {
-            var myBlockUI = blockUI.instances.get('CBSClientDetailBlockUI');
-            myBlockUI.start();
-            var client = vm.client;
-            client.branch = vm.client.branch._id;
-            client.created_by =  undefined;
-
-            //UPDATE and SEND CLIENT INFORMATION TO CBS
-            CoreBankingService.UpdateClient(vm.client).then(function (response) {
-                console.log("save client",response);
-                myBlockUI.stop();
-
-                var clientFormatted = {
-                    branchId: client.branchId,
-                    title : client.title,
-                    client: client._id };
-
-                CoreBankingService.PostClientToCBS(clientFormatted).then(
-                    function (response) {
-                        AlertService.showSuccess("Updated and Sent to CBS Successfully","Updated Client information and Sent to CBS successfully");
-                    }
-                    ,function (error) {
-                        console.log('error',error);
-                        var message = error.data.error.message;
-                        AlertService.showWarning( 'Oops... Something went wrong Client Info is updated but its not sent to CBS', message);
-                    });
-
-
-            },function (error) {
-                console.log("Updated client error",error);
-                myBlockUI.stop();
-                var message = error.data.error.message;
-                AlertService.showError("Failed to update Client",message);
-
-            });
-        }
-
-
-        function initializeDatePicker() {
-            vm.clear = function() {
-                vm.dt = null;
-            };
-
-            vm.dateOptions = {
-                dateDisabled: false,
-                formatYear: "yy",
-                maxDate: new Date(2020, 5, 22),
-                startingDay: 1
-            };
-
-            vm.openPopup = function() {
-                vm.popup1.opened = true;
-            };
-
-            vm.dateFormat = "dd-MMMM-yyyy";
-            vm.altInputFormats = ["M!/d!/yyyy"];
-
-            vm.popup1 = {
-                opened: false
-            };
-        }
-
-    }
-
-})(window.angular);
-(function(angular) {
-    'use strict';
-    angular.module('app.banking')
-
-        .service('CoreBankingService', CoreBankingService);
-
-    CoreBankingService.$inject = ['$http','CommonService','AuthService'];
-
-    function CoreBankingService($http, CommonService, AuthService) {
-        var Client = {};
-        return {
-            GetClients: _getClients,
-            GetAllClients: _getAllClients,
-            GetTitles: ["Obo","Ato","W/rt","W/ro","Mr","Mrs","Miss","Dr."],
-            SearchClient:_searchClient,
-            ConnectToCBS:_connectToCBS,
-            SendClientToCBS:_postClientToCBS,
-            SendBulkClientsToCBS:_postBulkClientsToCBS,
-            setClientInfo: _setClientInfo,
-            getClientInfo: _getClientInfo,
-            UpdateClient: _updateClient,
-            GetClientById:_getClientById,
-            GetBranches:_getBranches
-        };
-
-        function _setClientInfo(client) {
-            Client = client;
-        }
-        function _getClientInfo() {
-            return Client;
-        }
-
-        function _getClients(parameters){
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.CBS.Clients));
-        }
-        function _getAllClients(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients));
-        }
-
-        function _postClientToCBS(client){
-            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.CBS.CBS),client);
-        }
-
-        function _postBulkClientsToCBS(clients){
-            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.CBS.CBSBulk),clients);
-        }
-        function _connectToCBS(){
-            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.CBS.Connect));
-        }
-
-        function _searchClient(searchText) {
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients) + '/search=' + searchText);
-        }
-
-        function _updateClient(client) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,client._id),client);
-        }
-        function _getClientById(id){
-            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
-        }
-
-        function _getBranches(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
-        }
-
-
-    }
-
-})(window.angular);
 /**
  * Created by Yoni on 2/9/2018.
  */
@@ -4667,9 +4226,9 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
         .module('app.geospatial')
         .controller('GeospatialController', GeoSpatialController);
 
-    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI', 'SharedService', 'CommonService', 'AlertService'];
+    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI', 'SharedService', 'CommonService', 'AlertService','$sce'];
 
-    function GeoSpatialController(GeoSpatialService, blockUI, SharedService, CommonService, AlertService) {
+    function GeoSpatialController(GeoSpatialService, blockUI, SharedService, CommonService, AlertService,$sce) {
         var vm = this;
 
         vm.generateSeasonalReport = _generateSeasonalReport;
@@ -4690,7 +4249,9 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
         vm.resetConfig = _resetConfig;
 
         init();
-
+        vm.trustSrc = function(src) {
+            return $sce.trustAsHtml("http://seasmon.wenr.wur.nl/html/info_00000011_VI_latest.html");
+        }
         function _resetConfig() {
             vm.config = undefined;
         }
@@ -4717,8 +4278,8 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
             if (vm.IsValidData) {
                 vm.config.user = vm.currentUser._id;
-                vm.config.from_date = GeoSpatialService.formatDateForRequest(vm.config.fromDate);
-                vm.config.to_date = GeoSpatialService.formatDateForRequest(vm.config.toDate);
+                vm.config.from_date = vm.config.fromDate;
+                vm.config.to_date = vm.config.toDate;
 
                 vm.visibility.showSmiley = true;
                 vm.visibility.showInfoText = false;
@@ -4728,6 +4289,7 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
                 GeoSpatialService.SaveConfig(vm.config).then(function (response) {
                         AlertService.showSuccess('Configuration Saved Successfully', response);
                         console.log("response", response);
+                        vm.config = response.data;
                     }
                     , function (error) {
                         console.log('error', error);
@@ -4775,14 +4337,20 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
                     vm.config = response.data[0];
                     vm.config.fromDate = new Date(vm.config.from_date);
                     vm.config.toDate = new Date(vm.config.to_date);
-                    vm.isEditConfig = true;
+                    setVisibility();
                     getGeoSpatialData();
+                }else {
+                    vm.visibility.isEditConfig = false;
                 }
                 console.log(" vm.config", vm.config);
             }, function (reason) {
                 console.log(reason)
             });
 
+        function setVisibility() {
+            vm.visibility.isEditConfig = true;
+            vm.visibility.showSmiley = true;
+        }
 
         }
     }
@@ -4841,7 +4409,7 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
         }
 
         function _saveConfig(config){
-            return $http.get(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
+            return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
         }
 
         function _getIndicatorData(config) {
@@ -6059,147 +5627,445 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
     }
 
 })(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
-
 (function(angular) {
     "use strict";
 
-    angular.module("app.acat").controller("CropsController", CropsController);
 
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
+    angular
+        .module('app.banking')
+        .controller('CoreBankingController', CoreBankingController);
 
-    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+    CoreBankingController.$inject = ['CoreBankingService','$scope','AuthService','$rootScope','AlertService','$state'];
+
+    function CoreBankingController(CoreBankingService,$scope,AuthService,$rootScope,AlertService,$state) {
         var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearch;
+        //GET TITLES LIST
+        vm.titles = CoreBankingService.GetTitles;
+        //CHECK ALL/UNCHECK ALL OPTIONS
+        vm.onAllClientChange = _onAllClientChange;
+        vm.CheckUncheckAll = _checkUncheckAll;
+        vm.CheckUncheckHeader = _checkUncheckHeader;
+        //Filter related
+        vm.clearSearch = _clearSearch;
+        vm.onSelectedBranch = _onSelectedBranch;
+        //Client Related
+        vm.saveSingleClient = _saveSingleClient;
+        vm.saveAllClients = _saveAllClients;
+        vm.cbs_clientDetail = _clientDetail;
+        //UI SELECT Option for adding new titles
+        vm.refreshResults = refreshResults;
+
+        vm.statusStyle = _statusStyle;
 
         initialize();
 
         function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
+            $rootScope.app.layout.isCollapsed = true;
+            vm.filter = {show : false , allClient: "false"};
+            vm.IsAllChecked = false;
+            vm.query = { search: '' };
+            vm.currentUser = {selected_access_branch:undefined};
 
-            callApi();
+            callCBSReadyApi();
+            GetBranchFilter();
         }
 
+        function _onAllClientChange() {
+            if(vm.filter.allClient === "true"){
+                GetAllClientsApi();
+            }else{
+                callCBSReadyApi();
+            }
+        }
 
-        function _paginate (page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
+        function GetBranchFilter() {
+            if(AuthService.IsSuperuser()){
+                CoreBankingService.GetBranches().then(function(response){
+                    vm.currentUser.user_access_branches = response.data.docs;
+                },function(error){
+                    vm.currentUser.user_access_branches = [];
+                    console.log("error on GetBranchFilter",error);
+                });
+            }
+            else {
+                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
+            }
+        }
 
+        function _onSelectedBranch(){
+            vm.clients = vm.clientsCopy;
+
+            vm.clients = _.filter(vm.clients,function(client){
+                if(!_.isUndefined(client.branch) && client.branch !== null){
+                    return client.branch._id === vm.currentUser.selected_access_branch._id;
+                }
+            });
+
+        }
+
+        function _checkUncheckHeader() {
+            vm.IsAllChecked = true;
+            for (var i = 0; i < vm.clients.length; i++) {
+                if (!vm.clients[i].selected) {
+                    vm.IsAllChecked = false;
+                    break;
+                }
+            }
+        }
+
+        function _checkUncheckAll() {
+            for (var i = 0; i < vm.clients.length; i++) {
+                if(vm.clients[i].status === 'loan_granted' ){
+                    vm.clients[i].selected = vm.IsAllChecked;
+                }else{
+                    vm.clients[i].selected = false;
+                }
+
+            }
+        }
+
+        function _clientDetail(client){
+            CoreBankingService.setClientInfo(client);
+            $state.go('app.cbs_detail',{id:client._id});
+        }
+
+        function _statusStyle(status){
+            var style = '';
+            switch (status){
+                case 'ACCEPTED':
+                    style =  'label label-success';
+                    break;
+                case 'DENIED':
+                    style =  'label label-danger';
+                    break;
+                case 'NO ATTEMPT':
+                    style =  'label label-inverse';
+                    break;
+                default:
+                    style =  'label label-warning';
+            }
+            return style;
+        }
+
+        function _saveSingleClient(client){
+
+            var clientFormatted = {
+                branchId: client.branchId,
+                title : client.title,
+                client: client._id };
+
+            CoreBankingService.ConnectToCBS().then(function (value) {
+                CoreBankingService.SendClientToCBS(clientFormatted).then(
+                    function (response) {
+                        AlertService.showSuccess('Client Info sent to CBS!','Client Information sent to Core Banking Solution!');
+                        vm.onAllClientChange();
+                    }
+                    ,function (error) {
+                        console.log('error',error);
+                        var message = error.data.error.message;
+                        AlertService.showError( 'Oops... Something went wrong', message);
+                    });
+                },function (reason) {
+                    AlertService.showError( 'CAN NOT CONNECT TO CBS', reason);
+                }
+            );
+
+
+        }
+
+        function _saveAllClients(clients) {
+            var clientList = [];
+            _.each(clients, function (client) {
+                if (client.selected && client.status === 'loan_granted') {
+                    clientList.push({
+                        branchId: vm.allBranchId,
+                        client: client._id,
+                        title: client.title ? client.title : " - "
+                    });
+                }
+            });
+
+            CoreBankingService.ConnectToCBS().then(function () {
+                    CoreBankingService.SendBulkClientsToCBS(clientList).then(
+                        function (response) {
+                            AlertService.showSuccess(clientList.length + ' clients sent to CBS!',response);
+                            console.log("response",response);
+                        }
+                        ,function (error) {
+                            console.log('error',error);
+                            var message = error.data.error.message;
+                            AlertService.showError( 'Oops... Something went wrong', message);
+                        });
+                },function (reason) {
+                    AlertService.showError( 'CAN NOT CONNECT TO CBS', reason);
+                }
+            );
+
+
+
+            // AlertService.showInfo('Clients data sent to CBS!', "Total number of clients information sent to CBS is " + vm.clients.length);
         }
 
         function _clearSearch(){
             vm.query.search = "";
             vm.filter.show = false;
-            callApi();
+            callCBSReadyApi();
         }
 
-       function callApi(){
-        vm.promise =   ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
+        function callCBSReadyApi(){
+            vm.clientPromise = CoreBankingService.GetClients().then(function(response){
+                console.log(" callApi vm.clients",response);
+                vm.clients =  response.data.docs;
+                vm.clientsCopy = angular.copy(vm.clients);
+                vm.CheckUncheckHeader();
+            },function (error) {
+                console.log("error callApi vm.clients",error);
             });
         }
 
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
+        function GetAllClientsApi(){
+            vm.clientPromise = CoreBankingService.GetAllClients().then(function(response){
+                console.log(" callApi vm.clients",response);
+                vm.clients = response.data.docs;
+                vm.clientsCopy = angular.copy(vm.clients);
+                vm.CheckUncheckHeader();
+            },function (error) {
+                console.log("error callApi vm.clients",error);
+            });
+        }
 
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
 
-            if(vm.isEdit){
-                vm.crop = data.crop;
+
+        function refreshResults($select){
+            var search = $select.search,
+                list = angular.copy($select.items),
+                FLAG = -1;
+            //remove last user input
+            list = list.filter(function(item) {
+                return item.id !== FLAG;
+            });
+
+            if (!search) {
+                //use the predefined list
+                $select.items = list;
             }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
+            else {
+                //manually add user input and set selection
+                var userInputItem = search;
+                $select.items = [userInputItem].concat(list);
+                $select.selected = userInputItem;
             }
         }
 
     }
 
+})(window.angular);
+(function(angular) {
+    "use strict";
 
+
+    angular
+        .module('app.banking')
+        .controller('CoreBankingDetailController', CoreBankingDetailController);
+
+    CoreBankingDetailController.$inject = ['CoreBankingService','$scope','$rootScope','blockUI','AlertService','$stateParams'];
+
+    function CoreBankingDetailController(CoreBankingService,$scope,$rootScope,blockUI,AlertService,$stateParams) {
+        var vm = this;
+        vm.client_id = $stateParams.id;
+        vm.titles = CoreBankingService.GetTitles;
+        vm.updateClient = _updateClient;
+        vm.updateClientAndSendToCBS = _updateClientAndSendToCBS;
+        $rootScope.app.layout.isCollapsed = true;
+
+        initialize();
+
+        function initialize() {
+
+            initializeDatePicker();
+            vm.civilStatuses = CIVIL_STATUSES;
+            vm.months = MONTHS_CONST;
+            callAPI();
+        }
+
+        function callAPI() {
+
+            CoreBankingService.GetClientById(vm.client_id).then(function (response) {
+                vm.client = response.data;
+                var clientCopy = angular.copy(vm.client);
+                var dt = new Date(clientCopy.date_of_birth);
+                vm.client.date_of_birth = dt;
+                vm.client.civil_status = clientCopy.civil_status.toLowerCase();
+                vm.client.gender = clientCopy.gender.toLowerCase();
+            },function (error) {
+                console.log("Updated client error",error);
+
+                var message = error.data.error.message;
+                AlertService.showError("Failed to update Client",message);
+
+            });
+
+
+
+
+        }
+
+        function _updateClient() {
+
+            var myBlockUI = blockUI.instances.get('CBSClientDetailBlockUI');
+            myBlockUI.start();
+            var client = vm.client;
+            client.branch = vm.client.branch._id;
+            client.created_by =  undefined;
+            //UPDATE CLIENT INFORMATION
+            CoreBankingService.UpdateClient(vm.client).then(function (response) {
+                console.log("save client",response);
+                myBlockUI.stop();
+                AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
+            },function (error) {
+                console.log("Updated client error",error);
+                myBlockUI.stop();
+                var message = error.data.error.message;
+                AlertService.showError("Failed to update Client",message);
+
+            });
+
+
+
+        }
+
+        function _updateClientAndSendToCBS() {
+            var myBlockUI = blockUI.instances.get('CBSClientDetailBlockUI');
+            myBlockUI.start();
+            var client = vm.client;
+            client.branch = vm.client.branch._id;
+            client.created_by =  undefined;
+
+            //UPDATE and SEND CLIENT INFORMATION TO CBS
+            CoreBankingService.UpdateClient(vm.client).then(function (response) {
+                console.log("save client",response);
+                myBlockUI.stop();
+
+                var clientFormatted = {
+                    branchId: client.branchId,
+                    title : client.title,
+                    client: client._id };
+
+                CoreBankingService.PostClientToCBS(clientFormatted).then(
+                    function (response) {
+                        AlertService.showSuccess("Updated and Sent to CBS Successfully","Updated Client information and Sent to CBS successfully");
+                    }
+                    ,function (error) {
+                        console.log('error',error);
+                        var message = error.data.error.message;
+                        AlertService.showWarning( 'Oops... Something went wrong Client Info is updated but its not sent to CBS', message);
+                    });
+
+
+            },function (error) {
+                console.log("Updated client error",error);
+                myBlockUI.stop();
+                var message = error.data.error.message;
+                AlertService.showError("Failed to update Client",message);
+
+            });
+        }
+
+
+        function initializeDatePicker() {
+            vm.clear = function() {
+                vm.dt = null;
+            };
+
+            vm.dateOptions = {
+                dateDisabled: false,
+                formatYear: "yy",
+                maxDate: new Date(2020, 5, 22),
+                startingDay: 1
+            };
+
+            vm.openPopup = function() {
+                vm.popup1.opened = true;
+            };
+
+            vm.dateFormat = "dd-MMMM-yyyy";
+            vm.altInputFormats = ["M!/d!/yyyy"];
+
+            vm.popup1 = {
+                opened: false
+            };
+        }
+
+    }
+
+})(window.angular);
+(function(angular) {
+    'use strict';
+    angular.module('app.banking')
+
+        .service('CoreBankingService', CoreBankingService);
+
+    CoreBankingService.$inject = ['$http','CommonService','AuthService'];
+
+    function CoreBankingService($http, CommonService, AuthService) {
+        var Client = {};
+        return {
+            GetClients: _getClients,
+            GetAllClients: _getAllClients,
+            GetTitles: ["Obo","Ato","W/rt","W/ro","Mr","Mrs","Miss","Dr."],
+            SearchClient:_searchClient,
+            ConnectToCBS:_connectToCBS,
+            SendClientToCBS:_postClientToCBS,
+            SendBulkClientsToCBS:_postBulkClientsToCBS,
+            setClientInfo: _setClientInfo,
+            getClientInfo: _getClientInfo,
+            UpdateClient: _updateClient,
+            GetClientById:_getClientById,
+            GetBranches:_getBranches
+        };
+
+        function _setClientInfo(client) {
+            Client = client;
+        }
+        function _getClientInfo() {
+            return Client;
+        }
+
+        function _getClients(parameters){
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.CBS.Clients));
+        }
+        function _getAllClients(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients));
+        }
+
+        function _postClientToCBS(client){
+            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.CBS.CBS),client);
+        }
+
+        function _postBulkClientsToCBS(clients){
+            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.CBS.CBSBulk),clients);
+        }
+        function _connectToCBS(){
+            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.CBS.Connect));
+        }
+
+        function _searchClient(searchText) {
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients) + '/search=' + searchText);
+        }
+
+        function _updateClient(client) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,client._id),client);
+        }
+        function _getClientById(id){
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
+        }
+
+        function _getBranches(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+        }
+
+
+    }
 
 })(window.angular);
 /**
@@ -7050,6 +6916,149 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
         }
 
 
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+        }
+
+
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+       function callApi(){
+        vm.promise =   ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
 
     }
 
@@ -9619,6 +9628,155 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
  * Created by Yonas on 7/3/2018.
  */
 (function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("LoanApplicationProcessorController", LoanApplicationProcessorController);
+
+    LoanApplicationProcessorController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers','$state'];
+
+    function LoanApplicationProcessorController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers,$state ) {
+        var vm = this;
+        vm.backToList = _backToList;
+        vm.questionValueChanged = questionValueChanged;
+        vm.loanApplicationDetail = _loanApplicationDetail;
+        vm.saveClientForm = _saveClientForm;
+
+        vm.options = MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
+        vm.filter = {show : false};
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
+
+        vm.query = {
+            search:'',
+            page:1,
+            per_page:10
+        };
+        vm.visibility = { showLoanApplicationDetail: false };
+
+        vm.paginate = function(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        };
+        vm.clearSearchText = function () {
+            vm.query.search = '';
+            vm.filter.show = false;
+        };
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("search for ",newValue);
+            }
+        });
+
+        initialize();
+
+        function _loanApplicationDetail(client_loan_application) {
+            var client = client_loan_application.client;
+
+            LoanManagementService.GetClientLoanApplication(client._id).then(function (response) {
+                vm.client = response.data;
+                vm.visibility.showLoanApplicationDetail = true;
+                console.log("vm.client",vm.client);
+            });
+        }
+
+
+        function _saveClientForm(client,status) {
+
+            var loan_application = {
+                status: status,
+                questions:[],
+                sections: client.sections
+            };
+            // "[{"status":"Correct Status is either inprogress, accepted, submitted, rejected or declined_under_review"}]"
+
+            console.log("save status ", client);
+
+            LoanManagementService.SaveClientLoanApplication(loan_application,client._id)
+                .then(function (response) {
+                    AlertService.showSuccess('Client Loan Application',"Successfully saved Client Loan Application information  with status: " + status);
+                    console.log("saved  ", response);
+                },function (error) {
+                    console.log("error on saving loan application", error);
+                    var message = error.data.error.message;
+                    AlertService.showError("Error when saving loan application",message);
+                });
+
+        }
+
+        function _backToList(type) {
+            switch(type){
+                case 'LOAN_APPLICATION':
+                    vm.visibility.showLoanApplicationDetail = false;
+                    callAPI();
+                    break;
+            }
+
+        }
+
+        function initialize() {
+            callAPI();
+        }
+        function callAPI() {
+            vm.loanApplicationPromise = LoanManagementService.GetLoanApplications(vm.query).then(function (response) {
+                console.log("loan applications",response);
+                vm.loan_applications = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+            });
+        }
+
+        function questionValueChanged(question) {
+
+            var prQues = getPrerequisiteQuestion(question._id);
+
+            _.each(prQues, function(prQue) {
+                if (prQue) {
+                    var prerequisite = prQue.prerequisites[0];
+                    //Set question's show based by comparing current value with expected preq. value
+                    prQue.show = (prerequisite.answer === question.values[0]);
+                }
+            });
+
+        }
+
+        function getPrerequisiteQuestion(questionID) {
+
+            //extract outer questions; if section type, get them from sections
+            var questions = vm.client.has_sections ?
+                _.reduce(vm.client.sections, function(m, q) {
+                    return m.concat(q.questions);
+                }, []) :
+                vm.client.questions;
+
+            //Get all subquestions
+            var subQuestions = _.reduce(questions, function(m, q) {
+                return m.concat(q.sub_questions);
+            }, []);
+
+            //merge questions with subquestions into a singl array
+            var mergedQuestions = _.uniq(_.union(questions, subQuestions), false, _.property('_id'));
+
+            //Search in mergedQuestions
+            var prQue = _.filter(mergedQuestions, function(obj) {
+                return _.some(obj.prerequisites, { question: questionID });
+            });
+
+            return prQue;
+        }
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 7/3/2018.
+ */
+(function(angular) {
     'use strict';
     var screenings = {
         bindings: { },
@@ -9762,155 +9920,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
             });
 
         }
-        function getPrerequisiteQuestion(questionID) {
-
-            //extract outer questions; if section type, get them from sections
-            var questions = vm.client.has_sections ?
-                _.reduce(vm.client.sections, function(m, q) {
-                    return m.concat(q.questions);
-                }, []) :
-                vm.client.questions;
-
-            //Get all subquestions
-            var subQuestions = _.reduce(questions, function(m, q) {
-                return m.concat(q.sub_questions);
-            }, []);
-
-            //merge questions with subquestions into a singl array
-            var mergedQuestions = _.uniq(_.union(questions, subQuestions), false, _.property('_id'));
-
-            //Search in mergedQuestions
-            var prQue = _.filter(mergedQuestions, function(obj) {
-                return _.some(obj.prerequisites, { question: questionID });
-            });
-
-            return prQue;
-        }
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yonas on 7/3/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("LoanApplicationProcessorController", LoanApplicationProcessorController);
-
-    LoanApplicationProcessorController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers','$state'];
-
-    function LoanApplicationProcessorController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers,$state ) {
-        var vm = this;
-        vm.backToList = _backToList;
-        vm.questionValueChanged = questionValueChanged;
-        vm.loanApplicationDetail = _loanApplicationDetail;
-        vm.saveClientForm = _saveClientForm;
-
-        vm.options = MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
-        vm.filter = {show : false};
-        vm.pageSizes = [10, 25, 50, 100, 250, 500];
-
-        vm.query = {
-            search:'',
-            page:1,
-            per_page:10
-        };
-        vm.visibility = { showLoanApplicationDetail: false };
-
-        vm.paginate = function(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
-        };
-        vm.clearSearchText = function () {
-            vm.query.search = '';
-            vm.filter.show = false;
-        };
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("search for ",newValue);
-            }
-        });
-
-        initialize();
-
-        function _loanApplicationDetail(client_loan_application) {
-            var client = client_loan_application.client;
-
-            LoanManagementService.GetClientLoanApplication(client._id).then(function (response) {
-                vm.client = response.data;
-                vm.visibility.showLoanApplicationDetail = true;
-                console.log("vm.client",vm.client);
-            });
-        }
-
-
-        function _saveClientForm(client,status) {
-
-            var loan_application = {
-                status: status,
-                questions:[],
-                sections: client.sections
-            };
-            // "[{"status":"Correct Status is either inprogress, accepted, submitted, rejected or declined_under_review"}]"
-
-            console.log("save status ", client);
-
-            LoanManagementService.SaveClientLoanApplication(loan_application,client._id)
-                .then(function (response) {
-                    AlertService.showSuccess('Client Loan Application',"Successfully saved Client Loan Application information  with status: " + status);
-                    console.log("saved  ", response);
-                },function (error) {
-                    console.log("error on saving loan application", error);
-                    var message = error.data.error.message;
-                    AlertService.showError("Error when saving loan application",message);
-                });
-
-        }
-
-        function _backToList(type) {
-            switch(type){
-                case 'LOAN_APPLICATION':
-                    vm.visibility.showLoanApplicationDetail = false;
-                    callAPI();
-                    break;
-            }
-
-        }
-
-        function initialize() {
-            callAPI();
-        }
-        function callAPI() {
-            vm.loanApplicationPromise = LoanManagementService.GetLoanApplications(vm.query).then(function (response) {
-                console.log("loan applications",response);
-                vm.loan_applications = response.data.docs;
-                vm.query.total_pages = response.data.total_pages;
-                vm.query.total_docs_count = response.data.total_docs_count;
-            });
-        }
-
-        function questionValueChanged(question) {
-
-            var prQues = getPrerequisiteQuestion(question._id);
-
-            _.each(prQues, function(prQue) {
-                if (prQue) {
-                    var prerequisite = prQue.prerequisites[0];
-                    //Set question's show based by comparing current value with expected preq. value
-                    prQue.show = (prerequisite.answer === question.values[0]);
-                }
-            });
-
-        }
-
         function getPrerequisiteQuestion(questionID) {
 
             //extract outer questions; if section type, get them from sections

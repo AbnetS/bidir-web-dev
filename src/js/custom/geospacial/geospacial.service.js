@@ -25,7 +25,7 @@
         }
 
         function _saveConfig(config){
-            return $http.get(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
+            return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
         }
 
         function _getIndicatorData(config) {

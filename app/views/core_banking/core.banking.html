@@ -129,13 +129,16 @@
                      <label ng-class="vm.statusStyle(client.cbs_status)">{{client.cbs_status}}</label>
                   </td>
                   <td md-cell>
-                     <input ng-show="client.status ==='loan_granted'" class="form-control" type="text" ng-model="client.branchId" name="client_branch_id" placeholder="Branch Number Here" />
+                     <input ng-show="client.status ==='loan_granted' && client.cbs_status !== 'ACCEPTED'" class="form-control" type="text" ng-model="client.branchId" name="client_branch_id" placeholder="Branch Number Here" />
                      <span class="text-center text-muted" ng-show="client.status !=='loan_granted'">
                         NA
                      </span>
+                     <span ng-show="client.status ==='loan_granted' && client.cbs_status === 'ACCEPTED'" class="text-center text-muted">
+                        {{client.branchId}}
+                     </span>
                   </td>
                   <td md-cell>
-                     <ui-select ng-show="client.status ==='loan_granted'" ng-model="client.title" theme="bootstrap" on-select="vm.onSelectedTitle(client)" title="Choose Title" reset-search-input="false" required="true" ng-maxlength="40">
+                     <ui-select ng-show="client.status ==='loan_granted' && client.cbs_status !== 'ACCEPTED'" ng-model="client.title" theme="bootstrap" on-select="vm.onSelectedTitle(client)" title="Choose Title" reset-search-input="false" required="true" ng-maxlength="40">
                         <ui-select-match placeholder="Select title from the list or add...">
                            <span>{{$select.selected || $select.search}}</span>
                            <a class="btn btn-xs btn-link pull-right" ng-click="vm.clear($event, $select)"></a>
@@ -147,6 +150,10 @@
                      <span class="text-center text-muted" ng-show="client.status !=='loan_granted'">
                         NA
                      </span>
+                     <span ng-show="client.status ==='loan_granted' && client.cbs_status === 'ACCEPTED'" class="text-center text-muted">
+                        {{client.title}}
+                     </span>
+
                   </td>
                   <td md-cell>
                      <span ng-show="client.status ==='loan_granted'" class="input-group-btn">

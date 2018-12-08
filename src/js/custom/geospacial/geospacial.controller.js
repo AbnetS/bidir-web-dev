@@ -4,9 +4,9 @@
         .module('app.geospatial')
         .controller('GeospatialController', GeoSpatialController);
 
-    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI', 'SharedService', 'CommonService', 'AlertService'];
+    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI', 'SharedService', 'CommonService', 'AlertService','$sce'];
 
-    function GeoSpatialController(GeoSpatialService, blockUI, SharedService, CommonService, AlertService) {
+    function GeoSpatialController(GeoSpatialService, blockUI, SharedService, CommonService, AlertService,$sce) {
         var vm = this;
 
         vm.generateSeasonalReport = _generateSeasonalReport;
@@ -27,7 +27,9 @@
         vm.resetConfig = _resetConfig;
 
         init();
-
+        vm.trustSrc = function(src) {
+            return $sce.trustAsHtml("http://seasmon.wenr.wur.nl/html/info_00000011_VI_latest.html");
+        }
         function _resetConfig() {
             vm.config = undefined;
         }
@@ -54,8 +56,8 @@
 
             if (vm.IsValidData) {
                 vm.config.user = vm.currentUser._id;
-                vm.config.from_date = GeoSpatialService.formatDateForRequest(vm.config.fromDate);
-                vm.config.to_date = GeoSpatialService.formatDateForRequest(vm.config.toDate);
+                vm.config.from_date = vm.config.fromDate;
+                vm.config.to_date = vm.config.toDate;
 
                 vm.visibility.showSmiley = true;
                 vm.visibility.showInfoText = false;
@@ -65,6 +67,7 @@
                 GeoSpatialService.SaveConfig(vm.config).then(function (response) {
                         AlertService.showSuccess('Configuration Saved Successfully', response);
                         console.log("response", response);
+                        vm.config = response.data;
                     }
                     , function (error) {
                         console.log('error', error);
@@ -112,14 +115,20 @@
                     vm.config = response.data[0];
                     vm.config.fromDate = new Date(vm.config.from_date);
                     vm.config.toDate = new Date(vm.config.to_date);
-                    vm.isEditConfig = true;
+                    setVisibility();
                     getGeoSpatialData();
+                }else {
+                    vm.visibility.isEditConfig = false;
                 }
                 console.log(" vm.config", vm.config);
             }, function (reason) {
                 console.log(reason)
             });
 
+        function setVisibility() {
+            vm.visibility.isEditConfig = true;
+            vm.visibility.showSmiley = true;
+        }
 
         }
     }
