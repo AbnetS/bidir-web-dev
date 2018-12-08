@@ -1,5 +1,5 @@
 <div class="row">
-   <div ng-show="!vm.visibility.isEditConfig" class="col-md-8">
+   <div class="col-md-8">
       <form name="filteringForm">
          <div class="panel b">
             <div class="panel-heading bb">
@@ -62,7 +62,7 @@
          </div>
       </form>
    </div>
-   <div ng-show="vm.visibility.isEditConfig" class="col-sm-8 col-md-6 col-lg-4">
+   <div ng-show="!vm.visibility.isEditConfig" class="col-sm-8 col-md-6 col-lg-4">
 
       <div class="list-group-item">
          <table>
@@ -106,7 +106,7 @@
 </div>
 
 <div ng-show="vm.visibility.showSmiley" class="row clearfix">
-   <div class="col-lg-4 col-md-6">
+   <div class="col-lg-6 col-md-8">
       <div class="panel panel-default">
          <div class="panel-heading">
             <div class="panel-title">Branch Name #2</div>
@@ -115,78 +115,24 @@
             <div class="row text-center">
                <div class="col-xs-6">
                   <p class="text-bold">Rainfall</p>
-                  <!--<iframe width="150" height="150" frameborder="0" src="http://seasmon.wenr.wur.nl/html/info_00000011_VI_latest.html">-->
-                  <!--</iframe>-->
-                  <!--<div width="150" height="150" ng-include="'http://seasmon.wenr.wur.nl/html/info_00000011_VI_latest.html'"></div>-->
+
+                  <!--<div ng-include="'geospatialTemplate.html'"></div>-->
+                  <div class="embed-responsive embed-responsive-16by9">
+                     <iframe class="embed-responsive-item" src="http://seasmon.wenr.wur.nl/html/info_00000011_VI_latest.html" allowfullscreen></iframe>
+                  </div>
                </div>
                <div class="col-xs-6">
                   <p class="text-bold">Vegetation Index</p>
-                  <a target="_blank" href="https://ajwwag.home.xs4all.nl/chart_000001_20180401_20181031_PRECIP_20181031.html">
-                     <img class="img-circle thumb48" style="color: red;" src="http://seasmon.wenr.wur.nl/html/info_00000011_VI_latest.html" alt="Rainfall Result">
-                  </a>
-
+                  <div>
+                     <iframe src="http://seasmon.wenr.wur.nl/html/info_00000011_VI_latest.html" frameborder="0" style="overflow: hidden; overflow-y: hidden; height: 100%;width: 100%; position: relative;"></iframe>
+                  </div>
                </div>
             </div>
          </div>
-         <div class="panel-footer text-center">
-            <em>Description about this report</em>
-         </div>
-      </div>
-   </div>
-   <div class="col-lg-4 col-md-6">
-      <div class="panel panel-default">
-         <div class="panel-heading">
-            <div class="panel-title">Branch Name #2</div>
-         </div>
-         <div class="panel-body bb">
-            <div class="row text-center">
-               <div class="col-xs-6">
-                  <p class="text-bold">RainFall</p>
-                  <a class="inline" target="_blank" href="https://ajwwag.home.xs4all.nl/chart_000001_20180401_20181031_PRECIP_20181031.html" uib-tooltip="Rainfall">
-                     <img class="img-circle thumb48" src="app/img/smiley-red.png" alt="Rainfall Result">
-                  </a>
-               </div>
-               <div class="col-xs-4">
-                  <p class="text-bold">Vegetation Index</p>
-                  <a target="_blank" href="https://ajwwag.home.xs4all.nl/chart_000001_20180401_20181031_PRECIP_20181031.html">
-                     <img class="img-circle thumb48" style="color: red;" src="app/img/smiley-green.png" alt="Rainfall Result">
-                  </a>
-
-               </div>
-            </div>
-         </div>
-         <div class="panel-footer text-center">
-            <em>Description about this report</em>
-         </div>
-      </div>
-   </div>
-   <div class="col-lg-4 col-md-6">
-      <div class="panel panel-default">
-         <div class="panel-heading">
-            <div class="panel-title">Branch Name #3</div>
-         </div>
-         <div class="panel-body bb">
-            <div class="row text-center">
-               <div class="col-xs-4">
-                  <p class="text-bold">Rainfall</p>
-                  <a target="_blank" href="https://ajwwag.home.xs4all.nl/chart_000001_20180401_20181031_PRECIP_20181031.html">
-                     <img class="img-circle thumb48" style="color: red;" src="app/img/smiley.png" alt="Rainfall Result">
-                  </a>
-
-               </div>
-               <div class="col-xs-4">
-                  <p class="text-bold">Vegetation Index</p>
-                  <a target="_blank" href="https://ajwwag.home.xs4all.nl/chart_000001_20180401_20181031_PRECIP_20181031.html">
-                     <img class="img-circle thumb48" style="color: red;" src="app/img/smiley-green.png" alt="Rainfall Result">
-                  </a>
-
-               </div>
-            </div>
-         </div>
-         <div class="panel-footer text-center">
-            <em>Description about this report</em>
-         </div>
+         <!--<div class="panel-footer text-center">-->
+         <!--<em>Description about this report</em>-->
+         <!--</div>-->
       </div>
    </div>
 </div>
-
+<script type="text/ng-template" id="geospatialTemplate.html" src="http://seasmon.wenr.wur.nl/html/info_00000011_VI_latest.html"></script>

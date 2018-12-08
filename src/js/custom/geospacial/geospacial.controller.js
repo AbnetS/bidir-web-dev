@@ -4,9 +4,9 @@
         .module('app.geospatial')
         .controller('GeospatialController', GeoSpatialController);
 
-    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI', 'SharedService', 'CommonService', 'AlertService','$sce'];
+    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI', 'SharedService', 'CommonService', 'AlertService','$sce','$templateCache'];
 
-    function GeoSpatialController(GeoSpatialService, blockUI, SharedService, CommonService, AlertService,$sce) {
+    function GeoSpatialController(GeoSpatialService, blockUI, SharedService, CommonService, AlertService,$sce,$templateCache) {
         var vm = this;
 
         vm.generateSeasonalReport = _generateSeasonalReport;
@@ -17,6 +17,7 @@
             showInfoText: true,
             isEditConfig: false
         };
+        // var template = $templateCache.get('http://seasmon.wenr.wur.nl/html/info_00000011_VI_latest.html');
 
         vm.seasonalFilterForm = {
             IsfromDateValid: true,
@@ -39,8 +40,8 @@
 
             GeoSpatialService.getIndicatorsData({
                 indicator: 'VI',
-                start_date: '2018-07-01',//vm.config.from_date,//'2018-07-01',
-                end_date:  '2018-12-05',//vm.config.to_date,
+                start_date: vm.config.from_date,
+                end_date:  vm.config.to_date,
                 regions: '10212:10213:10301'
             })
                 .then(function (response) {
