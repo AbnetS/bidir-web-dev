@@ -45,7 +45,19 @@
                 regions: '10212:10213:10301'
             })
                 .then(function (response) {
-                    console.log("response", response);
+                    console.log("getIndicatorsData VI", response);
+                }, function (error) {
+                    console.log("error", error);
+                });
+
+            GeoSpatialService.getIndicatorsData({
+                indicator: 'PRECIP',
+                start_date: vm.config.from_date,
+                end_date:  vm.config.to_date,
+                regions: '10212:10213:10301'
+            })
+                .then(function (response) {
+                    console.log("getIndicatorsData rainfall" , response);
                 }, function (error) {
                     console.log("error", error);
                 });
