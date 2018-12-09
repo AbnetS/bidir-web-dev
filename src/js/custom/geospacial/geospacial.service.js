@@ -9,10 +9,12 @@
     function GeoSpatialService($http, CommonService, AuthService,$rootScope) {
         return {
             formatDateForRequest:_formatDateForRequest,
-            getIndicatorsData:_getIndicatorData,
-            CurrentUser: _getUser,
+            getSeasonalMonitorData:_getSeasonalMonitorData,
+            CurrentUser: _getUser(),
             SaveConfig : _saveConfig,
-            GetUserConfig:_getUserConfig
+            UpdateConfig:_updateConfig,
+            GetUserConfig:_getUserConfig,
+            DateOptionDefault:_dateOptionDefault
         };
 
         function _getUser() {
@@ -27,8 +29,11 @@
         function _saveConfig(config){
             return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
         }
+        function _updateConfig(config){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config,config._id),config);
+        }
 
-        function _getIndicatorData(config) {
+        function _getSeasonalMonitorData(config) {
             var request = {
                 method: 'GET',
                 headers: {
@@ -50,6 +55,30 @@
             if (day.length < 2) day = '0' + day;
 
             return [year, month, day].join('');
+        }
+
+        function _dateOptionDefault() {
+            var vm = this;
+            vm.dtOption = {};
+            vm.dtOption.dateOptions = {
+                dateDisabled: false, formatYear: "yy",
+                maxDate: new Date(2020, 5, 22), startingDay: 1
+            };
+            vm.dtOption.format = "shortDate";
+            vm.dtOption.altInputFormats = ["M!/d!/yyyy"];
+            vm.dtOption.popup = {opened: false};
+            vm.dtOption.fromPopup = {opened: false};
+            vm.dtOption.open = function () {
+                vm.dtOption.popup.opened = true;
+            };
+            vm.dtOption.fromOpen = function () {
+                vm.dtOption.fromPopup.opened = true;
+            };
+            vm.dtOption.clear = function () {
+                vm.dtOption.dt = null;
+            };
+
+            return vm.dtOption;
         }
 
     }

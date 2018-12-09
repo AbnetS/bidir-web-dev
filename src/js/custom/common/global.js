@@ -211,3 +211,8 @@ var MD_TABLE_GLOBAL_SETTINGS = {
     }
 };
 var CIVIL_STATUSES  = ["single","married","widowed","other"];
+
+var INDICATOR = {
+    VI: 'VI',
+    RAINFALL: 'PRECIP'
+};

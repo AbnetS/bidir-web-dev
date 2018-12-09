@@ -7,7 +7,7 @@
     .constant("APP_CONSTANTS", {
       USER_ROLES: {
         ALL: "*",
-        ADMIN: "admin",
+        ADMIN: "admin"
       },
       StorageKey: {
         TOKEN: "token",

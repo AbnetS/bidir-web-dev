@@ -117,13 +117,13 @@
     'use strict';
 
     angular
-        .module('app.translate', []);
+        .module('app.sidebar', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.sidebar', []);
+        .module('app.translate', []);
 })();
 (function() {
     'use strict';
@@ -2039,70 +2039,6 @@
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .config(translateConfig)
-        ;
-    translateConfig.$inject = ['$translateProvider'];
-    function translateConfig($translateProvider){
-
-      $translateProvider.useStaticFilesLoader({
-          prefix : 'app/i18n/',
-          suffix : '.json'
-      });
-
-      $translateProvider.preferredLanguage('en');
-      $translateProvider.useLocalStorage();
-      $translateProvider.usePostCompiling(true);
-      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
-
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .run(translateRun)
-        ;
-    translateRun.$inject = ['$rootScope', '$translate'];
-    
-    function translateRun($rootScope, $translate){
-
-      // Internationalization
-      // ----------------------
-
-      $rootScope.language = {
-        // Handles language dropdown
-        listIsOpen: false,
-        // list of available languages
-        available: {
-          'en':       'English',
-          'es_AR':    'Español'
-        },
-        // display always the current ui language
-        init: function () {
-          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
-          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
-          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
-        },
-        set: function (localeId) {
-          // Set the new idiom
-          $translate.use(localeId);
-          // save a reference for the current language
-          $rootScope.language.selected = $rootScope.language.available[localeId];
-          // finally toggle dropdown
-          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
-        }
-      };
-
-      $rootScope.language.init();
-
-    }
-})();
 /**=========================================================
  * Module: sidebar-menu.js
  * Handle sidebar collapsible elements
@@ -2506,6 +2442,70 @@
     }
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .config(translateConfig)
+        ;
+    translateConfig.$inject = ['$translateProvider'];
+    function translateConfig($translateProvider){
+
+      $translateProvider.useStaticFilesLoader({
+          prefix : 'app/i18n/',
+          suffix : '.json'
+      });
+
+      $translateProvider.preferredLanguage('en');
+      $translateProvider.useLocalStorage();
+      $translateProvider.usePostCompiling(true);
+      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
+
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .run(translateRun)
+        ;
+    translateRun.$inject = ['$rootScope', '$translate'];
+    
+    function translateRun($rootScope, $translate){
+
+      // Internationalization
+      // ----------------------
+
+      $rootScope.language = {
+        // Handles language dropdown
+        listIsOpen: false,
+        // list of available languages
+        available: {
+          'en':       'English',
+          'es_AR':    'Español'
+        },
+        // display always the current ui language
+        init: function () {
+          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
+          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
+          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
+        },
+        set: function (localeId) {
+          // Set the new idiom
+          $translate.use(localeId);
+          // save a reference for the current language
+          $rootScope.language.selected = $rootScope.language.available[localeId];
+          // finally toggle dropdown
+          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
+        }
+      };
+
+      $rootScope.language.init();
+
+    }
+})();
 /**=========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
@@ -3032,6 +3032,13 @@
 
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.authentication', []);
+
+})();
 (function(angular) {
   "use strict";
 
@@ -3045,11 +3052,40 @@
 
 })(window.angular);
 
+
 (function() {
     'use strict';
 
     angular
-        .module('app.authentication', []);
+        .module('app.banking', []);
+
+})();
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function() {
+    "use strict";
+
+    config.$inject = ["$mdIconProvider"];
+    angular.module("app.forms", [
+    ]).run(runBlock).config(config);
+
+    function runBlock() {}
+    function config($mdIconProvider) {
+        $mdIconProvider.iconSet("avatars", 'app/img/icons/avatar-icons.svg',128);
+    };
+
+})();
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function() {
+    'use strict';
+
+    angular.module('app.loan_management', [
+        'app.clients',
+        'app.processing'
+    ]);
 
 })();
 
@@ -3069,14 +3105,6 @@
         }]);
 
 })();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.banking', []);
-
-})();
 /**
  * Created by Yoni on 11/30/2017.
  */
@@ -3091,18 +3119,6 @@
     function runBlock() {  }
 
     function routeConfig() {}
-
-})();
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function() {
-    'use strict';
-
-    angular.module('app.loan_management', [
-        'app.clients',
-        'app.processing'
-    ]);
 
 })();
 /**
@@ -3147,22 +3163,6 @@ function runBlock() {
 
     angular
         .module('app.report', []);
-
-})();
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function() {
-    "use strict";
-
-    config.$inject = ["$mdIconProvider"];
-    angular.module("app.forms", [
-    ]).run(runBlock).config(config);
-
-    function runBlock() {}
-    function config($mdIconProvider) {
-        $mdIconProvider.iconSet("avatars", 'app/img/icons/avatar-icons.svg',128);
-    };
 
 })();
 /**
@@ -3313,6 +3313,142 @@ function runBlock() {
 
 })(window.angular);
 (function(angular) {
+    'use strict';
+    angular.module('app.authentication')
+
+    .service('AuthService', AuthService);
+
+     AuthService.$inject = ['$http', 'StorageService', 'CommonService', 'APP_CONSTANTS', '$rootScope', '$state','$location'];
+
+    function AuthService($http, StorageService, CommonService, APP_CONSTANTS, $rootScope, $state,$location) {
+        this.authorized = false;
+
+        return {
+            login: _login,
+            Logout: logout,
+            GetCredentials: getCredentials,
+            SetCredentials: setCredentials,
+            GetToken: getToken,
+            GetCurrentUser:_getCurrentUser,
+            GetAccessBranches:_getAccessBranches,
+            IsSuperuser:isSuper,
+            SaveAttemptUrl: _saveAttemptUrl,
+            RedirectToAttemptedUrl:_redirectToAttemptedUrl,
+            IsAuthenticated: _isAuthenticated
+        };
+
+
+        function _saveAttemptUrl() {
+
+            if($location.path().toLowerCase() !== '/page/login') {
+                StorageService.Set(APP_CONSTANTS.REDIRECT_TO_URL,$location.path());
+            }
+            else {
+                StorageService.Set(APP_CONSTANTS.REDIRECT_TO_URL,'/');
+            }
+        }
+        function _redirectToAttemptedUrl() {
+            var url = StorageService.Get(APP_CONSTANTS.REDIRECT_TO_URL);
+            $location.path(url);
+        }
+
+        function getCredentials() {
+            return !angular.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.SESSION)) ? StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) : null;
+        }
+        function _isAuthenticated() {
+            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) !== null;
+        }
+        function setCredentials(session) {
+            StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
+        }
+
+        function getToken() {
+            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION).token;
+        }
+
+
+        function _getCurrentUser(){
+          var credential = getCredentials();
+          return credential !== null? credential.user: null;
+        }
+        function _getAccessBranches() {
+            var credential = getCredentials();
+            return credential !== null ?  !isSuper()? credential.user.account.access_branches : [] :null;
+        }
+
+        function isSuper() {
+            var credential = getCredentials();
+            return credential !== null && credential.user.username === 'super@bidir.com';
+        }
+
+        function _login(user) {
+          return $http.post(CommonService.buildUrl(API.Service.Auth,API.Methods.Auth.Login), user);
+        }
+
+        function logout() {
+            StorageService.Reset();
+            $rootScope.currentUser = null;
+            $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
+            $state.go('page.login');
+        }
+
+    }
+
+})(window.angular);
+
+/**=========================================================
+ * Module: access-login.js
+ * Demo for login api
+ =========================================================*/
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.authentication')
+        .controller('LoginFormController', LoginFormController);
+
+    LoginFormController.$inject = ['AuthService', '$state',  '$rootScope',  'APP_CONSTANTS',  'blockUI', 'AlertService'];
+
+    function LoginFormController( AuthService,  $state, $rootScope,  APP_CONSTANTS, blockUI,AlertService
+    ) {
+        var vm = this;
+        vm.userValidator = {
+            usernameMin: 4,
+            usernameMax: 20,
+            passwordMin: 6
+        };
+
+        vm.login = function() {
+            var myBlockUI = blockUI.instances.get('loginFormBlockUI');
+            myBlockUI.start("Logging in");
+
+            AuthService.login(vm.user).then(
+                function(response) {
+                    console.log("login user",response);
+                    var result = response.data;
+                    vm.user = result.user;
+                    $rootScope.currentUser = vm.user;
+                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
+                    AuthService.SetCredentials(result);
+                    myBlockUI.stop();
+                    AuthService.RedirectToAttemptedUrl();
+                },
+                function(error) {
+                    myBlockUI.stop();
+                    console.log("error", error);
+                    AlertService.showError("Error on Login", "The username or password is incorrect! Please try again.");
+                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
+                }
+            );
+
+
+        };
+    }
+})(window.angular);
+
+
+(function(angular) {
   "use strict";
 
   angular
@@ -3321,7 +3457,7 @@ function runBlock() {
     .constant("APP_CONSTANTS", {
       USER_ROLES: {
         ALL: "*",
-        ADMIN: "admin",
+        ADMIN: "admin"
       },
       StorageKey: {
         TOKEN: "token",
@@ -3923,375 +4059,135 @@ var MD_TABLE_GLOBAL_SETTINGS = {
     }
 };
 var CIVIL_STATUSES  = ["single","married","widowed","other"];
-(function(angular) {
+
+var INDICATOR = {
+    VI: 'VI',
+    RAINFALL: 'PRECIP'
+};
+/**=========================================================
+ * Collapse panels * [panel-collapse]
+ =========================================================*/
+(function() {
     'use strict';
-    angular.module('app.authentication')
 
-    .service('AuthService', AuthService);
+    angular.module('app.common')
+        .directive('panelCollapse', panelCollapse);
 
-     AuthService.$inject = ['$http', 'StorageService', 'CommonService', 'APP_CONSTANTS', '$rootScope', '$state','$location'];
-
-    function AuthService($http, StorageService, CommonService, APP_CONSTANTS, $rootScope, $state,$location) {
-        this.authorized = false;
-
-        return {
-            login: _login,
-            Logout: logout,
-            GetCredentials: getCredentials,
-            SetCredentials: setCredentials,
-            GetToken: getToken,
-            GetCurrentUser:_getCurrentUser,
-            GetAccessBranches:_getAccessBranches,
-            IsSuperuser:isSuper,
-            SaveAttemptUrl: _saveAttemptUrl,
-            RedirectToAttemptedUrl:_redirectToAttemptedUrl,
-            IsAuthenticated: _isAuthenticated
+    function panelCollapse () {
+        var directive = {
+            controller: Controller,
+            restrict: 'A',
+            scope: false
         };
-
-
-        function _saveAttemptUrl() {
-
-            if($location.path().toLowerCase() !== '/page/login') {
-                StorageService.Set(APP_CONSTANTS.REDIRECT_TO_URL,$location.path());
-            }
-            else {
-                StorageService.Set(APP_CONSTANTS.REDIRECT_TO_URL,'/');
-            }
-        }
-        function _redirectToAttemptedUrl() {
-            var url = StorageService.Get(APP_CONSTANTS.REDIRECT_TO_URL);
-            $location.path(url);
-        }
-
-        function getCredentials() {
-            return !angular.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.SESSION)) ? StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) : null;
-        }
-        function _isAuthenticated() {
-            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION) !== null;
-        }
-        function setCredentials(session) {
-            StorageService.Set(APP_CONSTANTS.StorageKey.SESSION, session);
-        }
-
-        function getToken() {
-            return StorageService.Get(APP_CONSTANTS.StorageKey.SESSION).token;
-        }
-
-
-        function _getCurrentUser(){
-          var credential = getCredentials();
-          return credential !== null? credential.user: null;
-        }
-        function _getAccessBranches() {
-            var credential = getCredentials();
-            return credential !== null ?  !isSuper()? credential.user.account.access_branches : [] :null;
-        }
-
-        function isSuper() {
-            var credential = getCredentials();
-            return credential !== null && credential.user.username === 'super@bidir.com';
-        }
-
-        function _login(user) {
-          return $http.post(CommonService.buildUrl(API.Service.Auth,API.Methods.Auth.Login), user);
-        }
-
-        function logout() {
-            StorageService.Reset();
-            $rootScope.currentUser = null;
-            $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.logoutSuccess);
-            $state.go('page.login');
-        }
-
+        return directive;
     }
 
-})(window.angular);
+    Controller.$inject = ['$scope', '$element', '$timeout', '$localStorage'];
+    function Controller ($scope, $element, $timeout, $localStorage) {
+      var storageKeyName = 'panelState';
+
+      // Prepare the panel to be collapsible
+      var $elem   = $($element),
+          parent  = $elem.closest('.panel'), // find the first parent panel
+          panelId = parent.attr('id');
+
+      // Load the saved state if exists
+      var currentState = loadPanelState( panelId );
+      if ( typeof currentState !== 'undefined') {
+        $timeout(function(){
+            $scope[panelId] = currentState; },
+          10);
+      }
+
+      // bind events to switch icons
+      $element.bind('click', function(e) {
+        e.preventDefault();
+        savePanelState( panelId, !$scope[panelId] );
+
+      });
+  
+      // Controller helpers
+      function savePanelState(id, state) {
+        if(!id) return false;
+        var data = angular.fromJson($localStorage[storageKeyName]);
+        if(!data) { data = {}; }
+        data[id] = state;
+        $localStorage[storageKeyName] = angular.toJson(data);
+      }
+      function loadPanelState(id) {
+        if(!id) return false;
+        var data = angular.fromJson($localStorage[storageKeyName]);
+        if(data) {
+          return data[id];
+        }
+      }
+    }
+
+})();
 
 /**=========================================================
- * Module: access-login.js
- * Demo for login api
+ * Module panel-tools.js
+ * Directive tools to control panels.
+ * Allows collapse, refresh and dismiss (remove)
+ * Saves panel state in browser storage
  =========================================================*/
 
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.authentication')
-        .controller('LoginFormController', LoginFormController);
-
-    LoginFormController.$inject = ['AuthService', '$state',  '$rootScope',  'APP_CONSTANTS',  'blockUI', 'AlertService'];
-
-    function LoginFormController( AuthService,  $state, $rootScope,  APP_CONSTANTS, blockUI,AlertService
-    ) {
-        var vm = this;
-        vm.userValidator = {
-            usernameMin: 4,
-            usernameMax: 20,
-            passwordMin: 6
-        };
-
-        vm.login = function() {
-            var myBlockUI = blockUI.instances.get('loginFormBlockUI');
-            myBlockUI.start("Logging in");
-
-            AuthService.login(vm.user).then(
-                function(response) {
-                    console.log("login user",response);
-                    var result = response.data;
-                    vm.user = result.user;
-                    $rootScope.currentUser = vm.user;
-                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginSuccess);
-                    AuthService.SetCredentials(result);
-                    myBlockUI.stop();
-                    AuthService.RedirectToAttemptedUrl();
-                },
-                function(error) {
-                    myBlockUI.stop();
-                    console.log("error", error);
-                    AlertService.showError("Error on Login", "The username or password is incorrect! Please try again.");
-                    $rootScope.$broadcast(APP_CONSTANTS.AUTH_EVENTS.loginFailed);
-                }
-            );
-
-
-        };
-    }
-})(window.angular);
-
-
-(function (angular) {
-    "use strict";
-    angular
-        .module('app.geospatial')
-        .controller('GeospatialController', GeoSpatialController);
-
-    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI', 'SharedService', 'CommonService', 'AlertService','$sce','$templateCache'];
-
-    function GeoSpatialController(GeoSpatialService, blockUI, SharedService, CommonService, AlertService,$sce,$templateCache) {
-        var vm = this;
-
-        vm.generateSeasonalReport = _generateSeasonalReport;
-        vm.currentUser = GeoSpatialService.CurrentUser();
-        vm.config = {};
-        vm.visibility = {
-            showSmiley: false,
-            showInfoText: true,
-            isEditConfig: false
-        };
-        // var template = $templateCache.get('http://seasmon.wenr.wur.nl/html/info_00000011_VI_latest.html');
-
-        vm.seasonalFilterForm = {
-            IsfromDateValid: true,
-            IstoDateValid: true,
-            IsnameValid: true
-        };
-
-        vm.resetConfig = _resetConfig;
-
-        init();
-        vm.trustSrc = function(src) {
-            return $sce.trustAsHtml("http://seasmon.wenr.wur.nl/html/info_00000011_VI_latest.html");
-        }
-        function _resetConfig() {
-            vm.config = undefined;
-        }
-
-
-        function getGeoSpatialData() {
-
-            GeoSpatialService.getIndicatorsData({
-                indicator: 'VI',
-                start_date: vm.config.from_date,
-                end_date:  vm.config.to_date,
-                regions: '10212:10213:10301'
-            })
-                .then(function (response) {
-                    console.log("getIndicatorsData VI", response);
-                }, function (error) {
-                    console.log("error", error);
-                });
-
-            GeoSpatialService.getIndicatorsData({
-                indicator: 'PRECIP',
-                start_date: vm.config.from_date,
-                end_date:  vm.config.to_date,
-                regions: '10212:10213:10301'
-            })
-                .then(function (response) {
-                    console.log("getIndicatorsData rainfall" , response);
-                }, function (error) {
-                    console.log("error", error);
-                });
-        }
-
-        function _generateSeasonalReport() {
-
-            vm.IsValidData = CommonService.Validation.ValidateForm(vm.seasonalFilterForm, vm.config);
-
-            if (vm.IsValidData) {
-                vm.config.user = vm.currentUser._id;
-                vm.config.from_date = vm.config.fromDate;
-                vm.config.to_date = vm.config.toDate;
-
-                vm.visibility.showSmiley = true;
-                vm.visibility.showInfoText = false;
-                vm.visibility.showWarning = false;
-
-
-                GeoSpatialService.SaveConfig(vm.config).then(function (response) {
-                        AlertService.showSuccess('Configuration Saved Successfully', response);
-                        console.log("response", response);
-                        vm.config = response.data;
-                    }
-                    , function (error) {
-                        console.log('error', error);
-                        var message = error.data.error.message;
-                        AlertService.showError('Oops... Something went wrong', message);
-                    });
-            } else {
-                vm.visibility.showWarning = true;
-                vm.visibility.showInfoText = false;
-            }
-
-        }
-
-        function init() {
-            vm.dtOption = {};
-            vm.dtOption.dateOptions = {
-                dateDisabled: false, formatYear: "yy",
-                maxDate: new Date(2020, 5, 22), startingDay: 1
-            };
-            vm.dtOption.format = "shortDate";
-            vm.dtOption.altInputFormats = ["M!/d!/yyyy"];
-            vm.dtOption.popup = {opened: false};
-            vm.dtOption.fromPopup = {opened: false};
-            vm.dtOption.open = function () {
-                vm.dtOption.popup.opened = true;
-            };
-            vm.dtOption.fromOpen = function () {
-                vm.dtOption.fromPopup.opened = true;
-            };
-            vm.dtOption.clear = function () {
-                vm.dtOption.dt = null;
-            };
-
-            SharedService.GetBranches().then(
-                function (response) {
-                    vm.branches = response.data.docs;
-                },
-                function (error) {
-                    console.log("error fetching branches", error);
-                }
-            );
-
-            GeoSpatialService.GetUserConfig().then(function (response) {
-                if (response.data.length > 0) {
-                    vm.config = response.data[0];
-                    vm.config.fromDate = new Date(vm.config.from_date);
-                    vm.config.toDate = new Date(vm.config.to_date);
-                    setVisibility();
-                    getGeoSpatialData();
-                }else {
-                    vm.visibility.isEditConfig = false;
-                }
-                console.log(" vm.config", vm.config);
-            }, function (reason) {
-                console.log(reason)
-            });
-
-        function setVisibility() {
-            vm.visibility.isEditConfig = true;
-            vm.visibility.showSmiley = true;
-        }
-
-        }
-    }
-
-})(window.angular);
-(function(angular) {
-    "use strict";
-
-
-    angular
-        .module('app.geospatial')
-        .controller('PlotReportController', PlotReportController);
-
-    PlotReportController.$inject = ['NgMap', 'blockUI','SharedService','CommonService'];
-
-    function PlotReportController( NgMap,blockUI,SharedService,CommonService )
-    {
-        var vm = this;
-        NgMap.getMap().then(function(map) {
-            vm.showCustomMarker= function(evt) {
-                map.customMarkers.foo.setVisible(true);
-                map.customMarkers.foo.setPosition(this.getPosition());
-            };
-            vm.closeCustomMarker= function(evt) {
-                this.style.display = 'none';
-            };
-        });
-
-    }
-
-})(window.angular);
-(function(angular) {
+(function() {
     'use strict';
-    angular.module('app.geospatial')
 
-        .service('GeoSpatialService', GeoSpatialService);
+    angular.module('app.common')
+        .directive('paneltool', paneltool);
 
-    GeoSpatialService.$inject = ['$http','CommonService','AuthService','$rootScope'];
-
-    function GeoSpatialService($http, CommonService, AuthService,$rootScope) {
-        return {
-            formatDateForRequest:_formatDateForRequest,
-            getIndicatorsData:_getIndicatorData,
-            CurrentUser: _getUser,
-            SaveConfig : _saveConfig,
-            GetUserConfig:_getUserConfig
+    paneltool.$inject = ['$compile', '$timeout'];
+    function paneltool ($compile, $timeout) {
+        var directive = {
+            link: link,
+            restrict: 'E',
+            scope: false
         };
+        return directive;
 
-        function _getUser() {
-            return  AuthService.GetCurrentUser();
-        }
+        function link(scope, element, attrs) {
 
-        function _getUserConfig(){
-            var user = $rootScope.currentUser._id;// AuthService.GetCurrentUser();
-            return $http.get(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config, 'search?user=' + user));
-        }
+          var templates = {
+            /* jshint multistr: true */
+            collapse:'<a href="#" panel-collapse="" uib-tooltip="Collapse Panel" ng-click="{{panelId}} = !{{panelId}}"> \
+                        <em ng-show="{{panelId}}" class="fa fa-plus ng-no-animation"></em> \
+                        <em ng-show="!{{panelId}}" class="fa fa-minus ng-no-animation"></em> \
+                      </a>',
+            dismiss: '<a href="#" panel-dismiss="" uib-tooltip="Close Panel">\
+                       <em class="fa fa-times"></em>\
+                     </a>',
+            refresh: '<a href="#" panel-refresh="" data-spinner="{{spinner}}" uib-tooltip="Refresh Panel">\
+                       <em class="fa fa-refresh"></em>\
+                     </a>'
+          };
 
-        function _saveConfig(config){
-            return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
-        }
+          var tools = scope.panelTools || attrs;
 
-        function _getIndicatorData(config) {
-            var request = {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': undefined
-                },
-                url: API.Config.SeasonalMonitoringBaseUrl +  'indicator='+config.indicator+'&start_date='+config.start_date+'&end_date='+config.end_date+'&regions=' +config.regions};
+          $timeout(function() {
+            element.html(getTemplate(element, tools )).show();
+            $compile(element.contents())(scope);
 
+            element.addClass('pull-right');
+          });
 
-            return $http(request);
-        }
-        function _formatDateForRequest(date) {
-            var d = new Date(date),
-                month = '-' +  ("0" + (d.getMonth() + 1)).slice(-2) ,
-                day = '-' + ("0" + d.getDate()).slice(-2),
-                year = d.getFullYear();
-
-            if (month.length < 2) month = '0' + month;
-            if (day.length < 2) day = '0' + day;
-
-            return [year, month, day].join('');
-        }
-
+          function getTemplate( elem, attrs ){
+            var temp = '';
+            attrs = attrs || {};
+            if(attrs.toolCollapse)
+              temp += templates.collapse.replace(/{{panelId}}/g, (elem.parent().parent().attr('id')) );
+            if(attrs.toolDismiss)
+              temp += templates.dismiss;
+            if(attrs.toolRefresh)
+              temp += templates.refresh.replace(/{{spinner}}/g, attrs.toolRefresh);
+            return temp;
+          }
+        }// link
     }
 
+})();
 
-})(window.angular);
 (function(angular) {
     "use strict";
 
@@ -4734,6 +4630,596 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
 })(window.angular);
 /**
+ * Created by Yoni on 2/9/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.forms')
+        .constant('MW_QUESTION_TYPES', [
+            {name:'Fill In Blank',url:'fib',code:'FILL_IN_BLANK',type:'text'},
+            {name:'Yes/No Question',code:'YES_NO',url:'yn',type:'yn',options:['Yes','No']},
+            {name:'Multiple Choice',url:'mc',code:'MULTIPLE_CHOICE',options:[],type:'checkbox'},
+            {name:'Single Choice',url:'sc',code:'SINGLE_CHOICE',options:[],type:'select'},
+            {name:'Grouped Question',url:'GROUPED',code:'GROUPED',type:'grouped'}])
+        .constant('MW_FORM_TYPES', [
+            {name:'ACAT',code:'ACAT'},
+            {name:'Loan Application',code:'LOAN_APPLICATION'},
+            {name:'Screening',code:'SCREENING'},
+            {name:'Group Application',code:'GROUP_APPLICATION'},
+            {name:'Test',code:'TEST'}]);
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.forms").controller("FormsController", FormsController);
+
+    FormsController.$inject = ['FormService','$state'];
+
+    function FormsController(FormService,$state) {
+        var vm = this;
+        vm.forms = [];
+        vm.paginate = _paginate;
+        vm.editForm = _editForm;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+            callApi();//fetch first page data initially
+        }
+
+        function _paginate (page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+        function callApi() {
+             vm.promise = FormService.GetFormsPerPage(vm.query).then(function (response) {
+                vm.forms = response.data.docs;
+                _.forEach(vm.forms,function (form) {
+                    if(form.has_sections){
+                        form.sectionCount = form.sections.length;
+                        var questionCount = 0;
+                        _.forEach(form.sections,function (sec) {
+                            questionCount = questionCount + sec.questions.length;
+                        });
+                        form.questionCount = questionCount;
+                    }else{
+                        form.questionCount = form.questions.length;
+                    }
+                })
+            },function (error) {
+                console.log(error);
+            })
+        }
+
+        function _editForm(form, ev) {
+            $state.go('app.builder',{id:form._id});
+            console.log("edit Form",form);
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.forms')
+
+        .service('FormService', FormService);
+
+    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES','MW_FORM_TYPES'];
+
+    function FormService($http, CommonService,MW_QUESTION_TYPES,MW_FORM_TYPES) {
+        return {
+            GetFormsPerPage: _getFormsPerPage,
+            CreateForm:_createForm,
+            GetForm:_getForm,
+            UpdateForm:_updateForm,
+            GetQuestion:_getQuestion,
+            CreateQuestion:_createQuestion,
+            UpdateQuestion:_updateQuestion,
+            DeleteQuestion:_deleteQuestion,
+            CreateSection:_createSection,
+            UpdateSection:_updateSection,
+            RemoveSection:_removeSection,
+            QuestionTypes: MW_QUESTION_TYPES,
+            FormTypes: MW_FORM_TYPES
+        };
+        function _getFormsPerPage(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
+        }
+        function _getForm(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM, API.Methods.Form.All, id));
+        }
+        function _updateForm(form) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,form._id), form);
+        }
+        function _createForm(form){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
+        }
+        //------QUESTION-----------
+        function _getQuestion(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,id));
+        }
+        function _createQuestion(question,type){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question) + '/' + type, question);
+        }
+        function _updateQuestion(question) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id), question);
+        }
+        function _deleteQuestion(question) {
+          return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id + '?form=' + question.form));
+        }
+
+
+        //    ------SECTION--------
+        function _createSection(section){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Section), section);
+        }
+        function _updateSection(section) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id), section);
+        }
+        function _removeSection(section) {
+            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id + '?form=' + section.form));
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.loan_management')
+
+        .service('LoanManagementService', LoanManagementService);
+
+    LoanManagementService.$inject = ['$http', 'CommonService'];
+
+    function LoanManagementService($http, CommonService) {
+        return {
+            GetLoanApplications: _getLoanApplications,
+            GetClientLoanApplication:_getClientLoanApplication,
+            SaveClientLoanApplication:_saveClientLoanApplication,
+
+            GetScreenings: _getScreenings,
+            GetClientScreening:_getClientScreening,
+            GetClientApplicationByLoanCycle:_getClientApplicationByLoanCycle,
+
+            SaveClientScreening:_saveClientScreening,
+            //CLIENT MANAGEMENT RELATED SERVICES DECLARATION
+            GetClients: _getClients,
+            SaveClient: _saveClient,
+            UpdateClient: _updateClient,
+            GetClientDetail:_getClientDetail,
+            SearchClient:_searchClient,
+            GetClientByLoanCycle:_getClientByLoanCycle,
+            GetBranches: _getBranches,
+
+            GetACATCollections: _getACATCollections,
+            GetClientACAT:_getClientACAT,
+            GetClientLoanProposals:_getClientLoanProposals,
+            GetCrops:_getCrops,
+
+            StyleLabelByStatus: _styleLabelByStatus,
+            loanCycles: [{id:1,name:'1st Loan Cycle'},{id:2,name:'2nd Loan Cycle'},{id:3,name:'3rd Loan Cycle'},{id:4,name:'4th Loan Cycle'},{id:5,name:'5th Loan Cycle'}]
+        };
+
+        function _getScreenings(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening,parameters));
+        }
+        function _saveClientScreening(screening,id) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,id),screening);
+        }
+
+
+        function _getClientScreening(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
+        }
+        function _getClientApplicationByLoanCycle(clientId,application,loanCycle) {
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Histories) + 'application='+application+'&client='+clientId+'&loanCycle='+loanCycle);
+        }
+        function _getLoanApplications(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.LOANS,API.Methods.LOANS.Loans,parameters));
+        }
+        function _getClientLoanApplication(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Clients,clientId));
+        }
+        function _saveClientLoanApplication(loan_application,id) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Loans,id),loan_application);
+        }
+
+
+
+        //CLIENT MANAGEMENT RELATED SERVICES
+        function _searchClient(searchText) {
+            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
+        }
+        function _getClientByLoanCycle(loanCycle) {
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.Client) + '/search?loanCycle=' + loanCycle);
+        }
+
+        function _getClientDetail(id){
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
+        }
+        function _getBranches(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+        }
+        function _getClients(parameters){
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,parameters));
+        }
+        function _saveClient(client) {
+            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients + '/create'),client);
+        }
+        function _updateClient(client) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,client._id),client);
+        }
+
+
+        function _styleLabelByStatus(clientStatus) {
+            var style = '';
+            if(_.isUndefined(clientStatus))
+                return '';
+            switch (clientStatus.toLowerCase()){
+                case  'new':
+                    style =  'label bg-gray';
+                    break;
+                case  'submitted':
+                    style =  'label bg-primary-dark';
+                    break;
+                case  'approved':
+                    style =  'label bg-green-dark';
+                    break;
+                case 'screening_inprogress':
+                case 'declined_under_review':
+                    style =  'label label-warning';
+                    break;
+                case 'loan_application_accepted':
+                    style =  'label bg-info-dark';
+                    break;
+                case 'eligible':
+                    style =  'label label-success';
+                    break;
+                case 'ineligible':
+                case 'declined_final':
+                    style =  'label label-danger';
+                    break;
+                case 'loan_application_new':
+                    style =  'label bg-purple-dark';
+                    break;
+                default:
+                    style =  'label label-inverse';
+            }
+            return style;
+        }
+
+        function _getACATCollections(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.ACAT,API.Methods.ACAT.Clients,parameters));
+        }
+        function _getClientACAT(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Clients,clientId));
+        }
+        function _getClientLoanProposals(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProposals,clientId));
+        }
+
+        function _getCrops() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
+        }
+
+    }
+
+
+})(window.angular);
+(function (angular) {
+    "use strict";
+    angular
+        .module('app.geospatial')
+        .controller('GeospatialController', GeoSpatialController);
+
+    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI', 'SharedService', 'CommonService', 'AlertService','$scope','$templateCache'];
+
+    function GeoSpatialController(GeoSpatialService, blockUI, SharedService, CommonService, AlertService,$scope,$templateCache) {
+        var vm = this;
+        vm.INDICATOR = INDICATOR;
+        vm.currentUser = GeoSpatialService.CurrentUser;
+        vm.saveUserConfig = _saveUserConfig;
+        vm.resetConfig = _resetConfig;
+
+        init();
+
+        // We can use panel id name for the boolean flag to [un]collapse the panel
+        $scope.$watch('panelDemo1',function(newVal){
+
+            console.log('panelDemo1 collapsed: ' + newVal);
+
+        });
+
+
+
+
+
+        function _resetConfig() {
+            vm.config = undefined;
+        }
+
+        function getGeoSpatialData() {
+
+            vm.regions = '10501:10503';
+            //GET VI DATA
+            GeoSpatialService.getSeasonalMonitorData({
+                indicator: vm.INDICATOR.VI,
+                start_date: GeoSpatialService.formatDateForRequest(vm.config.from_date),
+                end_date:  GeoSpatialService.formatDateForRequest(vm.config.to_date),
+                regions: vm.regions
+            })
+                .then(function (response) {
+                    console.log("VI Data", response);
+                    setVisibility();
+                    vm.vegitationIndex = response.data;
+                }, function (error) {
+                    console.log("error", error);
+                });
+            //GET RAINFALL DATA
+            GeoSpatialService.getSeasonalMonitorData({
+                indicator: vm.INDICATOR.RAINFALL,
+                start_date: GeoSpatialService.formatDateForRequest(vm.config.from_date),
+                end_date:  GeoSpatialService.formatDateForRequest(vm.config.to_date),
+                regions: vm.regions
+            })
+                .then(function (response) {
+                    console.log("Rainfall data" , response);
+                    vm.rainfall = response.data;
+                }, function (error) {
+                    console.log("error", error);
+                });
+        }
+
+        function _saveUserConfig() {
+
+            vm.IsValidData = CommonService.Validation.ValidateForm(vm.seasonalFilterForm, vm.config);
+
+            if (vm.IsValidData) {
+                vm.config.user = vm.currentUser._id;
+                vm.config.from_date = vm.config.fromDate;
+                vm.config.to_date = vm.config.toDate;
+
+                vm.visibility.showSmiley = true;
+                vm.visibility.showInfoText = false;
+                vm.visibility.showWarning = false;
+
+                if(vm.config._id){
+                    GeoSpatialService.UpdateConfig(vm.config).then(function (response) {
+                            AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
+                            console.log("response", response);
+                            vm.config = response.data;
+                        }
+                        , function (error) {
+                            console.log('error', error);
+                            var message = error.data.error.message;
+                            AlertService.showError('Oops... Something went wrong', message);
+                        });
+                }else{
+                    GeoSpatialService.SaveConfig(vm.config).then(function (response) {
+                            AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
+                            console.log("response", response);
+                            vm.config = response.data;
+                        }
+                        , function (error) {
+                            console.log('error', error);
+                            var message = error.data.error.message;
+                            AlertService.showError('Oops... Something went wrong', message);
+                        });
+                }
+
+            } else {
+                vm.visibility.showWarning = true;
+                vm.visibility.showInfoText = false;
+            }
+
+        }
+
+        function init() {
+
+            vm.config = {};
+            vm.visibility = {
+                showSmiley: false,
+                showInfoText: true,
+                isEditConfig: false };
+            // var template = $templateCache.get('http://seasmon.wenr.wur.nl/html/info_00000011_VI_latest.html');
+
+            vm.seasonalFilterForm = {
+                IsfromDateValid: true,
+                IstoDateValid: true,
+                IsnameValid: true
+            };
+            //DATE OPTION
+            vm.dtOption = GeoSpatialService.DateOptionDefault();
+
+            SharedService.GetBranches()
+                .then( function (response) {
+                    vm.branches = response.data.docs;
+                    console.log("vm.branches", vm.branches);
+                },
+                    function (error) {
+                    console.log("error fetching branches", error);
+                });
+
+            GetUserConfig();
+
+        }
+
+        function GetUserConfig() {
+            GeoSpatialService.GetUserConfig().then(function (response) {
+                if (response.data.length > 0) {
+                    vm.config = response.data[0];
+                    vm.config.fromDate = new Date(vm.config.from_date);
+                    vm.config.toDate = new Date(vm.config.to_date);
+                    getGeoSpatialData();
+                }else {
+                    vm.visibility.isEditConfig = false;
+                }
+                console.log(" vm.config", vm.config);
+            }, function (reason) {
+                console.log(reason)
+            });
+        }
+
+        function setVisibility() {
+            vm.visibility.isEditConfig = true;
+            vm.visibility.showSmiley = true;
+        }
+    }
+
+})(window.angular);
+(function(angular) {
+    "use strict";
+
+
+    angular
+        .module('app.geospatial')
+        .controller('PlotReportController', PlotReportController);
+
+    PlotReportController.$inject = ['NgMap', 'blockUI','SharedService','CommonService'];
+
+    function PlotReportController( NgMap,blockUI,SharedService,CommonService )
+    {
+        var vm = this;
+        NgMap.getMap().then(function(map) {
+            vm.showCustomMarker= function(evt) {
+                map.customMarkers.foo.setVisible(true);
+                map.customMarkers.foo.setPosition(this.getPosition());
+            };
+            vm.closeCustomMarker= function(evt) {
+                this.style.display = 'none';
+            };
+        });
+
+    }
+
+})(window.angular);
+(function(angular) {
+    'use strict';
+    angular.module('app.geospatial')
+
+        .service('GeoSpatialService', GeoSpatialService);
+
+    GeoSpatialService.$inject = ['$http','CommonService','AuthService','$rootScope'];
+
+    function GeoSpatialService($http, CommonService, AuthService,$rootScope) {
+        return {
+            formatDateForRequest:_formatDateForRequest,
+            getSeasonalMonitorData:_getSeasonalMonitorData,
+            CurrentUser: _getUser(),
+            SaveConfig : _saveConfig,
+            UpdateConfig:_updateConfig,
+            GetUserConfig:_getUserConfig,
+            DateOptionDefault:_dateOptionDefault
+        };
+
+        function _getUser() {
+            return  AuthService.GetCurrentUser();
+        }
+
+        function _getUserConfig(){
+            var user = $rootScope.currentUser._id;// AuthService.GetCurrentUser();
+            return $http.get(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config, 'search?user=' + user));
+        }
+
+        function _saveConfig(config){
+            return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
+        }
+        function _updateConfig(config){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config,config._id),config);
+        }
+
+        function _getSeasonalMonitorData(config) {
+            var request = {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': undefined
+                },
+                url: API.Config.SeasonalMonitoringBaseUrl +  'indicator='+config.indicator+'&start_date='+config.start_date+'&end_date='+config.end_date+'&regions=' +config.regions};
+
+
+            return $http(request);
+        }
+        function _formatDateForRequest(date) {
+            var d = new Date(date),
+                month = '-' +  ("0" + (d.getMonth() + 1)).slice(-2) ,
+                day = '-' + ("0" + d.getDate()).slice(-2),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('');
+        }
+
+        function _dateOptionDefault() {
+            var vm = this;
+            vm.dtOption = {};
+            vm.dtOption.dateOptions = {
+                dateDisabled: false, formatYear: "yy",
+                maxDate: new Date(2020, 5, 22), startingDay: 1
+            };
+            vm.dtOption.format = "shortDate";
+            vm.dtOption.altInputFormats = ["M!/d!/yyyy"];
+            vm.dtOption.popup = {opened: false};
+            vm.dtOption.fromPopup = {opened: false};
+            vm.dtOption.open = function () {
+                vm.dtOption.popup.opened = true;
+            };
+            vm.dtOption.fromOpen = function () {
+                vm.dtOption.fromPopup.opened = true;
+            };
+            vm.dtOption.clear = function () {
+                vm.dtOption.dt = null;
+            };
+
+            return vm.dtOption;
+        }
+
+    }
+
+
+})(window.angular);
+/**
  * Created by Yoni on 12/10/2017.
  */
 
@@ -5007,152 +5493,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
 })(window.angular);
 
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.loan_management')
-
-        .service('LoanManagementService', LoanManagementService);
-
-    LoanManagementService.$inject = ['$http', 'CommonService'];
-
-    function LoanManagementService($http, CommonService) {
-        return {
-            GetLoanApplications: _getLoanApplications,
-            GetClientLoanApplication:_getClientLoanApplication,
-            SaveClientLoanApplication:_saveClientLoanApplication,
-
-            GetScreenings: _getScreenings,
-            GetClientScreening:_getClientScreening,
-            GetClientApplicationByLoanCycle:_getClientApplicationByLoanCycle,
-
-            SaveClientScreening:_saveClientScreening,
-            //CLIENT MANAGEMENT RELATED SERVICES DECLARATION
-            GetClients: _getClients,
-            SaveClient: _saveClient,
-            UpdateClient: _updateClient,
-            GetClientDetail:_getClientDetail,
-            SearchClient:_searchClient,
-            GetClientByLoanCycle:_getClientByLoanCycle,
-            GetBranches: _getBranches,
-
-            GetACATCollections: _getACATCollections,
-            GetClientACAT:_getClientACAT,
-            GetClientLoanProposals:_getClientLoanProposals,
-            GetCrops:_getCrops,
-
-            StyleLabelByStatus: _styleLabelByStatus,
-            loanCycles: [{id:1,name:'1st Loan Cycle'},{id:2,name:'2nd Loan Cycle'},{id:3,name:'3rd Loan Cycle'},{id:4,name:'4th Loan Cycle'},{id:5,name:'5th Loan Cycle'}]
-        };
-
-        function _getScreenings(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening,parameters));
-        }
-        function _saveClientScreening(screening,id) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,id),screening);
-        }
-
-
-        function _getClientScreening(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
-        }
-        function _getClientApplicationByLoanCycle(clientId,application,loanCycle) {
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Histories) + 'application='+application+'&client='+clientId+'&loanCycle='+loanCycle);
-        }
-        function _getLoanApplications(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.LOANS,API.Methods.LOANS.Loans,parameters));
-        }
-        function _getClientLoanApplication(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Clients,clientId));
-        }
-        function _saveClientLoanApplication(loan_application,id) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Loans,id),loan_application);
-        }
-
-
-
-        //CLIENT MANAGEMENT RELATED SERVICES
-        function _searchClient(searchText) {
-            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
-        }
-        function _getClientByLoanCycle(loanCycle) {
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.Client) + '/search?loanCycle=' + loanCycle);
-        }
-
-        function _getClientDetail(id){
-            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
-        }
-        function _getBranches(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
-        }
-        function _getClients(parameters){
-            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,parameters));
-        }
-        function _saveClient(client) {
-            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients + '/create'),client);
-        }
-        function _updateClient(client) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,client._id),client);
-        }
-
-
-        function _styleLabelByStatus(clientStatus) {
-            var style = '';
-            if(_.isUndefined(clientStatus))
-                return '';
-            switch (clientStatus.toLowerCase()){
-                case  'new':
-                    style =  'label bg-gray';
-                    break;
-                case  'submitted':
-                    style =  'label bg-primary-dark';
-                    break;
-                case  'approved':
-                    style =  'label bg-green-dark';
-                    break;
-                case 'screening_inprogress':
-                case 'declined_under_review':
-                    style =  'label label-warning';
-                    break;
-                case 'loan_application_accepted':
-                    style =  'label bg-info-dark';
-                    break;
-                case 'eligible':
-                    style =  'label label-success';
-                    break;
-                case 'ineligible':
-                case 'declined_final':
-                    style =  'label label-danger';
-                    break;
-                case 'loan_application_new':
-                    style =  'label bg-purple-dark';
-                    break;
-                default:
-                    style =  'label label-inverse';
-            }
-            return style;
-        }
-
-        function _getACATCollections(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.ACAT,API.Methods.ACAT.Clients,parameters));
-        }
-        function _getClientACAT(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Clients,clientId));
-        }
-        function _getClientLoanProposals(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProposals,clientId));
-        }
-
-        function _getCrops() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
-        }
-
-    }
-
-
-})(window.angular);
 /**
  * Created by Yoni on 11/30/2017.
  */
@@ -5788,176 +6128,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
 })(window.angular);
 /**
- * Created by Yoni on 2/9/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.forms')
-        .constant('MW_QUESTION_TYPES', [
-            {name:'Fill In Blank',url:'fib',code:'FILL_IN_BLANK',type:'text'},
-            {name:'Yes/No Question',code:'YES_NO',url:'yn',type:'yn',options:['Yes','No']},
-            {name:'Multiple Choice',url:'mc',code:'MULTIPLE_CHOICE',options:[],type:'checkbox'},
-            {name:'Single Choice',url:'sc',code:'SINGLE_CHOICE',options:[],type:'select'},
-            {name:'Grouped Question',url:'GROUPED',code:'GROUPED',type:'grouped'}])
-        .constant('MW_FORM_TYPES', [
-            {name:'ACAT',code:'ACAT'},
-            {name:'Loan Application',code:'LOAN_APPLICATION'},
-            {name:'Screening',code:'SCREENING'},
-            {name:'Group Application',code:'GROUP_APPLICATION'},
-            {name:'Test',code:'TEST'}]);
-})(window.angular);
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.forms").controller("FormsController", FormsController);
-
-    FormsController.$inject = ['FormService','$state'];
-
-    function FormsController(FormService,$state) {
-        var vm = this;
-        vm.forms = [];
-        vm.paginate = _paginate;
-        vm.editForm = _editForm;
-        vm.clearSearchText = _clearSearch;
-
-        initialize();
-
-
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-            callApi();//fetch first page data initially
-        }
-
-        function _paginate (page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-
-        function callApi() {
-             vm.promise = FormService.GetFormsPerPage(vm.query).then(function (response) {
-                vm.forms = response.data.docs;
-                _.forEach(vm.forms,function (form) {
-                    if(form.has_sections){
-                        form.sectionCount = form.sections.length;
-                        var questionCount = 0;
-                        _.forEach(form.sections,function (sec) {
-                            questionCount = questionCount + sec.questions.length;
-                        });
-                        form.questionCount = questionCount;
-                    }else{
-                        form.questionCount = form.questions.length;
-                    }
-                })
-            },function (error) {
-                console.log(error);
-            })
-        }
-
-        function _editForm(form, ev) {
-            $state.go('app.builder',{id:form._id});
-            console.log("edit Form",form);
-        }
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.forms')
-
-        .service('FormService', FormService);
-
-    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES','MW_FORM_TYPES'];
-
-    function FormService($http, CommonService,MW_QUESTION_TYPES,MW_FORM_TYPES) {
-        return {
-            GetFormsPerPage: _getFormsPerPage,
-            CreateForm:_createForm,
-            GetForm:_getForm,
-            UpdateForm:_updateForm,
-            GetQuestion:_getQuestion,
-            CreateQuestion:_createQuestion,
-            UpdateQuestion:_updateQuestion,
-            DeleteQuestion:_deleteQuestion,
-            CreateSection:_createSection,
-            UpdateSection:_updateSection,
-            RemoveSection:_removeSection,
-            QuestionTypes: MW_QUESTION_TYPES,
-            FormTypes: MW_FORM_TYPES
-        };
-        function _getFormsPerPage(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
-        }
-        function _getForm(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM, API.Methods.Form.All, id));
-        }
-        function _updateForm(form) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,form._id), form);
-        }
-        function _createForm(form){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
-        }
-        //------QUESTION-----------
-        function _getQuestion(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,id));
-        }
-        function _createQuestion(question,type){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question) + '/' + type, question);
-        }
-        function _updateQuestion(question) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id), question);
-        }
-        function _deleteQuestion(question) {
-          return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id + '?form=' + question.form));
-        }
-
-
-        //    ------SECTION--------
-        function _createSection(section){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Section), section);
-        }
-        function _updateSection(section) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id), section);
-        }
-        function _removeSection(section) {
-            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id + '?form=' + section.form));
-        }
-    }
-
-
-})(window.angular);
-/**
  * Created by Yoni on 12/3/2017.
  */
 (function(angular) {
@@ -6088,149 +6258,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
         }
     }
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearch;
-
-        initialize();
-
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-
-            callApi();
-        }
-
-
-        function _paginate (page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-
-       function callApi(){
-        vm.promise =   ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
-
-    }
-
-
 
 })(window.angular);
 /**
@@ -7088,6 +7115,149 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
 })(window.angular);
 /**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+        }
+
+
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+       function callApi(){
+        vm.promise =   ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
+
+    }
+
+
+
+})(window.angular);
+/**
  * Created by Yoni on 12/3/2017.
  */
 (function () {
@@ -7543,6 +7713,737 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
 
 })(window.angular);
 
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.forms").controller("FormBuilderController", FormBuilderController);
+
+    FormBuilderController.$inject = ['FormService','$mdDialog','RouteHelpers','$stateParams','AlertService','blockUI','$scope','$state'];
+
+    function FormBuilderController(FormService,$mdDialog,RouteHelpers,$stateParams,AlertService,blockUI,$scope,$state) {
+        var vm = this;
+        vm.isEdit = $stateParams.id !== "0";
+        vm.formId = $stateParams.id;
+        vm.formTypes = FormService.FormTypes;
+
+        //QUESTION RELATED
+        vm.addQuestion = _addQuestion;
+        vm.editQuestion = _editQuestion;
+
+        vm.saveForm = _saveForm;
+        vm.typeStyle = _typeStyle;
+
+        //Section related
+        vm.selectSection = _selectSection;
+        vm.addSection = _addSection;
+        vm.saveSection = _saveSection;
+        vm.editSection = _editSection;
+        vm.removeSection = _removeSection;
+        vm.cancelSection = _cancelSection;
+
+        //QUESTION ORDERING RELATED
+        $scope.sortableOptions = {
+            placeholder: 'ui-state-highlight',
+            update: function(e, ui) {
+            },
+            stop: function(e, ui) {
+                vm.selected_section.questions.map(function(question,index){
+                    question.number = index;
+                    UpdateQuestionOrder(question);
+                });
+            }
+        };
+        $scope.sectionSortableOptions = {
+            placeholder: 'ui-state-highlight',
+            stop: function(e, ui) {
+                console.log("stop ordering questions");
+                vm.formData.questions.map(function(question,index){
+                    question.number = index;
+                    UpdateQuestionOrder(question);
+                });
+            }
+        };
+
+        function UpdateQuestionOrder(question) {
+            FormService.UpdateQuestion(question).then(
+                function (response) {
+                    // console.log("saving ordered [" + question.question_text + "] ",response);
+                },function (error) {
+                    console.log("error saving order question [" + question.question_text + "] ",error);
+                }
+            )
+        }
+
+        initialize();
+
+        function _saveForm() {
+            var myBlockUI = blockUI.instances.get('formBuilderBlockUI');
+            myBlockUI.start();
+
+            if(vm.isEdit){
+
+                var editForm = {
+                    _id:vm.formData._id,
+                    title:vm.formData.title,
+                    subtitle:vm.formData.subtitle,
+                    purpose:vm.formData.purpose,
+                    layout:vm.formData.layout,
+                    has_sections:vm.formData.has_sections
+                };
+
+                FormService.UpdateForm(editForm).then(function (response) {
+                    myBlockUI.stop();
+                    vm.formData = response.data;
+                    vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+                    AlertService.showSuccess("FORM UPDATED","Form updated successfully");
+                    $state.go('app.builder',{id:vm.formData._id},{inherit:true});
+                },function (error) {
+                    myBlockUI.stop();
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to Save Form",message);
+                    console.log("error",error);
+                });
+
+            }else
+                {
+
+                var preparedForm = {
+                    title:vm.formData.title,
+                    subtitle:vm.formData.subtitle,
+                    purpose:vm.formData.purpose,
+                    layout:vm.formData.layout,
+                    has_sections:vm.formData.has_sections,
+                    type: vm.formData.selected_formType.code,
+                    questions: []
+                };
+
+                FormService.CreateForm(preparedForm).then(function (response) {
+                    myBlockUI.stop();
+                    vm.formData = response.data;
+                    vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+                    AlertService.showSuccess("FORM CREATED","Form created successfully");
+                    $state.go('app.builder',{id:vm.formData._id},{inherit:true});
+                },function (error) {
+                    myBlockUI.stop();
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to Save Form",message);
+                    console.log("error",error);
+                });
+
+            }
+
+        }
+
+
+        function _addQuestion(sectionData,ev) {
+            $mdDialog.show({
+                locals: {data: {question:null,form: {_id: vm.formData._id,questions:vm.formData.has_sections?vm.selected_section.questions:vm.formData.questions},section:sectionData,number:vm.maxOrderNumber}},
+                templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'QuestionBuilderController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                console.log("call api to refresh");
+                callAPI();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+
+        }
+        function _editQuestion(question,ev) {
+            $mdDialog.show({
+                locals: {data: {question:question,form: {_id: vm.formData._id,questions:vm.formData.has_sections?vm.selected_section.questions:vm.formData.questions},number:vm.maxOrderNumber}},
+                templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'QuestionBuilderController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callAPI();
+            }, function () {
+            });
+        }
+
+        function initialize() {
+
+            if(vm.isEdit){
+                callAPI();
+            }else{
+                vm.formData = {
+                    has_sections:0,
+                    layout:'TWO_COLUMNS'
+                };
+            }
+        }
+
+        function callAPI() {
+            var myBlockUIOnStart = blockUI.instances.get('formBuilderBlockUI');
+            myBlockUIOnStart.start();
+            FormService.GetForm(vm.formId).then(function (response) {
+                vm.formData = response.data;
+                //REFRESH SELECTED SECTION
+                if(vm.formData.sections.length > 0 && !_.isUndefined(vm.selected_section)){
+                    vm.selected_section = _.first(_.filter(vm.formData.sections,function (section) {
+                        return section._id === vm.selected_section._id;
+                    }));
+                }
+
+                if(vm.formData.has_sections){
+                    GetMaximumOrderNumberForSection();
+
+                }else{
+
+                    if(vm.formData.questions.length > 0){
+                        vm.maxOrderNumber = _.max(vm.formData.questions,function (qn) {
+                            return qn.number;
+                        }).number;
+                    }else{
+                        vm.maxOrderNumber = 0;
+                    }
+
+                    console.log("max number for question without section",vm.maxOrderNumber);
+                }
+
+                vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+
+                myBlockUIOnStart.stop();
+
+            },function (error) {
+                myBlockUIOnStart.stop();
+                console.log("error",error);
+            });
+        }
+
+        function GetMaximumOrderNumberForSection() {
+            if(!_.isUndefined(vm.selected_section)){
+
+                if(vm.selected_section.questions.length > 0){
+                    vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
+                        return qn.number;
+                    }).number;
+                }else {
+                    vm.maxOrderNumber = 0;
+                }
+
+            }else{
+                vm.maxOrderNumber = 0;
+            }
+        }
+        function getFormTypeObj(code) {
+            return _.first(_.filter(vm.formTypes,function (type) {
+                return type.code === code;
+            }));
+        }
+
+        function _typeStyle(type){
+            var style = '';
+            switch (type.trim()){
+                case 'Fill In Blank':
+                case 'FILL_IN_BLANK':
+                    style =  'label bg-green-dark';
+                    break;
+                case 'Yes/No':
+                case 'YES_NO':
+                    style =  'label bg-info';
+                    break;
+                case 'GROUPED':
+                    style =  'label bg-warning-dark';
+                    break;
+                case 'SINGLE_CHOICE':
+                    style =  'label bg-primary';
+                    break;
+                case 'MULTIPLE_CHOICE':
+                    style =  'label bg-pink-dark';
+                    break;
+                default:
+                    style =  'label bg-inverse';
+            }
+            return style;
+        }
+
+        //------SECTION RELATED---------
+
+        function _addSection() {
+            vm.selected_section = {};
+            vm.showSectionForm = true;
+        }
+        function _selectSection(selectedSection) {
+            vm.showSectionForm = false;
+            vm.selected_section = selectedSection;
+            vm.selected_section.form = vm.formId; //This is important for remove section
+            GetMaximumOrderNumberForSection();
+            // vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
+            //     return qn.number;
+            // }).number;
+            console.log("max number for question with section on select",vm.maxOrderNumber);
+        }
+
+        function _saveSection(section) {
+            section.form = vm.formId;
+            if( _.isUndefined(section._id)){
+
+            FormService.CreateSection(section).then(function (response) {
+                vm.selected_section = response.data;
+                vm.selected_section.form = vm.formId; //set to which form it belongs
+                vm.showSectionForm = false;
+                AlertService.showSuccess("SECTION","Section Created successfully");
+                callAPI();//REFRESH FORM DATA
+            },function (error) {
+                console.log("error when saving section",error);
+            });
+
+            }else {
+                FormService.UpdateSection(section).then(function (response) {
+                    vm.selected_section = response.data;
+                    vm.selected_section.form = vm.formId; //set to which form it belongs
+                    vm.showSectionForm = false;
+                    callAPI();//REFRESH FORM DATA
+                    AlertService.showSuccess("SECTION","Section Updated successfully");
+                    console.log("saved section",response);
+                },function (error) {
+                    console.log("error when saving section",error);
+                });
+            }
+        }
+        function _editSection(section) {
+            vm.selected_section = section;
+            vm.selected_section.form = vm.formId;
+            vm.showSectionForm = true;
+        }
+        function _cancelSection() {
+            vm.showSectionForm = false;
+        }
+
+        function _removeSection(section) {
+            AlertService.showConfirmForDelete("You are about to DELETE SECTION, All Questions under this section will be removed",
+                "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
+                    if(isConfirm){
+                        vm.selected_section.form = vm.formId; //set to which form it belongs
+                        FormService.RemoveSection(section).then(function(response){
+                            vm.showSectionForm = false;
+                            callAPI();
+                            AlertService.showSuccess("SECTION","Section Deleted successfully");
+                            vm.selected_section = undefined;
+                        },function(error){
+                            console.log("Section deleting error",error);
+                            var message = error.data.error.message;
+                            AlertService.showError("Failed to DELETE Section",message);
+                        });
+                    }
+
+                });
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 2/9/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.forms").controller("QuestionBuilderController", QuestionBuilderController);
+
+    QuestionBuilderController.$inject = ['FormService','$mdDialog','data','AlertService','$scope'];
+
+    function QuestionBuilderController(FormService,$mdDialog,data,AlertService,$scope) {
+        var vm = this;
+        vm.questionTypes = FormService.QuestionTypes;
+        vm.readOnly = false;
+
+        vm.saveQuestion = _saveQuestion;
+        vm.cancel = _cancel;
+        vm.addAnother = _addAnother;
+        vm.showQuestionOn = _showQuestionOn;
+        vm.removeQuestion = _removeQuestion;
+
+        vm.questionTypeChanged = _questionTypeChanged;
+
+        //Sub Question related
+        vm.showSubQuestion = false;//used for grouped questions
+        vm.toggleAddSubQuestion = _toggleAddSubQuestion;
+        vm.addToSubQuestion = _addToSubQuestion;
+        vm.editSubQuestion = _editSubQuestion;
+        vm.removeSubQuestion = _removeSubQuestion;
+        vm.cancelSubQuestion = _cancelSubQuestion;
+        vm.subQuestionValidationSelected = _subQuestionValidationSelected;
+
+
+        //SC & MC related
+        vm.addRadio = _addRadio;
+        vm.removeOption = _removeOption;
+        vm.editOption = _editOption;
+
+        //SUB QUESTION ORDERING RELATED
+        $scope.sortableSubQuestions = {
+            placeholder: 'ui-state-highlight',
+            update: function(e, ui) {
+              console.log("update")
+            },
+            stop: function(e, ui) {
+                vm.sub_question_list.map(function(question,index){
+                    question.number = index;
+                    FormService.UpdateQuestion(question).then(
+                        function (response) {
+                            // console.log("saving ordered [" + question.question_text + "] ",response);
+                        },function (error) {
+                            console.log("error saving order question [" + question.question_text + "] ",error);
+                        }
+                    )
+                });
+            }
+        };
+
+        initialize();
+
+        function initialize() {
+            vm.sub_question_list = [];
+            vm.fibvalidation = [{name:'NONE',code:'text'},{name:'ALPHANUMERIC',code:'text'},{name:'NUMERIC',code:'number'},{name:'ALPHABETIC',code:'text'}];
+            vm.isEdit = data.question !== null;
+            vm.form = data.form;
+            vm.maxOrderNumber = data.number;
+            vm.isSubEdit = false;
+            vm.sub_question = {};
+            vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
+                return val.name === 'NONE'; //set sub question validation default to NONE
+            }));
+            vm.questionList = _.filter(data.form.questions,function (question) {
+                return question.options.length > 0 && (question.type === QUESTION_TYPE.YES_NO || question.type === QUESTION_TYPE.SINGLE_CHOICE);
+               //question list used for WHEN is selected
+            });
+
+            if(vm.isEdit){
+                vm.question = data.question;
+                if(!_.isUndefined(vm.question.sub_questions)){
+                    vm.sub_question_list = vm.question.sub_questions;
+                }
+                if(vm.question.prerequisites.length === 1){
+                    var prereq = vm.question.prerequisites[0];
+                    FormService.GetQuestion(prereq.question).then(function (response) {
+                        vm.selected_question = response.data;
+                        vm.selected_question.selected_value =  prereq.answer;
+                    })
+                }
+                vm.question.form = data.form._id;
+                vm.question.selected_type = getQuestionTypeObj(vm.question.type);
+                SetValidationObj(false);
+            }else {
+                vm.question = {
+                    show: 1,
+                    required:0,
+                    options:[]
+                };
+
+                vm.question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
+                    return val.name === 'NONE'; //set question validation default to NONE
+                }));
+
+                if(data.section.has_section){
+                    vm.question.section = data.section.sectionId;
+                }
+
+            }
+        }
+
+        function _saveQuestion() {
+            var preparedQn = {
+                question_text:vm.question.question_text,
+                remark:vm.question.remark,
+                required:vm.question.required,
+                show:vm.question.show,
+                measurement_unit: !_.isUndefined(vm.question.measurement_unit)? vm.question.measurement_unit:null,
+                form:vm.form._id
+            };
+            if(vm.question.selected_type.code === QUESTION_TYPE.FILL_IN_BLANK){
+                preparedQn.validation_factor = vm.question.selected_validation.name;
+            }
+            else if(vm.question.selected_type.code === QUESTION_TYPE.YES_NO){
+                preparedQn.options = vm.question.selected_type.options;
+            }
+            if(!_.isUndefined(vm.question.options) && vm.question.options.length > 0 ){
+                preparedQn.options = vm.question.options;
+            }
+            //SET PREREQUISITE IF SHOW IS FALSE
+            if(vm.question.show === "0" || !vm.question.show){
+                if(!_.isUndefined(vm.selected_question) &&
+                    !_.isUndefined(vm.selected_question.selected_value)){
+                    var prerequisite = {
+                        question:vm.selected_question._id,
+                        answer:vm.selected_question.selected_value
+                    };
+                    preparedQn.prerequisites = [];
+                    preparedQn.prerequisites.push(prerequisite);
+                }
+            }else{
+                preparedQn.prerequisites = [];
+            }
+
+            if(!vm.isEdit){
+                preparedQn.section = vm.question.section;
+                preparedQn.number = GetNextQuestionOrderNumber();
+                FormService.CreateQuestion(preparedQn,vm.question.selected_type.url).then(function (response) {
+                    console.log("Question created",response);
+                    vm.maxOrderNumber = preparedQn.number;
+                    vm.question = response.data;
+                    vm.showSubQuestion = true;
+                    if(vm.question.type === QUESTION_TYPE.GROUPED){
+                        saveSubQuestionList();
+                    }
+                    $mdDialog.hide();
+                    AlertService.showSuccess("Question Created","Question Created successfully");
+                },function (error) {
+                    console.log("Question create error",error);
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to Save Question",message);
+                });
+
+            }else
+                {
+                preparedQn._id = vm.question._id;
+
+                FormService.UpdateQuestion(preparedQn).then(function (response) {
+                    if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED){
+                        saveSubQuestionList();
+                    }
+                    $mdDialog.hide();
+                    AlertService.showSuccess("Question Updated","Question Updated successfully");
+                },function (error) {
+                    console.log("qn update error",error);
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to Update Question",message);
+
+                });
+            }
+        }
+        function _removeQuestion(question,$event) {
+            AlertService.showConfirmForDelete("You are about to DELETE this Question?",
+                "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
+                    question.form = vm.form._id;
+
+                if(isConfirm){
+                    FormService.DeleteQuestion(question).then(function(response){
+                        AlertService.showSuccess("Question","Question Deleted successfully");
+                        $mdDialog.hide();
+                    },function(error){
+                        console.log("qn deleting error",error);
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to DELETE Question",message);
+                    })
+                }
+
+                });
+
+        }
+
+        //SC AND MC OPTIONS RELATED
+        function _addRadio(newValue) {
+            // If value is undefined, cancel.
+            if (newValue === undefined || newValue === '') {
+                return;
+            }
+            // Push it to radioOptions
+            if(!_.isUndefined(vm.oldOption)){
+                var oldOptionIndex =  vm.question.options.indexOf(vm.oldOption);
+                if(oldOptionIndex !== -1 ){
+                    vm.question.options.splice(oldOptionIndex, 1);
+                }
+                vm.isOptionEdit = false;
+            }
+
+            var index =  vm.question.options.indexOf(newValue);
+            if(index === -1) {
+                vm.question.options.push(newValue);
+            }
+            console.log("question",vm.question.options);
+            // vm.isOptionEdit
+            // Clear input contents
+            vm.newRadioValue = '';
+        }
+        function _removeOption(option) {
+            var index = vm.question.options.indexOf(option);
+            if(index !== -1){
+                vm.question.options.splice(index,1);
+            }
+        }
+        function _editOption(option) {
+            vm.isOptionEdit = true;
+            vm.newRadioValue = option;
+            vm.oldOption = option;
+        }
+
+        //SUB QUESTIONS RELATED
+        function _toggleAddSubQuestion() {
+            vm.showSubQuestion = true;
+            if(vm.isSubEdit){
+                vm.sub_question = {};
+                vm.isSubEdit = false
+            }
+        }
+        function _addToSubQuestion() {
+
+            var subQuestion = {
+                question_text:vm.sub_question.question_text,
+                parent_question:vm.question._id,
+                required:vm.question.required,
+                show:true,
+                measurement_unit: !_.isUndefined(vm.sub_question.measurement_unit)? vm.sub_question.measurement_unit:null,
+                validation_factor: vm.sub_question.selected_validation.name,
+                sub_question_type: 'fib',
+                form:vm.form._id
+            };
+            //TODO check obj b4 adding
+            vm.sub_question_list.push(subQuestion);
+            vm.vallidationCopy = vm.sub_question.selected_validation;
+            vm.sub_question = {};
+            vm.sub_question.selected_validation = vm.vallidationCopy;
+            vm.showSubQuestion = false;
+        }
+        function _cancelSubQuestion() {
+            vm.sub_question = {};
+            vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
+                return val.name === 'NONE'; //set sub question validation default to NONE
+            }));
+            vm.showSubQuestion = false;
+        }
+        function saveSubQuestionList() {
+            _.forEach(vm.sub_question_list,function (subQn) {
+                if(!_.isUndefined(subQn._id)){
+                    FormService.UpdateQuestion(subQn).then(function (response) {
+                        // console.log(subQn.question_text + "Updated",response);
+                    },function (error) {
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to Save Sub Question",message);
+                    });
+                }else {
+                    subQn.number = setSubQuestionOrderNumber();
+                    subQn.parent_question = vm.question._id;
+                    vm.maxSubOrderNumber = subQn.number;
+                    FormService.CreateQuestion(subQn,subQn.sub_question_type).then(function (response) {
+                        // console.log(subQn.question_text + "sub question created",response);
+                    },function (error) {
+                        console.log("sub question error create",error);
+                    });
+                }
+            });
+        }
+        function _editSubQuestion(question,ev) {
+            vm.isSubEdit = true;
+            vm.showSubQuestion = true;
+            vm.sub_question = question;
+            SetValidationObj(true);
+            console.log("vm.sub_question.selected_validation",vm.sub_question);
+        }
+
+        function spliceQuestionFromList(question) {
+            var subQuestionIndex =  vm.sub_question_list.indexOf(question);
+            if(subQuestionIndex !== -1 ){
+                vm.sub_question_list.splice(subQuestionIndex, 1);
+            }
+        }
+
+        function _removeSubQuestion(question, ev) {
+            AlertService.showConfirmForDelete("You are about to REMOVE this Question?",
+                "Are you sure?", "Yes, REMOVE it!", "warning", true,function (isConfirm) {
+
+                    if(isConfirm){
+                        if(_.isUndefined(question._id)){
+                            // vm.sub_question
+                            if(_.isUndefined(vm.question.sub_questions)){
+                                spliceQuestionFromList(question);
+                            }else{
+                                var subIndex =  vm.question.sub_questions.indexOf(question);
+                                if(subIndex !== -1 ){
+                                    vm.question.sub_questions.splice(subIndex, 1);
+                                }
+                            }
+
+                        }else{
+                            question.form = vm.form._id;
+                            FormService.DeleteQuestion(question).then(function(response){
+                                spliceQuestionFromList(question);
+                                AlertService.showSuccess("SUB QUESTION","Sub Question Deleted successfully");
+                            },function(error){
+                                console.log("qn deleting error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("Failed to DELETE Question",message);
+                            })
+                        }
+                    }
+
+                });
+
+        }
+        function _subQuestionValidationSelected() {
+          console.log("vm.sub_question.selected_validation",vm.sub_question.selected_validation)
+        }
+
+
+
+        function _addAnother() {
+            console.log("question",vm.question);
+        }
+        function _showQuestionOn() {
+            console.log("Question show",vm.question.show);
+        }
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+        function _questionTypeChanged() {
+            // if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED && !vm.isEdit){
+            //     vm.showSubQuestion = true;
+            // }
+        }
+
+
+
+        function getQuestionTypeObj(typeName) {
+            return _.first(_.filter(vm.questionTypes,function (type) {
+                return type.name === typeName || type.code === typeName;
+            }));
+        }
+        function SetValidationObj(isSubQuestion) {
+            if(isSubQuestion){
+                vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function (val) {
+                    return val.name === vm.sub_question.validation_factor;
+                }));
+            }else{
+                if(vm.question.selected_type.code === QUESTION_TYPE.FILL_IN_BLANK){
+                    vm.question.selected_validation = _.first(_.filter(vm.fibvalidation,function (val) {
+                        return val.name === vm.question.validation_factor;
+                    }));
+                }
+            }
+
+        }
+
+        function setSubQuestionOrderNumber() {
+            var maxNo = _.max(vm.question.sub_questions,function(sub){
+                return sub.number;
+            });
+            vm.maxSubOrderNumber = _.isUndefined(vm.maxSubOrderNumber)?maxNo.number: vm.maxSubOrderNumber;
+            var number =  _.isEmpty(vm.maxSubOrderNumber)? 0 :  parseInt(vm.maxSubOrderNumber) + 1;
+            return _.isUndefined(number)? 0 : number;
+        }
+        function GetNextQuestionOrderNumber() {
+            return vm.maxOrderNumber + 1;
+        }
+
+    }
+
+
+})(window.angular);
 /**
  * Created by Yoni on 1/9/2018.
  */
@@ -8512,906 +9413,6 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
   }
 })(window.angular);
 
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.forms").controller("FormBuilderController", FormBuilderController);
-
-    FormBuilderController.$inject = ['FormService','$mdDialog','RouteHelpers','$stateParams','AlertService','blockUI','$scope','$state'];
-
-    function FormBuilderController(FormService,$mdDialog,RouteHelpers,$stateParams,AlertService,blockUI,$scope,$state) {
-        var vm = this;
-        vm.isEdit = $stateParams.id !== "0";
-        vm.formId = $stateParams.id;
-        vm.formTypes = FormService.FormTypes;
-
-        //QUESTION RELATED
-        vm.addQuestion = _addQuestion;
-        vm.editQuestion = _editQuestion;
-
-        vm.saveForm = _saveForm;
-        vm.typeStyle = _typeStyle;
-
-        //Section related
-        vm.selectSection = _selectSection;
-        vm.addSection = _addSection;
-        vm.saveSection = _saveSection;
-        vm.editSection = _editSection;
-        vm.removeSection = _removeSection;
-        vm.cancelSection = _cancelSection;
-
-        //QUESTION ORDERING RELATED
-        $scope.sortableOptions = {
-            placeholder: 'ui-state-highlight',
-            update: function(e, ui) {
-            },
-            stop: function(e, ui) {
-                vm.selected_section.questions.map(function(question,index){
-                    question.number = index;
-                    UpdateQuestionOrder(question);
-                });
-            }
-        };
-        $scope.sectionSortableOptions = {
-            placeholder: 'ui-state-highlight',
-            stop: function(e, ui) {
-                console.log("stop ordering questions");
-                vm.formData.questions.map(function(question,index){
-                    question.number = index;
-                    UpdateQuestionOrder(question);
-                });
-            }
-        };
-
-        function UpdateQuestionOrder(question) {
-            FormService.UpdateQuestion(question).then(
-                function (response) {
-                    // console.log("saving ordered [" + question.question_text + "] ",response);
-                },function (error) {
-                    console.log("error saving order question [" + question.question_text + "] ",error);
-                }
-            )
-        }
-
-        initialize();
-
-        function _saveForm() {
-            var myBlockUI = blockUI.instances.get('formBuilderBlockUI');
-            myBlockUI.start();
-
-            if(vm.isEdit){
-
-                var editForm = {
-                    _id:vm.formData._id,
-                    title:vm.formData.title,
-                    subtitle:vm.formData.subtitle,
-                    purpose:vm.formData.purpose,
-                    layout:vm.formData.layout,
-                    has_sections:vm.formData.has_sections
-                };
-
-                FormService.UpdateForm(editForm).then(function (response) {
-                    myBlockUI.stop();
-                    vm.formData = response.data;
-                    vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
-                    AlertService.showSuccess("FORM UPDATED","Form updated successfully");
-                    $state.go('app.builder',{id:vm.formData._id},{inherit:true});
-                },function (error) {
-                    myBlockUI.stop();
-                    var message = error.data.error.message;
-                    AlertService.showError("Failed to Save Form",message);
-                    console.log("error",error);
-                });
-
-            }else
-                {
-
-                var preparedForm = {
-                    title:vm.formData.title,
-                    subtitle:vm.formData.subtitle,
-                    purpose:vm.formData.purpose,
-                    layout:vm.formData.layout,
-                    has_sections:vm.formData.has_sections,
-                    type: vm.formData.selected_formType.code,
-                    questions: []
-                };
-
-                FormService.CreateForm(preparedForm).then(function (response) {
-                    myBlockUI.stop();
-                    vm.formData = response.data;
-                    vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
-                    AlertService.showSuccess("FORM CREATED","Form created successfully");
-                    $state.go('app.builder',{id:vm.formData._id},{inherit:true});
-                },function (error) {
-                    myBlockUI.stop();
-                    var message = error.data.error.message;
-                    AlertService.showError("Failed to Save Form",message);
-                    console.log("error",error);
-                });
-
-            }
-
-        }
-
-
-        function _addQuestion(sectionData,ev) {
-            $mdDialog.show({
-                locals: {data: {question:null,form: {_id: vm.formData._id,questions:vm.formData.has_sections?vm.selected_section.questions:vm.formData.questions},section:sectionData,number:vm.maxOrderNumber}},
-                templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'QuestionBuilderController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                console.log("call api to refresh");
-                callAPI();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-
-        }
-        function _editQuestion(question,ev) {
-            $mdDialog.show({
-                locals: {data: {question:question,form: {_id: vm.formData._id,questions:vm.formData.has_sections?vm.selected_section.questions:vm.formData.questions},number:vm.maxOrderNumber}},
-                templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'QuestionBuilderController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callAPI();
-            }, function () {
-            });
-        }
-
-        function initialize() {
-
-            if(vm.isEdit){
-                callAPI();
-            }else{
-                vm.formData = {
-                    has_sections:0,
-                    layout:'TWO_COLUMNS'
-                };
-            }
-        }
-
-        function callAPI() {
-            var myBlockUIOnStart = blockUI.instances.get('formBuilderBlockUI');
-            myBlockUIOnStart.start();
-            FormService.GetForm(vm.formId).then(function (response) {
-                vm.formData = response.data;
-                //REFRESH SELECTED SECTION
-                if(vm.formData.sections.length > 0 && !_.isUndefined(vm.selected_section)){
-                    vm.selected_section = _.first(_.filter(vm.formData.sections,function (section) {
-                        return section._id === vm.selected_section._id;
-                    }));
-                }
-
-                if(vm.formData.has_sections){
-                    GetMaximumOrderNumberForSection();
-
-                }else{
-
-                    if(vm.formData.questions.length > 0){
-                        vm.maxOrderNumber = _.max(vm.formData.questions,function (qn) {
-                            return qn.number;
-                        }).number;
-                    }else{
-                        vm.maxOrderNumber = 0;
-                    }
-
-                    console.log("max number for question without section",vm.maxOrderNumber);
-                }
-
-                vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
-
-                myBlockUIOnStart.stop();
-
-            },function (error) {
-                myBlockUIOnStart.stop();
-                console.log("error",error);
-            });
-        }
-
-        function GetMaximumOrderNumberForSection() {
-            if(!_.isUndefined(vm.selected_section)){
-
-                if(vm.selected_section.questions.length > 0){
-                    vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
-                        return qn.number;
-                    }).number;
-                }else {
-                    vm.maxOrderNumber = 0;
-                }
-
-            }else{
-                vm.maxOrderNumber = 0;
-            }
-        }
-        function getFormTypeObj(code) {
-            return _.first(_.filter(vm.formTypes,function (type) {
-                return type.code === code;
-            }));
-        }
-
-        function _typeStyle(type){
-            var style = '';
-            switch (type.trim()){
-                case 'Fill In Blank':
-                case 'FILL_IN_BLANK':
-                    style =  'label bg-green-dark';
-                    break;
-                case 'Yes/No':
-                case 'YES_NO':
-                    style =  'label bg-info';
-                    break;
-                case 'GROUPED':
-                    style =  'label bg-warning-dark';
-                    break;
-                case 'SINGLE_CHOICE':
-                    style =  'label bg-primary';
-                    break;
-                case 'MULTIPLE_CHOICE':
-                    style =  'label bg-pink-dark';
-                    break;
-                default:
-                    style =  'label bg-inverse';
-            }
-            return style;
-        }
-
-        //------SECTION RELATED---------
-
-        function _addSection() {
-            vm.selected_section = {};
-            vm.showSectionForm = true;
-        }
-        function _selectSection(selectedSection) {
-            vm.showSectionForm = false;
-            vm.selected_section = selectedSection;
-            vm.selected_section.form = vm.formId; //This is important for remove section
-            GetMaximumOrderNumberForSection();
-            // vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
-            //     return qn.number;
-            // }).number;
-            console.log("max number for question with section on select",vm.maxOrderNumber);
-        }
-
-        function _saveSection(section) {
-            section.form = vm.formId;
-            if( _.isUndefined(section._id)){
-
-            FormService.CreateSection(section).then(function (response) {
-                vm.selected_section = response.data;
-                vm.selected_section.form = vm.formId; //set to which form it belongs
-                vm.showSectionForm = false;
-                AlertService.showSuccess("SECTION","Section Created successfully");
-                callAPI();//REFRESH FORM DATA
-            },function (error) {
-                console.log("error when saving section",error);
-            });
-
-            }else {
-                FormService.UpdateSection(section).then(function (response) {
-                    vm.selected_section = response.data;
-                    vm.selected_section.form = vm.formId; //set to which form it belongs
-                    vm.showSectionForm = false;
-                    callAPI();//REFRESH FORM DATA
-                    AlertService.showSuccess("SECTION","Section Updated successfully");
-                    console.log("saved section",response);
-                },function (error) {
-                    console.log("error when saving section",error);
-                });
-            }
-        }
-        function _editSection(section) {
-            vm.selected_section = section;
-            vm.selected_section.form = vm.formId;
-            vm.showSectionForm = true;
-        }
-        function _cancelSection() {
-            vm.showSectionForm = false;
-        }
-
-        function _removeSection(section) {
-            AlertService.showConfirmForDelete("You are about to DELETE SECTION, All Questions under this section will be removed",
-                "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
-                    if(isConfirm){
-                        vm.selected_section.form = vm.formId; //set to which form it belongs
-                        FormService.RemoveSection(section).then(function(response){
-                            vm.showSectionForm = false;
-                            callAPI();
-                            AlertService.showSuccess("SECTION","Section Deleted successfully");
-                            vm.selected_section = undefined;
-                        },function(error){
-                            console.log("Section deleting error",error);
-                            var message = error.data.error.message;
-                            AlertService.showError("Failed to DELETE Section",message);
-                        });
-                    }
-
-                });
-        }
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 2/9/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.forms").controller("QuestionBuilderController", QuestionBuilderController);
-
-    QuestionBuilderController.$inject = ['FormService','$mdDialog','data','AlertService','$scope'];
-
-    function QuestionBuilderController(FormService,$mdDialog,data,AlertService,$scope) {
-        var vm = this;
-        vm.questionTypes = FormService.QuestionTypes;
-        vm.readOnly = false;
-
-        vm.saveQuestion = _saveQuestion;
-        vm.cancel = _cancel;
-        vm.addAnother = _addAnother;
-        vm.showQuestionOn = _showQuestionOn;
-        vm.removeQuestion = _removeQuestion;
-
-        vm.questionTypeChanged = _questionTypeChanged;
-
-        //Sub Question related
-        vm.showSubQuestion = false;//used for grouped questions
-        vm.toggleAddSubQuestion = _toggleAddSubQuestion;
-        vm.addToSubQuestion = _addToSubQuestion;
-        vm.editSubQuestion = _editSubQuestion;
-        vm.removeSubQuestion = _removeSubQuestion;
-        vm.cancelSubQuestion = _cancelSubQuestion;
-        vm.subQuestionValidationSelected = _subQuestionValidationSelected;
-
-
-        //SC & MC related
-        vm.addRadio = _addRadio;
-        vm.removeOption = _removeOption;
-        vm.editOption = _editOption;
-
-        //SUB QUESTION ORDERING RELATED
-        $scope.sortableSubQuestions = {
-            placeholder: 'ui-state-highlight',
-            update: function(e, ui) {
-              console.log("update")
-            },
-            stop: function(e, ui) {
-                vm.sub_question_list.map(function(question,index){
-                    question.number = index;
-                    FormService.UpdateQuestion(question).then(
-                        function (response) {
-                            // console.log("saving ordered [" + question.question_text + "] ",response);
-                        },function (error) {
-                            console.log("error saving order question [" + question.question_text + "] ",error);
-                        }
-                    )
-                });
-            }
-        };
-
-        initialize();
-
-        function initialize() {
-            vm.sub_question_list = [];
-            vm.fibvalidation = [{name:'NONE',code:'text'},{name:'ALPHANUMERIC',code:'text'},{name:'NUMERIC',code:'number'},{name:'ALPHABETIC',code:'text'}];
-            vm.isEdit = data.question !== null;
-            vm.form = data.form;
-            vm.maxOrderNumber = data.number;
-            vm.isSubEdit = false;
-            vm.sub_question = {};
-            vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
-                return val.name === 'NONE'; //set sub question validation default to NONE
-            }));
-            vm.questionList = _.filter(data.form.questions,function (question) {
-                return question.options.length > 0 && (question.type === QUESTION_TYPE.YES_NO || question.type === QUESTION_TYPE.SINGLE_CHOICE);
-               //question list used for WHEN is selected
-            });
-
-            if(vm.isEdit){
-                vm.question = data.question;
-                if(!_.isUndefined(vm.question.sub_questions)){
-                    vm.sub_question_list = vm.question.sub_questions;
-                }
-                if(vm.question.prerequisites.length === 1){
-                    var prereq = vm.question.prerequisites[0];
-                    FormService.GetQuestion(prereq.question).then(function (response) {
-                        vm.selected_question = response.data;
-                        vm.selected_question.selected_value =  prereq.answer;
-                    })
-                }
-                vm.question.form = data.form._id;
-                vm.question.selected_type = getQuestionTypeObj(vm.question.type);
-                SetValidationObj(false);
-            }else {
-                vm.question = {
-                    show: 1,
-                    required:0,
-                    options:[]
-                };
-
-                vm.question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
-                    return val.name === 'NONE'; //set question validation default to NONE
-                }));
-
-                if(data.section.has_section){
-                    vm.question.section = data.section.sectionId;
-                }
-
-            }
-        }
-
-        function _saveQuestion() {
-            var preparedQn = {
-                question_text:vm.question.question_text,
-                remark:vm.question.remark,
-                required:vm.question.required,
-                show:vm.question.show,
-                measurement_unit: !_.isUndefined(vm.question.measurement_unit)? vm.question.measurement_unit:null,
-                form:vm.form._id
-            };
-            if(vm.question.selected_type.code === QUESTION_TYPE.FILL_IN_BLANK){
-                preparedQn.validation_factor = vm.question.selected_validation.name;
-            }
-            else if(vm.question.selected_type.code === QUESTION_TYPE.YES_NO){
-                preparedQn.options = vm.question.selected_type.options;
-            }
-            if(!_.isUndefined(vm.question.options) && vm.question.options.length > 0 ){
-                preparedQn.options = vm.question.options;
-            }
-            //SET PREREQUISITE IF SHOW IS FALSE
-            if(vm.question.show === "0" || !vm.question.show){
-                if(!_.isUndefined(vm.selected_question) &&
-                    !_.isUndefined(vm.selected_question.selected_value)){
-                    var prerequisite = {
-                        question:vm.selected_question._id,
-                        answer:vm.selected_question.selected_value
-                    };
-                    preparedQn.prerequisites = [];
-                    preparedQn.prerequisites.push(prerequisite);
-                }
-            }else{
-                preparedQn.prerequisites = [];
-            }
-
-            if(!vm.isEdit){
-                preparedQn.section = vm.question.section;
-                preparedQn.number = GetNextQuestionOrderNumber();
-                FormService.CreateQuestion(preparedQn,vm.question.selected_type.url).then(function (response) {
-                    console.log("Question created",response);
-                    vm.maxOrderNumber = preparedQn.number;
-                    vm.question = response.data;
-                    vm.showSubQuestion = true;
-                    if(vm.question.type === QUESTION_TYPE.GROUPED){
-                        saveSubQuestionList();
-                    }
-                    $mdDialog.hide();
-                    AlertService.showSuccess("Question Created","Question Created successfully");
-                },function (error) {
-                    console.log("Question create error",error);
-                    var message = error.data.error.message;
-                    AlertService.showError("Failed to Save Question",message);
-                });
-
-            }else
-                {
-                preparedQn._id = vm.question._id;
-
-                FormService.UpdateQuestion(preparedQn).then(function (response) {
-                    if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED){
-                        saveSubQuestionList();
-                    }
-                    $mdDialog.hide();
-                    AlertService.showSuccess("Question Updated","Question Updated successfully");
-                },function (error) {
-                    console.log("qn update error",error);
-                    var message = error.data.error.message;
-                    AlertService.showError("Failed to Update Question",message);
-
-                });
-            }
-        }
-        function _removeQuestion(question,$event) {
-            AlertService.showConfirmForDelete("You are about to DELETE this Question?",
-                "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
-                    question.form = vm.form._id;
-
-                if(isConfirm){
-                    FormService.DeleteQuestion(question).then(function(response){
-                        AlertService.showSuccess("Question","Question Deleted successfully");
-                        $mdDialog.hide();
-                    },function(error){
-                        console.log("qn deleting error",error);
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to DELETE Question",message);
-                    })
-                }
-
-                });
-
-        }
-
-        //SC AND MC OPTIONS RELATED
-        function _addRadio(newValue) {
-            // If value is undefined, cancel.
-            if (newValue === undefined || newValue === '') {
-                return;
-            }
-            // Push it to radioOptions
-            if(!_.isUndefined(vm.oldOption)){
-                var oldOptionIndex =  vm.question.options.indexOf(vm.oldOption);
-                if(oldOptionIndex !== -1 ){
-                    vm.question.options.splice(oldOptionIndex, 1);
-                }
-                vm.isOptionEdit = false;
-            }
-
-            var index =  vm.question.options.indexOf(newValue);
-            if(index === -1) {
-                vm.question.options.push(newValue);
-            }
-            console.log("question",vm.question.options);
-            // vm.isOptionEdit
-            // Clear input contents
-            vm.newRadioValue = '';
-        }
-        function _removeOption(option) {
-            var index = vm.question.options.indexOf(option);
-            if(index !== -1){
-                vm.question.options.splice(index,1);
-            }
-        }
-        function _editOption(option) {
-            vm.isOptionEdit = true;
-            vm.newRadioValue = option;
-            vm.oldOption = option;
-        }
-
-        //SUB QUESTIONS RELATED
-        function _toggleAddSubQuestion() {
-            vm.showSubQuestion = true;
-            if(vm.isSubEdit){
-                vm.sub_question = {};
-                vm.isSubEdit = false
-            }
-        }
-        function _addToSubQuestion() {
-
-            var subQuestion = {
-                question_text:vm.sub_question.question_text,
-                parent_question:vm.question._id,
-                required:vm.question.required,
-                show:true,
-                measurement_unit: !_.isUndefined(vm.sub_question.measurement_unit)? vm.sub_question.measurement_unit:null,
-                validation_factor: vm.sub_question.selected_validation.name,
-                sub_question_type: 'fib',
-                form:vm.form._id
-            };
-            //TODO check obj b4 adding
-            vm.sub_question_list.push(subQuestion);
-            vm.vallidationCopy = vm.sub_question.selected_validation;
-            vm.sub_question = {};
-            vm.sub_question.selected_validation = vm.vallidationCopy;
-            vm.showSubQuestion = false;
-        }
-        function _cancelSubQuestion() {
-            vm.sub_question = {};
-            vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
-                return val.name === 'NONE'; //set sub question validation default to NONE
-            }));
-            vm.showSubQuestion = false;
-        }
-        function saveSubQuestionList() {
-            _.forEach(vm.sub_question_list,function (subQn) {
-                if(!_.isUndefined(subQn._id)){
-                    FormService.UpdateQuestion(subQn).then(function (response) {
-                        // console.log(subQn.question_text + "Updated",response);
-                    },function (error) {
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to Save Sub Question",message);
-                    });
-                }else {
-                    subQn.number = setSubQuestionOrderNumber();
-                    subQn.parent_question = vm.question._id;
-                    vm.maxSubOrderNumber = subQn.number;
-                    FormService.CreateQuestion(subQn,subQn.sub_question_type).then(function (response) {
-                        // console.log(subQn.question_text + "sub question created",response);
-                    },function (error) {
-                        console.log("sub question error create",error);
-                    });
-                }
-            });
-        }
-        function _editSubQuestion(question,ev) {
-            vm.isSubEdit = true;
-            vm.showSubQuestion = true;
-            vm.sub_question = question;
-            SetValidationObj(true);
-            console.log("vm.sub_question.selected_validation",vm.sub_question);
-        }
-
-        function spliceQuestionFromList(question) {
-            var subQuestionIndex =  vm.sub_question_list.indexOf(question);
-            if(subQuestionIndex !== -1 ){
-                vm.sub_question_list.splice(subQuestionIndex, 1);
-            }
-        }
-
-        function _removeSubQuestion(question, ev) {
-            AlertService.showConfirmForDelete("You are about to REMOVE this Question?",
-                "Are you sure?", "Yes, REMOVE it!", "warning", true,function (isConfirm) {
-
-                    if(isConfirm){
-                        if(_.isUndefined(question._id)){
-                            // vm.sub_question
-                            if(_.isUndefined(vm.question.sub_questions)){
-                                spliceQuestionFromList(question);
-                            }else{
-                                var subIndex =  vm.question.sub_questions.indexOf(question);
-                                if(subIndex !== -1 ){
-                                    vm.question.sub_questions.splice(subIndex, 1);
-                                }
-                            }
-
-                        }else{
-                            question.form = vm.form._id;
-                            FormService.DeleteQuestion(question).then(function(response){
-                                spliceQuestionFromList(question);
-                                AlertService.showSuccess("SUB QUESTION","Sub Question Deleted successfully");
-                            },function(error){
-                                console.log("qn deleting error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("Failed to DELETE Question",message);
-                            })
-                        }
-                    }
-
-                });
-
-        }
-        function _subQuestionValidationSelected() {
-          console.log("vm.sub_question.selected_validation",vm.sub_question.selected_validation)
-        }
-
-
-
-        function _addAnother() {
-            console.log("question",vm.question);
-        }
-        function _showQuestionOn() {
-            console.log("Question show",vm.question.show);
-        }
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-        function _questionTypeChanged() {
-            // if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED && !vm.isEdit){
-            //     vm.showSubQuestion = true;
-            // }
-        }
-
-
-
-        function getQuestionTypeObj(typeName) {
-            return _.first(_.filter(vm.questionTypes,function (type) {
-                return type.name === typeName || type.code === typeName;
-            }));
-        }
-        function SetValidationObj(isSubQuestion) {
-            if(isSubQuestion){
-                vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function (val) {
-                    return val.name === vm.sub_question.validation_factor;
-                }));
-            }else{
-                if(vm.question.selected_type.code === QUESTION_TYPE.FILL_IN_BLANK){
-                    vm.question.selected_validation = _.first(_.filter(vm.fibvalidation,function (val) {
-                        return val.name === vm.question.validation_factor;
-                    }));
-                }
-            }
-
-        }
-
-        function setSubQuestionOrderNumber() {
-            var maxNo = _.max(vm.question.sub_questions,function(sub){
-                return sub.number;
-            });
-            vm.maxSubOrderNumber = _.isUndefined(vm.maxSubOrderNumber)?maxNo.number: vm.maxSubOrderNumber;
-            var number =  _.isEmpty(vm.maxSubOrderNumber)? 0 :  parseInt(vm.maxSubOrderNumber) + 1;
-            return _.isUndefined(number)? 0 : number;
-        }
-        function GetNextQuestionOrderNumber() {
-            return vm.maxOrderNumber + 1;
-        }
-
-    }
-
-
-})(window.angular);
-/**
- * Created by Yonas on 7/2/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("ClientsController", ClientsController);
-
-    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
-
-    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
-        var vm = this;
-        vm.clientDetailEdit = _clientDetailEdit;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearchText;
-        vm.saveClient = _saveClient;
-        vm.backToClientList = _backToClientList;
-
-
-
-        initialize();
-
-        function initialize() {
-            initializeDatePicker();
-            vm.visibility = { showClientDetail: false };
-            vm.civilStatuses = CIVIL_STATUSES;
-            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
-            vm.filter = {show : false};
-            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
-
-            vm.query = { search:'',   page:1,  per_page:10 };
-            vm.months = MONTHS_CONST;
-            callAPI();
-            getBranches();
-        }
-
-        function callAPI() {
-            var myBlockUI = blockUI.instances.get('clientsBlockUI');
-            myBlockUI.start();
-
-            vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
-                vm.clients = response.data.docs;
-                vm.query.total_pages = response.data.total_pages;
-                vm.query.total_docs_count = response.data.total_docs_count;
-                myBlockUI.stop();
-                console.log("clients",vm.clients);
-            });
-        }
-
-        function _clientDetailEdit(client,ev) {
-            console.log("client detail",client);
-            vm.visibility.showClientDetail = true;
-            //data set
-            vm.selectedClient = client;
-            var dt = new Date(client.date_of_birth);
-            vm.selectedClient.date_of_birth = dt;
-            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
-            vm.selectedClient.gender = client.gender.toLowerCase();
-            vm.selected_branch = client.branch;
-        }
-
-        function _backToClientList() {
-            vm.visibility = { showClientDetail: false };
-        }
-        function _saveClient() {
-
-            if(_.isUndefined(vm.selected_branch)){
-                AlertService.showWarning("Warning!","Please Select Branch....");
-            }else{
-                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
-                myBlockUI.start();
-                var client = vm.selectedClient;
-                client.branch = vm.selected_branch._id;
-                client.created_by =  undefined;
-
-
-                if( _.isUndefined(vm.selectedClient._id)){
-                    //ADD NEW CLIENT INFORMATION
-                    LoanManagementService.SaveClient(client).then(function (response) {
-                        console.log("save client",response);
-                        myBlockUI.stop();
-                        vm.visibility = { showClientDetail: false };
-                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
-
-                    },function (error) {
-                        console.log("save client error",error);
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to save client",message);
-
-                    });
-                }else{
-                    //UPDATE CLIENT INFORMATION
-                    LoanManagementService.UpdateClient(client).then(function (response) {
-                        console.log("save client",response);
-                        myBlockUI.stop();
-                        vm.visibility = { showClientDetail: false };
-                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
-                    },function (error) {
-                        console.log("Updated client error",error);
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to update Client",message);
-
-                    });
-                }
-
-
-            }
-
-        }
-
-        function getBranches() {
-            SharedService.GetBranches().then(function(response){
-                vm.branches = response.data.docs;
-                console.log("vm.branches",vm.branches);
-            },function(error){
-                console.log("error",error);
-            });
-        }
-
-        /**
-         *
-         *  Paging parameters and methods
-         */
-        function _paginate(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
-        }
-        function _clearSearchText() {
-            vm.query.search = '';
-            vm.filter.show = false;
-        }
-        function initializeDatePicker() {
-            vm.clear = function() {
-                vm.dt = null;
-            };
-
-            vm.dateOptions = {
-                dateDisabled: false,
-                formatYear: "yy",
-                maxDate: new Date(2020, 5, 22),
-                startingDay: 1
-            };
-
-            vm.openPopup = function() {
-                vm.popup1.opened = true;
-            };
-
-            vm.dateFormat = "dd-MMMM-yyyy";
-            vm.altInputFormats = ["M!/d!/yyyy"];
-
-            vm.popup1 = {
-                opened: false
-            };
-        }
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("searching clients for ",newValue);
-            }
-        });
-
-    }
-
-})(window.angular);
 (function (angular) {
     "use strict";
 
@@ -9644,6 +9645,175 @@ var CIVIL_STATUSES  = ["single","married","widowed","other"];
     }
 
 
+
+})(window.angular);
+/**
+ * Created by Yonas on 7/2/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("ClientsController", ClientsController);
+
+    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
+
+    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
+        var vm = this;
+        vm.clientDetailEdit = _clientDetailEdit;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearchText;
+        vm.saveClient = _saveClient;
+        vm.backToClientList = _backToClientList;
+
+
+
+        initialize();
+
+        function initialize() {
+            initializeDatePicker();
+            vm.visibility = { showClientDetail: false };
+            vm.civilStatuses = CIVIL_STATUSES;
+            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
+            vm.filter = {show : false};
+            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
+
+            vm.query = { search:'',   page:1,  per_page:10 };
+            vm.months = MONTHS_CONST;
+            callAPI();
+            getBranches();
+        }
+
+        function callAPI() {
+            var myBlockUI = blockUI.instances.get('clientsBlockUI');
+            myBlockUI.start();
+
+            vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
+                vm.clients = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+                myBlockUI.stop();
+                console.log("clients",vm.clients);
+            });
+        }
+
+        function _clientDetailEdit(client,ev) {
+            console.log("client detail",client);
+            vm.visibility.showClientDetail = true;
+            //data set
+            vm.selectedClient = client;
+            var dt = new Date(client.date_of_birth);
+            vm.selectedClient.date_of_birth = dt;
+            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
+            vm.selectedClient.gender = client.gender.toLowerCase();
+            vm.selected_branch = client.branch;
+        }
+
+        function _backToClientList() {
+            vm.visibility = { showClientDetail: false };
+        }
+        function _saveClient() {
+
+            if(_.isUndefined(vm.selected_branch)){
+                AlertService.showWarning("Warning!","Please Select Branch....");
+            }else{
+                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
+                myBlockUI.start();
+                var client = vm.selectedClient;
+                client.branch = vm.selected_branch._id;
+                client.created_by =  undefined;
+
+
+                if( _.isUndefined(vm.selectedClient._id)){
+                    //ADD NEW CLIENT INFORMATION
+                    LoanManagementService.SaveClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
+                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
+
+                    },function (error) {
+                        console.log("save client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to save client",message);
+
+                    });
+                }else{
+                    //UPDATE CLIENT INFORMATION
+                    LoanManagementService.UpdateClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
+                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
+                    },function (error) {
+                        console.log("Updated client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to update Client",message);
+
+                    });
+                }
+
+
+            }
+
+        }
+
+        function getBranches() {
+            SharedService.GetBranches().then(function(response){
+                vm.branches = response.data.docs;
+                console.log("vm.branches",vm.branches);
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        /**
+         *
+         *  Paging parameters and methods
+         */
+        function _paginate(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        }
+        function _clearSearchText() {
+            vm.query.search = '';
+            vm.filter.show = false;
+        }
+        function initializeDatePicker() {
+            vm.clear = function() {
+                vm.dt = null;
+            };
+
+            vm.dateOptions = {
+                dateDisabled: false,
+                formatYear: "yy",
+                maxDate: new Date(2020, 5, 22),
+                startingDay: 1
+            };
+
+            vm.openPopup = function() {
+                vm.popup1.opened = true;
+            };
+
+            vm.dateFormat = "dd-MMMM-yyyy";
+            vm.altInputFormats = ["M!/d!/yyyy"];
+
+            vm.popup1 = {
+                opened: false
+            };
+        }
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("searching clients for ",newValue);
+            }
+        });
+
+    }
 
 })(window.angular);
 /**
