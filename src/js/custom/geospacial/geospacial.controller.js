@@ -30,7 +30,7 @@
             vm.config = undefined;
         }
 
-        function getGeoSpatialData() {
+        function getGeoSpatialData(branch) {
 
             vm.regions = '10501:10503';
             //GET VI DATA
@@ -80,6 +80,7 @@
                             AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
                             console.log("response", response);
                             vm.config = response.data;
+                            getGeoSpatialData();
                         }
                         , function (error) {
                             console.log('error', error);
@@ -91,6 +92,7 @@
                             AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
                             console.log("response", response);
                             vm.config = response.data;
+                            getGeoSpatialData();
                         }
                         , function (error) {
                             console.log('error', error);

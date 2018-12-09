@@ -76,37 +76,30 @@
 </div>
 
 <div ng-show="vm.visibility.showSmiley" class="row clearfix">
-   <div class="col-lg-6 col-md-8">
+   <div class="col-lg-6 col-md-8" ng-repeat="branch in vm.branches">
       <div class="panel panel-default">
          <div class="panel-heading">
-            <div class="panel-title">Branch Name #2</div>
+            <div class="panel-title">{{branch.name}}</div>
          </div>
          <div class="panel-body bb">
             <div class="row text-center">
                <div class="col-xs-6">
                   <p class="text-bold text-center">Rainfall</p>
-
-                  <!--<div ng-include="'geospatialTemplate.html'"></div>-->
-                  <div class="embed-responsive embed-responsive-16by9">
-                     <iframe style="min-height: 300px;" class="embed-responsive-item" ng-src="{{vm.vegitationIndex.image_url}}" allowfullscreen></iframe>
+                  <div>
+                     <iframe align="middle" style="min-height: 200px; min-width: 150px;" frameborder="0" ng-src="{{vm.vegitationIndex.image_url}}"></iframe>
+                     <a target="_blank" class="btn btn-block  btn-default" href="http://seasmon.wenr.wur.nl/html/chart_00000018_PRECIP_2014-08-05.html">Detail</a>
                   </div>
                </div>
                <div class="col-xs-6">
                   <p class="text-bold">Vegetation Index</p>
                   <div>
-                     <iframe style="min-height: 200px;" src="http://seasmon.wenr.wur.nl/html/info_00000018_PRECIP_latest.html" frameborder="0">
-                     </iframe>
-                     <a target="_blank" class="btn btn-info" href="http://seasmon.wenr.wur.nl/html/chart_00000018_PRECIP_2014-08-05.html">Detail</a>
+                     <iframe align="middle" style="min-height: 200px; min-width: 150px;" frameborder="0" ng-src="{{vm.rainfall.image_url}}"></iframe>
+                     <a target="_blank" class="btn btn-block btn-default" href="http://seasmon.wenr.wur.nl/html/chart_00000018_PRECIP_2014-08-05.html">Detail</a>
                   </div>
                </div>
             </div>
          </div>
-         <!--<div class="panel-footer text-center">-->
-         <!--<em>Description about this report</em>-->
-         <!--</div>-->
       </div>
    </div>
 </div>
 
-
-<script type="text/ng-template" id="geospatialTemplate.html" src="http://seasmon.wenr.wur.nl/html/info_00000011_VI_latest.html"></script>
