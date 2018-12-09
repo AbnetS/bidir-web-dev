@@ -122,7 +122,8 @@
             branch.vegitationIndexPromise =  GeoSpatialService.getSeasonalMonitorData(configVI)
                 .then(function (response) {
                     branch.vegitationIndex = response.data;
-                    branch.vegitationIndex.chart_url = response.data.image_url.replace('info','chart');
+                    branch.vegitationIndex.chart_url =  _.isUndefined(branch.vegitationIndex.image_url)? '': branch.vegitationIndex.image_url.replace('info','chart');
+                    console.log("vegitationIndex",branch.vegitationIndex)
                 }, function (error) { console.log("error", error);});
 
             var configRainfall = angular.copy(configVI);
@@ -131,8 +132,8 @@
             branch.rainfallPromise = GeoSpatialService.getSeasonalMonitorData(configRainfall)
                 .then(function (response) {
                     branch.rainfall = response.data;
-                    branch.rainfall.chart_url = response.data.image_url.replace('info','chart');
-                    console.log("rainfall",response)
+                    branch.rainfall.chart_url = _.isUndefined(branch.rainfall.image_url)? '': branch.rainfall.image_url.replace('info','chart');
+                    console.log("rainfall",branch.rainfall)
                 }, function (error) { console.log("error", error);});
         }
 
