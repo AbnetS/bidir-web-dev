@@ -17,50 +17,14 @@
 
         // We can use panel id name for the boolean flag to [un]collapse the panel
         $scope.$watch('panelDemo1',function(newVal){
-
             console.log('panelDemo1 collapsed: ' + newVal);
-
         });
-
-
-
 
 
         function _resetConfig() {
             vm.config = undefined;
         }
 
-        function getGeoSpatialData(branch) {
-
-            vm.regions = '10501:10503';
-            //GET VI DATA
-            GeoSpatialService.getSeasonalMonitorData({
-                indicator: vm.INDICATOR.VI,
-                start_date: GeoSpatialService.formatDateForRequest(vm.config.from_date),
-                end_date:  GeoSpatialService.formatDateForRequest(vm.config.to_date),
-                regions: vm.regions
-            })
-                .then(function (response) {
-                    console.log("VI Data", response);
-                    setVisibility();
-                    vm.vegitationIndex = response.data;
-                }, function (error) {
-                    console.log("error", error);
-                });
-            //GET RAINFALL DATA
-            GeoSpatialService.getSeasonalMonitorData({
-                indicator: vm.INDICATOR.RAINFALL,
-                start_date: GeoSpatialService.formatDateForRequest(vm.config.from_date),
-                end_date:  GeoSpatialService.formatDateForRequest(vm.config.to_date),
-                regions: vm.regions
-            })
-                .then(function (response) {
-                    console.log("Rainfall data" , response);
-                    vm.rainfall = response.data;
-                }, function (error) {
-                    console.log("error", error);
-                });
-        }
 
         function _saveUserConfig() {
 
@@ -80,7 +44,7 @@
                             AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
                             console.log("response", response);
                             vm.config = response.data;
-                            getGeoSpatialData();
+                            prepareBranchesData();
                         }
                         , function (error) {
                             console.log('error', error);
@@ -92,7 +56,7 @@
                             AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
                             console.log("response", response);
                             vm.config = response.data;
-                            getGeoSpatialData();
+                            prepareBranchesData();
                         }
                         , function (error) {
                             console.log('error', error);
@@ -109,13 +73,12 @@
         }
 
         function init() {
-
+            // setVisibility();
             vm.config = {};
             vm.visibility = {
-                showSmiley: false,
+                showSmiley: true,
                 showInfoText: true,
                 isEditConfig: false };
-            // var template = $templateCache.get('http://seasmon.wenr.wur.nl/html/info_00000011_VI_latest.html');
 
             vm.seasonalFilterForm = {
                 IsfromDateValid: true,
@@ -124,18 +87,53 @@
             };
             //DATE OPTION
             vm.dtOption = GeoSpatialService.DateOptionDefault();
+            GetUserConfig();
+
+        }
+
+        function prepareBranchesData() {
 
             SharedService.GetBranches()
                 .then( function (response) {
-                    vm.branches = response.data.docs;
-                    console.log("vm.branches", vm.branches);
-                },
+                        vm.branches = response.data.docs;
+                        _.each(vm.branches,function (branch) {
+                            branch.regions = _.map(branch.weredas,function (woreda) {
+                                return woreda.w_code;
+                            }).join(":");
+
+                            GetGeospatialByBranch(branch);
+
+                        });
+
+                    },
                     function (error) {
-                    console.log("error fetching branches", error);
-                });
+                        console.log("error fetching branches", error);
+                    });
+        }
 
-            GetUserConfig();
+        function GetGeospatialByBranch(branch) {
+            var configVI = {
+                indicator: vm.INDICATOR.VI,
+                start_date: GeoSpatialService.formatDateForRequest(vm.config.from_date),
+                end_date:  GeoSpatialService.formatDateForRequest(vm.config.to_date),
+                regions: branch.regions
+            };
+            //GET VI DATA
+            branch.vegitationIndexPromise =  GeoSpatialService.getSeasonalMonitorData(configVI)
+                .then(function (response) {
+                    branch.vegitationIndex = response.data;
+                    branch.vegitationIndex.chart_url = response.data.image_url.replace('info','chart');
+                }, function (error) { console.log("error", error);});
 
+            var configRainfall = angular.copy(configVI);
+            configRainfall.indicator = vm.INDICATOR.RAINFALL;
+            //GET RAINFALL DATA
+            branch.rainfallPromise = GeoSpatialService.getSeasonalMonitorData(configRainfall)
+                .then(function (response) {
+                    branch.rainfall = response.data;
+                    branch.rainfall.chart_url = response.data.image_url.replace('info','chart');
+                    console.log("rainfall",response)
+                }, function (error) { console.log("error", error);});
         }
 
         function GetUserConfig() {
@@ -144,7 +142,7 @@
                     vm.config = response.data[0];
                     vm.config.fromDate = new Date(vm.config.from_date);
                     vm.config.toDate = new Date(vm.config.to_date);
-                    getGeoSpatialData();
+                    prepareBranchesData();
                 }else {
                     vm.visibility.isEditConfig = false;
                 }

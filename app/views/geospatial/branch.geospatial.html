@@ -84,17 +84,17 @@
          <div class="panel-body bb">
             <div class="row text-center">
                <div class="col-xs-6">
-                  <p class="text-bold text-center">Rainfall</p>
+                  <p class="text-bold">Vegetation Index</p>
                   <div>
-                     <iframe align="middle" style="min-height: 200px; min-width: 150px;" frameborder="0" ng-src="{{vm.vegitationIndex.image_url}}"></iframe>
-                     <a target="_blank" class="btn btn-block  btn-default" href="http://seasmon.wenr.wur.nl/html/chart_00000018_PRECIP_2014-08-05.html">Detail</a>
+                     <iframe align="middle" style="min-height: 200px; min-width: 150px;" frameborder="0" ng-src="{{branch.vegitationIndex.image_url}}"></iframe>
+                     <a target="_blank" class="btn btn-block  btn-default" ng-href="{{branch.vegitationIndex.chart_url}}">Detail</a>
                   </div>
                </div>
                <div class="col-xs-6">
-                  <p class="text-bold">Vegetation Index</p>
+                  <p class="text-bold text-center">Rainfall</p>
                   <div>
-                     <iframe align="middle" style="min-height: 200px; min-width: 150px;" frameborder="0" ng-src="{{vm.rainfall.image_url}}"></iframe>
-                     <a target="_blank" class="btn btn-block btn-default" href="http://seasmon.wenr.wur.nl/html/chart_00000018_PRECIP_2014-08-05.html">Detail</a>
+                     <iframe align="middle" style="min-height: 200px; min-width: 150px;" frameborder="0" ng-src="{{branch.rainfall.image_url}}"></iframe>
+                     <a target="_blank" class="btn btn-block btn-default" ng-href="{{branch.rainfall.chart_url}}">Detail</a>
                   </div>
                </div>
             </div>

@@ -3136,6 +3136,16 @@
 
 
 })();
+/**
+ * Created by Yonas on 8/16/2018.
+ */
+(function() {
+    'use strict';
+
+    angular
+        .module('app.profile', []);
+
+})();
 (function() {
   "use strict";
 
@@ -3147,14 +3157,12 @@ function runBlock() {
 
 })();
 
-/**
- * Created by Yonas on 8/16/2018.
- */
+
 (function() {
     'use strict';
 
     angular
-        .module('app.profile', []);
+        .module('app.report', []);
 
 })();
 /**
@@ -3166,14 +3174,6 @@ function runBlock() {
 
     angular
         .module('app.welcomePage', []);
-
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.report', []);
 
 })();
 
@@ -4818,50 +4818,14 @@ var INDICATOR = {
 
         // We can use panel id name for the boolean flag to [un]collapse the panel
         $scope.$watch('panelDemo1',function(newVal){
-
             console.log('panelDemo1 collapsed: ' + newVal);
-
         });
-
-
-
 
 
         function _resetConfig() {
             vm.config = undefined;
         }
 
-        function getGeoSpatialData(branch) {
-
-            vm.regions = '10501:10503';
-            //GET VI DATA
-            GeoSpatialService.getSeasonalMonitorData({
-                indicator: vm.INDICATOR.VI,
-                start_date: GeoSpatialService.formatDateForRequest(vm.config.from_date),
-                end_date:  GeoSpatialService.formatDateForRequest(vm.config.to_date),
-                regions: vm.regions
-            })
-                .then(function (response) {
-                    console.log("VI Data", response);
-                    setVisibility();
-                    vm.vegitationIndex = response.data;
-                }, function (error) {
-                    console.log("error", error);
-                });
-            //GET RAINFALL DATA
-            GeoSpatialService.getSeasonalMonitorData({
-                indicator: vm.INDICATOR.RAINFALL,
-                start_date: GeoSpatialService.formatDateForRequest(vm.config.from_date),
-                end_date:  GeoSpatialService.formatDateForRequest(vm.config.to_date),
-                regions: vm.regions
-            })
-                .then(function (response) {
-                    console.log("Rainfall data" , response);
-                    vm.rainfall = response.data;
-                }, function (error) {
-                    console.log("error", error);
-                });
-        }
 
         function _saveUserConfig() {
 
@@ -4881,7 +4845,7 @@ var INDICATOR = {
                             AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
                             console.log("response", response);
                             vm.config = response.data;
-                            getGeoSpatialData();
+                            prepareBranchesData();
                         }
                         , function (error) {
                             console.log('error', error);
@@ -4893,7 +4857,7 @@ var INDICATOR = {
                             AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
                             console.log("response", response);
                             vm.config = response.data;
-                            getGeoSpatialData();
+                            prepareBranchesData();
                         }
                         , function (error) {
                             console.log('error', error);
@@ -4910,13 +4874,12 @@ var INDICATOR = {
         }
 
         function init() {
-
+            // setVisibility();
             vm.config = {};
             vm.visibility = {
-                showSmiley: false,
+                showSmiley: true,
                 showInfoText: true,
                 isEditConfig: false };
-            // var template = $templateCache.get('http://seasmon.wenr.wur.nl/html/info_00000011_VI_latest.html');
 
             vm.seasonalFilterForm = {
                 IsfromDateValid: true,
@@ -4925,18 +4888,53 @@ var INDICATOR = {
             };
             //DATE OPTION
             vm.dtOption = GeoSpatialService.DateOptionDefault();
+            GetUserConfig();
+
+        }
+
+        function prepareBranchesData() {
 
             SharedService.GetBranches()
                 .then( function (response) {
-                    vm.branches = response.data.docs;
-                    console.log("vm.branches", vm.branches);
-                },
+                        vm.branches = response.data.docs;
+                        _.each(vm.branches,function (branch) {
+                            branch.regions = _.map(branch.weredas,function (woreda) {
+                                return woreda.w_code;
+                            }).join(":");
+
+                            GetGeospatialByBranch(branch);
+
+                        });
+
+                    },
                     function (error) {
-                    console.log("error fetching branches", error);
-                });
+                        console.log("error fetching branches", error);
+                    });
+        }
 
-            GetUserConfig();
+        function GetGeospatialByBranch(branch) {
+            var configVI = {
+                indicator: vm.INDICATOR.VI,
+                start_date: GeoSpatialService.formatDateForRequest(vm.config.from_date),
+                end_date:  GeoSpatialService.formatDateForRequest(vm.config.to_date),
+                regions: branch.regions
+            };
+            //GET VI DATA
+            branch.vegitationIndexPromise =  GeoSpatialService.getSeasonalMonitorData(configVI)
+                .then(function (response) {
+                    branch.vegitationIndex = response.data;
+                    branch.vegitationIndex.chart_url = response.data.image_url.replace('info','chart');
+                }, function (error) { console.log("error", error);});
 
+            var configRainfall = angular.copy(configVI);
+            configRainfall.indicator = vm.INDICATOR.RAINFALL;
+            //GET RAINFALL DATA
+            branch.rainfallPromise = GeoSpatialService.getSeasonalMonitorData(configRainfall)
+                .then(function (response) {
+                    branch.rainfall = response.data;
+                    branch.rainfall.chart_url = response.data.image_url.replace('info','chart');
+                    console.log("rainfall",response)
+                }, function (error) { console.log("error", error);});
         }
 
         function GetUserConfig() {
@@ -4945,7 +4943,7 @@ var INDICATOR = {
                     vm.config = response.data[0];
                     vm.config.fromDate = new Date(vm.config.from_date);
                     vm.config.toDate = new Date(vm.config.to_date);
-                    getGeoSpatialData();
+                    prepareBranchesData();
                 }else {
                     vm.visibility.isEditConfig = false;
                 }
@@ -5923,6 +5921,80 @@ var INDICATOR = {
 
 })(window.angular);
 
+/**
+ * Created by Yonas on 8/16/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.profile')
+        .controller('ProfileController', ProfileController);
+
+    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService'];
+
+    function ProfileController( ProfileService,   blockUI,AlertService ) {
+        var vm = this;
+        vm.updateProfile = _updateUserProfile;
+
+        vm.user = ProfileService.GetUser();
+
+        function _updateUserProfile(user) {
+            var profile = {
+                _id:user._id,
+                title:user.title,
+                email: user.email,
+                first_name : user.first_name,
+                last_name:user.last_name,
+                grandfather_name:user.grandfather_name,
+                phone:user.phone
+                // picture:""
+            };
+            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
+            myBlockUI.stop();
+            ProfileService.UpdateProfile(profile).then(function (response) {
+                myBlockUI.start();
+                console.log("updated user profile",response);
+                AlertService.showSuccess("User Profile","User Account Info updated successfully" );
+            },function (error) {
+                myBlockUI.stop();
+                console.log("error",error);
+                var message = error.data.error.message;
+                AlertService.showError("User Account Information failed updating",message);
+            });
+        }
+    }
+})(window.angular);
+/**
+ * Created by Yonas on 8/17/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.profile')
+
+        .service('ProfileService', ProfileService);
+
+    ProfileService.$inject = ['$http','CommonService','AuthService'];
+
+    function ProfileService($http, CommonService,AuthService) {
+
+        return {
+            GetUser: _getUser,
+            UpdateProfile: _updateProfile
+        };
+
+        function _getUser(){
+            var user = AuthService.GetCurrentUser();
+            return _.isUndefined(user.account)? user.admin:user.account;
+        }
+
+        function _updateProfile(account){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
+        }
+
+    }
+
+})(window.angular);
 (function(angular) {
   'use strict';
   angular.module('app.mfi')
@@ -6006,76 +6078,51 @@ var INDICATOR = {
 
 })(window.angular);
 
-/**
- * Created by Yonas on 8/16/2018.
- */
 (function(angular) {
     "use strict";
 
+
     angular
-        .module('app.profile')
-        .controller('ProfileController', ProfileController);
+        .module('app.report')
+        .controller('ReportController', ReportController);
 
-    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService'];
+    ReportController.$inject = ['ReportService', 'blockUI','AlertService'];
 
-    function ProfileController( ProfileService,   blockUI,AlertService ) {
+    function ReportController( ReportService,blockUI,AlertService )
+    {
         var vm = this;
-        vm.updateProfile = _updateUserProfile;
+        vm.onSelectedReport = _onSelectedReport;
+        vm.reports = [
+            {
+                name: 'report 1',
+                data: []
+            },
+            {
+                name: 'report 2',
+                data: []
+            },
+            {
+                name: 'report 3',
+                data: []
+            }
+        ];
 
-        vm.user = ProfileService.GetUser();
-
-        function _updateUserProfile(user) {
-            var profile = {
-                _id:user._id,
-                title:user.title,
-                email: user.email,
-                first_name : user.first_name,
-                last_name:user.last_name,
-                grandfather_name:user.grandfather_name,
-                phone:user.phone
-                // picture:""
-            };
-            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
-            myBlockUI.stop();
-            ProfileService.UpdateProfile(profile).then(function (response) {
-                myBlockUI.start();
-                console.log("updated user profile",response);
-                AlertService.showSuccess("User Profile","User Account Info updated successfully" );
-            },function (error) {
-                myBlockUI.stop();
-                console.log("error",error);
-                var message = error.data.error.message;
-                AlertService.showError("User Account Information failed updating",message);
-            });
+        function _onSelectedReport() {
+            console.log("report ",vm.report);
         }
+
     }
+
 })(window.angular);
-/**
- * Created by Yonas on 8/17/2018.
- */
 (function(angular) {
     'use strict';
-    angular.module('app.profile')
+    angular.module('app.report')
 
-        .service('ProfileService', ProfileService);
+        .service('ReportService', ReportService);
 
-    ProfileService.$inject = ['$http','CommonService','AuthService'];
+    ReportService.$inject = ['$http','CommonService','AuthService'];
 
-    function ProfileService($http, CommonService,AuthService) {
-
-        return {
-            GetUser: _getUser,
-            UpdateProfile: _updateProfile
-        };
-
-        function _getUser(){
-            var user = AuthService.GetCurrentUser();
-            return _.isUndefined(user.account)? user.admin:user.account;
-        }
-
-        function _updateProfile(account){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
-        }
+    function ReportService($http, CommonService, AuthService) {
 
     }
 
@@ -6210,55 +6257,6 @@ var INDICATOR = {
             };
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
         }
-    }
-
-})(window.angular);
-(function(angular) {
-    "use strict";
-
-
-    angular
-        .module('app.report')
-        .controller('ReportController', ReportController);
-
-    ReportController.$inject = ['ReportService', 'blockUI','AlertService'];
-
-    function ReportController( ReportService,blockUI,AlertService )
-    {
-        var vm = this;
-        vm.onSelectedReport = _onSelectedReport;
-        vm.reports = [
-            {
-                name: 'report 1',
-                data: []
-            },
-            {
-                name: 'report 2',
-                data: []
-            },
-            {
-                name: 'report 3',
-                data: []
-            }
-        ];
-
-        function _onSelectedReport() {
-            console.log("report ",vm.report);
-        }
-
-    }
-
-})(window.angular);
-(function(angular) {
-    'use strict';
-    angular.module('app.report')
-
-        .service('ReportService', ReportService);
-
-    ReportService.$inject = ['$http','CommonService','AuthService'];
-
-    function ReportService($http, CommonService, AuthService) {
-
     }
 
 })(window.angular);
