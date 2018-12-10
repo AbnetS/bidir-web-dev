@@ -69,19 +69,13 @@
     'use strict';
 
     angular
-        .module('app.lazyload', []);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar', []);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.maps', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.lazyload', []);
 })();
 (function() {
     'use strict';
@@ -117,13 +111,19 @@
     'use strict';
 
     angular
+        .module('app.translate', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.sidebar', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.translate', []);
+        .module('app.loadingbar', []);
 })();
 (function() {
     'use strict';
@@ -300,6 +300,171 @@
 
 })();
 
+
+/**=========================================================
+ * Module: modals.js
+ * Provides a simple way to implement bootstrap modals from templates
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps')
+        .controller('ModalGmapController', ModalGmapController);
+
+    ModalGmapController.$inject = ['$uibModal'];
+    function ModalGmapController($uibModal) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+
+          vm.open = function (size) {
+
+            //var modalInstance =
+            $uibModal.open({
+              templateUrl: '/myModalContent.html',
+              controller: ModalInstanceCtrl,
+              size: size
+            });
+          };
+
+          // Please note that $uibModalInstance represents a modal window (instance) dependency.
+          // It is not the same as the $uibModal service used above.
+
+          ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout'];
+          function ModalInstanceCtrl($scope, $uibModalInstance, $timeout) {
+
+            $uibModalInstance.opened.then(function () {
+              var position = new google.maps.LatLng(33.790807, -117.835734);
+
+              $scope.mapOptionsModal = {
+                zoom: 14,
+                center: position,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+              };
+
+              // we use timeout to wait maps to be ready before add a markers
+              $timeout(function(){
+                // 1. Add a marker at the position it was initialized
+                new google.maps.Marker({
+                  map: $scope.myMapModal,
+                  position: position
+                });
+                // 2. Trigger a resize so the map is redrawed
+                google.maps.event.trigger($scope.myMapModal, 'resize');
+                // 3. Move to the center if it is misaligned
+                $scope.myMapModal.panTo(position);
+              });
+
+            });
+
+            $scope.ok = function () {
+              $uibModalInstance.close('closed');
+            };
+
+            $scope.cancel = function () {
+              $uibModalInstance.dismiss('cancel');
+            };
+
+          }
+
+        }
+    }
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps')
+        .controller('GMapController', GMapController);
+
+    GMapController.$inject = ['$timeout'];
+    function GMapController($timeout) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+          var position = [
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.787453, -117.835858)
+            ];
+          
+          vm.addMarker = addMarker;
+          // we use timeout to wait maps to be ready before add a markers
+          $timeout(function(){
+            addMarker(vm.myMap1, position[0]);
+            addMarker(vm.myMap2, position[1]);
+            addMarker(vm.myMap3, position[2]);
+            addMarker(vm.myMap5, position[3]);
+          });
+
+          vm.mapOptions1 = {
+            zoom: 14,
+            center: position[0],
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+          };
+
+          vm.mapOptions2 = {
+            zoom: 19,
+            center: position[1],
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+
+          vm.mapOptions3 = {
+            zoom: 14,
+            center: position[2],
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+          };
+
+          vm.mapOptions4 = {
+            zoom: 14,
+            center: position[3],
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+
+          // for multiple markers
+          $timeout(function(){
+            addMarker(vm.myMap4, position[3]);
+            addMarker(vm.myMap4, position[4]);
+          });
+
+          // custom map style
+          var MapStyles = [{'featureType':'water','stylers':[{'visibility':'on'},{'color':'#bdd1f9'}]},{'featureType':'all','elementType':'labels.text.fill','stylers':[{'color':'#334165'}]},{featureType:'landscape',stylers:[{color:'#e9ebf1'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#c5c6c6'}]},{featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'road.local',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'transit',elementType:'geometry',stylers:[{color:'#d8dbe0'}]},{featureType:'poi',elementType:'geometry',stylers:[{color:'#cfd5e0'}]},{featureType:'administrative',stylers:[{visibility:'on'},{lightness:33}]},{featureType:'poi.park',elementType:'labels',stylers:[{visibility:'on'},{lightness:20}]},{featureType:'road',stylers:[{color:'#d8dbe0',lightness:20}]}];
+          vm.mapOptions5 = {
+            zoom: 14,
+            center: position[3],
+            styles: MapStyles,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+          };
+
+          ///////////////
+          
+          function addMarker(map, position) {
+            return new google.maps.Marker({
+              map: map,
+              position: position
+            });
+          }
+
+        }
+    }
+})();
 
 (function() {
     'use strict';
@@ -482,215 +647,6 @@
         })
         ;
 
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
-
-})();
-/**=========================================================
- * Module: modals.js
- * Provides a simple way to implement bootstrap modals from templates
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.maps')
-        .controller('ModalGmapController', ModalGmapController);
-
-    ModalGmapController.$inject = ['$uibModal'];
-    function ModalGmapController($uibModal) {
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-
-          vm.open = function (size) {
-
-            //var modalInstance =
-            $uibModal.open({
-              templateUrl: '/myModalContent.html',
-              controller: ModalInstanceCtrl,
-              size: size
-            });
-          };
-
-          // Please note that $uibModalInstance represents a modal window (instance) dependency.
-          // It is not the same as the $uibModal service used above.
-
-          ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout'];
-          function ModalInstanceCtrl($scope, $uibModalInstance, $timeout) {
-
-            $uibModalInstance.opened.then(function () {
-              var position = new google.maps.LatLng(33.790807, -117.835734);
-
-              $scope.mapOptionsModal = {
-                zoom: 14,
-                center: position,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-              };
-
-              // we use timeout to wait maps to be ready before add a markers
-              $timeout(function(){
-                // 1. Add a marker at the position it was initialized
-                new google.maps.Marker({
-                  map: $scope.myMapModal,
-                  position: position
-                });
-                // 2. Trigger a resize so the map is redrawed
-                google.maps.event.trigger($scope.myMapModal, 'resize');
-                // 3. Move to the center if it is misaligned
-                $scope.myMapModal.panTo(position);
-              });
-
-            });
-
-            $scope.ok = function () {
-              $uibModalInstance.close('closed');
-            };
-
-            $scope.cancel = function () {
-              $uibModalInstance.dismiss('cancel');
-            };
-
-          }
-
-        }
-    }
-
-})();
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.maps')
-        .controller('GMapController', GMapController);
-
-    GMapController.$inject = ['$timeout'];
-    function GMapController($timeout) {
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-          var position = [
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.787453, -117.835858)
-            ];
-          
-          vm.addMarker = addMarker;
-          // we use timeout to wait maps to be ready before add a markers
-          $timeout(function(){
-            addMarker(vm.myMap1, position[0]);
-            addMarker(vm.myMap2, position[1]);
-            addMarker(vm.myMap3, position[2]);
-            addMarker(vm.myMap5, position[3]);
-          });
-
-          vm.mapOptions1 = {
-            zoom: 14,
-            center: position[0],
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            scrollwheel: false
-          };
-
-          vm.mapOptions2 = {
-            zoom: 19,
-            center: position[1],
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
-
-          vm.mapOptions3 = {
-            zoom: 14,
-            center: position[2],
-            mapTypeId: google.maps.MapTypeId.SATELLITE
-          };
-
-          vm.mapOptions4 = {
-            zoom: 14,
-            center: position[3],
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
-
-          // for multiple markers
-          $timeout(function(){
-            addMarker(vm.myMap4, position[3]);
-            addMarker(vm.myMap4, position[4]);
-          });
-
-          // custom map style
-          var MapStyles = [{'featureType':'water','stylers':[{'visibility':'on'},{'color':'#bdd1f9'}]},{'featureType':'all','elementType':'labels.text.fill','stylers':[{'color':'#334165'}]},{featureType:'landscape',stylers:[{color:'#e9ebf1'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#c5c6c6'}]},{featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'road.local',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'transit',elementType:'geometry',stylers:[{color:'#d8dbe0'}]},{featureType:'poi',elementType:'geometry',stylers:[{color:'#cfd5e0'}]},{featureType:'administrative',stylers:[{visibility:'on'},{lightness:33}]},{featureType:'poi.park',elementType:'labels',stylers:[{visibility:'on'},{lightness:20}]},{featureType:'road',stylers:[{color:'#d8dbe0',lightness:20}]}];
-          vm.mapOptions5 = {
-            zoom: 14,
-            center: position[3],
-            styles: MapStyles,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            scrollwheel: false
-          };
-
-          ///////////////
-          
-          function addMarker(map, position) {
-            return new google.maps.Marker({
-              map: map,
-              position: position
-            });
-          }
-
-        }
-    }
 })();
 
 
@@ -2050,6 +2006,70 @@
 
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .config(translateConfig)
+        ;
+    translateConfig.$inject = ['$translateProvider'];
+    function translateConfig($translateProvider){
+
+      $translateProvider.useStaticFilesLoader({
+          prefix : 'app/i18n/',
+          suffix : '.json'
+      });
+
+      $translateProvider.preferredLanguage('en');
+      $translateProvider.useLocalStorage();
+      $translateProvider.usePostCompiling(true);
+      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
+
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .run(translateRun)
+        ;
+    translateRun.$inject = ['$rootScope', '$translate'];
+    
+    function translateRun($rootScope, $translate){
+
+      // Internationalization
+      // ----------------------
+
+      $rootScope.language = {
+        // Handles language dropdown
+        listIsOpen: false,
+        // list of available languages
+        available: {
+          'en':       'English',
+          'es_AR':    'Español'
+        },
+        // display always the current ui language
+        init: function () {
+          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
+          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
+          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
+        },
+        set: function (localeId) {
+          // Set the new idiom
+          $translate.use(localeId);
+          // save a reference for the current language
+          $rootScope.language.selected = $rootScope.language.available[localeId];
+          // finally toggle dropdown
+          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
+        }
+      };
+
+      $rootScope.language.init();
+
+    }
+})();
 /**=========================================================
  * Module: sidebar-menu.js
  * Handle sidebar collapsible elements
@@ -2457,65 +2477,45 @@
     'use strict';
 
     angular
-        .module('app.translate')
-        .config(translateConfig)
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
         ;
-    translateConfig.$inject = ['$translateProvider'];
-    function translateConfig($translateProvider){
-
-      $translateProvider.useStaticFilesLoader({
-          prefix : 'app/i18n/',
-          suffix : '.json'
-      });
-
-      $translateProvider.preferredLanguage('en');
-      $translateProvider.useLocalStorage();
-      $translateProvider.usePostCompiling(true);
-      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
-
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
     }
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.translate')
-        .run(translateRun)
+        .module('app.loadingbar')
+        .run(loadingbarRun)
         ;
-    translateRun.$inject = ['$rootScope', '$translate'];
-    
-    function translateRun($rootScope, $translate){
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
 
-      // Internationalization
-      // ----------------------
-
-      $rootScope.language = {
-        // Handles language dropdown
-        listIsOpen: false,
-        // list of available languages
-        available: {
-          'en':       'English',
-          'es_AR':    'Español'
-        },
-        // display always the current ui language
-        init: function () {
-          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
-          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
-          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
-        },
-        set: function (localeId) {
-          // Set the new idiom
-          $translate.use(localeId);
-          // save a reference for the current language
-          $rootScope.language.selected = $rootScope.language.available[localeId];
-          // finally toggle dropdown
-          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
-        }
-      };
-
-      $rootScope.language.init();
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
 
     }
+
 })();
 /**=========================================================
  * Module: animate-enabled.js
@@ -3027,6 +3027,13 @@
             .primaryPalette('blue');
     }
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.authentication', []);
+
+})();
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -3043,13 +3050,6 @@
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.authentication', []);
-
-})();
 (function(angular) {
   "use strict";
 
@@ -3063,6 +3063,14 @@
 
 })(window.angular);
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.banking', []);
+
+})();
 /**
  * Created by Yoni on 1/29/2018.
  */
@@ -3097,26 +3105,6 @@
 
 })();
 /**
- * Created by Yonas on 4/27/2018.
- */
-(function() {
-    'use strict';
-
-    angular.module('app.loan_management', [
-        'app.clients',
-        'app.processing'
-    ]);
-
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.banking', []);
-
-})();
-/**
  * Created by Yoni on 11/30/2017.
  */
 (function() {
@@ -3133,6 +3121,29 @@
 
 })();
 /**
+ * Created by Yonas on 4/27/2018.
+ */
+(function() {
+    'use strict';
+
+    angular.module('app.loan_management', [
+        'app.clients',
+        'app.processing'
+    ]);
+
+})();
+(function() {
+  "use strict";
+
+  angular.module("app.mfi", [
+  ]).run(runBlock);
+
+function runBlock() {
+}
+
+})();
+
+/**
  * Created by Yoni on 11/30/2017.
  */
 (function() {
@@ -3147,17 +3158,6 @@
 
 
 })();
-(function() {
-  "use strict";
-
-  angular.module("app.mfi", [
-  ]).run(runBlock);
-
-function runBlock() {
-}
-
-})();
-
 /**
  * Created by Yonas on 8/16/2018.
  */
@@ -3238,89 +3238,6 @@ function runBlock() {
         }
 
     }
-
-})(window.angular);
-/**
- * Created by Yoni on 3/11/2018.
- */
-
-(function(angular) {
-    'use strict';
-    angular.module('app.forms')
-
-        .service('ACATService', ACATService);
-
-    ACATService.$inject = ['$http','CommonService'];
-
-    function ACATService($http, CommonService) {
-        return {
-            GetCrops:_getCrops,
-            SaveCrop:_createCrop,
-            UpdateCrop:_updateCrop,
-            GetAllACATList: _getAllACAT,
-            GetACATById: _getACATById,
-            CreateACAT:_createACAT,
-            UpdateACAT:_updateACAT,
-            AddCostList:_addCostList,
-            UpdateCostList:_updateCostList,
-            RemoveCostListLinear:_removeCostListLinear,
-            RemoveCostListGroup:_removeCostGroupList,
-            RemoveCostGroup:_removeCostGroup,
-            UpdateCostGroup:_updateCostGroup,
-            ResetCostList:_resetCostList
-        };
-
-
-        function _getCrops() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
-        }
-        function _createCrop(crop){
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateCrop), crop);
-        }
-        function _updateCrop(crop){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Crop,crop._id), crop);
-        }
-        function _getACATById(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,id));
-        }
-        function _getAllACAT() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
-        }
-        function _addCostList(cost) {
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
-        }
-
-        function _updateCostList(cost){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
-        }
-        function _createACAT(acat) {
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
-        }
-        function _updateACAT(acat) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,acat._id), acat);
-        }
-
-        function _removeCostListLinear(cost_list){
-            var item = {  item_id: cost_list.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + ACAT_COST_LIST_TYPE.LINEAR, item);
-        }
-        function _removeCostGroupList(group_cost_list){
-            var item = {  item_id: group_cost_list.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,group_cost_list._id) +'/items', item);
-        }
-        function _removeCostGroup(group){
-            var item = {  item_id: group.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group._id) +'/group', item);
-        }
-
-        function _updateCostGroup(group) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,'grouped') +'/' +group._id, group);
-        }
-        function _resetCostList(cost_list) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
-        }
-    }
-
 
 })(window.angular);
 (function(angular) {
@@ -3459,6 +3376,89 @@ function runBlock() {
 })(window.angular);
 
 
+/**
+ * Created by Yoni on 3/11/2018.
+ */
+
+(function(angular) {
+    'use strict';
+    angular.module('app.forms')
+
+        .service('ACATService', ACATService);
+
+    ACATService.$inject = ['$http','CommonService'];
+
+    function ACATService($http, CommonService) {
+        return {
+            GetCrops:_getCrops,
+            SaveCrop:_createCrop,
+            UpdateCrop:_updateCrop,
+            GetAllACATList: _getAllACAT,
+            GetACATById: _getACATById,
+            CreateACAT:_createACAT,
+            UpdateACAT:_updateACAT,
+            AddCostList:_addCostList,
+            UpdateCostList:_updateCostList,
+            RemoveCostListLinear:_removeCostListLinear,
+            RemoveCostListGroup:_removeCostGroupList,
+            RemoveCostGroup:_removeCostGroup,
+            UpdateCostGroup:_updateCostGroup,
+            ResetCostList:_resetCostList
+        };
+
+
+        function _getCrops() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
+        }
+        function _createCrop(crop){
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateCrop), crop);
+        }
+        function _updateCrop(crop){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Crop,crop._id), crop);
+        }
+        function _getACATById(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,id));
+        }
+        function _getAllACAT() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
+        }
+        function _addCostList(cost) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
+        }
+
+        function _updateCostList(cost){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
+        }
+        function _createACAT(acat) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
+        }
+        function _updateACAT(acat) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,acat._id), acat);
+        }
+
+        function _removeCostListLinear(cost_list){
+            var item = {  item_id: cost_list.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + ACAT_COST_LIST_TYPE.LINEAR, item);
+        }
+        function _removeCostGroupList(group_cost_list){
+            var item = {  item_id: group_cost_list.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,group_cost_list._id) +'/items', item);
+        }
+        function _removeCostGroup(group){
+            var item = {  item_id: group.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group._id) +'/group', item);
+        }
+
+        function _updateCostGroup(group) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,'grouped') +'/' +group._id, group);
+        }
+        function _resetCostList(cost_list) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
+        }
+    }
+
+
+})(window.angular);
 (function(angular) {
   "use strict";
 
@@ -4203,592 +4203,6 @@ var INDICATOR = {
 
 })();
 
-/**
- * Created by Yoni on 2/9/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.forms')
-        .constant('MW_QUESTION_TYPES', [
-            {name:'Fill In Blank',url:'fib',code:'FILL_IN_BLANK',type:'text'},
-            {name:'Yes/No Question',code:'YES_NO',url:'yn',type:'yn',options:['Yes','No']},
-            {name:'Multiple Choice',url:'mc',code:'MULTIPLE_CHOICE',options:[],type:'checkbox'},
-            {name:'Single Choice',url:'sc',code:'SINGLE_CHOICE',options:[],type:'select'},
-            {name:'Grouped Question',url:'GROUPED',code:'GROUPED',type:'grouped'}])
-        .constant('MW_FORM_TYPES', [
-            {name:'ACAT',code:'ACAT'},
-            {name:'Loan Application',code:'LOAN_APPLICATION'},
-            {name:'Screening',code:'SCREENING'},
-            {name:'Group Application',code:'GROUP_APPLICATION'},
-            {name:'Test',code:'TEST'}]);
-})(window.angular);
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.forms").controller("FormsController", FormsController);
-
-    FormsController.$inject = ['FormService','$state'];
-
-    function FormsController(FormService,$state) {
-        var vm = this;
-        vm.forms = [];
-        vm.paginate = _paginate;
-        vm.editForm = _editForm;
-        vm.clearSearchText = _clearSearch;
-
-        initialize();
-
-
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-            callApi();//fetch first page data initially
-        }
-
-        function _paginate (page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-
-        function callApi() {
-             vm.promise = FormService.GetFormsPerPage(vm.query).then(function (response) {
-                vm.forms = response.data.docs;
-                _.forEach(vm.forms,function (form) {
-                    if(form.has_sections){
-                        form.sectionCount = form.sections.length;
-                        var questionCount = 0;
-                        _.forEach(form.sections,function (sec) {
-                            questionCount = questionCount + sec.questions.length;
-                        });
-                        form.questionCount = questionCount;
-                    }else{
-                        form.questionCount = form.questions.length;
-                    }
-                })
-            },function (error) {
-                console.log(error);
-            })
-        }
-
-        function _editForm(form, ev) {
-            $state.go('app.builder',{id:form._id});
-            console.log("edit Form",form);
-        }
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.forms')
-
-        .service('FormService', FormService);
-
-    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES','MW_FORM_TYPES'];
-
-    function FormService($http, CommonService,MW_QUESTION_TYPES,MW_FORM_TYPES) {
-        return {
-            GetFormsPerPage: _getFormsPerPage,
-            CreateForm:_createForm,
-            GetForm:_getForm,
-            UpdateForm:_updateForm,
-            GetQuestion:_getQuestion,
-            CreateQuestion:_createQuestion,
-            UpdateQuestion:_updateQuestion,
-            DeleteQuestion:_deleteQuestion,
-            CreateSection:_createSection,
-            UpdateSection:_updateSection,
-            RemoveSection:_removeSection,
-            QuestionTypes: MW_QUESTION_TYPES,
-            FormTypes: MW_FORM_TYPES
-        };
-        function _getFormsPerPage(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
-        }
-        function _getForm(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM, API.Methods.Form.All, id));
-        }
-        function _updateForm(form) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,form._id), form);
-        }
-        function _createForm(form){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
-        }
-        //------QUESTION-----------
-        function _getQuestion(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,id));
-        }
-        function _createQuestion(question,type){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question) + '/' + type, question);
-        }
-        function _updateQuestion(question) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id), question);
-        }
-        function _deleteQuestion(question) {
-          return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id + '?form=' + question.form));
-        }
-
-
-        //    ------SECTION--------
-        function _createSection(section){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Section), section);
-        }
-        function _updateSection(section) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id), section);
-        }
-        function _removeSection(section) {
-            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id + '?form=' + section.form));
-        }
-    }
-
-
-})(window.angular);
-(function (angular) {
-    "use strict";
-    angular
-        .module('app.geospatial')
-        .controller('GeospatialController', GeoSpatialController);
-
-    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI', 'SharedService', 'CommonService', 'AlertService','$scope','$templateCache'];
-
-    function GeoSpatialController(GeoSpatialService, blockUI, SharedService, CommonService, AlertService,$scope,$templateCache) {
-        var vm = this;
-        vm.INDICATOR = INDICATOR;
-        vm.currentUser = GeoSpatialService.CurrentUser;
-        vm.saveUserConfig = _saveUserConfig;
-        vm.resetConfig = _resetConfig;
-
-        init();
-
-        // We can use panel id name for the boolean flag to [un]collapse the panel
-        $scope.$watch('panelDemo1',function(newVal){
-            console.log('panelDemo1 collapsed: ' + newVal);
-        });
-
-
-        function _resetConfig() {
-            vm.config = undefined;
-        }
-
-
-        function _saveUserConfig() {
-
-            vm.IsValidData = CommonService.Validation.ValidateForm(vm.seasonalFilterForm, vm.config);
-
-            if (vm.IsValidData) {
-                vm.config.user = vm.currentUser._id;
-                vm.config.from_date = vm.config.fromDate;
-                vm.config.to_date = vm.config.toDate;
-
-                vm.visibility.showSmiley = true;
-                vm.visibility.showInfoText = false;
-                vm.visibility.showWarning = false;
-
-                if(vm.config._id){
-                    GeoSpatialService.UpdateConfig(vm.config).then(function (response) {
-                            AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
-                            vm.config = response.data;
-                            prepareBranchesData();
-                        }
-                        , function (error) {
-                            console.log('error', error);
-                            var message = error.data.error.message;
-                            AlertService.showError('Oops... Something went wrong', message);
-                        });
-                }else{
-                    GeoSpatialService.SaveConfig(vm.config).then(function (response) {
-                            AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
-                            vm.config = response.data;
-                            prepareBranchesData();
-                        }
-                        , function (error) {
-                            console.log('error', error);
-                            var message = error.data.error.message;
-                            AlertService.showError('Oops... Something went wrong', message);
-                        });
-                }
-
-            } else {
-                vm.visibility.showWarning = true;
-                vm.visibility.showInfoText = false;
-            }
-
-        }
-
-        function init() {
-            // setVisibility();
-            vm.config = {};
-            vm.visibility = {
-                showSmiley: true,
-                showInfoText: true,
-                isEditConfig: false };
-
-            vm.seasonalFilterForm = {
-                IsfromDateValid: true,
-                IstoDateValid: true,
-                IsnameValid: true
-            };
-            //DATE OPTION
-            vm.dtOption = GeoSpatialService.DateOptionDefault();
-            GetUserConfig();
-
-        }
-
-        function prepareBranchesData() {
-
-            SharedService.GetBranches()
-                .then( function (response) {
-                        vm.branches = response.data.docs;
-                        _.each(vm.branches,function (branch) {
-                            branch.regions = _.map(branch.weredas,function (woreda) {
-                                return woreda.w_code;
-                            }).join(":");
-
-                            GetGeospatialByBranch(branch);
-
-                        });
-
-                    },
-                    function (error) {
-                        console.log("error fetching branches", error);
-                    });
-        }
-
-        function GetGeospatialByBranch(branch) {
-            var configVI = {
-                indicator: vm.INDICATOR.VI,
-                start_date: GeoSpatialService.formatDateForRequest(vm.config.from_date),
-                end_date:  GeoSpatialService.formatDateForRequest(vm.config.to_date),
-                regions: branch.regions
-            };
-            //GET VI DATA
-            branch.vegitationIndexPromise =  GeoSpatialService.getSeasonalMonitorData(configVI)
-                .then(function (response) {
-                    branch.vegitationIndex = response.data;
-                    branch.vegitationIndex.chart_url =  _.isUndefined(branch.vegitationIndex.image_url)? '': branch.vegitationIndex.image_url.replace('info','chart');
-                }, function (error) { console.log("error", error);});
-
-            var configRainfall = angular.copy(configVI);
-            configRainfall.indicator = vm.INDICATOR.RAINFALL;
-            //GET RAINFALL DATA
-            branch.rainfallPromise = GeoSpatialService.getSeasonalMonitorData(configRainfall)
-                .then(function (response) {
-                    branch.rainfall = response.data;
-                    branch.rainfall.chart_url = _.isUndefined(branch.rainfall.image_url)? '': branch.rainfall.image_url.replace('info','chart');
-                }, function (error) { console.log("error", error);});
-        }
-
-        function GetUserConfig() {
-            GeoSpatialService.GetUserConfig().then(function (response) {
-                if (response.data.length > 0) {
-                    vm.config = response.data[0];
-                    vm.config.fromDate = new Date(vm.config.from_date);
-                    vm.config.toDate = new Date(vm.config.to_date);
-                    prepareBranchesData();
-                }else {
-                    vm.visibility.isEditConfig = false;
-                }
-            }, function (reason) {
-                console.log(reason)
-            });
-        }
-
-        function setVisibility() {
-            vm.visibility.isEditConfig = true;
-            vm.visibility.showSmiley = true;
-        }
-    }
-
-})(window.angular);
-(function(angular) {
-    "use strict";
-
-
-    angular
-        .module('app.geospatial')
-        .controller('PlotReportController', PlotReportController);
-
-    PlotReportController.$inject = ['NgMap', 'blockUI','SharedService','CommonService'];
-
-    function PlotReportController( NgMap,blockUI,SharedService,CommonService )
-    {
-        var vm = this;
-        NgMap.getMap().then(function(map) {
-            vm.showCustomMarker= function(evt) {
-                map.customMarkers.foo.setVisible(true);
-                map.customMarkers.foo.setPosition(this.getPosition());
-            };
-            vm.closeCustomMarker= function(evt) {
-                this.style.display = 'none';
-            };
-        });
-
-    }
-
-})(window.angular);
-(function(angular) {
-    'use strict';
-    angular.module('app.geospatial')
-
-        .service('GeoSpatialService', GeoSpatialService);
-
-    GeoSpatialService.$inject = ['$http','CommonService','AuthService','$rootScope'];
-
-    function GeoSpatialService($http, CommonService, AuthService,$rootScope) {
-        return {
-            formatDateForRequest:_formatDateForRequest,
-            getSeasonalMonitorData:_getSeasonalMonitorData,
-            CurrentUser: _getUser(),
-            SaveConfig : _saveConfig,
-            UpdateConfig:_updateConfig,
-            GetUserConfig:_getUserConfig,
-            DateOptionDefault:_dateOptionDefault
-        };
-
-        function _getUser() {
-            return  AuthService.GetCurrentUser();
-        }
-
-        function _getUserConfig(){
-            var user = $rootScope.currentUser._id;// AuthService.GetCurrentUser();
-            return $http.get(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config, 'search?user=' + user));
-        }
-
-        function _saveConfig(config){
-            return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
-        }
-        function _updateConfig(config){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config,config._id),config);
-        }
-
-        function _getSeasonalMonitorData(config) {
-            var request = {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': undefined
-                },
-                url: API.Config.SeasonalMonitoringBaseUrl +  'indicator='+config.indicator+'&start_date='+config.start_date+'&end_date='+config.end_date+'&regions=' +config.regions};
-
-
-            return $http(request);
-        }
-        function _formatDateForRequest(date) {
-            var d = new Date(date),
-                month = '-' +  ("0" + (d.getMonth() + 1)).slice(-2) ,
-                day = '-' + ("0" + d.getDate()).slice(-2),
-                year = d.getFullYear();
-
-            if (month.length < 2) month = '0' + month;
-            if (day.length < 2) day = '0' + day;
-
-            return [year, month, day].join('');
-        }
-
-        function _dateOptionDefault() {
-            var vm = this;
-            vm.dtOption = {};
-            vm.dtOption.dateOptions = {
-                dateDisabled: false, formatYear: "yy",
-                maxDate: new Date(2020, 5, 22), startingDay: 1
-            };
-            vm.dtOption.format = "shortDate";
-            vm.dtOption.altInputFormats = ["M!/d!/yyyy"];
-            vm.dtOption.popup = {opened: false};
-            vm.dtOption.fromPopup = {opened: false};
-            vm.dtOption.open = function () {
-                vm.dtOption.popup.opened = true;
-            };
-            vm.dtOption.fromOpen = function () {
-                vm.dtOption.fromPopup.opened = true;
-            };
-            vm.dtOption.clear = function () {
-                vm.dtOption.dt = null;
-            };
-
-            return vm.dtOption;
-        }
-
-    }
-
-
-})(window.angular);
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.loan_management')
-
-        .service('LoanManagementService', LoanManagementService);
-
-    LoanManagementService.$inject = ['$http', 'CommonService'];
-
-    function LoanManagementService($http, CommonService) {
-        return {
-            GetLoanApplications: _getLoanApplications,
-            GetClientLoanApplication:_getClientLoanApplication,
-            SaveClientLoanApplication:_saveClientLoanApplication,
-
-            GetScreenings: _getScreenings,
-            GetClientScreening:_getClientScreening,
-            GetClientApplicationByLoanCycle:_getClientApplicationByLoanCycle,
-
-            SaveClientScreening:_saveClientScreening,
-            //CLIENT MANAGEMENT RELATED SERVICES DECLARATION
-            GetClients: _getClients,
-            SaveClient: _saveClient,
-            UpdateClient: _updateClient,
-            GetClientDetail:_getClientDetail,
-            SearchClient:_searchClient,
-            GetClientByLoanCycle:_getClientByLoanCycle,
-            GetBranches: _getBranches,
-
-            GetACATCollections: _getACATCollections,
-            GetClientACAT:_getClientACAT,
-            GetClientLoanProposals:_getClientLoanProposals,
-            GetCrops:_getCrops,
-
-            StyleLabelByStatus: _styleLabelByStatus,
-            loanCycles: [{id:1,name:'1st Loan Cycle'},{id:2,name:'2nd Loan Cycle'},{id:3,name:'3rd Loan Cycle'},{id:4,name:'4th Loan Cycle'},{id:5,name:'5th Loan Cycle'}]
-        };
-
-        function _getScreenings(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening,parameters));
-        }
-        function _saveClientScreening(screening,id) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,id),screening);
-        }
-
-
-        function _getClientScreening(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
-        }
-        function _getClientApplicationByLoanCycle(clientId,application,loanCycle) {
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Histories) + 'application='+application+'&client='+clientId+'&loanCycle='+loanCycle);
-        }
-        function _getLoanApplications(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.LOANS,API.Methods.LOANS.Loans,parameters));
-        }
-        function _getClientLoanApplication(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Clients,clientId));
-        }
-        function _saveClientLoanApplication(loan_application,id) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Loans,id),loan_application);
-        }
-
-
-
-        //CLIENT MANAGEMENT RELATED SERVICES
-        function _searchClient(searchText) {
-            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
-        }
-        function _getClientByLoanCycle(loanCycle) {
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.Client) + '/search?loan_cycle_number=' + loanCycle);
-        }
-
-        function _getClientDetail(id){
-            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
-        }
-        function _getBranches(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
-        }
-        function _getClients(parameters){
-            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,parameters));
-        }
-        function _saveClient(client) {
-            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients + '/create'),client);
-        }
-        function _updateClient(client) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,client._id),client);
-        }
-
-
-        function _styleLabelByStatus(clientStatus) {
-            var style = '';
-            if(_.isUndefined(clientStatus))
-                return '';
-            switch (clientStatus.toLowerCase()){
-                case  'new':
-                    style =  'label bg-gray';
-                    break;
-                case  'submitted':
-                    style =  'label bg-primary-dark';
-                    break;
-                case  'approved':
-                    style =  'label bg-green-dark';
-                    break;
-                case 'screening_inprogress':
-                case 'declined_under_review':
-                    style =  'label label-warning';
-                    break;
-                case 'loan_application_accepted':
-                    style =  'label bg-info-dark';
-                    break;
-                case 'eligible':
-                    style =  'label label-success';
-                    break;
-                case 'ineligible':
-                case 'declined_final':
-                    style =  'label label-danger';
-                    break;
-                case 'loan_application_new':
-                    style =  'label bg-purple-dark';
-                    break;
-                default:
-                    style =  'label label-inverse';
-            }
-            return style;
-        }
-
-        function _getACATCollections(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.ACAT,API.Methods.ACAT.Clients,parameters));
-        }
-        function _getClientACAT(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Clients,clientId));
-        }
-        function _getClientLoanProposals(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProposals,clientId));
-        }
-
-        function _getCrops() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
-        }
-
-    }
-
-
-})(window.angular);
 (function(angular) {
     "use strict";
 
@@ -5231,6 +4645,446 @@ var INDICATOR = {
 
 })(window.angular);
 /**
+ * Created by Yoni on 2/9/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.forms')
+        .constant('MW_QUESTION_TYPES', [
+            {name:'Fill In Blank',url:'fib',code:'FILL_IN_BLANK',type:'text'},
+            {name:'Yes/No Question',code:'YES_NO',url:'yn',type:'yn',options:['Yes','No']},
+            {name:'Multiple Choice',url:'mc',code:'MULTIPLE_CHOICE',options:[],type:'checkbox'},
+            {name:'Single Choice',url:'sc',code:'SINGLE_CHOICE',options:[],type:'select'},
+            {name:'Grouped Question',url:'GROUPED',code:'GROUPED',type:'grouped'}])
+        .constant('MW_FORM_TYPES', [
+            {name:'ACAT',code:'ACAT'},
+            {name:'Loan Application',code:'LOAN_APPLICATION'},
+            {name:'Screening',code:'SCREENING'},
+            {name:'Group Application',code:'GROUP_APPLICATION'},
+            {name:'Test',code:'TEST'}]);
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.forms").controller("FormsController", FormsController);
+
+    FormsController.$inject = ['FormService','$state'];
+
+    function FormsController(FormService,$state) {
+        var vm = this;
+        vm.forms = [];
+        vm.paginate = _paginate;
+        vm.editForm = _editForm;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+            callApi();//fetch first page data initially
+        }
+
+        function _paginate (page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+        function callApi() {
+             vm.promise = FormService.GetFormsPerPage(vm.query).then(function (response) {
+                vm.forms = response.data.docs;
+                _.forEach(vm.forms,function (form) {
+                    if(form.has_sections){
+                        form.sectionCount = form.sections.length;
+                        var questionCount = 0;
+                        _.forEach(form.sections,function (sec) {
+                            questionCount = questionCount + sec.questions.length;
+                        });
+                        form.questionCount = questionCount;
+                    }else{
+                        form.questionCount = form.questions.length;
+                    }
+                })
+            },function (error) {
+                console.log(error);
+            })
+        }
+
+        function _editForm(form, ev) {
+            $state.go('app.builder',{id:form._id});
+            console.log("edit Form",form);
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.forms')
+
+        .service('FormService', FormService);
+
+    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES','MW_FORM_TYPES'];
+
+    function FormService($http, CommonService,MW_QUESTION_TYPES,MW_FORM_TYPES) {
+        return {
+            GetFormsPerPage: _getFormsPerPage,
+            CreateForm:_createForm,
+            GetForm:_getForm,
+            UpdateForm:_updateForm,
+            GetQuestion:_getQuestion,
+            CreateQuestion:_createQuestion,
+            UpdateQuestion:_updateQuestion,
+            DeleteQuestion:_deleteQuestion,
+            CreateSection:_createSection,
+            UpdateSection:_updateSection,
+            RemoveSection:_removeSection,
+            QuestionTypes: MW_QUESTION_TYPES,
+            FormTypes: MW_FORM_TYPES
+        };
+        function _getFormsPerPage(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
+        }
+        function _getForm(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM, API.Methods.Form.All, id));
+        }
+        function _updateForm(form) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,form._id), form);
+        }
+        function _createForm(form){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
+        }
+        //------QUESTION-----------
+        function _getQuestion(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,id));
+        }
+        function _createQuestion(question,type){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question) + '/' + type, question);
+        }
+        function _updateQuestion(question) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id), question);
+        }
+        function _deleteQuestion(question) {
+          return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id + '?form=' + question.form));
+        }
+
+
+        //    ------SECTION--------
+        function _createSection(section){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Section), section);
+        }
+        function _updateSection(section) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id), section);
+        }
+        function _removeSection(section) {
+            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id + '?form=' + section.form));
+        }
+    }
+
+
+})(window.angular);
+(function (angular) {
+    "use strict";
+    angular
+        .module('app.geospatial')
+        .controller('GeospatialController', GeoSpatialController);
+
+    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI', 'SharedService', 'CommonService', 'AlertService','$scope','$templateCache'];
+
+    function GeoSpatialController(GeoSpatialService, blockUI, SharedService, CommonService, AlertService,$scope,$templateCache) {
+        var vm = this;
+        vm.INDICATOR = INDICATOR;
+        vm.currentUser = GeoSpatialService.CurrentUser;
+        vm.saveUserConfig = _saveUserConfig;
+        vm.resetConfig = _resetConfig;
+
+        init();
+
+        // We can use panel id name for the boolean flag to [un]collapse the panel
+        $scope.$watch('panelDemo1',function(newVal){
+            console.log('panelDemo1 collapsed: ' + newVal);
+        });
+
+
+        function _resetConfig() {
+            vm.config = undefined;
+        }
+
+
+        function _saveUserConfig() {
+
+            vm.IsValidData = CommonService.Validation.ValidateForm(vm.seasonalFilterForm, vm.config);
+
+            if (vm.IsValidData) {
+                vm.config.user = vm.currentUser._id;
+                vm.config.from_date = vm.config.fromDate;
+                vm.config.to_date = vm.config.toDate;
+
+                vm.visibility.showSmiley = true;
+                vm.visibility.showInfoText = false;
+                vm.visibility.showWarning = false;
+
+                if(vm.config._id){
+                    GeoSpatialService.UpdateConfig(vm.config).then(function (response) {
+                            AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
+                            vm.config = response.data;
+                            prepareBranchesData();
+                        }
+                        , function (error) {
+                            console.log('error', error);
+                            var message = error.data.error.message;
+                            AlertService.showError('Oops... Something went wrong', message);
+                        });
+                }else{
+                    GeoSpatialService.SaveConfig(vm.config).then(function (response) {
+                            AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
+                            vm.config = response.data;
+                            prepareBranchesData();
+                        }
+                        , function (error) {
+                            console.log('error', error);
+                            var message = error.data.error.message;
+                            AlertService.showError('Oops... Something went wrong', message);
+                        });
+                }
+
+            } else {
+                vm.visibility.showWarning = true;
+                vm.visibility.showInfoText = false;
+            }
+
+        }
+
+        function init() {
+            // setVisibility();
+            vm.config = {};
+            vm.visibility = {
+                showSmiley: true,
+                showInfoText: true,
+                isEditConfig: false };
+
+            vm.seasonalFilterForm = {
+                IsfromDateValid: true,
+                IstoDateValid: true,
+                IsnameValid: true
+            };
+            //DATE OPTION
+            vm.dtOption = GeoSpatialService.DateOptionDefault();
+            GetUserConfig();
+
+        }
+
+        function prepareBranchesData() {
+
+            SharedService.GetBranches()
+                .then( function (response) {
+                        vm.branches = response.data.docs;
+                        _.each(vm.branches,function (branch) {
+                            branch.regions = _.map(branch.weredas,function (woreda) {
+                                return woreda.w_code;
+                            }).join(":");
+
+                            GetGeospatialByBranch(branch);
+
+                        });
+
+                    },
+                    function (error) {
+                        console.log("error fetching branches", error);
+                    });
+        }
+
+        function GetGeospatialByBranch(branch) {
+            var configVI = {
+                indicator: vm.INDICATOR.VI,
+                start_date: GeoSpatialService.formatDateForRequest(vm.config.from_date),
+                end_date:  GeoSpatialService.formatDateForRequest(vm.config.to_date),
+                regions: branch.regions
+            };
+            //GET VI DATA
+            branch.vegitationIndexPromise =  GeoSpatialService.getSeasonalMonitorData(configVI)
+                .then(function (response) {
+                    branch.vegitationIndex = response.data;
+                    branch.vegitationIndex.chart_url =  _.isUndefined(branch.vegitationIndex.image_url)? '': branch.vegitationIndex.image_url.replace('info','chart');
+                }, function (error) { console.log("error", error);});
+
+            var configRainfall = angular.copy(configVI);
+            configRainfall.indicator = vm.INDICATOR.RAINFALL;
+            //GET RAINFALL DATA
+            branch.rainfallPromise = GeoSpatialService.getSeasonalMonitorData(configRainfall)
+                .then(function (response) {
+                    branch.rainfall = response.data;
+                    branch.rainfall.chart_url = _.isUndefined(branch.rainfall.image_url)? '': branch.rainfall.image_url.replace('info','chart');
+                }, function (error) { console.log("error", error);});
+        }
+
+        function GetUserConfig() {
+            GeoSpatialService.GetUserConfig().then(function (response) {
+                if (response.data.length > 0) {
+                    vm.config = response.data[0];
+                    vm.config.fromDate = new Date(vm.config.from_date);
+                    vm.config.toDate = new Date(vm.config.to_date);
+                    prepareBranchesData();
+                }else {
+                    vm.visibility.isEditConfig = false;
+                }
+            }, function (reason) {
+                console.log(reason)
+            });
+        }
+
+        function setVisibility() {
+            vm.visibility.isEditConfig = true;
+            vm.visibility.showSmiley = true;
+        }
+    }
+
+})(window.angular);
+(function(angular) {
+    "use strict";
+
+
+    angular
+        .module('app.geospatial')
+        .controller('PlotReportController', PlotReportController);
+
+    PlotReportController.$inject = ['NgMap', 'blockUI','SharedService','CommonService'];
+
+    function PlotReportController( NgMap,blockUI,SharedService,CommonService )
+    {
+        var vm = this;
+        NgMap.getMap().then(function(map) {
+            vm.showCustomMarker= function(evt) {
+                map.customMarkers.foo.setVisible(true);
+                map.customMarkers.foo.setPosition(this.getPosition());
+            };
+            vm.closeCustomMarker= function(evt) {
+                this.style.display = 'none';
+            };
+        });
+
+    }
+
+})(window.angular);
+(function(angular) {
+    'use strict';
+    angular.module('app.geospatial')
+
+        .service('GeoSpatialService', GeoSpatialService);
+
+    GeoSpatialService.$inject = ['$http','CommonService','AuthService','$rootScope'];
+
+    function GeoSpatialService($http, CommonService, AuthService,$rootScope) {
+        return {
+            formatDateForRequest:_formatDateForRequest,
+            getSeasonalMonitorData:_getSeasonalMonitorData,
+            CurrentUser: _getUser(),
+            SaveConfig : _saveConfig,
+            UpdateConfig:_updateConfig,
+            GetUserConfig:_getUserConfig,
+            DateOptionDefault:_dateOptionDefault
+        };
+
+        function _getUser() {
+            return  AuthService.GetCurrentUser();
+        }
+
+        function _getUserConfig(){
+            var user = $rootScope.currentUser._id;// AuthService.GetCurrentUser();
+            return $http.get(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config, 'search?user=' + user));
+        }
+
+        function _saveConfig(config){
+            return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
+        }
+        function _updateConfig(config){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config,config._id),config);
+        }
+
+        function _getSeasonalMonitorData(config) {
+            var request = {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': undefined
+                },
+                url: API.Config.SeasonalMonitoringBaseUrl +  'indicator='+config.indicator+'&start_date='+config.start_date+'&end_date='+config.end_date+'&regions=' +config.regions};
+
+
+            return $http(request);
+        }
+        function _formatDateForRequest(date) {
+            var d = new Date(date),
+                month = '-' +  ("0" + (d.getMonth() + 1)).slice(-2) ,
+                day = '-' + ("0" + d.getDate()).slice(-2),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('');
+        }
+
+        function _dateOptionDefault() {
+            var vm = this;
+            vm.dtOption = {};
+            vm.dtOption.dateOptions = {
+                dateDisabled: false, formatYear: "yy",
+                maxDate: new Date(2020, 5, 22), startingDay: 1
+            };
+            vm.dtOption.format = "shortDate";
+            vm.dtOption.altInputFormats = ["M!/d!/yyyy"];
+            vm.dtOption.popup = {opened: false};
+            vm.dtOption.fromPopup = {opened: false};
+            vm.dtOption.open = function () {
+                vm.dtOption.popup.opened = true;
+            };
+            vm.dtOption.fromOpen = function () {
+                vm.dtOption.fromPopup.opened = true;
+            };
+            vm.dtOption.clear = function () {
+                vm.dtOption.dt = null;
+            };
+
+            return vm.dtOption;
+        }
+
+    }
+
+
+})(window.angular);
+/**
  * Created by Yoni on 12/10/2017.
  */
 
@@ -5501,6 +5355,235 @@ var INDICATOR = {
         }
 
     }
+
+})(window.angular);
+
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.loan_management')
+
+        .service('LoanManagementService', LoanManagementService);
+
+    LoanManagementService.$inject = ['$http', 'CommonService'];
+
+    function LoanManagementService($http, CommonService) {
+        return {
+            GetLoanApplications: _getLoanApplications,
+            GetClientLoanApplication:_getClientLoanApplication,
+            SaveClientLoanApplication:_saveClientLoanApplication,
+
+            GetScreenings: _getScreenings,
+            GetClientScreening:_getClientScreening,
+            GetClientApplicationByLoanCycle:_getClientApplicationByLoanCycle,
+
+            SaveClientScreening:_saveClientScreening,
+            //CLIENT MANAGEMENT RELATED SERVICES DECLARATION
+            GetClients: _getClients,
+            SaveClient: _saveClient,
+            UpdateClient: _updateClient,
+            GetClientDetail:_getClientDetail,
+            SearchClient:_searchClient,
+            GetClientByLoanCycle:_getClientByLoanCycle,
+            GetBranches: _getBranches,
+
+            GetACATCollections: _getACATCollections,
+            GetClientACAT:_getClientACAT,
+            GetClientLoanProposals:_getClientLoanProposals,
+            GetCrops:_getCrops,
+
+            StyleLabelByStatus: _styleLabelByStatus,
+            loanCycles: [{id:1,name:'1st Loan Cycle'},{id:2,name:'2nd Loan Cycle'},{id:3,name:'3rd Loan Cycle'},{id:4,name:'4th Loan Cycle'},{id:5,name:'5th Loan Cycle'}]
+        };
+
+        function _getScreenings(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening,parameters));
+        }
+        function _saveClientScreening(screening,id) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,id),screening);
+        }
+
+
+        function _getClientScreening(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
+        }
+        function _getClientApplicationByLoanCycle(clientId,application,loanCycle) {
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Histories) + 'application='+application+'&client='+clientId+'&loanCycle='+loanCycle);
+        }
+        function _getLoanApplications(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.LOANS,API.Methods.LOANS.Loans,parameters));
+        }
+        function _getClientLoanApplication(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Clients,clientId));
+        }
+        function _saveClientLoanApplication(loan_application,id) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Loans,id),loan_application);
+        }
+
+
+
+        //CLIENT MANAGEMENT RELATED SERVICES
+        function _searchClient(searchText) {
+            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
+        }
+        function _getClientByLoanCycle(loanCycle) {
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.Client) + '/search?loan_cycle_number=' + loanCycle);
+        }
+
+        function _getClientDetail(id){
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
+        }
+        function _getBranches(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+        }
+        function _getClients(parameters){
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,parameters));
+        }
+        function _saveClient(client) {
+            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients + '/create'),client);
+        }
+        function _updateClient(client) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,client._id),client);
+        }
+
+
+        function _styleLabelByStatus(clientStatus) {
+            var style = '';
+            if(_.isUndefined(clientStatus))
+                return '';
+            switch (clientStatus.toLowerCase()){
+                case  'new':
+                    style =  'label bg-gray';
+                    break;
+                case  'submitted':
+                    style =  'label bg-primary-dark';
+                    break;
+                case  'approved':
+                    style =  'label bg-green-dark';
+                    break;
+                case 'screening_inprogress':
+                case 'declined_under_review':
+                    style =  'label label-warning';
+                    break;
+                case 'loan_application_accepted':
+                    style =  'label bg-info-dark';
+                    break;
+                case 'eligible':
+                    style =  'label label-success';
+                    break;
+                case 'ineligible':
+                case 'declined_final':
+                    style =  'label label-danger';
+                    break;
+                case 'loan_application_new':
+                    style =  'label bg-purple-dark';
+                    break;
+                default:
+                    style =  'label label-inverse';
+            }
+            return style;
+        }
+
+        function _getACATCollections(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.ACAT,API.Methods.ACAT.Clients,parameters));
+        }
+        function _getClientACAT(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Clients,clientId));
+        }
+        function _getClientLoanProposals(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProposals,clientId));
+        }
+
+        function _getCrops() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
+        }
+
+    }
+
+
+})(window.angular);
+(function(angular) {
+  'use strict';
+  angular.module('app.mfi')
+
+  .service('MainService', MainService);
+
+  MainService.$inject = ['$http','CommonService','AuthService'];
+
+  function MainService($http, CommonService,AuthService) {
+
+      return {
+        GetMFI: _getMFI,
+        UpdateMFI: _updateMFI,
+        CreateMFI:_createMFI,
+        UpdateBranch: _updateBranch,
+        GetBranches: _getBranches,
+        CreateBranch:_createBranch
+      };
+
+      function _getBranches(){
+          return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+      }
+      function _createBranch(branch){
+        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch), branch);
+      }
+      function _updateBranch(updated_branch){
+          return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.Branches,updated_branch._id), updated_branch);
+      }
+
+      function _getMFI(){
+        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll));
+      }
+      function _updateMFI(data,logo){
+        var updatedMFI = setAttribute(data,logo);
+
+        return $http({
+          url: CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.MFIUpdate,data._id),
+          method: 'PUT',
+          data: updatedMFI,
+          //assigning content-type as undefined,let the browser
+          //assign the correct boundary for us
+          headers: {
+                  'Content-Type': undefined},
+          //prevents serializing payload.  don't do it.
+          transformRequest: angular.identity
+      });
+      }
+
+      function _createMFI(data,logo){
+        var mfiData = setAttribute(data,logo);
+        return $http({
+          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.MFI),
+          method: 'POST',
+          data: mfiData,
+          //assigning content-type as undefined,let the browser handle it
+          headers: {
+            'Authorization': 'Bearer ' + AuthService.GetToken(),
+            'Content-Type': undefined},
+          //prevents serializing data.  don't do it.
+          transformRequest: angular.identity
+      });
+
+      }
+
+      function setAttribute(mfi,picFile){
+          var mfiData = new FormData();
+          mfiData.append("name", mfi.name);
+          mfiData.append("location", mfi.location);
+          mfiData.append("establishment_year", mfi.establishment_year);
+          mfiData.append("contact_person", _.isUndefined(mfi.contact_person)?'':mfi.contact_person);
+          mfiData.append("phone", _.isUndefined(mfi.phone)?'':mfi.phone);
+          mfiData.append("email", _.isUndefined(mfi.email)?'':mfi.email);
+          mfiData.append("website_link", _.isUndefined(mfi.website_link)?'':mfi.website_link);
+          if(!_.isUndefined(picFile)){
+              mfiData.append("logo", picFile);
+          }
+
+          return mfiData;
+      }
+  }
 
 })(window.angular);
 
@@ -5932,89 +6015,6 @@ var INDICATOR = {
 
 })(window.angular);
 
-(function(angular) {
-  'use strict';
-  angular.module('app.mfi')
-
-  .service('MainService', MainService);
-
-  MainService.$inject = ['$http','CommonService','AuthService'];
-
-  function MainService($http, CommonService,AuthService) {
-
-      return {
-        GetMFI: _getMFI,
-        UpdateMFI: _updateMFI,
-        CreateMFI:_createMFI,
-        UpdateBranch: _updateBranch,
-        GetBranches: _getBranches,
-        CreateBranch:_createBranch
-      };
-
-      function _getBranches(){
-          return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
-      }
-      function _createBranch(branch){
-        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch), branch);
-      }
-      function _updateBranch(updated_branch){
-          return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.Branches,updated_branch._id), updated_branch);
-      }
-
-      function _getMFI(){
-        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll));
-      }
-      function _updateMFI(data,logo){
-        var updatedMFI = setAttribute(data,logo);
-
-        return $http({
-          url: CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.MFIUpdate,data._id),
-          method: 'PUT',
-          data: updatedMFI,
-          //assigning content-type as undefined,let the browser
-          //assign the correct boundary for us
-          headers: {
-                  'Content-Type': undefined},
-          //prevents serializing payload.  don't do it.
-          transformRequest: angular.identity
-      });
-      }
-
-      function _createMFI(data,logo){
-        var mfiData = setAttribute(data,logo);
-        return $http({
-          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.MFI),
-          method: 'POST',
-          data: mfiData,
-          //assigning content-type as undefined,let the browser handle it
-          headers: {
-            'Authorization': 'Bearer ' + AuthService.GetToken(),
-            'Content-Type': undefined},
-          //prevents serializing data.  don't do it.
-          transformRequest: angular.identity
-      });
-
-      }
-
-      function setAttribute(mfi,picFile){
-          var mfiData = new FormData();
-          mfiData.append("name", mfi.name);
-          mfiData.append("location", mfi.location);
-          mfiData.append("establishment_year", mfi.establishment_year);
-          mfiData.append("contact_person", _.isUndefined(mfi.contact_person)?'':mfi.contact_person);
-          mfiData.append("phone", _.isUndefined(mfi.phone)?'':mfi.phone);
-          mfiData.append("email", _.isUndefined(mfi.email)?'':mfi.email);
-          mfiData.append("website_link", _.isUndefined(mfi.website_link)?'':mfi.website_link);
-          if(!_.isUndefined(picFile)){
-              mfiData.append("logo", picFile);
-          }
-
-          return mfiData;
-      }
-  }
-
-})(window.angular);
-
 /**
  * Created by Yonas on 8/16/2018.
  */
@@ -6103,28 +6103,24 @@ var INDICATOR = {
     {
         var vm = this;
 
-        ReportService.GetLineChartReport().then(function (report) { console.log("report ",report); })
+        ReportService.GetLineChartReport().then(function (report) {
+              var chartData = report.data;
+              var no_of_clients = _.pluck(chartData,'no_of_clients');
+              var total_loan_amount = _.pluck(chartData,'total_loan_amount');
+
+            vm.barLabels = _.pluck(chartData,'crop');
+            vm.barSeries = ['Number of Clients', 'Total Loan Amount'];
+            vm.barData = [ no_of_clients, total_loan_amount ];
+
+            vm.barColors = ReportService.barColors;
+
+        });
 
 
         init();
 
         function init() {
 
-            // Bar Chart
-            // ------------------
-            vm.barLabels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
-            vm.barSeries = ['Series A', 'Series B'];
-            vm.barData = [
-                [65, 59, 80, 81, 56, 55, 40],
-                [28, 48, 40, 19, 86, 27, 90]
-            ];
-            vm.barColors = [{
-                backgroundColor: Colors.byName('dark'),
-                borderColor: Colors.byName('dark')
-            }, {
-                backgroundColor: Colors.byName('green'),
-                borderColor: Colors.byName('green')
-            }];
         }
 
     }
@@ -6172,13 +6168,14 @@ var INDICATOR = {
 
         .service('ReportService', ReportService);
 
-    ReportService.$inject = ['$http','CommonService','AuthService'];
+    ReportService.$inject = ['$http','CommonService','Colors'];
 
-    function ReportService($http, CommonService, AuthService) {
+    function ReportService($http, CommonService, Colors) {
         // {{bidir_reports_service}}/5c0ce5e7c3bb100001b218e7
 
         return {
-            GetLineChartReport:_getLineChartReport
+            GetLineChartReport:_getLineChartReport,
+            barColors: [{backgroundColor: Colors.byName('primary'), borderColor: Colors.byName('primary')}, {backgroundColor: Colors.byName('info'),  borderColor: Colors.byName('info') }]
         };
 
         function _getLineChartReport(config){
@@ -6318,149 +6315,6 @@ var INDICATOR = {
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
         }
     }
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearch;
-
-        initialize();
-
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-
-            callApi();
-        }
-
-
-        function _paginate (page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-
-       function callApi(){
-        vm.promise =   ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
-
-    }
-
-
 
 })(window.angular);
 /**
@@ -7311,6 +7165,149 @@ var INDICATOR = {
         }
 
 
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+        }
+
+
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+       function callApi(){
+        vm.promise =   ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
 
     }
 

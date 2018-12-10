@@ -12,28 +12,24 @@
     {
         var vm = this;
 
-        ReportService.GetLineChartReport().then(function (report) { console.log("report ",report); })
+        ReportService.GetLineChartReport().then(function (report) {
+              var chartData = report.data;
+              var no_of_clients = _.pluck(chartData,'no_of_clients');
+              var total_loan_amount = _.pluck(chartData,'total_loan_amount');
+
+            vm.barLabels = _.pluck(chartData,'crop');
+            vm.barSeries = ['Number of Clients', 'Total Loan Amount'];
+            vm.barData = [ no_of_clients, total_loan_amount ];
+
+            vm.barColors = ReportService.barColors;
+
+        });
 
 
         init();
 
         function init() {
 
-            // Bar Chart
-            // ------------------
-            vm.barLabels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
-            vm.barSeries = ['Series A', 'Series B'];
-            vm.barData = [
-                [65, 59, 80, 81, 56, 55, 40],
-                [28, 48, 40, 19, 86, 27, 90]
-            ];
-            vm.barColors = [{
-                backgroundColor: Colors.byName('dark'),
-                borderColor: Colors.byName('dark')
-            }, {
-                backgroundColor: Colors.byName('green'),
-                borderColor: Colors.byName('green')
-            }];
         }
 
     }
