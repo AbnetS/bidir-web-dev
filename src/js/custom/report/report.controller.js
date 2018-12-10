@@ -30,6 +30,7 @@
         function _onSelectedReport() {
             console.log("report ",vm.report);
         }
+        ReportService.GetLineChartReport().then(function (report) { console.log("report ",report); })
 
     }
 

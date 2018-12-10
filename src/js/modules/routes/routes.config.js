@@ -247,7 +247,7 @@
                 url: "/report",
                 title: "Report",
                 templateUrl:helper.basepath('report/report.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select','moment','filestyle'),
+                resolve:helper.resolveFor('md.data.table','ui.select','moment','chart.js'),
                 controller: "ReportController",
                 controllerAs: 'vm',
                 data: {

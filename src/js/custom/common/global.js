@@ -13,7 +13,8 @@ var API = {
         LOANS:'loans',
         FORM:'forms',
         ACAT:'acat',
-        GEOSPATIAL: 'geospatial'
+        GEOSPATIAL: 'geospatial',
+        REPORT:'reports'
     },
     Methods: {
         Auth: {
@@ -91,6 +92,9 @@ var API = {
             Config: 'configs',
             UserConfig: 'configs/search?user=',
             Woredas: 'weredas'
+        },
+        Report:{
+            ClientLineChart: ''
         }
     }
 };
