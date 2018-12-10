@@ -94,7 +94,7 @@ var API = {
             Woredas: 'weredas'
         },
         Report:{
-            ClientLineChart: ''
+            Report: ''
         }
     }
 };

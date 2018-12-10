@@ -27,8 +27,17 @@
             }
         ];
 
+        init();
+
         function _onSelectedReport() {
             console.log("report ",vm.report);
+        }
+
+
+        function init() {
+            ReportService.GetClientHistoryReport().then(function (report) {
+                vm.reportData = report.data;
+            });
         }
 
     }
