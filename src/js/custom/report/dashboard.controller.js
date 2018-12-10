@@ -6,9 +6,9 @@
         .module('app.report')
         .controller('DashboardController', DashboardController);
 
-    DashboardController.$inject = ['ReportService', 'SharedService','AlertService'];
+    DashboardController.$inject = ['ReportService', 'SharedService','Colors'];
 
-    function DashboardController( ReportService,SharedService,AlertService )
+    function DashboardController( ReportService,SharedService,Colors )
     {
         var vm = this;
 
@@ -22,12 +22,14 @@
             vm.barSeries_byAmount = ['Total Loan Amount'];
             vm.barData_byClient = [ no_of_clients ];
             vm.barData_byAmount = [ total_loan_amount ];
-            vm.barColors_byClient = ReportService.barColors;
-            vm.barColors_byAmount = [{backgroundColor: Colors.byName('info'),  borderColor: Colors.byName('info') },{backgroundColor: Colors.byName('primary'), borderColor: Colors.byName('primary')}];
+            vm.barColors_byClient = [{backgroundColor: Colors.byName('green')}];
+            vm.barColors_byAmount = [{backgroundColor: Colors.byName('primary')}];
 
         });
 
         init();
+
+
 
         function init() {
             vm.count = {
@@ -35,6 +37,17 @@
                 client: 0,
                 user: 0};
 
+            getAllCounts();
+
+            // Pie Chart
+            // ------------------
+            vm.pieLabels = ["Screening", "Loan", "ACAT"];
+            vm.pieData = [300, 500, 100];
+            vm.pieColors = [Colors.byName('green'), Colors.byName('purple'), Colors.byName('yellow')];
+
+        }
+
+        function getAllCounts() {
             SharedService.GetBranches().then(function (value) {
                 vm.count.branch = value.data.docs.length;
             });
@@ -44,7 +57,6 @@
             SharedService.GetClients().then(function (value) {
                 vm.count.client = value.data.docs.length;
             });
-
         }
 
     }

@@ -87,14 +87,6 @@
     'use strict';
 
     angular
-        .module('app.material', [
-            'ngMaterial'
-          ]);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.preloader', []);
 })();
 
@@ -134,6 +126,14 @@
           ]);
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.material', [
+            'ngMaterial'
+          ]);
+})();
 (function() {
     'use strict';
 
@@ -693,740 +693,6 @@
     }
 })();
 
-
-(function() {
-    'use strict';
-    // Used only for the BottomSheetExample
-    angular
-        .module('app.material')
-        .config(materialConfig)
-        ;
-    materialConfig.$inject = ['$mdIconProvider'];
-    function materialConfig($mdIconProvider){
-      $mdIconProvider
-        .icon('share-arrow', 'app/img/icons/share-arrow.svg', 24)
-        .icon('upload', 'app/img/icons/upload.svg', 24)
-        .icon('copy', 'app/img/icons/copy.svg', 24)
-        .icon('print', 'app/img/icons/print.svg', 24)
-        .icon('hangout', 'app/img/icons/hangout.svg', 24)
-        .icon('mail', 'app/img/icons/mail.svg', 24)
-        .icon('message', 'app/img/icons/message.svg', 24)
-        .icon('copy2', 'app/img/icons/copy2.svg', 24)
-        .icon('facebook', 'app/img/icons/facebook.svg', 24)
-        .icon('twitter', 'app/img/icons/twitter.svg', 24);
-    }
-})();
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.material')
-        .controller('MDAutocompleteCtrl', MDAutocompleteCtrl)
-        .controller('MDBottomSheetCtrl', MDBottomSheetCtrl)
-        .controller('MDListBottomSheetCtrl', MDListBottomSheetCtrl)
-        .controller('MDGridBottomSheetCtrl', MDGridBottomSheetCtrl)
-        .controller('MDCheckboxCtrl', MDCheckboxCtrl)
-        .controller('MDRadioCtrl', MDRadioCtrl)
-        .controller('MDSwitchCtrl', MDSwitchCtrl)
-        .controller('MDDialogCtrl', MDDialogCtrl)
-        .controller('MDSliderCtrl', MDSliderCtrl)
-        .controller('MDSelectCtrl', MDSelectCtrl)
-        .controller('MDInputCtrl', MDInputCtrl)
-        .controller('MDProgressCtrl', MDProgressCtrl)
-        .controller('MDSidenavCtrl', MDSidenavCtrl)
-        .controller('MDSubheaderCtrl', MDSubheaderCtrl)
-        .controller('MDToastCtrl', MDToastCtrl)
-          .controller('ToastCtrl', ToastCtrl)
-        .controller('MDTooltipCtrl', MDTooltipCtrl)
-        .controller('BottomSheetExample', BottomSheetExample)
-          .controller('ListBottomSheetCtrl', ListBottomSheetCtrl)
-          .controller('GridBottomSheetCtrl', GridBottomSheetCtrl)
-        ;
-
-    /*
-      MDAutocompleteCtrl
-     */
-    MDAutocompleteCtrl.$inject = ['$scope', '$timeout', '$q'];
-    function MDAutocompleteCtrl($scope, $timeout, $q) {
-      var self = this;
-
-      self.states        = loadAll();
-      self.selectedItem  = null;
-      self.searchText    = null;
-      self.querySearch   = querySearch;
-      self.simulateQuery = false;
-      self.isDisabled    = false;
-
-      // use $timeout to simulate remote dataservice call
-      function querySearch (query) {
-        var results = query ? self.states.filter( createFilterFor(query) ) : [],
-            deferred;
-        if (self.simulateQuery) {
-          deferred = $q.defer();
-          $timeout(function () { deferred.resolve( results ); }, Math.random() * 1000, false);
-          return deferred.promise;
-        } else {
-          return results;
-        }
-      }
-
-      function loadAll() {
-        var allStates = 'Alabama, Alaska, Arizona, Arkansas, California, Colorado, Connecticut, Delaware, Florida, Georgia, Hawaii, Idaho, Illinois, Indiana, Iowa, Kansas, Kentucky, Louisiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, Mississippi, Missouri, Montana, Nebraska, Nevada, New Hampshire, New Jersey, New Mexico, New York, North Carolina, North Dakota, Ohio, Oklahoma, Oregon, Pennsylvania, Rhode Island, South Carolina, South Dakota, Tennessee, Texas, Utah, Vermont, Virginia, Washington, West Virginia, Wisconsin, Wyoming';
-
-        return allStates.split(/, +/g).map( function (state) {
-          return {
-            value: state.toLowerCase(),
-            display: state
-          };
-        });
-      }
-
-          /**
-           * Create filter function for a query string
-           */
-          function createFilterFor(query) {
-            var lowercaseQuery = angular.lowercase(query);
-
-            return function filterFn(state) {
-              return (state.value.indexOf(lowercaseQuery) === 0);
-            };
-
-          }
-        }
-
-    /*
-    MDBottomSheetCtrl
-     */
-    MDBottomSheetCtrl.$inject = ['$scope', '$timeout', '$mdBottomSheet'];
-    function MDBottomSheetCtrl($scope, $timeout, $mdBottomSheet) {
-      $scope.alert = '';
-
-      $scope.showListBottomSheet = function($event) {
-        $scope.alert = '';
-        $mdBottomSheet.show({
-          templateUrl: 'bottom-sheet-list-template.html',
-          controller: 'ListBottomSheetCtrl',
-          targetEvent: $event,
-          disableParentScroll: false
-        }).then(function(clickedItem) {
-          $scope.alert = clickedItem.name + ' clicked!';
-        });
-      };
-
-      $scope.showGridBottomSheet = function($event) {
-        $scope.alert = '';
-        $mdBottomSheet.show({
-          templateUrl: 'bottom-sheet-grid-template.html',
-          controller: 'GridBottomSheetCtrl',
-          targetEvent: $event,
-          disableParentScroll: false
-        }).then(function(clickedItem) {
-          $scope.alert = clickedItem.name + ' clicked!';
-        });
-      };
-    }
-    /*
-    MDListBottomSheetCtrl
-     */
-    MDListBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
-    function MDListBottomSheetCtrl($scope, $mdBottomSheet) {
-
-      $scope.items = [
-        { name: 'Share', icon: 'share' },
-        { name: 'Upload', icon: 'upload' },
-        { name: 'Copy', icon: 'copy' },
-        { name: 'Print this page', icon: 'print' },
-      ];
-
-      $scope.listItemClick = function($index) {
-        var clickedItem = $scope.items[$index];
-        $mdBottomSheet.hide(clickedItem);
-      };
-    }
-    /*
-    MDGridBottomSheetCtrl
-     */
-    MDGridBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
-    function MDGridBottomSheetCtrl($scope, $mdBottomSheet) {
-
-      $scope.items = [
-        { name: 'Hangout', icon: 'hangout' },
-        { name: 'Mail', icon: 'mail' },
-        { name: 'Message', icon: 'message' },
-        { name: 'Copy', icon: 'copy' },
-        { name: 'Facebook', icon: 'facebook' },
-        { name: 'Twitter', icon: 'twitter' },
-      ];
-
-      $scope.listItemClick = function($index) {
-        var clickedItem = $scope.items[$index];
-        $mdBottomSheet.hide(clickedItem);
-      };
-    }
-    /*
-    MDCheckboxCtrl
-     */
-    MDCheckboxCtrl.$inject = ['$scope'];
-    function MDCheckboxCtrl($scope) {
-
-      $scope.data = {};
-      $scope.data.cb1 = true;
-      $scope.data.cb2 = false;
-      $scope.data.cb3 = false;
-      $scope.data.cb4 = false;
-      $scope.data.cb5 = false;
-    }
-    /*
-    MDRadioCtrl
-     */
-    MDRadioCtrl.$inject = ['$scope'];
-    function MDRadioCtrl($scope) {
-
-        $scope.data = {
-          group1 : 'Banana',
-          group2 : '2',
-          group3 : 'avatar-1'
-        };
-
-        $scope.avatarData = [{
-            id: 'svg-1',
-            title: 'avatar 1',
-            value: 'avatar-1'
-          },{
-            id: 'svg-2',
-            title: 'avatar 2',
-            value: 'avatar-2'
-          },{
-            id: 'svg-3',
-            title: 'avatar 3',
-            value: 'avatar-3'
-        }];
-
-        $scope.radioData = [
-          { label: 'Apple', value: 1 },
-          { label: 'Banana', value: 2 },
-          { label: 'Mango', value: '3', isDisabled: true }
-        ];
-
-
-        $scope.submit = function() {
-          alert('submit');
-        };
-
-        var vals = ['Apple', 'Banana', 'Mango', 'Grape', 'Melon', 'Strawberry', 'Kiwi'];
-        $scope.addItem = function() {
-          var rval = vals[Math.floor(Math.random() * vals.length)];
-          $scope.radioData.push({ label: rval, value: rval });
-        };
-
-        $scope.removeItem = function() {
-          $scope.radioData.pop();
-        };
-    }
-    /*
-    MDSwitchCtrl
-     */
-    MDSwitchCtrl.$inject = ['$scope'];
-    function MDSwitchCtrl($scope) {
-      $scope.data = {
-        cb1: true,
-        cb4: true
-      };
-      
-      $scope.onChange = function(cbState){
-         $scope.message = 'The switch is now: ' + cbState;
-      };
-    }
-    /*
-    MDDialogCtrl
-     */
-    MDDialogCtrl.$inject = ['$scope', '$mdDialog'];
-    function MDDialogCtrl($scope, $mdDialog) {
-      $scope.alert = '';
-
-      $scope.showAlert = function(ev) {
-        $mdDialog.show(
-          $mdDialog.alert()
-            .title('This is an alert title')
-            .content('You can specify some description text in here.')
-            .ariaLabel('Password notification')
-            .ok('Got it!')
-            .targetEvent(ev)
-        );
-      };
-
-      $scope.showConfirm = function(ev) {
-        var confirm = $mdDialog.confirm()
-          .title('Would you like to delete your debt?')
-          .content('All of the banks have agreed to forgive you your debts.')
-          .ariaLabel('Lucky day')
-          .ok('Please do it!')
-          .cancel('Sounds like a scam')
-          .targetEvent(ev);
-
-        $mdDialog.show(confirm).then(function() {
-          $scope.alert = 'You decided to get rid of your debt.';
-        }, function() {
-          $scope.alert = 'You decided to keep your debt.';
-        });
-      };
-
-      $scope.showAdvanced = function(ev) {
-        $mdDialog.show({
-          controller: DialogController,
-          templateUrl: 'dialog1.tmpl.html',
-          targetEvent: ev,
-        })
-        .then(function(answer) {
-          $scope.alert = 'You said the information was \'' + answer + '\'.';
-        }, function() {
-          $scope.alert = 'You cancelled the dialog.';
-        });
-      };
-      DialogController.$inject = ['$scope', '$mdDialog'];
-      function DialogController($scope, $mdDialog) {
-        $scope.hide = function() {
-          $mdDialog.hide();
-        };
-
-        $scope.cancel = function() {
-          $mdDialog.cancel();
-        };
-
-        $scope.answer = function(answer) {
-          $mdDialog.hide(answer);
-        };
-      }
-    }
-    /*
-    MDSliderCtrl
-     */
-    MDSliderCtrl.$inject = ['$scope'];
-    function MDSliderCtrl($scope) {
-
-      $scope.color = {
-        red: Math.floor(Math.random() * 255),
-        green: Math.floor(Math.random() * 255),
-        blue: Math.floor(Math.random() * 255)
-      };
-
-      $scope.rating1 = 3;
-      $scope.rating2 = 2;
-      $scope.rating3 = 4;
-
-      $scope.disabled1 = 0;
-      $scope.disabled2 = 70;
-    }
-    /*
-    MDSelectCtrl
-     */
-    function MDSelectCtrl() {
-      
-      var vm = this;
-      
-      vm.userState = '';
-      vm.states = ('AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS ' +
-          'MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI ' +
-          'WY').split(' ').map(function (state) { return { abbrev: state }; });
-
-      vm.sizes = [
-          'small (12-inch)',
-          'medium (14-inch)',
-          'large (16-inch)',
-          'insane (42-inch)'
-      ];
-      vm.toppings = [
-        { category: 'meat', name: 'Pepperoni' },
-        { category: 'meat', name: 'Sausage' },
-        { category: 'meat', name: 'Ground Beef' },
-        { category: 'meat', name: 'Bacon' },
-        { category: 'veg', name: 'Mushrooms' },
-        { category: 'veg', name: 'Onion' },
-        { category: 'veg', name: 'Green Pepper' },
-        { category: 'veg', name: 'Green Olives' }
-      ];
-    }
-    /*
-    MDInputCtrl
-     */
-    MDInputCtrl.$inject = ['$scope'];
-    function MDInputCtrl($scope) {
-      $scope.user = {
-        title: 'Developer',
-        email: 'ipsum@lorem.com',
-        firstName: '',
-        lastName: '' ,
-        company: 'Google' ,
-        address: '1600 Amphitheatre Pkwy' ,
-        city: 'Mountain View' ,
-        state: 'CA' ,
-        biography: 'Loves kittens, snowboarding, and can type at 130 WPM.\n\nAnd rumor has it she bouldered up Castle Craig!',
-        postalCode : '94043'
-      };
-      $scope.project = {
-        description: 'Nuclear Missile Defense System',
-        clientName: 'Bill Clinton',
-        rate: 500
-      };
-    }
-    /*
-    MDProgressCtrl
-     */
-    MDProgressCtrl.$inject = ['$scope', '$interval'];
-    function MDProgressCtrl($scope, $interval) {
-        $scope.mode = 'query';
-        $scope.determinateValue = 30;
-        $scope.determinateValue2 = 30;
-
-        $interval(function() {
-          $scope.determinateValue += 1;
-          $scope.determinateValue2 += 1.5;
-          if ($scope.determinateValue > 100) {
-            $scope.determinateValue = 30;
-            $scope.determinateValue2 = 30;
-          }
-        }, 100, 0, true);
-
-        $interval(function() {
-          $scope.mode = ($scope.mode === 'query' ? 'determinate' : 'query');
-        }, 7200, 0, true);
-    }
-    /*
-    MDSidenavCtrl
-     */
-    MDSidenavCtrl.$inject = ['$scope', '$timeout', '$mdSidenav', '$log'];
-    function MDSidenavCtrl($scope, $timeout, $mdSidenav, $log) {
-      $scope.toggleLeft = function() {
-        $mdSidenav('left').toggle()
-                          .then(function(){
-                              $log.debug('toggle left is done');
-                          });
-      };
-      $scope.toggleRight = function() {
-        $mdSidenav('right').toggle()
-                            .then(function(){
-                              $log.debug('toggle RIGHT is done');
-                            });
-      };
-      $scope.closeLeft = function() {
-        $mdSidenav('left').close()
-                          .then(function(){
-                            $log.debug('close LEFT is done');
-                          });
-
-      };
-      $scope.closeRight = function() {
-        $mdSidenav('right').close()
-                            .then(function(){
-                              $log.debug('close RIGHT is done');
-                            });
-      };
-    }
-    /*
-    MDSubheaderCtrl
-     */
-    MDSubheaderCtrl.$inject = ['$scope'];
-    function MDSubheaderCtrl($scope) {
-        $scope.messages = [
-          {
-            face : 'app/img/user/10.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/01.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/02.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/03.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/04.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/05.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/06.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/07.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/08.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/09.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-          {
-            face : 'app/img/user/11.jpg',
-            what: 'Brunch this weekend?',
-            who: 'Min Li Chan',
-            when: '3:08PM',
-            notes: 'I\'ll be in your neighborhood doing errands'
-          },
-        ];
-    }
-    /*
-    MDToastCtrl
-     */
-    MDToastCtrl.$inject = ['$scope', '$mdToast'];
-    function MDToastCtrl($scope, $mdToast) {
-
-      $scope.toastPosition = {
-        bottom: false,
-        top: true,
-        left: false,
-        right: true
-      };
-
-      $scope.getToastPosition = function() {
-        return Object.keys($scope.toastPosition)
-          .filter(function(pos) { return $scope.toastPosition[pos]; })
-          .join(' ');
-      };
-
-      $scope.showCustomToast = function() {
-        $mdToast.show({
-          controller: 'ToastCtrl',
-          templateUrl: 'toast-template.html',
-          hideDelay: 60000,
-          parent:'#toastcontainer',
-          position: $scope.getToastPosition()
-        });
-      };
-
-      $scope.showSimpleToast = function() {
-        $mdToast.show(
-          $mdToast.simple()
-            .content('Simple Toast!')
-            .position($scope.getToastPosition())
-            .hideDelay(30000)
-        );
-      };
-
-      $scope.showActionToast = function() {
-        var toast = $mdToast.simple()
-              .content('Action Toast!')
-              .action('OK')
-              .highlightAction(false)
-              .position($scope.getToastPosition());
-
-        $mdToast.show(toast).then(function() {
-          alert('You clicked \'OK\'.');
-        });
-      };
-    }
-    /*
-    ToastCtrl
-     */
-    ToastCtrl.$inject = ['$scope', '$mdToast'];
-    function ToastCtrl($scope, $mdToast) {
-      $scope.closeToast = function() {
-        $mdToast.hide();
-      };
-    }
-    /*
-    MDTooltipCtrl
-     */
-    MDTooltipCtrl.$inject = ['$scope'];
-    function MDTooltipCtrl($scope) {
-      $scope.demo = {};
-    }
-    /*
-    BottomSheetExample
-     */
-    BottomSheetExample.$inject = ['$scope', '$timeout', '$mdBottomSheet'];
-    function BottomSheetExample($scope, $timeout, $mdBottomSheet) {
-      $scope.alert = '';
-
-      $scope.showListBottomSheet = function($event) {
-        $scope.alert = '';
-        $mdBottomSheet.show({
-          templateUrl: 'bottom-sheet-list-template.html',
-          controller: 'ListBottomSheetCtrl',
-          targetEvent: $event,
-          parent: '#bottomsheetcontainer',
-          disableParentScroll: false
-        }).then(function(clickedItem) {
-          $scope.alert = clickedItem.name + ' clicked!';
-        });
-      };
-
-      $scope.showGridBottomSheet = function($event) {
-        $scope.alert = '';
-        $mdBottomSheet.show({
-          templateUrl: 'bottom-sheet-grid-template.html',
-          controller: 'GridBottomSheetCtrl',
-          targetEvent: $event,
-          parent: '#bottomsheetcontainer',
-          disableParentScroll: false
-        }).then(function(clickedItem) {
-          $scope.alert = clickedItem.name + ' clicked!';
-        });
-      };
-    }
-    /*
-    ListBottomSheetCtrl
-     */
-    ListBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
-    function ListBottomSheetCtrl($scope, $mdBottomSheet) {
-
-      $scope.items = [
-        { name: 'Share', icon: 'share-arrow' },
-        { name: 'Upload', icon: 'upload' },
-        { name: 'Copy', icon: 'copy' },
-        { name: 'Print this page', icon: 'print' },
-      ];
-
-      $scope.listItemClick = function($index) {
-        var clickedItem = $scope.items[$index];
-        $mdBottomSheet.hide(clickedItem);
-      };
-    }
-    /*
-    GridBottomSheetCtrl
-     */
-    GridBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
-    function GridBottomSheetCtrl($scope, $mdBottomSheet) {
-      $scope.items = [
-        { name: 'Hangout', icon: 'hangout' },
-        { name: 'Mail', icon: 'mail' },
-        { name: 'Message', icon: 'message' },
-        { name: 'Copy', icon: 'copy2' },
-        { name: 'Facebook', icon: 'facebook' },
-        { name: 'Twitter', icon: 'twitter' },
-      ];
-
-      $scope.listItemClick = function($index) {
-        var clickedItem = $scope.items[$index];
-        $mdBottomSheet.hide(clickedItem);
-      };
-    }
-
-
-})();
-
-(function() {
-    'use strict';
-    // Used only for the BottomSheetExample
-    angular
-        .module('app.material')
-        .run(materialRun)
-        ;
-    materialRun.$inject = ['$http', '$templateCache'];
-    function materialRun($http, $templateCache){
-      var urls = [
-        'app/img/icons/share-arrow.svg',
-        'app/img/icons/upload.svg',
-        'app/img/icons/copy.svg',
-        'app/img/icons/print.svg',
-        'app/img/icons/hangout.svg',
-        'app/img/icons/mail.svg',
-        'app/img/icons/message.svg',
-        'app/img/icons/copy2.svg',
-        'app/img/icons/facebook.svg',
-        'app/img/icons/twitter.svg'
-      ];
-
-      angular.forEach(urls, function(url) {
-        $http.get(url, {cache: $templateCache});
-      });
-
-    }
-
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.material')
-        .controller('MaterialWidgetsController', MaterialWidgetsController);
-
-    MaterialWidgetsController.$inject = ['Colors'];
-    function MaterialWidgetsController(Colors) {
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-
-          vm.sparkOption1 = {
-            type : 'line',
-            width : '100%',
-            height : '140px',
-            tooltipOffsetX : -20,
-            tooltipOffsetY : 20,
-            lineColor : Colors.byName('success'),
-            fillColor : Colors.byName('success'),
-            spotColor : 'rgba(0,0,0,.26)',
-            minSpotColor : 'rgba(0,0,0,.26)',
-            maxSpotColor : 'rgba(0,0,0,.26)',
-            highlightSpotColor : 'rgba(0,0,0,.26)',
-            highlightLineColor : 'rgba(0,0,0,.26)',
-            spotRadius : 2,
-            tooltipPrefix : '',
-            tooltipSuffix : ' Visits',
-            tooltipFormat : '{{prefix}}{{y}}{{suffix}}',
-            chartRangeMin: 0,
-            resize: true
-          };
-
-          vm.sparkOptionPie = {
-            type: 'pie',
-            width : '2em',
-            height : '2em',
-            sliceColors: [ Colors.byName('success'), Colors.byName('gray-light')]
-          };
-        
-        }
-    }
-})();
 (function() {
     'use strict';
 
@@ -2947,6 +2213,740 @@
     }
 })();
 
+
+(function() {
+    'use strict';
+    // Used only for the BottomSheetExample
+    angular
+        .module('app.material')
+        .config(materialConfig)
+        ;
+    materialConfig.$inject = ['$mdIconProvider'];
+    function materialConfig($mdIconProvider){
+      $mdIconProvider
+        .icon('share-arrow', 'app/img/icons/share-arrow.svg', 24)
+        .icon('upload', 'app/img/icons/upload.svg', 24)
+        .icon('copy', 'app/img/icons/copy.svg', 24)
+        .icon('print', 'app/img/icons/print.svg', 24)
+        .icon('hangout', 'app/img/icons/hangout.svg', 24)
+        .icon('mail', 'app/img/icons/mail.svg', 24)
+        .icon('message', 'app/img/icons/message.svg', 24)
+        .icon('copy2', 'app/img/icons/copy2.svg', 24)
+        .icon('facebook', 'app/img/icons/facebook.svg', 24)
+        .icon('twitter', 'app/img/icons/twitter.svg', 24);
+    }
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.material')
+        .controller('MDAutocompleteCtrl', MDAutocompleteCtrl)
+        .controller('MDBottomSheetCtrl', MDBottomSheetCtrl)
+        .controller('MDListBottomSheetCtrl', MDListBottomSheetCtrl)
+        .controller('MDGridBottomSheetCtrl', MDGridBottomSheetCtrl)
+        .controller('MDCheckboxCtrl', MDCheckboxCtrl)
+        .controller('MDRadioCtrl', MDRadioCtrl)
+        .controller('MDSwitchCtrl', MDSwitchCtrl)
+        .controller('MDDialogCtrl', MDDialogCtrl)
+        .controller('MDSliderCtrl', MDSliderCtrl)
+        .controller('MDSelectCtrl', MDSelectCtrl)
+        .controller('MDInputCtrl', MDInputCtrl)
+        .controller('MDProgressCtrl', MDProgressCtrl)
+        .controller('MDSidenavCtrl', MDSidenavCtrl)
+        .controller('MDSubheaderCtrl', MDSubheaderCtrl)
+        .controller('MDToastCtrl', MDToastCtrl)
+          .controller('ToastCtrl', ToastCtrl)
+        .controller('MDTooltipCtrl', MDTooltipCtrl)
+        .controller('BottomSheetExample', BottomSheetExample)
+          .controller('ListBottomSheetCtrl', ListBottomSheetCtrl)
+          .controller('GridBottomSheetCtrl', GridBottomSheetCtrl)
+        ;
+
+    /*
+      MDAutocompleteCtrl
+     */
+    MDAutocompleteCtrl.$inject = ['$scope', '$timeout', '$q'];
+    function MDAutocompleteCtrl($scope, $timeout, $q) {
+      var self = this;
+
+      self.states        = loadAll();
+      self.selectedItem  = null;
+      self.searchText    = null;
+      self.querySearch   = querySearch;
+      self.simulateQuery = false;
+      self.isDisabled    = false;
+
+      // use $timeout to simulate remote dataservice call
+      function querySearch (query) {
+        var results = query ? self.states.filter( createFilterFor(query) ) : [],
+            deferred;
+        if (self.simulateQuery) {
+          deferred = $q.defer();
+          $timeout(function () { deferred.resolve( results ); }, Math.random() * 1000, false);
+          return deferred.promise;
+        } else {
+          return results;
+        }
+      }
+
+      function loadAll() {
+        var allStates = 'Alabama, Alaska, Arizona, Arkansas, California, Colorado, Connecticut, Delaware, Florida, Georgia, Hawaii, Idaho, Illinois, Indiana, Iowa, Kansas, Kentucky, Louisiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, Mississippi, Missouri, Montana, Nebraska, Nevada, New Hampshire, New Jersey, New Mexico, New York, North Carolina, North Dakota, Ohio, Oklahoma, Oregon, Pennsylvania, Rhode Island, South Carolina, South Dakota, Tennessee, Texas, Utah, Vermont, Virginia, Washington, West Virginia, Wisconsin, Wyoming';
+
+        return allStates.split(/, +/g).map( function (state) {
+          return {
+            value: state.toLowerCase(),
+            display: state
+          };
+        });
+      }
+
+          /**
+           * Create filter function for a query string
+           */
+          function createFilterFor(query) {
+            var lowercaseQuery = angular.lowercase(query);
+
+            return function filterFn(state) {
+              return (state.value.indexOf(lowercaseQuery) === 0);
+            };
+
+          }
+        }
+
+    /*
+    MDBottomSheetCtrl
+     */
+    MDBottomSheetCtrl.$inject = ['$scope', '$timeout', '$mdBottomSheet'];
+    function MDBottomSheetCtrl($scope, $timeout, $mdBottomSheet) {
+      $scope.alert = '';
+
+      $scope.showListBottomSheet = function($event) {
+        $scope.alert = '';
+        $mdBottomSheet.show({
+          templateUrl: 'bottom-sheet-list-template.html',
+          controller: 'ListBottomSheetCtrl',
+          targetEvent: $event,
+          disableParentScroll: false
+        }).then(function(clickedItem) {
+          $scope.alert = clickedItem.name + ' clicked!';
+        });
+      };
+
+      $scope.showGridBottomSheet = function($event) {
+        $scope.alert = '';
+        $mdBottomSheet.show({
+          templateUrl: 'bottom-sheet-grid-template.html',
+          controller: 'GridBottomSheetCtrl',
+          targetEvent: $event,
+          disableParentScroll: false
+        }).then(function(clickedItem) {
+          $scope.alert = clickedItem.name + ' clicked!';
+        });
+      };
+    }
+    /*
+    MDListBottomSheetCtrl
+     */
+    MDListBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
+    function MDListBottomSheetCtrl($scope, $mdBottomSheet) {
+
+      $scope.items = [
+        { name: 'Share', icon: 'share' },
+        { name: 'Upload', icon: 'upload' },
+        { name: 'Copy', icon: 'copy' },
+        { name: 'Print this page', icon: 'print' },
+      ];
+
+      $scope.listItemClick = function($index) {
+        var clickedItem = $scope.items[$index];
+        $mdBottomSheet.hide(clickedItem);
+      };
+    }
+    /*
+    MDGridBottomSheetCtrl
+     */
+    MDGridBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
+    function MDGridBottomSheetCtrl($scope, $mdBottomSheet) {
+
+      $scope.items = [
+        { name: 'Hangout', icon: 'hangout' },
+        { name: 'Mail', icon: 'mail' },
+        { name: 'Message', icon: 'message' },
+        { name: 'Copy', icon: 'copy' },
+        { name: 'Facebook', icon: 'facebook' },
+        { name: 'Twitter', icon: 'twitter' },
+      ];
+
+      $scope.listItemClick = function($index) {
+        var clickedItem = $scope.items[$index];
+        $mdBottomSheet.hide(clickedItem);
+      };
+    }
+    /*
+    MDCheckboxCtrl
+     */
+    MDCheckboxCtrl.$inject = ['$scope'];
+    function MDCheckboxCtrl($scope) {
+
+      $scope.data = {};
+      $scope.data.cb1 = true;
+      $scope.data.cb2 = false;
+      $scope.data.cb3 = false;
+      $scope.data.cb4 = false;
+      $scope.data.cb5 = false;
+    }
+    /*
+    MDRadioCtrl
+     */
+    MDRadioCtrl.$inject = ['$scope'];
+    function MDRadioCtrl($scope) {
+
+        $scope.data = {
+          group1 : 'Banana',
+          group2 : '2',
+          group3 : 'avatar-1'
+        };
+
+        $scope.avatarData = [{
+            id: 'svg-1',
+            title: 'avatar 1',
+            value: 'avatar-1'
+          },{
+            id: 'svg-2',
+            title: 'avatar 2',
+            value: 'avatar-2'
+          },{
+            id: 'svg-3',
+            title: 'avatar 3',
+            value: 'avatar-3'
+        }];
+
+        $scope.radioData = [
+          { label: 'Apple', value: 1 },
+          { label: 'Banana', value: 2 },
+          { label: 'Mango', value: '3', isDisabled: true }
+        ];
+
+
+        $scope.submit = function() {
+          alert('submit');
+        };
+
+        var vals = ['Apple', 'Banana', 'Mango', 'Grape', 'Melon', 'Strawberry', 'Kiwi'];
+        $scope.addItem = function() {
+          var rval = vals[Math.floor(Math.random() * vals.length)];
+          $scope.radioData.push({ label: rval, value: rval });
+        };
+
+        $scope.removeItem = function() {
+          $scope.radioData.pop();
+        };
+    }
+    /*
+    MDSwitchCtrl
+     */
+    MDSwitchCtrl.$inject = ['$scope'];
+    function MDSwitchCtrl($scope) {
+      $scope.data = {
+        cb1: true,
+        cb4: true
+      };
+      
+      $scope.onChange = function(cbState){
+         $scope.message = 'The switch is now: ' + cbState;
+      };
+    }
+    /*
+    MDDialogCtrl
+     */
+    MDDialogCtrl.$inject = ['$scope', '$mdDialog'];
+    function MDDialogCtrl($scope, $mdDialog) {
+      $scope.alert = '';
+
+      $scope.showAlert = function(ev) {
+        $mdDialog.show(
+          $mdDialog.alert()
+            .title('This is an alert title')
+            .content('You can specify some description text in here.')
+            .ariaLabel('Password notification')
+            .ok('Got it!')
+            .targetEvent(ev)
+        );
+      };
+
+      $scope.showConfirm = function(ev) {
+        var confirm = $mdDialog.confirm()
+          .title('Would you like to delete your debt?')
+          .content('All of the banks have agreed to forgive you your debts.')
+          .ariaLabel('Lucky day')
+          .ok('Please do it!')
+          .cancel('Sounds like a scam')
+          .targetEvent(ev);
+
+        $mdDialog.show(confirm).then(function() {
+          $scope.alert = 'You decided to get rid of your debt.';
+        }, function() {
+          $scope.alert = 'You decided to keep your debt.';
+        });
+      };
+
+      $scope.showAdvanced = function(ev) {
+        $mdDialog.show({
+          controller: DialogController,
+          templateUrl: 'dialog1.tmpl.html',
+          targetEvent: ev,
+        })
+        .then(function(answer) {
+          $scope.alert = 'You said the information was \'' + answer + '\'.';
+        }, function() {
+          $scope.alert = 'You cancelled the dialog.';
+        });
+      };
+      DialogController.$inject = ['$scope', '$mdDialog'];
+      function DialogController($scope, $mdDialog) {
+        $scope.hide = function() {
+          $mdDialog.hide();
+        };
+
+        $scope.cancel = function() {
+          $mdDialog.cancel();
+        };
+
+        $scope.answer = function(answer) {
+          $mdDialog.hide(answer);
+        };
+      }
+    }
+    /*
+    MDSliderCtrl
+     */
+    MDSliderCtrl.$inject = ['$scope'];
+    function MDSliderCtrl($scope) {
+
+      $scope.color = {
+        red: Math.floor(Math.random() * 255),
+        green: Math.floor(Math.random() * 255),
+        blue: Math.floor(Math.random() * 255)
+      };
+
+      $scope.rating1 = 3;
+      $scope.rating2 = 2;
+      $scope.rating3 = 4;
+
+      $scope.disabled1 = 0;
+      $scope.disabled2 = 70;
+    }
+    /*
+    MDSelectCtrl
+     */
+    function MDSelectCtrl() {
+      
+      var vm = this;
+      
+      vm.userState = '';
+      vm.states = ('AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS ' +
+          'MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI ' +
+          'WY').split(' ').map(function (state) { return { abbrev: state }; });
+
+      vm.sizes = [
+          'small (12-inch)',
+          'medium (14-inch)',
+          'large (16-inch)',
+          'insane (42-inch)'
+      ];
+      vm.toppings = [
+        { category: 'meat', name: 'Pepperoni' },
+        { category: 'meat', name: 'Sausage' },
+        { category: 'meat', name: 'Ground Beef' },
+        { category: 'meat', name: 'Bacon' },
+        { category: 'veg', name: 'Mushrooms' },
+        { category: 'veg', name: 'Onion' },
+        { category: 'veg', name: 'Green Pepper' },
+        { category: 'veg', name: 'Green Olives' }
+      ];
+    }
+    /*
+    MDInputCtrl
+     */
+    MDInputCtrl.$inject = ['$scope'];
+    function MDInputCtrl($scope) {
+      $scope.user = {
+        title: 'Developer',
+        email: 'ipsum@lorem.com',
+        firstName: '',
+        lastName: '' ,
+        company: 'Google' ,
+        address: '1600 Amphitheatre Pkwy' ,
+        city: 'Mountain View' ,
+        state: 'CA' ,
+        biography: 'Loves kittens, snowboarding, and can type at 130 WPM.\n\nAnd rumor has it she bouldered up Castle Craig!',
+        postalCode : '94043'
+      };
+      $scope.project = {
+        description: 'Nuclear Missile Defense System',
+        clientName: 'Bill Clinton',
+        rate: 500
+      };
+    }
+    /*
+    MDProgressCtrl
+     */
+    MDProgressCtrl.$inject = ['$scope', '$interval'];
+    function MDProgressCtrl($scope, $interval) {
+        $scope.mode = 'query';
+        $scope.determinateValue = 30;
+        $scope.determinateValue2 = 30;
+
+        $interval(function() {
+          $scope.determinateValue += 1;
+          $scope.determinateValue2 += 1.5;
+          if ($scope.determinateValue > 100) {
+            $scope.determinateValue = 30;
+            $scope.determinateValue2 = 30;
+          }
+        }, 100, 0, true);
+
+        $interval(function() {
+          $scope.mode = ($scope.mode === 'query' ? 'determinate' : 'query');
+        }, 7200, 0, true);
+    }
+    /*
+    MDSidenavCtrl
+     */
+    MDSidenavCtrl.$inject = ['$scope', '$timeout', '$mdSidenav', '$log'];
+    function MDSidenavCtrl($scope, $timeout, $mdSidenav, $log) {
+      $scope.toggleLeft = function() {
+        $mdSidenav('left').toggle()
+                          .then(function(){
+                              $log.debug('toggle left is done');
+                          });
+      };
+      $scope.toggleRight = function() {
+        $mdSidenav('right').toggle()
+                            .then(function(){
+                              $log.debug('toggle RIGHT is done');
+                            });
+      };
+      $scope.closeLeft = function() {
+        $mdSidenav('left').close()
+                          .then(function(){
+                            $log.debug('close LEFT is done');
+                          });
+
+      };
+      $scope.closeRight = function() {
+        $mdSidenav('right').close()
+                            .then(function(){
+                              $log.debug('close RIGHT is done');
+                            });
+      };
+    }
+    /*
+    MDSubheaderCtrl
+     */
+    MDSubheaderCtrl.$inject = ['$scope'];
+    function MDSubheaderCtrl($scope) {
+        $scope.messages = [
+          {
+            face : 'app/img/user/10.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/01.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/02.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/03.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/04.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/05.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/06.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/07.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/08.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/09.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+          {
+            face : 'app/img/user/11.jpg',
+            what: 'Brunch this weekend?',
+            who: 'Min Li Chan',
+            when: '3:08PM',
+            notes: 'I\'ll be in your neighborhood doing errands'
+          },
+        ];
+    }
+    /*
+    MDToastCtrl
+     */
+    MDToastCtrl.$inject = ['$scope', '$mdToast'];
+    function MDToastCtrl($scope, $mdToast) {
+
+      $scope.toastPosition = {
+        bottom: false,
+        top: true,
+        left: false,
+        right: true
+      };
+
+      $scope.getToastPosition = function() {
+        return Object.keys($scope.toastPosition)
+          .filter(function(pos) { return $scope.toastPosition[pos]; })
+          .join(' ');
+      };
+
+      $scope.showCustomToast = function() {
+        $mdToast.show({
+          controller: 'ToastCtrl',
+          templateUrl: 'toast-template.html',
+          hideDelay: 60000,
+          parent:'#toastcontainer',
+          position: $scope.getToastPosition()
+        });
+      };
+
+      $scope.showSimpleToast = function() {
+        $mdToast.show(
+          $mdToast.simple()
+            .content('Simple Toast!')
+            .position($scope.getToastPosition())
+            .hideDelay(30000)
+        );
+      };
+
+      $scope.showActionToast = function() {
+        var toast = $mdToast.simple()
+              .content('Action Toast!')
+              .action('OK')
+              .highlightAction(false)
+              .position($scope.getToastPosition());
+
+        $mdToast.show(toast).then(function() {
+          alert('You clicked \'OK\'.');
+        });
+      };
+    }
+    /*
+    ToastCtrl
+     */
+    ToastCtrl.$inject = ['$scope', '$mdToast'];
+    function ToastCtrl($scope, $mdToast) {
+      $scope.closeToast = function() {
+        $mdToast.hide();
+      };
+    }
+    /*
+    MDTooltipCtrl
+     */
+    MDTooltipCtrl.$inject = ['$scope'];
+    function MDTooltipCtrl($scope) {
+      $scope.demo = {};
+    }
+    /*
+    BottomSheetExample
+     */
+    BottomSheetExample.$inject = ['$scope', '$timeout', '$mdBottomSheet'];
+    function BottomSheetExample($scope, $timeout, $mdBottomSheet) {
+      $scope.alert = '';
+
+      $scope.showListBottomSheet = function($event) {
+        $scope.alert = '';
+        $mdBottomSheet.show({
+          templateUrl: 'bottom-sheet-list-template.html',
+          controller: 'ListBottomSheetCtrl',
+          targetEvent: $event,
+          parent: '#bottomsheetcontainer',
+          disableParentScroll: false
+        }).then(function(clickedItem) {
+          $scope.alert = clickedItem.name + ' clicked!';
+        });
+      };
+
+      $scope.showGridBottomSheet = function($event) {
+        $scope.alert = '';
+        $mdBottomSheet.show({
+          templateUrl: 'bottom-sheet-grid-template.html',
+          controller: 'GridBottomSheetCtrl',
+          targetEvent: $event,
+          parent: '#bottomsheetcontainer',
+          disableParentScroll: false
+        }).then(function(clickedItem) {
+          $scope.alert = clickedItem.name + ' clicked!';
+        });
+      };
+    }
+    /*
+    ListBottomSheetCtrl
+     */
+    ListBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
+    function ListBottomSheetCtrl($scope, $mdBottomSheet) {
+
+      $scope.items = [
+        { name: 'Share', icon: 'share-arrow' },
+        { name: 'Upload', icon: 'upload' },
+        { name: 'Copy', icon: 'copy' },
+        { name: 'Print this page', icon: 'print' },
+      ];
+
+      $scope.listItemClick = function($index) {
+        var clickedItem = $scope.items[$index];
+        $mdBottomSheet.hide(clickedItem);
+      };
+    }
+    /*
+    GridBottomSheetCtrl
+     */
+    GridBottomSheetCtrl.$inject = ['$scope', '$mdBottomSheet'];
+    function GridBottomSheetCtrl($scope, $mdBottomSheet) {
+      $scope.items = [
+        { name: 'Hangout', icon: 'hangout' },
+        { name: 'Mail', icon: 'mail' },
+        { name: 'Message', icon: 'message' },
+        { name: 'Copy', icon: 'copy2' },
+        { name: 'Facebook', icon: 'facebook' },
+        { name: 'Twitter', icon: 'twitter' },
+      ];
+
+      $scope.listItemClick = function($index) {
+        var clickedItem = $scope.items[$index];
+        $mdBottomSheet.hide(clickedItem);
+      };
+    }
+
+
+})();
+
+(function() {
+    'use strict';
+    // Used only for the BottomSheetExample
+    angular
+        .module('app.material')
+        .run(materialRun)
+        ;
+    materialRun.$inject = ['$http', '$templateCache'];
+    function materialRun($http, $templateCache){
+      var urls = [
+        'app/img/icons/share-arrow.svg',
+        'app/img/icons/upload.svg',
+        'app/img/icons/copy.svg',
+        'app/img/icons/print.svg',
+        'app/img/icons/hangout.svg',
+        'app/img/icons/mail.svg',
+        'app/img/icons/message.svg',
+        'app/img/icons/copy2.svg',
+        'app/img/icons/facebook.svg',
+        'app/img/icons/twitter.svg'
+      ];
+
+      angular.forEach(urls, function(url) {
+        $http.get(url, {cache: $templateCache});
+      });
+
+    }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.material')
+        .controller('MaterialWidgetsController', MaterialWidgetsController);
+
+    MaterialWidgetsController.$inject = ['Colors'];
+    function MaterialWidgetsController(Colors) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+
+          vm.sparkOption1 = {
+            type : 'line',
+            width : '100%',
+            height : '140px',
+            tooltipOffsetX : -20,
+            tooltipOffsetY : 20,
+            lineColor : Colors.byName('success'),
+            fillColor : Colors.byName('success'),
+            spotColor : 'rgba(0,0,0,.26)',
+            minSpotColor : 'rgba(0,0,0,.26)',
+            maxSpotColor : 'rgba(0,0,0,.26)',
+            highlightSpotColor : 'rgba(0,0,0,.26)',
+            highlightLineColor : 'rgba(0,0,0,.26)',
+            spotRadius : 2,
+            tooltipPrefix : '',
+            tooltipSuffix : ' Visits',
+            tooltipFormat : '{{prefix}}{{y}}{{suffix}}',
+            chartRangeMin: 0,
+            resize: true
+          };
+
+          vm.sparkOptionPie = {
+            type: 'pie',
+            width : '2em',
+            height : '2em',
+            sliceColors: [ Colors.byName('success'), Colors.byName('gray-light')]
+          };
+        
+        }
+    }
+})();
 /**
  * Created by Yoni on 1/8/2018.
  */
@@ -3168,6 +3168,14 @@ function runBlock() {
         .module('app.profile', []);
 
 })();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.report', []);
+
+})();
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -3177,14 +3185,6 @@ function runBlock() {
 
     angular
         .module('app.welcomePage', []);
-
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.report', []);
 
 })();
 
@@ -6112,6 +6112,141 @@ var INDICATOR = {
     }
 
 })(window.angular);
+(function(angular) {
+    "use strict";
+
+
+    angular
+        .module('app.report')
+        .controller('DashboardController', DashboardController);
+
+    DashboardController.$inject = ['ReportService', 'SharedService','Colors'];
+
+    function DashboardController( ReportService,SharedService,Colors )
+    {
+        var vm = this;
+
+        ReportService.GetLineChartReport().then(function (report) {
+            var chartData = report.data;
+            var no_of_clients = _.pluck(chartData,'no_of_clients');
+            var total_loan_amount = _.map(chartData, function(data){ return data.total_loan_amount; });  // _.pluck(chartData,'total_loan_amount');
+
+            vm.barLabels = _.pluck(chartData,'crop');
+            vm.barSeries_byClient = ['Number of Clients'];
+            vm.barSeries_byAmount = ['Total Loan Amount'];
+            vm.barData_byClient = [ no_of_clients ];
+            vm.barData_byAmount = [ total_loan_amount ];
+            vm.barColors_byClient = [{backgroundColor: Colors.byName('green')}];
+            vm.barColors_byAmount = [{backgroundColor: Colors.byName('primary')}];
+
+        });
+
+        init();
+
+
+
+        function init() {
+            vm.count = {
+                branch: 0,
+                client: 0,
+                user: 0};
+
+            getAllCounts();
+
+            // Pie Chart
+            // ------------------
+            vm.pieLabels = ["Screening", "Loan", "ACAT"];
+            vm.pieData = [300, 500, 100];
+            vm.pieColors = [Colors.byName('green'), Colors.byName('purple'), Colors.byName('yellow')];
+
+        }
+
+        function getAllCounts() {
+            SharedService.GetBranches().then(function (value) {
+                vm.count.branch = value.data.docs.length;
+            });
+            SharedService.GetUsers().then(function (value) {
+                vm.count.user = value.data.docs.length;
+            });
+            SharedService.GetClients().then(function (value) {
+                vm.count.client = value.data.docs.length;
+            });
+        }
+
+    }
+
+})(window.angular);
+(function(angular) {
+    "use strict";
+
+
+    angular
+        .module('app.report')
+        .controller('ReportController', ReportController);
+
+    ReportController.$inject = ['ReportService', 'blockUI','AlertService'];
+
+    function ReportController( ReportService,blockUI,AlertService )
+    {
+        var vm = this;
+        vm.onSelectedReport = _onSelectedReport;
+        vm.reports = [
+            {
+                name: 'report 1',
+                data: []
+            },
+            {
+                name: 'report 2',
+                data: []
+            },
+            {
+                name: 'report 3',
+                data: []
+            }
+        ];
+
+        init();
+
+        function _onSelectedReport() {
+            console.log("report ",vm.report);
+        }
+
+
+        function init() {
+            ReportService.GetClientHistoryReport().then(function (report) {
+                vm.reportData = report.data;
+            });
+        }
+
+    }
+
+})(window.angular);
+(function(angular) {
+    'use strict';
+    angular.module('app.report')
+
+        .service('ReportService', ReportService);
+
+    ReportService.$inject = ['$http','CommonService','Colors'];
+
+    function ReportService($http, CommonService, Colors) {
+        // {{bidir_reports_service}}/5c0ce5e7c3bb100001b218e7
+
+        return {
+            GetLineChartReport:_getLineChartReport,
+            GetClientHistoryReport:_getClientHistoryReport,
+            barColors: [{backgroundColor: Colors.byName('success'), borderColor: Colors.byName('success')}, {backgroundColor: Colors.byName('info'),  borderColor: Colors.byName('info') }]
+        };
+
+        function _getLineChartReport(config){
+            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.Report) + '5c0ce5e7c3bb100001b218e7');
+        }
+        function _getClientHistoryReport(){
+            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.Report) + '5c0de708d836a80001357602?client=5c0e1d76afef1b0001f6a96d');
+        }
+    }
+
+})(window.angular);
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -6241,129 +6376,6 @@ var INDICATOR = {
                 }
             };
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
-        }
-    }
-
-})(window.angular);
-(function(angular) {
-    "use strict";
-
-
-    angular
-        .module('app.report')
-        .controller('DashboardController', DashboardController);
-
-    DashboardController.$inject = ['ReportService', 'SharedService','AlertService'];
-
-    function DashboardController( ReportService,SharedService,AlertService )
-    {
-        var vm = this;
-
-        ReportService.GetLineChartReport().then(function (report) {
-            var chartData = report.data;
-            var no_of_clients = _.pluck(chartData,'no_of_clients');
-            var total_loan_amount = _.map(chartData, function(data){ return data.total_loan_amount; });  // _.pluck(chartData,'total_loan_amount');
-
-            vm.barLabels = _.pluck(chartData,'crop');
-            vm.barSeries_byClient = ['Number of Clients'];
-            vm.barSeries_byAmount = ['Total Loan Amount'];
-            vm.barData_byClient = [ no_of_clients ];
-            vm.barData_byAmount = [ total_loan_amount ];
-            vm.barColors_byClient = ReportService.barColors;
-            vm.barColors_byAmount = [{backgroundColor: Colors.byName('info'),  borderColor: Colors.byName('info') },{backgroundColor: Colors.byName('primary'), borderColor: Colors.byName('primary')}];
-
-        });
-
-        init();
-
-        function init() {
-            vm.count = {
-                branch: 0,
-                client: 0,
-                user: 0};
-
-            SharedService.GetBranches().then(function (value) {
-                vm.count.branch = value.data.docs.length;
-            });
-            SharedService.GetUsers().then(function (value) {
-                vm.count.user = value.data.docs.length;
-            });
-            SharedService.GetClients().then(function (value) {
-                vm.count.client = value.data.docs.length;
-            });
-
-        }
-
-    }
-
-})(window.angular);
-(function(angular) {
-    "use strict";
-
-
-    angular
-        .module('app.report')
-        .controller('ReportController', ReportController);
-
-    ReportController.$inject = ['ReportService', 'blockUI','AlertService'];
-
-    function ReportController( ReportService,blockUI,AlertService )
-    {
-        var vm = this;
-        vm.onSelectedReport = _onSelectedReport;
-        vm.reports = [
-            {
-                name: 'report 1',
-                data: []
-            },
-            {
-                name: 'report 2',
-                data: []
-            },
-            {
-                name: 'report 3',
-                data: []
-            }
-        ];
-
-        init();
-
-        function _onSelectedReport() {
-            console.log("report ",vm.report);
-        }
-
-
-        function init() {
-            ReportService.GetClientHistoryReport().then(function (report) {
-                vm.reportData = report.data;
-            });
-        }
-
-    }
-
-})(window.angular);
-(function(angular) {
-    'use strict';
-    angular.module('app.report')
-
-        .service('ReportService', ReportService);
-
-    ReportService.$inject = ['$http','CommonService','Colors'];
-
-    function ReportService($http, CommonService, Colors) {
-        // {{bidir_reports_service}}/5c0ce5e7c3bb100001b218e7
-
-        return {
-            GetLineChartReport:_getLineChartReport,
-            GetClientHistoryReport:_getClientHistoryReport,
-            barColors: [{backgroundColor: Colors.byName('primary'), borderColor: Colors.byName('primary')}, {backgroundColor: Colors.byName('info'),  borderColor: Colors.byName('info') }]
-        };
-
-        function _getLineChartReport(config){
-            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.Report) + '5c0ce5e7c3bb100001b218e7');
-        }
-        function _getClientHistoryReport(){
-            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.Report) + '5c0de708d836a80001357602?client=5c0e1d76afef1b0001f6a96d');
         }
     }
 
@@ -9521,175 +9533,6 @@ var INDICATOR = {
   }
 })(window.angular);
 
-/**
- * Created by Yonas on 7/2/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("ClientsController", ClientsController);
-
-    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
-
-    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
-        var vm = this;
-        vm.clientDetailEdit = _clientDetailEdit;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearchText;
-        vm.saveClient = _saveClient;
-        vm.backToClientList = _backToClientList;
-
-
-
-        initialize();
-
-        function initialize() {
-            initializeDatePicker();
-            vm.visibility = { showClientDetail: false };
-            vm.civilStatuses = CIVIL_STATUSES;
-            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
-            vm.filter = {show : false};
-            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
-
-            vm.query = { search:'',   page:1,  per_page:10 };
-            vm.months = MONTHS_CONST;
-            callAPI();
-            getBranches();
-        }
-
-        function callAPI() {
-            var myBlockUI = blockUI.instances.get('clientsBlockUI');
-            myBlockUI.start();
-
-            vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
-                vm.clients = response.data.docs;
-                vm.query.total_pages = response.data.total_pages;
-                vm.query.total_docs_count = response.data.total_docs_count;
-                myBlockUI.stop();
-                console.log("clients",vm.clients);
-            });
-        }
-
-        function _clientDetailEdit(client,ev) {
-            console.log("client detail",client);
-            vm.visibility.showClientDetail = true;
-            //data set
-            vm.selectedClient = client;
-            var dt = new Date(client.date_of_birth);
-            vm.selectedClient.date_of_birth = dt;
-            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
-            vm.selectedClient.gender = client.gender.toLowerCase();
-            vm.selected_branch = client.branch;
-        }
-
-        function _backToClientList() {
-            vm.visibility = { showClientDetail: false };
-        }
-        function _saveClient() {
-
-            if(_.isUndefined(vm.selected_branch)){
-                AlertService.showWarning("Warning!","Please Select Branch....");
-            }else{
-                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
-                myBlockUI.start();
-                var client = vm.selectedClient;
-                client.branch = vm.selected_branch._id;
-                client.created_by =  undefined;
-
-
-                if( _.isUndefined(vm.selectedClient._id)){
-                    //ADD NEW CLIENT INFORMATION
-                    LoanManagementService.SaveClient(client).then(function (response) {
-                        console.log("save client",response);
-                        myBlockUI.stop();
-                        vm.visibility = { showClientDetail: false };
-                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
-
-                    },function (error) {
-                        console.log("save client error",error);
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to save client",message);
-
-                    });
-                }else{
-                    //UPDATE CLIENT INFORMATION
-                    LoanManagementService.UpdateClient(client).then(function (response) {
-                        console.log("save client",response);
-                        myBlockUI.stop();
-                        vm.visibility = { showClientDetail: false };
-                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
-                    },function (error) {
-                        console.log("Updated client error",error);
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to update Client",message);
-
-                    });
-                }
-
-
-            }
-
-        }
-
-        function getBranches() {
-            SharedService.GetBranches().then(function(response){
-                vm.branches = response.data.docs;
-                console.log("vm.branches",vm.branches);
-            },function(error){
-                console.log("error",error);
-            });
-        }
-
-        /**
-         *
-         *  Paging parameters and methods
-         */
-        function _paginate(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
-        }
-        function _clearSearchText() {
-            vm.query.search = '';
-            vm.filter.show = false;
-        }
-        function initializeDatePicker() {
-            vm.clear = function() {
-                vm.dt = null;
-            };
-
-            vm.dateOptions = {
-                dateDisabled: false,
-                formatYear: "yy",
-                maxDate: new Date(2020, 5, 22),
-                startingDay: 1
-            };
-
-            vm.openPopup = function() {
-                vm.popup1.opened = true;
-            };
-
-            vm.dateFormat = "dd-MMMM-yyyy";
-            vm.altInputFormats = ["M!/d!/yyyy"];
-
-            vm.popup1 = {
-                opened: false
-            };
-        }
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("searching clients for ",newValue);
-            }
-        });
-
-    }
-
-})(window.angular);
 (function (angular) {
     "use strict";
 
@@ -9922,6 +9765,175 @@ var INDICATOR = {
     }
 
 
+
+})(window.angular);
+/**
+ * Created by Yonas on 7/2/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("ClientsController", ClientsController);
+
+    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
+
+    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
+        var vm = this;
+        vm.clientDetailEdit = _clientDetailEdit;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearchText;
+        vm.saveClient = _saveClient;
+        vm.backToClientList = _backToClientList;
+
+
+
+        initialize();
+
+        function initialize() {
+            initializeDatePicker();
+            vm.visibility = { showClientDetail: false };
+            vm.civilStatuses = CIVIL_STATUSES;
+            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
+            vm.filter = {show : false};
+            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
+
+            vm.query = { search:'',   page:1,  per_page:10 };
+            vm.months = MONTHS_CONST;
+            callAPI();
+            getBranches();
+        }
+
+        function callAPI() {
+            var myBlockUI = blockUI.instances.get('clientsBlockUI');
+            myBlockUI.start();
+
+            vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
+                vm.clients = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+                myBlockUI.stop();
+                console.log("clients",vm.clients);
+            });
+        }
+
+        function _clientDetailEdit(client,ev) {
+            console.log("client detail",client);
+            vm.visibility.showClientDetail = true;
+            //data set
+            vm.selectedClient = client;
+            var dt = new Date(client.date_of_birth);
+            vm.selectedClient.date_of_birth = dt;
+            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
+            vm.selectedClient.gender = client.gender.toLowerCase();
+            vm.selected_branch = client.branch;
+        }
+
+        function _backToClientList() {
+            vm.visibility = { showClientDetail: false };
+        }
+        function _saveClient() {
+
+            if(_.isUndefined(vm.selected_branch)){
+                AlertService.showWarning("Warning!","Please Select Branch....");
+            }else{
+                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
+                myBlockUI.start();
+                var client = vm.selectedClient;
+                client.branch = vm.selected_branch._id;
+                client.created_by =  undefined;
+
+
+                if( _.isUndefined(vm.selectedClient._id)){
+                    //ADD NEW CLIENT INFORMATION
+                    LoanManagementService.SaveClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
+                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
+
+                    },function (error) {
+                        console.log("save client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to save client",message);
+
+                    });
+                }else{
+                    //UPDATE CLIENT INFORMATION
+                    LoanManagementService.UpdateClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
+                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
+                    },function (error) {
+                        console.log("Updated client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to update Client",message);
+
+                    });
+                }
+
+
+            }
+
+        }
+
+        function getBranches() {
+            SharedService.GetBranches().then(function(response){
+                vm.branches = response.data.docs;
+                console.log("vm.branches",vm.branches);
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        /**
+         *
+         *  Paging parameters and methods
+         */
+        function _paginate(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        }
+        function _clearSearchText() {
+            vm.query.search = '';
+            vm.filter.show = false;
+        }
+        function initializeDatePicker() {
+            vm.clear = function() {
+                vm.dt = null;
+            };
+
+            vm.dateOptions = {
+                dateDisabled: false,
+                formatYear: "yy",
+                maxDate: new Date(2020, 5, 22),
+                startingDay: 1
+            };
+
+            vm.openPopup = function() {
+                vm.popup1.opened = true;
+            };
+
+            vm.dateFormat = "dd-MMMM-yyyy";
+            vm.altInputFormats = ["M!/d!/yyyy"];
+
+            vm.popup1 = {
+                opened: false
+            };
+        }
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("searching clients for ",newValue);
+            }
+        });
+
+    }
 
 })(window.angular);
 /**

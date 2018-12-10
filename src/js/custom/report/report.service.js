@@ -12,7 +12,7 @@
         return {
             GetLineChartReport:_getLineChartReport,
             GetClientHistoryReport:_getClientHistoryReport,
-            barColors: [{backgroundColor: Colors.byName('primary'), borderColor: Colors.byName('primary')}, {backgroundColor: Colors.byName('info'),  borderColor: Colors.byName('info') }]
+            barColors: [{backgroundColor: Colors.byName('success'), borderColor: Colors.byName('success')}, {backgroundColor: Colors.byName('info'),  borderColor: Colors.byName('info') }]
         };
 
         function _getLineChartReport(config){

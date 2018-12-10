@@ -1,9 +1,9 @@
 <h3>
     Dashboard
 </h3>
-<div class="container-fluid container-md">
-    <!-- START widgets box-->
-    <div class="row">
+
+<!-- START widgets box-->
+<div class="row">
         <div class="col-lg-3 col-sm-6">
             <!-- START widget-->
             <div class="panel widget bg-primary">
@@ -67,11 +67,9 @@
         </div>
     </div>
 
-
-
-    <div class="row mb-lg">
+<div class="row mb-lg">
         <div class="col-lg-6">
-            <h5 class="mb-lg pv">Crop by number of clients</h5>
+            <h5 class="mb-lg pv">Crop by Number of Clients</h5>
             <div>
                 <canvas class="chart chart-bar" id="bar1"
                         chart-data="vm.barData_byClient"
@@ -82,15 +80,24 @@
             </div>
         </div>
         <div class="col-lg-6">
-            <h5 class="mb-lg pv">Crop by total loan amount</h5>
+            <h5 class="mb-lg pv">Crop by Total Loan Amount</h5>
             <div>
                 <canvas class="chart chart-bar" id="bar"
                         chart-data="vm.barData_byAmount"
                         chart-labels="vm.barLabels"
                         chart-series="vm.barSeries_byAmount"
-                        chart-colors="vm.barColors"
+                        chart-colors="vm.barColors_byAmount"
                         chart-options="vm.barOptions"></canvas>
             </div>
         </div>
-    </div>
+        <div class="col-lg-6">
+            <h5 class="mb-lg pv">Clients Count by Status</h5>
+            <div class="col-lg-8">
+                <canvas class="chart chart-pie" id="pie"
+                        chart-data="vm.pieData"
+                        chart-labels="vm.pieLabels"
+                        chart-colors="vm.pieColors"
+                        legend="true"></canvas>
+            </div>
+        </div> 
 </div>
