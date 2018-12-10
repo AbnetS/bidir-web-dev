@@ -42,7 +42,6 @@
                 if(vm.config._id){
                     GeoSpatialService.UpdateConfig(vm.config).then(function (response) {
                             AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
-                            console.log("response", response);
                             vm.config = response.data;
                             prepareBranchesData();
                         }
@@ -54,7 +53,6 @@
                 }else{
                     GeoSpatialService.SaveConfig(vm.config).then(function (response) {
                             AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
-                            console.log("response", response);
                             vm.config = response.data;
                             prepareBranchesData();
                         }
@@ -123,7 +121,6 @@
                 .then(function (response) {
                     branch.vegitationIndex = response.data;
                     branch.vegitationIndex.chart_url =  _.isUndefined(branch.vegitationIndex.image_url)? '': branch.vegitationIndex.image_url.replace('info','chart');
-                    console.log("vegitationIndex",branch.vegitationIndex)
                 }, function (error) { console.log("error", error);});
 
             var configRainfall = angular.copy(configVI);
@@ -133,7 +130,6 @@
                 .then(function (response) {
                     branch.rainfall = response.data;
                     branch.rainfall.chart_url = _.isUndefined(branch.rainfall.image_url)? '': branch.rainfall.image_url.replace('info','chart');
-                    console.log("rainfall",branch.rainfall)
                 }, function (error) { console.log("error", error);});
         }
 
@@ -147,7 +143,6 @@
                 }else {
                     vm.visibility.isEditConfig = false;
                 }
-                console.log(" vm.config", vm.config);
             }, function (reason) {
                 console.log(reason)
             });
