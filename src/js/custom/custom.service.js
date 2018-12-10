@@ -11,7 +11,9 @@
     function SharedService($http, CommonService,$sce) {
         return {
             GetBranches: _getBranches,
-            GetWoredas:_getWoredas
+            GetWoredas:_getWoredas,
+            GetUsers:_getUsers,
+            GetClients:_getClients
         };
 
         function _getBranches(){
@@ -19,6 +21,12 @@
         }
         function _getWoredas(){
             return $http.get(CommonService.buildPaginatedUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Woredas));
+        }
+        function _getUsers(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.GetAll));
+        }
+        function _getClients(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients));
         }
 
     }

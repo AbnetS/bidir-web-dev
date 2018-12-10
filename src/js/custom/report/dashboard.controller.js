@@ -6,9 +6,9 @@
         .module('app.report')
         .controller('DashboardController', DashboardController);
 
-    DashboardController.$inject = ['ReportService', 'Colors','AlertService'];
+    DashboardController.$inject = ['ReportService', 'SharedService','AlertService'];
 
-    function DashboardController( ReportService,Colors,AlertService )
+    function DashboardController( ReportService,SharedService,AlertService )
     {
         var vm = this;
 
@@ -25,10 +25,23 @@
 
         });
 
-
         init();
 
         function init() {
+            vm.count = {
+                branch: 0,
+                client: 0,
+                user: 0};
+
+            SharedService.GetBranches().then(function (value) {
+                vm.count.branch = value.data.docs.length;
+            });
+            SharedService.GetUsers().then(function (value) {
+                vm.count.user = value.data.docs.length;
+            });
+            SharedService.GetClients().then(function (value) {
+                vm.count.client = value.data.docs.length;
+            });
 
         }
 
