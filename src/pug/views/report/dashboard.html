@@ -70,10 +70,26 @@
 
 
     <div class="row mb-lg">
-        <div class="col-lg-8 col-lg-offset-2">
-            <h3 class="mb-lg pv">Bar Chart</h3>
+        <div class="col-lg-6">
+            <h5 class="mb-lg pv">Crop by number of clients</h5>
             <div>
-                <canvas class="chart chart-bar" id="bar" chart-data="vm.barData" chart-labels="vm.barLabels" chart-series="vm.barSeries" chart-colors="vm.barColors" chart-options="vm.barOptions"></canvas>
+                <canvas class="chart chart-bar" id="bar1"
+                        chart-data="vm.barData_byClient"
+                        chart-labels="vm.barLabels"
+                        chart-series="vm.barSeries_byClient"
+                        chart-colors="vm.barColors_byClient"
+                        chart-options="vm.barOptions"></canvas>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <h5 class="mb-lg pv">Crop by total loan amount</h5>
+            <div>
+                <canvas class="chart chart-bar" id="bar"
+                        chart-data="vm.barData_byAmount"
+                        chart-labels="vm.barLabels"
+                        chart-series="vm.barSeries_byAmount"
+                        chart-colors="vm.barColors"
+                        chart-options="vm.barOptions"></canvas>
             </div>
         </div>
     </div>

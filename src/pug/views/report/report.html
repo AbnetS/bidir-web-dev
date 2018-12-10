@@ -3,76 +3,38 @@
     <!--<small> List all types of information.</small>-->
 </h3>
 
-<!--<div class="panel panel-default ng-scope">-->
-    <!--<div class="panel-body">-->
-        <!--<div class="col-xs-10 col-lg-5">-->
-            <!--<label class="control-label">Select Report Types</label>-->
-            <!--<ui-select ng-model="vm.report"-->
-                       <!--theme="bootstrap"  on-select="vm.onSelectedReport()"-->
-                       <!--title="select report" style="width: 100%;">-->
-                <!--<ui-select-match allow-clear="true"-->
-                                 <!--placeholder="Select report...">-->
-                    <!--{{$select.selected.name}}-->
-                <!--</ui-select-match>-->
-                <!--<ui-select-choices-->
-                        <!--repeat="report in vm.reports | filter: $select.search">-->
-                    <!--<div ng-bind-html="report.name | highlight: $select.search"></div>-->
-                <!--</ui-select-choices>-->
-            <!--</ui-select>-->
-        <!--</div>-->
-
-    <!--</div>-->
-<!--</div>-->
-
-<!--<div ng-show="!vm.report" class="col-lg-12">-->
-    <!--<h4 class="centerPageText-lg">-->
-        <!--PLEASE! <strong>Select the report from the list above.-->
-        <!--<i class="fa fa-arrow-circle-up"></i></strong>-->
-        <!--<a></a>-->
-    <!--</h4>-->
-<!--</div>-->
-
 <div class="panel panel-default">
-    <div class="panel-heading">Client Loan History Report</div>
+    <div class="panel-heading">
+        <h4>Client Loan History Report</h4>
+    </div>
     <div class="panel-body">
-        <md-table-container>
-            <table md-table md-progress="vm.clientPromise" class="table-hover">
-                <thead md-head class="bg-grey md-head">
-                <tr md-row>
-                    <th md-column style="width:3%;"><span> No</span></th>
-                    <th md-column ><span>Actual Total Cost</span></th>
-                    <th md-column ><span>Actual Total Revenue</span></th>
-                    <th md-column  ><span>Estimated Total Cost</span></th>
-                    <th md-column  ><span>Estimated Total Revenue</span></th>
-                    <th md-column  >Loan Approved</th>
-                    <th md-column  >Loan Cycle Number</th>
-                    <th md-column  >Loan Requested</th>
+        <div class="table-responsive">
+            <table  class="table table-hover table-bordered table-striped">
+                <thead class="bg-success">
+                <tr>
+                    <th>Loan Cycle Number</th>
+                    <th>Estimated Total Cost</th>
+                    <th>Estimated Total Revenue</th>
+                    <th>Actual Total Cost</th>
+                    <th>Actual Total Revenue</th>
+                    <th>Loan Requested</th>
+                    <th>Loan Approved</th>
                 </tr>
                 </thead>
 
-                <tbody md-body>
-                <tr md-row ng-repeat="report in vm.reportData">
-                    <td md-cell>{{$index + 1}}</td>
-                    <td md-cell> {{report.actual_total_cost | number}} </td>
-                    <td md-cell >{{report.actual_total_revenue | number}}</td>
-                    <td md-cell >{{report.estimated_total_cost | number }}</td>
-                    <td md-cell> {{report.estimated_total_revenue | number}}</td>
-                    <td md-cell> {{report.loan_approved | number}}</td>
-                    <td md-cell> {{report.loan_cycle_no | number}}</td>
-                    <td md-cell> {{report.loan_requested | number}}</td>
+                <tbody>
+                <tr ng-repeat="report in vm.reportData">
+                    <td> {{report.loan_cycle_no | number}}</td>
+                    <td>{{report.estimated_total_cost | number }}</td>
+                    <td> {{report.estimated_total_revenue | number}}</td>
+                    <td> {{report.actual_total_cost | number}} </td>
+                    <td >{{report.actual_total_revenue | number}}</td>
+                    <td> {{report.loan_requested | number}}</td>
+                    <td> {{report.loan_approved | number}}</td>
                 </tr>
                 </tbody>
             </table>
-        </md-table-container>
-
-        <!--<md-table-pagination md-limit="vm.query.per_page"-->
-                             <!--md-limit-options="vm.pageSizes"-->
-                             <!--md-page="vm.query.page"-->
-                             <!--md-total="{{vm.query.total_docs_count}}"-->
-                             <!--md-page-select="vm.options.pageSelect"-->
-                             <!--md-boundary-links="vm.options.boundaryLinks"-->
-                             <!--md-on-paginate="vm.paginate">-->
-        <!--</md-table-pagination>-->
+        </div>
     </div>
 </div>
 
