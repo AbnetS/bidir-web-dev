@@ -156,7 +156,7 @@
 
                   </td>
                   <td md-cell>
-                     <span ng-show="client.status ==='loan_granted'" class="input-group-btn">
+                     <span ng-show="client.status ==='loan_granted' && client.cbs_status !== 'ACCEPTED'" class="input-group-btn">
                         <button class="btn btn-success" ng-click="vm.saveSingleClient(client)" type="button">
                            <i class="fa fa-paper-plane"></i> 
                         </button>

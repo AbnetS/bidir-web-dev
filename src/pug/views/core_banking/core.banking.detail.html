@@ -11,7 +11,7 @@
             <a ui-sref="app.cbs"><i class="fa fa-arrow-left"></i> Back </a>
         </small>
 
-        <label class="pull-right" ng-class="vm.client.in_cbs?'label label-success':'label label-danger'"  >{{vm.client.in_cbs? 'In CBS': 'NOT IN CBS'}}</label>
+        <label class="pull-right" ng-class="vm.client.cbs_status === 'ACCEPTED'?'label label-success':'label label-warning'"  >{{vm.client.cbs_status}}</label>
     </div>
     <!-- CLIENT FORM-->
     <form action="" method="post" novalidate="novalidate" block-ui="CBSClientDetailBlockUI">
@@ -223,8 +223,8 @@
                 <p class="pull-left text-sm"><i>Fields marked with (<span class="text-danger">*</span>) are required</i>
                 </p>
                 <div class="pull-right">
-                    <button class="btn btn-info" type="button" ng-click="vm.updateClient()">Update Client</button>
-                    <button class="btn btn-primary" type="button" ng-click="vm.updateClientAndSendToCBS()">Update and Send to CBS</button>
+                    <button  class="btn btn-info" type="button" ng-click="vm.updateClient()">Update Client</button>
+                    <button ng-show="vm.client.status ==='loan_granted' && vm.client.cbs_status !== 'ACCEPTED'" class="btn btn-primary" type="button" ng-click="vm.updateClientAndSendToCBS()">Update and Send to CBS</button>
                 </div>
             </div>
         </fieldset>

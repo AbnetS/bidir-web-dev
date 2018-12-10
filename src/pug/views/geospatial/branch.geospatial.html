@@ -91,7 +91,7 @@
 </div>
 
 <div ng-show="vm.visibility.showSmiley" class="row clearfix">
-    <div class="col-lg-6 col-md-8" ng-repeat="branch in vm.branches">
+    <div class="col-xs-12 col-md-6 col-lg-6" ng-repeat="branch in vm.branches">
         <div class="panel panel-success" >
             <div class="panel-heading">
                 <div class="panel-title">{{branch.name}}</div>
@@ -99,7 +99,9 @@
             <div class="panel-body bb">
                 <div class="row text-center">
                     <div class="col-xs-6" ng-show="branch.vegitationIndex.image_url">
-                        <p class="text-bold">Vegetation Index</p>
+                        <p class="text-bold text-center text-gray-dark">
+                           <i class="fa fa-leaf fa-lg"> </i>  Vegetation Index
+                        </p>
                         <div >
                             <iframe align="middle" style="min-height: 200px; min-width: 150px;" frameborder="0"
                                     ng-src="{{branch.vegitationIndex.image_url}}"></iframe>
@@ -108,7 +110,8 @@
                         </div>
                     </div>
                     <div class="col-xs-6" ng-show="branch.rainfall.image_url">
-                        <p class="text-bold text-center">Rainfall</p>
+                        <p class="text-bold text-center text-gray-dark">
+                            <i class="fa fa-umbrella fa-lg"> </i>  Rainfall</p>
                         <div>
                             <iframe align="middle" style="min-height: 200px; min-width: 150px;" frameborder="0"
                                     ng-src="{{branch.rainfall.image_url}}"></iframe>
