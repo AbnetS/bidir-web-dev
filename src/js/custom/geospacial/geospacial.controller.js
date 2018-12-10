@@ -20,11 +20,9 @@
             console.log('panelDemo1 collapsed: ' + newVal);
         });
 
-
         function _resetConfig() {
             vm.config = undefined;
         }
-
 
         function _saveUserConfig() {
 
@@ -71,68 +69,22 @@
         }
 
         function init() {
-            // setVisibility();
             vm.config = {};
             vm.visibility = {
                 showSmiley: true,
                 showInfoText: true,
                 isEditConfig: false };
-
             vm.seasonalFilterForm = {
                 IsfromDateValid: true,
                 IstoDateValid: true,
                 IsnameValid: true
             };
+
             //DATE OPTION
             vm.dtOption = GeoSpatialService.DateOptionDefault();
             GetUserConfig();
 
         }
-
-        function prepareBranchesData() {
-
-            SharedService.GetBranches()
-                .then( function (response) {
-                        vm.branches = response.data.docs;
-                        _.each(vm.branches,function (branch) {
-                            branch.regions = _.map(branch.weredas,function (woreda) {
-                                return woreda.w_code;
-                            }).join(":");
-
-                            GetGeospatialByBranch(branch);
-
-                        });
-
-                    },
-                    function (error) {
-                        console.log("error fetching branches", error);
-                    });
-        }
-
-        function GetGeospatialByBranch(branch) {
-            var configVI = {
-                indicator: vm.INDICATOR.VI,
-                start_date: GeoSpatialService.formatDateForRequest(vm.config.from_date),
-                end_date:  GeoSpatialService.formatDateForRequest(vm.config.to_date),
-                regions: branch.regions
-            };
-            //GET VI DATA
-            branch.vegitationIndexPromise =  GeoSpatialService.getSeasonalMonitorData(configVI)
-                .then(function (response) {
-                    branch.vegitationIndex = response.data;
-                    branch.vegitationIndex.chart_url =  _.isUndefined(branch.vegitationIndex.image_url)? '': branch.vegitationIndex.image_url.replace('info','chart');
-                }, function (error) { console.log("error", error);});
-
-            var configRainfall = angular.copy(configVI);
-            configRainfall.indicator = vm.INDICATOR.RAINFALL;
-            //GET RAINFALL DATA
-            branch.rainfallPromise = GeoSpatialService.getSeasonalMonitorData(configRainfall)
-                .then(function (response) {
-                    branch.rainfall = response.data;
-                    branch.rainfall.chart_url = _.isUndefined(branch.rainfall.image_url)? '': branch.rainfall.image_url.replace('info','chart');
-                }, function (error) { console.log("error", error);});
-        }
-
         function GetUserConfig() {
             GeoSpatialService.GetUserConfig().then(function (response) {
                 if (response.data.length > 0) {
@@ -148,10 +100,66 @@
             });
         }
 
-        function setVisibility() {
-            vm.visibility.isEditConfig = true;
-            vm.visibility.showSmiley = true;
+        function prepareBranchesData() {
+            SharedService.GetBranches()
+                .then( function (response) {
+                        vm.branches = response.data.docs;
+                        _.each(vm.branches,function (branch) {
+                            branch.regions = _.map(branch.weredas,function (woreda) {
+                                return woreda.w_code;
+                            }).join(":");
+                            GetGeoSpatialByBranch(branch);
+                        });
+                    },
+                    function (error) {
+                        console.log("error fetching branches", error);
+                    });
         }
+
+        function GetGeoSpatialByBranch(branch) {
+            var configVI = {
+                indicator: vm.INDICATOR.VI,
+                start_date: GeoSpatialService.formatDateForRequest(vm.config.from_date),
+                end_date:  GeoSpatialService.formatDateForRequest(vm.config.to_date),
+                regions: branch.regions
+            };
+            //GET VI DATA
+            branch.vegitationIndexPromise =  GeoSpatialService.getSeasonalMonitorData(configVI)
+                .then(function (response) {
+                    branch.vegitationIndex = response.data;
+                    branch.vegitationIndex.chart_url =  _.isUndefined(branch.vegitationIndex.image_url)? '': branch.vegitationIndex.image_url.replace('info','chart');
+
+                    // SaveRequest({
+                    //     config: vm.config._id,
+                    //     branch: branch._id,
+                    //     indicator: configVI.indicator,
+                    //     UID: branch.vegitationIndex.uid});
+
+                }, function (error) { console.log("error", error);});
+
+            var configRainfall = angular.copy(configVI);
+            configRainfall.indicator = vm.INDICATOR.RAINFALL;
+            //GET RAINFALL DATA
+            branch.rainfallPromise = GeoSpatialService.getSeasonalMonitorData(configRainfall)
+                .then(function (response) {
+                    branch.rainfall = response.data;
+                    branch.rainfall.chart_url = _.isUndefined(branch.rainfall.image_url)? '': branch.rainfall.image_url.replace('info','chart');
+
+                    // SaveRequest({
+                    //     config: vm.config._id,
+                    //     branch: branch._id,
+                    //     indicator: configRainfall.indicator,
+                    //     UID: branch.rainfall.uid});
+
+                }, function (error) { console.log("error", error);});
+        }
+
+       function SaveRequest(request) {
+
+           GeoSpatialService.SaveRequest(request).then(function (response) {
+               console.log('response', response);
+               }, function (error) { console.log('error', error); });
+       }
     }
 
 })(window.angular);

@@ -10,11 +10,12 @@
         return {
             formatDateForRequest:_formatDateForRequest,
             getSeasonalMonitorData:_getSeasonalMonitorData,
-            CurrentUser: _getUser(),
             SaveConfig : _saveConfig,
             UpdateConfig:_updateConfig,
             GetUserConfig:_getUserConfig,
-            DateOptionDefault:_dateOptionDefault
+            DateOptionDefault:_dateOptionDefault,
+            SaveRequest:_saveRequest,
+            CurrentUser: _getUser()
         };
 
         function _getUser() {
@@ -45,6 +46,7 @@
 
             return $http(request);
         }
+
         function _formatDateForRequest(date) {
             var d = new Date(date),
                 month = '-' +  ("0" + (d.getMonth() + 1)).slice(-2) ,
@@ -79,6 +81,10 @@
             };
 
             return vm.dtOption;
+        }
+
+        function _saveRequest(request) {
+            return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Request),request);
         }
 
     }

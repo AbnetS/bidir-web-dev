@@ -91,7 +91,8 @@ var API = {
             SaveConfig: 'configs/create',
             Config: 'configs',
             UserConfig: 'configs/search?user=',
-            Woredas: 'weredas'
+            Woredas: 'weredas',
+            Request: 'requests/create'
         },
         Report:{
             Report: ''
