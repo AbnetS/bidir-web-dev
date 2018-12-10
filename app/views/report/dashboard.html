@@ -1,0 +1,80 @@
+<h3>
+   Dashboard
+</h3>
+<div class="container-fluid container-md">
+   <!-- START widgets box-->
+   <div class="row">
+      <div class="col-lg-3 col-sm-6">
+         <!-- START widget-->
+         <div class="panel widget bg-primary">
+            <div class="row row-table">
+               <div class="col-xs-4 text-center bg-primary-dark pv-lg">
+                  <em class="icon-speedometer fa-3x"></em>
+               </div>
+               <div class="col-xs-8 pv-lg">
+                  <div class="h2 mt0">10</div>
+                  <div class="text-uppercase">Branches</div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+         <!-- START widget-->
+         <div class="panel widget bg-success">
+            <div class="row row-table">
+               <div class="col-xs-4 text-center bg-success-dark pv-lg">
+                  <em class="icon-people fa-3x"></em>
+               </div>
+               <div class="col-xs-8 pv-lg">
+                  <div class="h2 mt0">100</div>
+                  <div class="text-uppercase">Clients</div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-12">
+         <!-- START widget-->
+         <div class="panel widget bg-green">
+            <div class="row row-table">
+               <div class="col-xs-4 text-center bg-green-dark pv-lg">
+                  <em class="icon-user fa-3x"></em>
+               </div>
+               <div class="col-xs-8 pv-lg">
+                  <div class="h2 mt0">15</div>
+                  <div class="text-uppercase">Users</div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-12">
+         <!-- START date widget-->
+         <div class="panel widget">
+            <div class="row row-table">
+               <div class="col-xs-4 text-center bg-green pv-lg">
+                  <now class="text-sm" format="MMMM"></now>
+                  <br/>
+                  <now class="h2 mt0" format="d"></now>
+               </div>
+               <div class="col-xs-8 pv-lg">
+                  <now class="text-uppercase" format="EEEE"></now>
+                  <br/>
+                  <now class="h2 mt0" format="h:mm"></now>
+                  <now class="text-muted text-sm" format="a"></now>
+               </div>
+            </div>
+         </div>
+         <!-- END date widget-->
+      </div>
+   </div>
+
+
+
+   <div class="row mb-lg">
+      <div class="col-lg-8 col-lg-offset-2">
+         <h3 class="mb-lg pv">Bar Chart</h3>
+         <div>
+            <canvas class="chart chart-bar" id="bar" chart-data="vm.barData" chart-labels="vm.barLabels" chart-series="vm.barSeries" chart-colors="vm.barColors" chart-options="vm.barOptions"></canvas>
+         </div>
+      </div>
+   </div>
+</div>

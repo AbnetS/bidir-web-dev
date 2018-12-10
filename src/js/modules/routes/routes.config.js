@@ -247,13 +247,24 @@
                 url: "/report",
                 title: "Report",
                 templateUrl:helper.basepath('report/report.html'),
-                resolve:helper.resolveFor('md.data.table','ui.select','moment','chart.js'),
+                resolve:helper.resolveFor('md.data.table','ui.select','moment'),
                 controller: "ReportController",
                 controllerAs: 'vm',
                 data: {
                     authenticate: true
                 }
 
+            })
+            .state("app.dashboard", {
+                url: "/dashboard",
+                title: "Dashboard",
+                templateUrl:helper.basepath('report/dashboard.html'),
+                resolve:helper.resolveFor('ui.select','moment','chart.js'),
+                controller: "DashboardController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
             })
             .state("app.branch-report", {
                 url: "/branch-report",
