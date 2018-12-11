@@ -156,6 +156,10 @@
                                                         'vendor/angular-ui-calendar/src/calendar.js'], serie: true},
             {name: 'chart.js',                   files: ['vendor/chart.js/dist/Chart.js',
                                                          'vendor/angular-chart.js/dist/angular-chart.js'], serie: true},
+            {name: 'ui-leaflet',                   files: ['vendor/leaflet/dist/leaflet.js',
+                                                           'vendor/angular-simple-logger/dist/angular-simple-logger.js',
+                                                            'vendor/ui-leaflet/dist/ui-leaflet.js',
+                                                            'vendor/leaflet/dist/leaflet.css'], serie: true}
           ]
         })
         ;

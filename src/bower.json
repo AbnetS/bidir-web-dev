@@ -125,7 +125,9 @@
     "angular-moment": "^1.2.0",
     "seiyria-bootstrap-slider": "9.7.2",
     "angular-file-upload": "2.5.0",
-    "ngmap": "^1.18.4"
+    "ngmap": "^1.18.4",
+    "angular-simple-logger": "^0.1.7",
+    "ui-leaflet": "^2.0.0"
   },
   "resolutions": {
     "angular-ui-utils": "3.0.0",

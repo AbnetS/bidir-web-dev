@@ -131,5 +131,9 @@
   "bower_components/moment/min/moment-with-locales.min.js",
   "bower_components/angular-moment/angular-moment.min.js",
   "bower_components/underscore/underscore.js",
-  "bower_components/ngmap/build/scripts/ng-map.min.js"
+  "bower_components/ngmap/build/scripts/ng-map.min.js",
+  "bower_components/leaflet/dist/leaflet.js",
+  "bower_components/angular-simple-logger/dist/angular-simple-logger.js",
+  "bower_components/ui-leaflet/dist/ui-leaflet.js",
+  "bower_components/leaflet/dist/leaflet.css"
 ]

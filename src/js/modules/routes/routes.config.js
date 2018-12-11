@@ -281,7 +281,7 @@
                 url: "/plot-report",
                 title: "Plot Report",
                 templateUrl:helper.basepath('geospatial/plot.geospatial.html'),
-                resolve:helper.resolveFor('ngmap','ui.select'),
+                resolve:helper.resolveFor('ui-leaflet','ui.select'),
                 controller: "PlotReportController",
                 controllerAs: 'vm',
                 data: {

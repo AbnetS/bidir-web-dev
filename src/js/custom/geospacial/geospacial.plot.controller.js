@@ -6,20 +6,46 @@
         .module('app.geospatial')
         .controller('PlotReportController', PlotReportController);
 
-    PlotReportController.$inject = ['NgMap', 'blockUI','SharedService','CommonService'];
+    PlotReportController.$inject = [ '$scope','SharedService','CommonService'];
 
-    function PlotReportController( NgMap,blockUI,SharedService,CommonService )
+    function PlotReportController( $scope,SharedService,CommonService )
     {
         var vm = this;
-        NgMap.getMap().then(function(map) {
-            vm.showCustomMarker= function(evt) {
-                map.customMarkers.foo.setVisible(true);
-                map.customMarkers.foo.setPosition(this.getPosition());
-            };
-            vm.closeCustomMarker= function(evt) {
-                this.style.display = 'none';
-            };
+
+        angular.extend($scope, {
+            center: {
+                lat: 8.9895,
+                lng: 38.6878,
+                zoom: 8
+            },
+            markers: {}
         });
+
+        $scope.addMarkers = function() {
+            angular.extend($scope, {
+                markers: {
+                    m1: {
+                        lat: 8.526,
+                        lng: 39.714889,
+                        message: "static marker"
+                    },
+                    m2: {
+                        lat:9.080,
+                        lng: 38.847,
+                        focus: true,
+                        message: "Hey, drag me if you want",
+                        draggable: true
+                    }
+                }
+            });
+        };
+
+        $scope.removeMarkers = function() {
+            $scope.markers = {};
+        }
+
+        $scope.addMarkers();
+
 
     }
 
