@@ -6,30 +6,35 @@
         .module('app.report')
         .controller('DashboardController', DashboardController);
 
-    DashboardController.$inject = ['ReportService', 'SharedService','Colors'];
+    DashboardController.$inject = ['ReportService', 'SharedService','Colors','$rootScope'];
 
-    function DashboardController( ReportService,SharedService,Colors )
+    function DashboardController( ReportService,SharedService,Colors,$rootScope )
     {
         var vm = this;
+        $rootScope.app.layout.isCollapsed = true;
+        callApi();
 
-        ReportService.GetLineChartReport().then(function (report) {
-            var chartData = report.data;
-            var no_of_clients = _.pluck(chartData,'no_of_clients');
-            var total_loan_amount = _.map(chartData, function(data){ return data.total_loan_amount; });  // _.pluck(chartData,'total_loan_amount');
 
-            vm.barLabels = _.pluck(chartData,'crop');
-            vm.barSeries_byClient = ['Number of Clients'];
-            vm.barSeries_byAmount = ['Total Loan Amount'];
-            vm.barData_byClient = [ no_of_clients ];
-            vm.barData_byAmount = [ total_loan_amount ];
-            vm.barColors_byClient = [{backgroundColor: Colors.byName('green')}];
-            vm.barColors_byAmount = [{backgroundColor: Colors.byName('primary')}];
-
-        });
 
         init();
 
 
+        function callApi(){
+            ReportService.GetLineChartReport().then(function (report) {
+                var chartData = report.data;
+                var no_of_clients = _.pluck(chartData,'no_of_clients');
+                var total_loan_amount = _.map(chartData, function(data){ return data.total_loan_amount; });  // _.pluck(chartData,'total_loan_amount');
+
+                vm.barLabels = _.pluck(chartData,'crop');
+                vm.barSeries_byClient = ['Number of Clients'];
+                vm.barSeries_byAmount = ['Total Loan Amount'];
+                vm.barData_byClient = [ no_of_clients ];
+                vm.barData_byAmount = [ total_loan_amount ];
+                vm.barColors_byClient = [{backgroundColor: Colors.byName('green')}];
+                vm.barColors_byAmount = [{backgroundColor: Colors.byName('primary')}];
+
+            });
+        }
 
         function init() {
             vm.count = {
