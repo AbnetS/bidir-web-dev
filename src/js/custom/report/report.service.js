@@ -9,7 +9,7 @@
     function ReportService($http, CommonService, Colors) {
         return {
             GetLineChartReport:_getLineChartReport,
-            GetClientHistoryReport:_getClientHistoryReport,
+            // GetClientHistoryReport:_getClientHistoryReport,
             GetReportById:_getReportById,
             GetAllReports:_getAllReports,
             barColors: [{backgroundColor: Colors.byName('success'), borderColor: Colors.byName('success')}, {backgroundColor: Colors.byName('info'),  borderColor: Colors.byName('info') }]

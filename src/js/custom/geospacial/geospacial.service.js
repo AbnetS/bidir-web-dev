@@ -16,7 +16,8 @@
             DateOptionDefault:_dateOptionDefault,
             SaveRequest:_saveRequest,
             SearchRequest:_searchRequest,
-            CurrentUser: _getUser()
+            CurrentUser: _getUser(),
+            GetPlotAreaData:_getPlotAreaData
         };
 
         function _getUser() {
@@ -91,6 +92,9 @@
             return $http.get(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Search) + 'config='+config_id+'&branch=' + branch_id);
         }
 
+        function _getPlotAreaData(branch) {
+            return $http.get(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.Empty) + 'search?branch='+branch+'&fields=crop,client,gps_location');
+        }
 
     }
 

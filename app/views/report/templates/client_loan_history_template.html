@@ -1,30 +1,38 @@
-<div class="table-responsive">
-   <table class="table table-hover table-bordered table-striped">
-      <thead class="bg-success">
-         <tr>
-            <th colspan="7">{{vm.reportData[0].client}}</th>
-         </tr>
-         <tr>
-            <th>Loan Cycle Number</th>
-            <th>Estimated Total Cost</th>
-            <th>Estimated Total Revenue</th>
-            <th>Actual Total Cost</th>
-            <th>Actual Total Revenue</th>
-            <th>Loan Requested</th>
-            <th>Loan Approved</th>
-         </tr>
-      </thead>
+<div class="panel panel-default">
+   <div class="panel-heading">
+      <h4>Client Loan History</h4>
 
-      <tbody>
-         <tr ng-repeat="report in vm.reportData">
-            <td>{{report.loan_cycle_no | number}}</td>
-            <td>{{report.estimated_total_cost | number }}</td>
-            <td>{{report.estimated_total_revenue | number}}</td>
-            <td>{{report.actual_total_cost | number}}</td>
-            <td>{{report.actual_total_revenue | number}}</td>
-            <td>{{report.loan_requested | number}}</td>
-            <td>{{report.loan_approved | number}}</td>
-         </tr>
-      </tbody>
-   </table>
+   </div>
+   <div class="panel-body">
+      <div class="table-responsive">
+         <table class="table table-hover table-bordered table-striped" ng-repeat="report in vm.client_loan_history">
+            <thead class="bg-green">
+               <tr class="bg-green">
+                  <th colspan="7">{{report.client}}</th>
+               </tr>
+               <tr class="bg-gray-light">
+                  <th>Loan Cycle Number</th>
+                  <th>Estimated Total Cost</th>
+                  <th>Estimated Total Revenue</th>
+                  <th>Actual Total Cost</th>
+                  <th>Actual Total Revenue</th>
+                  <th>Loan Requested</th>
+                  <th>Loan Approved</th>
+               </tr>
+            </thead>
+
+            <tbody>
+               <tr ng-repeat="report in report.loan_cycles">
+                  <td>{{report.loan_cycle_no | number}}</td>
+                  <td>{{report.estimated_total_cost | number }}</td>
+                  <td>{{report.estimated_total_revenue | number}}</td>
+                  <td>{{report.actual_total_cost | number}}</td>
+                  <td>{{report.actual_total_revenue | number}}</td>
+                  <td>{{report.loan_requested | number}}</td>
+                  <td>{{report.loan_approved | number}}</td>
+               </tr>
+            </tbody>
+         </table>
+      </div>
+   </div>
 </div>

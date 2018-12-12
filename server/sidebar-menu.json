@@ -87,10 +87,7 @@
   {
     "text": "Report",
     "module": "all",
-    "sref": "#",
-    "icon": "fa fa-bar-chart",
-    "submenu": [
-      {"text": "Tabular Report", "sref": "app.report" }
-    ]
+    "sref": "app.report",
+    "icon": "fa fa-bar-chart"
   }
 ]

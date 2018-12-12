@@ -41,12 +41,6 @@
     'use strict';
 
     angular
-        .module('app.colors', []);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.core', [
             'ngRoute',
             'ngAnimate',
@@ -64,6 +58,12 @@
             'ngMessages',
             'angularMoment'
         ]);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
 })();
 (function() {
     'use strict';
@@ -132,56 +132,6 @@
         .module('app.utils', [
           'app.colors'
           ]);
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
 })();
 
 (function() {
@@ -300,6 +250,56 @@
 
 })();
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
 
 (function() {
     'use strict';
@@ -3030,6 +3030,13 @@
             .primaryPalette('blue');
     }
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.authentication', []);
+
+})();
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -3046,13 +3053,6 @@
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.authentication', []);
-
-})();
 (function(angular) {
   "use strict";
 
@@ -3171,14 +3171,6 @@ function runBlock() {
         .module('app.profile', []);
 
 })();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.report', []);
-
-})();
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -3188,6 +3180,14 @@ function runBlock() {
 
     angular
         .module('app.welcomePage', []);
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.report', []);
 
 })();
 
@@ -3249,89 +3249,6 @@ function runBlock() {
         }
 
     }
-
-})(window.angular);
-/**
- * Created by Yoni on 3/11/2018.
- */
-
-(function(angular) {
-    'use strict';
-    angular.module('app.forms')
-
-        .service('ACATService', ACATService);
-
-    ACATService.$inject = ['$http','CommonService'];
-
-    function ACATService($http, CommonService) {
-        return {
-            GetCrops:_getCrops,
-            SaveCrop:_createCrop,
-            UpdateCrop:_updateCrop,
-            GetAllACATList: _getAllACAT,
-            GetACATById: _getACATById,
-            CreateACAT:_createACAT,
-            UpdateACAT:_updateACAT,
-            AddCostList:_addCostList,
-            UpdateCostList:_updateCostList,
-            RemoveCostListLinear:_removeCostListLinear,
-            RemoveCostListGroup:_removeCostGroupList,
-            RemoveCostGroup:_removeCostGroup,
-            UpdateCostGroup:_updateCostGroup,
-            ResetCostList:_resetCostList
-        };
-
-
-        function _getCrops() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
-        }
-        function _createCrop(crop){
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateCrop), crop);
-        }
-        function _updateCrop(crop){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Crop,crop._id), crop);
-        }
-        function _getACATById(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,id));
-        }
-        function _getAllACAT() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
-        }
-        function _addCostList(cost) {
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
-        }
-
-        function _updateCostList(cost){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
-        }
-        function _createACAT(acat) {
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
-        }
-        function _updateACAT(acat) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,acat._id), acat);
-        }
-
-        function _removeCostListLinear(cost_list){
-            var item = {  item_id: cost_list.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + ACAT_COST_LIST_TYPE.LINEAR, item);
-        }
-        function _removeCostGroupList(group_cost_list){
-            var item = {  item_id: group_cost_list.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,group_cost_list._id) +'/items', item);
-        }
-        function _removeCostGroup(group){
-            var item = {  item_id: group.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group._id) +'/group', item);
-        }
-
-        function _updateCostGroup(group) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,'grouped') +'/' +group._id, group);
-        }
-        function _resetCostList(cost_list) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
-        }
-    }
-
 
 })(window.angular);
 (function(angular) {
@@ -3470,6 +3387,89 @@ function runBlock() {
 })(window.angular);
 
 
+/**
+ * Created by Yoni on 3/11/2018.
+ */
+
+(function(angular) {
+    'use strict';
+    angular.module('app.forms')
+
+        .service('ACATService', ACATService);
+
+    ACATService.$inject = ['$http','CommonService'];
+
+    function ACATService($http, CommonService) {
+        return {
+            GetCrops:_getCrops,
+            SaveCrop:_createCrop,
+            UpdateCrop:_updateCrop,
+            GetAllACATList: _getAllACAT,
+            GetACATById: _getACATById,
+            CreateACAT:_createACAT,
+            UpdateACAT:_updateACAT,
+            AddCostList:_addCostList,
+            UpdateCostList:_updateCostList,
+            RemoveCostListLinear:_removeCostListLinear,
+            RemoveCostListGroup:_removeCostGroupList,
+            RemoveCostGroup:_removeCostGroup,
+            UpdateCostGroup:_updateCostGroup,
+            ResetCostList:_resetCostList
+        };
+
+
+        function _getCrops() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
+        }
+        function _createCrop(crop){
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateCrop), crop);
+        }
+        function _updateCrop(crop){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Crop,crop._id), crop);
+        }
+        function _getACATById(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,id));
+        }
+        function _getAllACAT() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
+        }
+        function _addCostList(cost) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
+        }
+
+        function _updateCostList(cost){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
+        }
+        function _createACAT(acat) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
+        }
+        function _updateACAT(acat) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,acat._id), acat);
+        }
+
+        function _removeCostListLinear(cost_list){
+            var item = {  item_id: cost_list.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + ACAT_COST_LIST_TYPE.LINEAR, item);
+        }
+        function _removeCostGroupList(group_cost_list){
+            var item = {  item_id: group_cost_list.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,group_cost_list._id) +'/items', item);
+        }
+        function _removeCostGroup(group){
+            var item = {  item_id: group.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group._id) +'/group', item);
+        }
+
+        function _updateCostGroup(group) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,'grouped') +'/' +group._id, group);
+        }
+        function _resetCostList(cost_list) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
+        }
+    }
+
+
+})(window.angular);
 (function(angular) {
   "use strict";
 
@@ -3932,6 +3932,7 @@ var API = {
             Create_Section:'sections/create'
         },
         ACAT:{
+            Empty: '',
             ACAT:'forms',
             Crop:'crops',
             Clients:'clients',
@@ -5048,20 +5049,15 @@ var INDICATOR = {
         .module('app.geospatial')
         .controller('PlotReportController', PlotReportController);
 
-    PlotReportController.$inject = [ '$scope','SharedService','CommonService'];
+    PlotReportController.$inject = [ '$scope','GeoSpatialService','CommonService'];
 
-    function PlotReportController( $scope,SharedService,CommonService )
+    function PlotReportController( $scope,GeoSpatialService,CommonService )
     {
         var vm = this;
 
-        angular.extend($scope, {
-            center: {
-                lat: 8.9895,
-                lng: 38.6878,
-                zoom: 8
-            },
-            markers: {}
-        });
+        init();
+
+
 
         $scope.addMarkers = function() {
             angular.extend($scope, {
@@ -5084,9 +5080,56 @@ var INDICATOR = {
 
         $scope.removeMarkers = function() {
             $scope.markers = {};
+        };
+
+
+        function init() {
+            // angular.extend($scope, {
+            //     center: {
+            //         lat: 8.9895,
+            //         lng: 38.6878,
+            //         zoom: 8
+            //     },
+            //     markers: {}
+            // });
+
+            callAPI();
         }
 
-        $scope.addMarkers();
+        function callAPI() {
+            GeoSpatialService.GetPlotAreaData('5b926c849fb7f20001f1494c').then(function (response) {
+                // console.log('GetPlotAreaData', response);
+                var data = response.data.docs[5];
+                var data1 = response.data.docs[6];
+                var data2 = response.data.docs[7];
+
+
+                angular.extend($scope, {
+                    markers: {
+                        m1: {
+                            lat: data.gps_location.single_point.latitude,
+                            lng: data.gps_location.single_point.longitude,
+                            message: data.crop.name
+                        },
+                        m2: {
+                            lat: data1.gps_location.single_point.latitude,
+                            lng: data1.gps_location.single_point.longitude,
+                            message: data1.crop.name
+                        },
+                        m3: {
+                            lat: data2.gps_location.single_point.latitude,
+                            lng: data2.gps_location.single_point.longitude,
+                            message: data2.crop.name
+                        }
+                    },
+                    center: {
+                        lat: data.gps_location.single_point.latitude,
+                        lng: data.gps_location.single_point.longitude,
+                        zoom: 8
+                    }
+                });
+            }, function (error) { console.log('error', error); });
+        }
 
 
     }
@@ -5110,7 +5153,8 @@ var INDICATOR = {
             DateOptionDefault:_dateOptionDefault,
             SaveRequest:_saveRequest,
             SearchRequest:_searchRequest,
-            CurrentUser: _getUser()
+            CurrentUser: _getUser(),
+            GetPlotAreaData:_getPlotAreaData
         };
 
         function _getUser() {
@@ -5185,6 +5229,9 @@ var INDICATOR = {
             return $http.get(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Search) + 'config='+config_id+'&branch=' + branch_id);
         }
 
+        function _getPlotAreaData(branch) {
+            return $http.get(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.Empty) + 'search?branch='+branch+'&fields=crop,client,gps_location');
+        }
 
     }
 
@@ -6195,159 +6242,6 @@ var INDICATOR = {
     }
 
 })(window.angular);
-(function(angular) {
-    "use strict";
-
-
-    angular
-        .module('app.report')
-        .controller('DashboardController', DashboardController);
-
-    DashboardController.$inject = ['ReportService', 'SharedService','Colors','$rootScope'];
-
-    function DashboardController( ReportService,SharedService,Colors,$rootScope )
-    {
-        var vm = this;
-        $rootScope.app.layout.isCollapsed = true;
-        callApi();
-
-
-
-        init();
-
-
-        function callApi(){
-            ReportService.GetLineChartReport().then(function (report) {
-                var chartData = report.data;
-                var no_of_clients = _.pluck(chartData,'no_of_clients');
-                var total_loan_amount = _.map(chartData, function(data){ return data.total_loan_amount; });  // _.pluck(chartData,'total_loan_amount');
-
-                vm.barLabels = _.pluck(chartData,'crop');
-                vm.barSeries_byClient = ['Number of Clients'];
-                vm.barSeries_byAmount = ['Total Loan Amount'];
-                vm.barData_byClient = [ no_of_clients ];
-                vm.barData_byAmount = [ total_loan_amount ];
-                vm.barColors_byClient = [{backgroundColor: Colors.byName('green')}];
-                vm.barColors_byAmount = [{backgroundColor: Colors.byName('primary')}];
-
-            });
-        }
-
-        function init() {
-            vm.count = {
-                branch: 0,
-                client: 0,
-                user: 0};
-
-            getAllCounts();
-
-            // Pie Chart
-            // ------------------
-            vm.pieLabels = ["Screening", "Loan", "ACAT"];
-            vm.pieData = [300, 500, 100];
-            vm.pieColors = [Colors.byName('green'), Colors.byName('purple'), Colors.byName('yellow')];
-
-        }
-
-        function getAllCounts() {
-            SharedService.GetBranches().then(function (value) {
-                vm.count.branch = value.data.docs.length;
-            });
-            SharedService.GetUsers().then(function (value) {
-                vm.count.user = value.data.docs.length;
-            });
-            SharedService.GetClients().then(function (value) {
-                vm.count.client = value.data.docs.length;
-            });
-        }
-
-    }
-
-})(window.angular);
-(function(angular) {
-    "use strict";
-
-
-    angular
-        .module('app.report')
-        .controller('ReportController', ReportController);
-
-    ReportController.$inject = ['ReportService', 'blockUI','AlertService'];
-
-    function ReportController( ReportService,blockUI,AlertService )
-    {
-        var vm = this;
-        vm.onSelectedReport = _onSelectedReport;
-        vm.reports = [
-            {
-                name: 'report 1',
-                data: []
-            },
-            {
-                name: 'report 2',
-                data: []
-            },
-            {
-                name: 'report 3',
-                data: []
-            }
-        ];
-
-        init();
-
-        function _onSelectedReport() {
-            console.log("report ",vm.report);
-        }
-
-
-        function init() {
-            ReportService.GetClientHistoryReport().then(function (report) {
-                vm.reportData = report.data;
-            });
-
-
-            ReportService.GetReportById('5c0e852ed836a8000135774f').then(function (report) {
-                vm.client_loan_cycle_stats = report.data;
-
-            });
-        }
-
-    }
-
-})(window.angular);
-(function(angular) {
-    'use strict';
-    angular.module('app.report')
-
-        .service('ReportService', ReportService);
-
-    ReportService.$inject = ['$http','CommonService','Colors'];
-
-    function ReportService($http, CommonService, Colors) {
-        return {
-            GetLineChartReport:_getLineChartReport,
-            GetClientHistoryReport:_getClientHistoryReport,
-            GetReportById:_getReportById,
-            GetAllReports:_getAllReports,
-            barColors: [{backgroundColor: Colors.byName('success'), borderColor: Colors.byName('success')}, {backgroundColor: Colors.byName('info'),  borderColor: Colors.byName('info') }]
-        };
-
-        function _getReportById(id){
-            return $http.get(CommonService.buildUrlWithParam(API.Service.REPORT,API.Methods.Report.Report,id));
-        }
-        function _getLineChartReport(config){
-            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.Report) + '5c0ce5e7c3bb100001b218e7');
-        }
-        function _getClientHistoryReport(){
-            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.Report) + '5c0de708d836a80001357602?client=5c0e1d76afef1b0001f6a96d');
-        }
-
-        function _getAllReports(){
-            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.AllReport));
-        }
-    }
-
-})(window.angular);
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -6479,6 +6373,299 @@ var INDICATOR = {
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
         }
     }
+
+})(window.angular);
+(function(angular) {
+    "use strict";
+
+
+    angular
+        .module('app.report')
+        .controller('DashboardController', DashboardController);
+
+    DashboardController.$inject = ['ReportService', 'SharedService','Colors','$rootScope'];
+
+    function DashboardController( ReportService,SharedService,Colors,$rootScope )
+    {
+        var vm = this;
+        $rootScope.app.layout.isCollapsed = true;
+        callApi();
+
+
+
+        init();
+
+
+        function callApi(){
+            ReportService.GetLineChartReport().then(function (report) {
+                var chartData = report.data;
+                var no_of_clients = _.pluck(chartData,'no_of_clients');
+                var total_loan_amount = _.map(chartData, function(data){ return data.total_loan_amount; });  // _.pluck(chartData,'total_loan_amount');
+
+                vm.barLabels = _.pluck(chartData,'crop');
+                vm.barSeries_byClient = ['Number of Clients'];
+                vm.barSeries_byAmount = ['Total Loan Amount'];
+                vm.barData_byClient = [ no_of_clients ];
+                vm.barData_byAmount = [ total_loan_amount ];
+                vm.barColors_byClient = [{backgroundColor: Colors.byName('green')}];
+                vm.barColors_byAmount = [{backgroundColor: Colors.byName('primary')}];
+
+            });
+        }
+
+        function init() {
+            vm.count = {
+                branch: 0,
+                client: 0,
+                user: 0};
+
+            getAllCounts();
+
+            // Pie Chart
+            // ------------------
+            vm.pieLabels = ["Screening", "Loan", "ACAT"];
+            vm.pieData = [300, 500, 100];
+            vm.pieColors = [Colors.byName('green'), Colors.byName('purple'), Colors.byName('yellow')];
+
+        }
+
+        function getAllCounts() {
+            SharedService.GetBranches().then(function (value) {
+                vm.count.branch = value.data.docs.length;
+            });
+            SharedService.GetUsers().then(function (value) {
+                vm.count.user = value.data.docs.length;
+            });
+            SharedService.GetClients().then(function (value) {
+                vm.count.client = value.data.docs.length;
+            });
+        }
+
+    }
+
+})(window.angular);
+(function(angular) {
+    "use strict";
+
+
+    angular
+        .module('app.report')
+        .controller('ReportController', ReportController);
+
+    ReportController.$inject = ['ReportService', 'blockUI','AlertService'];
+
+    function ReportController( ReportService,blockUI,AlertService )
+    {
+        var vm = this;
+        vm.onSelectedReport = _onSelectedReport;
+        vm.reports = [
+            {
+                name: 'report 1',
+                data: []
+            },
+            {
+                name: 'report 2',
+                data: []
+            },
+            {
+                name: 'report 3',
+                data: []
+            }
+        ];
+        init();
+
+        function _onSelectedReport() {
+            console.log("report ",vm.report);
+        }
+
+
+        function init() {
+
+            ReportService.GetReportById('5c0de708d836a80001357602').then(function (report) {
+                vm.client_loan_history = report.data.data;
+            });
+            ReportService.GetReportById('5c0e852ed836a8000135774f').then(function (report) {
+                vm.client_loan_cycle_stats = report.data;
+            });
+        }
+
+    }
+
+})(window.angular);
+(function(angular) {
+    'use strict';
+    angular.module('app.report')
+
+        .service('ReportService', ReportService);
+
+    ReportService.$inject = ['$http','CommonService','Colors'];
+
+    function ReportService($http, CommonService, Colors) {
+        return {
+            GetLineChartReport:_getLineChartReport,
+            // GetClientHistoryReport:_getClientHistoryReport,
+            GetReportById:_getReportById,
+            GetAllReports:_getAllReports,
+            barColors: [{backgroundColor: Colors.byName('success'), borderColor: Colors.byName('success')}, {backgroundColor: Colors.byName('info'),  borderColor: Colors.byName('info') }]
+        };
+
+        function _getReportById(id){
+            return $http.get(CommonService.buildUrlWithParam(API.Service.REPORT,API.Methods.Report.Report,id));
+        }
+        function _getLineChartReport(config){
+            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.Report) + '5c0ce5e7c3bb100001b218e7');
+        }
+        function _getClientHistoryReport(){
+            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.Report) + '5c0de708d836a80001357602?client=5c0e1d76afef1b0001f6a96d');
+        }
+
+        function _getAllReports(){
+            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.AllReport));
+        }
+    }
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+        }
+
+
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+       function callApi(){
+        vm.promise =   ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
+
+    }
+
+
 
 })(window.angular);
 /**
@@ -7329,149 +7516,6 @@ var INDICATOR = {
         }
 
 
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearch;
-
-        initialize();
-
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-
-            callApi();
-        }
-
-
-        function _paginate (page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-
-       function callApi(){
-        vm.promise =   ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
 
     }
 
@@ -9869,155 +9913,6 @@ var INDICATOR = {
 
 })(window.angular);
 /**
- * Created by Yonas on 7/3/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("LoanApplicationProcessorController", LoanApplicationProcessorController);
-
-    LoanApplicationProcessorController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers','$state'];
-
-    function LoanApplicationProcessorController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers,$state ) {
-        var vm = this;
-        vm.backToList = _backToList;
-        vm.questionValueChanged = questionValueChanged;
-        vm.loanApplicationDetail = _loanApplicationDetail;
-        vm.saveClientForm = _saveClientForm;
-
-        vm.options = MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
-        vm.filter = {show : false};
-        vm.pageSizes = [10, 25, 50, 100, 250, 500];
-
-        vm.query = {
-            search:'',
-            page:1,
-            per_page:10
-        };
-        vm.visibility = { showLoanApplicationDetail: false };
-
-        vm.paginate = function(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
-        };
-        vm.clearSearchText = function () {
-            vm.query.search = '';
-            vm.filter.show = false;
-        };
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("search for ",newValue);
-            }
-        });
-
-        initialize();
-
-        function _loanApplicationDetail(client_loan_application) {
-            var client = client_loan_application.client;
-
-            LoanManagementService.GetClientLoanApplication(client._id).then(function (response) {
-                vm.client = response.data;
-                vm.visibility.showLoanApplicationDetail = true;
-                console.log("vm.client",vm.client);
-            });
-        }
-
-
-        function _saveClientForm(client,status) {
-
-            var loan_application = {
-                status: status,
-                questions:[],
-                sections: client.sections
-            };
-            // "[{"status":"Correct Status is either inprogress, accepted, submitted, rejected or declined_under_review"}]"
-
-            console.log("save status ", client);
-
-            LoanManagementService.SaveClientLoanApplication(loan_application,client._id)
-                .then(function (response) {
-                    AlertService.showSuccess('Client Loan Application',"Successfully saved Client Loan Application information  with status: " + status);
-                    console.log("saved  ", response);
-                },function (error) {
-                    console.log("error on saving loan application", error);
-                    var message = error.data.error.message;
-                    AlertService.showError("Error when saving loan application",message);
-                });
-
-        }
-
-        function _backToList(type) {
-            switch(type){
-                case 'LOAN_APPLICATION':
-                    vm.visibility.showLoanApplicationDetail = false;
-                    callAPI();
-                    break;
-            }
-
-        }
-
-        function initialize() {
-            callAPI();
-        }
-        function callAPI() {
-            vm.loanApplicationPromise = LoanManagementService.GetLoanApplications(vm.query).then(function (response) {
-                console.log("loan applications",response);
-                vm.loan_applications = response.data.docs;
-                vm.query.total_pages = response.data.total_pages;
-                vm.query.total_docs_count = response.data.total_docs_count;
-            });
-        }
-
-        function questionValueChanged(question) {
-
-            var prQues = getPrerequisiteQuestion(question._id);
-
-            _.each(prQues, function(prQue) {
-                if (prQue) {
-                    var prerequisite = prQue.prerequisites[0];
-                    //Set question's show based by comparing current value with expected preq. value
-                    prQue.show = (prerequisite.answer === question.values[0]);
-                }
-            });
-
-        }
-
-        function getPrerequisiteQuestion(questionID) {
-
-            //extract outer questions; if section type, get them from sections
-            var questions = vm.client.has_sections ?
-                _.reduce(vm.client.sections, function(m, q) {
-                    return m.concat(q.questions);
-                }, []) :
-                vm.client.questions;
-
-            //Get all subquestions
-            var subQuestions = _.reduce(questions, function(m, q) {
-                return m.concat(q.sub_questions);
-            }, []);
-
-            //merge questions with subquestions into a singl array
-            var mergedQuestions = _.uniq(_.union(questions, subQuestions), false, _.property('_id'));
-
-            //Search in mergedQuestions
-            var prQue = _.filter(mergedQuestions, function(obj) {
-                return _.some(obj.prerequisites, { question: questionID });
-            });
-
-            return prQue;
-        }
-
-    }
-
-
-
-})(window.angular);
-/**
  * Created by Yonas on 7/2/2018.
  */
 (function(angular) {
@@ -10184,6 +10079,155 @@ var INDICATOR = {
         });
 
     }
+
+})(window.angular);
+/**
+ * Created by Yonas on 7/3/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("LoanApplicationProcessorController", LoanApplicationProcessorController);
+
+    LoanApplicationProcessorController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers','$state'];
+
+    function LoanApplicationProcessorController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers,$state ) {
+        var vm = this;
+        vm.backToList = _backToList;
+        vm.questionValueChanged = questionValueChanged;
+        vm.loanApplicationDetail = _loanApplicationDetail;
+        vm.saveClientForm = _saveClientForm;
+
+        vm.options = MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
+        vm.filter = {show : false};
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
+
+        vm.query = {
+            search:'',
+            page:1,
+            per_page:10
+        };
+        vm.visibility = { showLoanApplicationDetail: false };
+
+        vm.paginate = function(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        };
+        vm.clearSearchText = function () {
+            vm.query.search = '';
+            vm.filter.show = false;
+        };
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("search for ",newValue);
+            }
+        });
+
+        initialize();
+
+        function _loanApplicationDetail(client_loan_application) {
+            var client = client_loan_application.client;
+
+            LoanManagementService.GetClientLoanApplication(client._id).then(function (response) {
+                vm.client = response.data;
+                vm.visibility.showLoanApplicationDetail = true;
+                console.log("vm.client",vm.client);
+            });
+        }
+
+
+        function _saveClientForm(client,status) {
+
+            var loan_application = {
+                status: status,
+                questions:[],
+                sections: client.sections
+            };
+            // "[{"status":"Correct Status is either inprogress, accepted, submitted, rejected or declined_under_review"}]"
+
+            console.log("save status ", client);
+
+            LoanManagementService.SaveClientLoanApplication(loan_application,client._id)
+                .then(function (response) {
+                    AlertService.showSuccess('Client Loan Application',"Successfully saved Client Loan Application information  with status: " + status);
+                    console.log("saved  ", response);
+                },function (error) {
+                    console.log("error on saving loan application", error);
+                    var message = error.data.error.message;
+                    AlertService.showError("Error when saving loan application",message);
+                });
+
+        }
+
+        function _backToList(type) {
+            switch(type){
+                case 'LOAN_APPLICATION':
+                    vm.visibility.showLoanApplicationDetail = false;
+                    callAPI();
+                    break;
+            }
+
+        }
+
+        function initialize() {
+            callAPI();
+        }
+        function callAPI() {
+            vm.loanApplicationPromise = LoanManagementService.GetLoanApplications(vm.query).then(function (response) {
+                console.log("loan applications",response);
+                vm.loan_applications = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+            });
+        }
+
+        function questionValueChanged(question) {
+
+            var prQues = getPrerequisiteQuestion(question._id);
+
+            _.each(prQues, function(prQue) {
+                if (prQue) {
+                    var prerequisite = prQue.prerequisites[0];
+                    //Set question's show based by comparing current value with expected preq. value
+                    prQue.show = (prerequisite.answer === question.values[0]);
+                }
+            });
+
+        }
+
+        function getPrerequisiteQuestion(questionID) {
+
+            //extract outer questions; if section type, get them from sections
+            var questions = vm.client.has_sections ?
+                _.reduce(vm.client.sections, function(m, q) {
+                    return m.concat(q.questions);
+                }, []) :
+                vm.client.questions;
+
+            //Get all subquestions
+            var subQuestions = _.reduce(questions, function(m, q) {
+                return m.concat(q.sub_questions);
+            }, []);
+
+            //merge questions with subquestions into a singl array
+            var mergedQuestions = _.uniq(_.union(questions, subQuestions), false, _.property('_id'));
+
+            //Search in mergedQuestions
+            var prQue = _.filter(mergedQuestions, function(obj) {
+                return _.some(obj.prerequisites, { question: questionID });
+            });
+
+            return prQue;
+        }
+
+    }
+
+
 
 })(window.angular);
 /**
