@@ -16,7 +16,7 @@
     "text": "Dashboard",
     "sref": "app.dashboard",
     "icon": "icon-speedometer",
-    "module": "all"
+    "module": "DASHBOARD"
   },
   {
     "text": "MFI Setup",
@@ -74,19 +74,19 @@
     "sref": "#",
     "icon": "fa fa-globe",
     "submenu": [
-      {"text": "Branch Report",     "sref": "app.branch-report" },
-      {"text": "Plot Report",     "sref": "app.plot-report"}
+      {"text": "Branch Report",     "sref": "app.branch-report" ,  "permission": "GEOSPATIAL_BRANCH_REPORT" },
+      {"text": "Plot Report",     "sref": "app.plot-report",  "permission": "GEOSPATIAL_PLOT_REPORT"}
     ]
   },
   {
     "text": "Core Banking",
-    "module": "CORE_BANKING",
+    "module": "CBS_INTEGRATION",
     "sref": "app.cbs",
     "icon": "fa fa-university"
   },
   {
     "text": "Report",
-    "module": "all",
+    "module": "REPORT",
     "sref": "app.report",
     "icon": "fa fa-bar-chart"
   }

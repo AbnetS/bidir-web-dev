@@ -63,19 +63,11 @@
                </div>
             </div>
          </div>
-
-         <!--<div class="panel b">-->
-         <!--<div class="panel-heading bb">-->
-         <!--<h4 class="panel-title">Seasonal Monitoring config</h4>-->
-         <!--</div>-->
-         <!---->
-         <!---->
-         <!--</div>-->
       </form>
    </div>
 </div>
 
-<div ng-show="vm.visibility.showSmiley" class="row clearfix">
+<div ng-show="vm.visibility.ConfigExists" class="row clearfix">
    <div class="col-xs-12 col-md-6 col-lg-6" ng-repeat="branch in vm.branches">
       <div class="panel panel-success">
          <div class="panel-heading">
@@ -104,5 +96,16 @@
          </div>
       </div>
    </div>
+</div>
+<div ng-show="!vm.visibility.ConfigExists" class="row clearfix">
+   <h4 class="centerPageText-lg">
+      Seasonal Monitoring Config Not Found!
+      <p>PLEASE Setup your Configuration to get vegetation index and rainfall seasonal monitoring information
+         <i class="fa fa-arrow-circle-up"></i>
+      </p>
+      <a></a>
+   </h4>
+
+
 </div>
 

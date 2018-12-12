@@ -41,14 +41,11 @@
 
 
         function init() {
-            // angular.extend($scope, {
-            //     center: {
-            //         lat: 8.9895,
-            //         lng: 38.6878,
-            //         zoom: 8
-            //     },
-            //     markers: {}
-            // });
+            angular.extend($scope, {
+                center: {
+                    autoDiscover: true
+                }
+            });
 
             callAPI();
         }

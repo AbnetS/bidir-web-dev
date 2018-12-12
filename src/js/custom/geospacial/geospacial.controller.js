@@ -73,7 +73,7 @@
             vm.visibility = {
                 showSmiley: true,
                 showInfoText: true,
-                isEditConfig: false };
+                ConfigExists: false };
             vm.seasonalFilterForm = {
                 IsfromDateValid: true,
                 IstoDateValid: true,
@@ -91,9 +91,10 @@
                     vm.config = response.data[0];
                     vm.config.fromDate = new Date(vm.config.from_date);
                     vm.config.toDate = new Date(vm.config.to_date);
+                    vm.visibility.ConfigExists = true;
                     prepareBranchesData();
                 }else {
-                    vm.visibility.isEditConfig = false;
+                    vm.visibility.ConfigExists = false;
                 }
             }, function (reason) {
                 console.log(reason)
@@ -126,7 +127,7 @@
                 var allRequest = response.data;
 
                 _.each(allRequest,function (request) {
-                    var sUID = "000000" + request.UID;
+                    var sUID =request.UID;
 
                     if(request.indicator === vm.INDICATOR.VI){
                         branch.vegitationIndex = {
@@ -144,12 +145,6 @@
                 });
 
             }, function (error) { console.log('error', error); });
-
-
-
-
-
-            var rainfall_UID = "00000018";
 
         }
 
@@ -179,7 +174,7 @@
                         config: vm.config._id,
                         branch: branch._id,
                         indicator: configVI.indicator,
-                        UID: branch.vegitationIndex.uid});
+                        UID: branch.vegitationIndex.suid});
 
                 }, function (error) { console.log("error", error);});
 
@@ -195,7 +190,7 @@
                         config: vm.config._id,
                         branch: branch._id,
                         indicator: configRainfall.indicator,
-                        UID: branch.rainfall.uid});
+                        UID: branch.rainfall.suid});
 
                 }, function (error) { console.log("error", error);});
         }
