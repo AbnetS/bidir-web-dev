@@ -82,7 +82,6 @@
 
             //DATE OPTION
             vm.dtOption = GeoSpatialService.DateOptionDefault();
-            GetBranches();
             GetUserConfig();
 
         }
@@ -102,29 +101,48 @@
         }
 
         function prepareBranchesData() {
-            _.each(vm.branches,function (branch) {
-                branch.regions = _.map(branch.weredas,function (woreda) {
-                    return woreda.w_code;
-                }).join(":");
-                ConstructGeoSpatialUrls(branch);
-            });
-        }
 
-
-        function ConstructGeoSpatialUrls(branch) {
-            //GET REQUEST FROM API TO GET UID SID
-            
-        }
-
-        function GetBranches() {
             SharedService.GetBranches()
                 .then( function (response) {
                         vm.branches = response.data.docs;
+                        _.each(vm.branches,function (branch) {
+                            branch.regions = _.map(branch.weredas,function (woreda) {
+                                return woreda.w_code;
+                            }).join(":");
+                            ConstructGeoSpatialUrls(branch);
+                        });
                     },
                     function (error) {
                         console.log("error fetching branches", error);
                     });
+
         }
+
+
+        function ConstructGeoSpatialUrls(branch) {
+            //GET REQUEST(branch,config) FROM API TO GET UID SID
+            var VI_UID = "00000088";
+            // http://seasmon.wenr.wur.nl/html/info_00000088_VI_latest.html
+             branch.vegitationIndex = {
+                 image_url: API.Config.SeasmonBaseUrl + 'info_' + VI_UID + '_VI_latest.html',
+                 chart_url: API.Config.SeasmonBaseUrl + 'chart_' + VI_UID + '_VI_latest.html'
+             };
+            var rainfall_UID = "00000018";
+            branch.rainfall = {
+                image_url: API.Config.SeasmonBaseUrl + 'info_' + rainfall_UID + '_PRECIP_latest.html',
+                chart_url: API.Config.SeasmonBaseUrl + 'chart_' + rainfall_UID + '_PRECIP_latest.html'
+            };
+        }
+
+        // function GetBranches() {
+        //     SharedService.GetBranches()
+        //         .then( function (response) {
+        //                 vm.branches = response.data.docs;
+        //             },
+        //             function (error) {
+        //                 console.log("error fetching branches", error);
+        //             });
+        // }
 
         function GetHumanizedGeoSpatialStatus() {
             _.each(vm.branches,function (branch) {

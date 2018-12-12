@@ -87,8 +87,8 @@
         function _saveRequest(request) {
             return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Request),request);
         }
-        function _getRequest(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Request,id));
+        function _getRequest(config_id,branch_id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Request,config_id));
         }
 
 

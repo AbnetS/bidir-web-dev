@@ -86,7 +86,7 @@
   },
   {
     "text": "Report",
-    "module": "REPORT",
+    "module": "all",
     "sref": "#",
     "icon": "fa fa-bar-chart",
     "submenu": [
