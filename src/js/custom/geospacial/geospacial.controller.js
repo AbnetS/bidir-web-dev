@@ -15,10 +15,10 @@
 
         init();
 
-        // We can use panel id name for the boolean flag to [un]collapse the panel
-        $scope.$watch('panelDemo1',function(newVal){
-            console.log('panelDemo1 collapsed: ' + newVal);
-        });
+        // // We can use panel id name for the boolean flag to [un]collapse the panel
+        // $scope.$watch('panelDemo1',function(newVal){
+        //     console.log('panelDemo1 collapsed: ' + newVal);
+        // });
 
         function _resetConfig() {
             vm.config = undefined;
@@ -41,6 +41,7 @@
                     GeoSpatialService.UpdateConfig(vm.config).then(function (response) {
                             AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
                             vm.config = response.data;
+                            vm.visibility.ConfigExists = true;
                             GetHumanizedGeoSpatialStatus();
                         }
                         , function (error) {
@@ -52,6 +53,7 @@
                     GeoSpatialService.SaveConfig(vm.config).then(function (response) {
                             AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
                             vm.config = response.data;
+                            vm.visibility.ConfigExists = true;
                             GetHumanizedGeoSpatialStatus();
                         }
                         , function (error) {
@@ -149,12 +151,21 @@
         }
 
         function GetHumanizedGeoSpatialStatus() {
-            _.each(vm.branches,function (branch) {
-                branch.regions = _.map(branch.weredas,function (woreda) {
-                    return woreda.w_code;
-                }).join(":");
-                RequestGeoSpatialByBranch(branch);
-            });
+
+            SharedService.GetBranches()
+                .then( function (response) {
+                        vm.branches = response.data.docs;
+                        _.each(vm.branches,function (branch) {
+                            branch.regions = _.map(branch.weredas,function (woreda) {
+                                return woreda.w_code;
+                            }).join(":");
+                            RequestGeoSpatialByBranch(branch);
+                        });
+                    },
+                    function (error) {
+                        console.log("error fetching branches", error);
+                    });
+
         }
 
        function RequestGeoSpatialByBranch(branch) {
