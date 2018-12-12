@@ -94,10 +94,12 @@ var API = {
             Config: 'configs',
             UserConfig: 'configs/search?user=',
             Woredas: 'weredas',
-            Request: 'requests/create'
+            Request: 'requests/create',
+            Search: 'requests/search?'
         },
         Report:{
-            Report: ''
+            Report: '',
+            AllReport: 'reports/all'
         }
     }
 };
