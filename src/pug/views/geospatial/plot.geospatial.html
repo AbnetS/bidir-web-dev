@@ -1,6 +1,36 @@
 <h3>Plot Geo Spatial Report</h3>
 
-<div class="col-lg-12">
-    <leaflet lf-center="center" markers="markers" height="480px" width="100%"></leaflet>
+
+<!--<div class="panel panel-default">-->
+    <!--<div class="panel-heading">-->
+        <!--Filters-->
+    <!--</div>-->
+    <!--<div class="panel-body">-->
+        <!--<div class="col-xs-12 col-lg-4">-->
+
+            <!--<ui-select ng-model="vm.selected_branch"-->
+                       <!--theme="select2"  on-select="vm.onSelectedBranch()"-->
+                       <!--title="select branch" style="width: 100%;">-->
+                <!--<ui-select-match allow-clear="true" placeholder="Select branch to filter...">-->
+                    <!--{{$select.selected.name}} - {{$select.selected.location}}-->
+                <!--</ui-select-match>-->
+                <!--<ui-select-choices repeat="branch in vm.branches | filter: $select.search">-->
+                    <!--<div ng-bind-html="branch.name | highlight: $select.search"></div>-->
+                    <!--<small>-->
+                        <!--<strong>location:</strong> {{branch.location}}-->
+                    <!--</small>-->
+                <!--</ui-select-choices>-->
+            <!--</ui-select>-->
+        <!--</div>-->
+    <!--</div>-->
+
+<!--</div>-->
+
+<div class="row">
+    <div class="col-lg-12">
+        <leaflet lf-center="center" markers="markers" height="480px" width="100%"></leaflet>
+    </div>
 </div>
+
+
 

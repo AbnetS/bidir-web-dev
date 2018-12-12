@@ -180,12 +180,13 @@
                 .then(function (response) {
                     branch.vegitationIndex = response.data;
                     branch.vegitationIndex.chart_url =  _.isUndefined(branch.vegitationIndex.image_url)? '': branch.vegitationIndex.image_url.replace('info','chart');
-
-                    SaveRequest({
-                        config: vm.config._id,
-                        branch: branch._id,
-                        indicator: configVI.indicator,
-                        UID: branch.vegitationIndex.suid});
+                    if(_.isUndefined(branch.vegitationIndex.is_registered) || !branch.vegitationIndex.is_registered){
+                        SaveRequest({
+                            config: vm.config._id,
+                            branch: branch._id,
+                            indicator: configVI.indicator,
+                            UID: branch.vegitationIndex.suid});
+                    }
 
                 }, function (error) { console.log("error", error);});
 
@@ -196,12 +197,13 @@
                 .then(function (response) {
                     branch.rainfall = response.data;
                     branch.rainfall.chart_url = _.isUndefined(branch.rainfall.image_url)? '': branch.rainfall.image_url.replace('info','chart');
-
-                    SaveRequest({
-                        config: vm.config._id,
-                        branch: branch._id,
-                        indicator: configRainfall.indicator,
-                        UID: branch.rainfall.suid});
+                    if(_.isUndefined(branch.rainfall.is_registered) || !branch.rainfall.is_registered){
+                        SaveRequest({
+                            config: vm.config._id,
+                            branch: branch._id,
+                            indicator: configRainfall.indicator,
+                            UID: branch.rainfall.suid});
+                    }
 
                 }, function (error) { console.log("error", error);});
         }

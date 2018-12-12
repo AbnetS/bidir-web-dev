@@ -6,9 +6,9 @@
         .module('app.geospatial')
         .controller('PlotReportController', PlotReportController);
 
-    PlotReportController.$inject = [ '$scope','GeoSpatialService','CommonService'];
+    PlotReportController.$inject = [ '$scope','GeoSpatialService','SharedService'];
 
-    function PlotReportController( $scope,GeoSpatialService,CommonService )
+    function PlotReportController( $scope,GeoSpatialService,SharedService )
     {
         var vm = this;
 
@@ -46,7 +46,7 @@
                     autoDiscover: true
                 }
             });
-
+            GetBranches();
             callAPI();
         }
 
@@ -85,6 +85,16 @@
             }, function (error) { console.log('error', error); });
         }
 
+
+        function GetBranches() {
+            SharedService.GetBranches()
+                .then( function (response) {
+                        vm.branches = response.data.docs;
+                    },
+                    function (error) {
+                        console.log("error fetching branches", error);
+                    });
+        }
 
     }
 

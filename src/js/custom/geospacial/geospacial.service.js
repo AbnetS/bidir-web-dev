@@ -17,6 +17,7 @@
             SaveRequest:_saveRequest,
             SearchRequest:_searchRequest,
             CurrentUser: _getUser(),
+            AccessBranches:  AuthService.GetAccessBranches(),
             GetPlotAreaData:_getPlotAreaData
         };
 
