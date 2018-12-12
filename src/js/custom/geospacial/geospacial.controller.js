@@ -41,7 +41,7 @@
                     GeoSpatialService.UpdateConfig(vm.config).then(function (response) {
                             AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
                             vm.config = response.data;
-                            prepareBranchesData();
+                            GetHumanizedGeoSpatialStatus();
                         }
                         , function (error) {
                             console.log('error', error);
@@ -52,7 +52,7 @@
                     GeoSpatialService.SaveConfig(vm.config).then(function (response) {
                             AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
                             vm.config = response.data;
-                            prepareBranchesData();
+                            GetHumanizedGeoSpatialStatus();
                         }
                         , function (error) {
                             console.log('error', error);
@@ -82,6 +82,7 @@
 
             //DATE OPTION
             vm.dtOption = GeoSpatialService.DateOptionDefault();
+            GetBranches();
             GetUserConfig();
 
         }
@@ -101,22 +102,40 @@
         }
 
         function prepareBranchesData() {
+            _.each(vm.branches,function (branch) {
+                branch.regions = _.map(branch.weredas,function (woreda) {
+                    return woreda.w_code;
+                }).join(":");
+                ConstructGeoSpatialUrls(branch);
+            });
+        }
+
+
+        function ConstructGeoSpatialUrls(branch) {
+            //GET REQUEST FROM API TO GET UID SID
+            
+        }
+
+        function GetBranches() {
             SharedService.GetBranches()
                 .then( function (response) {
                         vm.branches = response.data.docs;
-                        _.each(vm.branches,function (branch) {
-                            branch.regions = _.map(branch.weredas,function (woreda) {
-                                return woreda.w_code;
-                            }).join(":");
-                            GetGeoSpatialByBranch(branch);
-                        });
                     },
                     function (error) {
                         console.log("error fetching branches", error);
                     });
         }
 
-        function GetGeoSpatialByBranch(branch) {
+        function GetHumanizedGeoSpatialStatus() {
+            _.each(vm.branches,function (branch) {
+                branch.regions = _.map(branch.weredas,function (woreda) {
+                    return woreda.w_code;
+                }).join(":");
+                RequestGeoSpatialByBranch(branch);
+            });
+        }
+
+       function RequestGeoSpatialByBranch(branch) {
             var configVI = {
                 indicator: vm.INDICATOR.VI,
                 start_date: GeoSpatialService.formatDateForRequest(vm.config.from_date),
@@ -129,11 +148,11 @@
                     branch.vegitationIndex = response.data;
                     branch.vegitationIndex.chart_url =  _.isUndefined(branch.vegitationIndex.image_url)? '': branch.vegitationIndex.image_url.replace('info','chart');
 
-                    // SaveRequest({
-                    //     config: vm.config._id,
-                    //     branch: branch._id,
-                    //     indicator: configVI.indicator,
-                    //     UID: branch.vegitationIndex.uid});
+                    SaveRequest({
+                        config: vm.config._id,
+                        branch: branch._id,
+                        indicator: configVI.indicator,
+                        UID: branch.vegitationIndex.uid});
 
                 }, function (error) { console.log("error", error);});
 
@@ -145,17 +164,16 @@
                     branch.rainfall = response.data;
                     branch.rainfall.chart_url = _.isUndefined(branch.rainfall.image_url)? '': branch.rainfall.image_url.replace('info','chart');
 
-                    // SaveRequest({
-                    //     config: vm.config._id,
-                    //     branch: branch._id,
-                    //     indicator: configRainfall.indicator,
-                    //     UID: branch.rainfall.uid});
+                    SaveRequest({
+                        config: vm.config._id,
+                        branch: branch._id,
+                        indicator: configRainfall.indicator,
+                        UID: branch.rainfall.uid});
 
                 }, function (error) { console.log("error", error);});
         }
 
        function SaveRequest(request) {
-
            GeoSpatialService.SaveRequest(request).then(function (response) {
                console.log('response', response);
                }, function (error) { console.log('error', error); });

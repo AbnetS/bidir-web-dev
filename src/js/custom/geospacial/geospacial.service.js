@@ -15,6 +15,7 @@
             GetUserConfig:_getUserConfig,
             DateOptionDefault:_dateOptionDefault,
             SaveRequest:_saveRequest,
+            GetRequest:_getRequest,
             CurrentUser: _getUser()
         };
 
@@ -86,6 +87,10 @@
         function _saveRequest(request) {
             return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Request),request);
         }
+        function _getRequest(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Request,id));
+        }
+
 
     }
 
