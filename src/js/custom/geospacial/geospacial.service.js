@@ -34,7 +34,10 @@
             return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
         }
         function _updateConfig(config){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config,config._id),config);
+            return $http.put(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config,config._id),{
+                user : config.user,
+                from_date : config.from_date,
+                to_date : config.to_date});
         }
 
         function _getSeasonalMonitorData(config) {
@@ -45,8 +48,6 @@
                     'Authorization': undefined
                 },
                 url: API.Config.SeasonalMonitoringBaseUrl +  'indicator='+config.indicator+'&start_date='+config.start_date+'&end_date='+config.end_date+'&regions=' +config.regions};
-
-
             return $http(request);
         }
 
