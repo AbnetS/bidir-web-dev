@@ -11,17 +11,16 @@
     </div>
     Reports</h3>
 
-
+<md-progress-linear md-mode="indeterminate" ng-show="vm.report.isLoading"></md-progress-linear>
 <div>
-    <div ng-show="vm.report" class="pull-right">
+    <div ng-show="vm.reportData && vm.reportData.length>0" class="pull-right">
         <a ng-click="vm.printReport(vm.report)" class="btn btn-default hidden-print">
-            <i class="icon-printer"></i>
-        </a>
+            <i class="icon-printer"></i></a>
     </div>
 
-    <div ng-include="vm.report.templateUrl"></div>
+    <div ng-include="vm.report.templateUrl" ng-show="vm.reportData && vm.reportData.length>0"></div>
 
-    <div ng-show="!vm.report" class="row clearfix">
+    <div class="row" ng-show="!vm.report || vm.reportData">
         <h4 class="centerPageText-lg">
             <p> PLEASE! Select Report from the the top right side
                 <i class="fa fa-arrow-circle-up"></i></p>

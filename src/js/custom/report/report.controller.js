@@ -14,19 +14,27 @@
         vm.onSelectedReport = _onSelectedReport;
         vm.getReportTemplate = _getReportTemplate;
         vm.printReport = _printReport;
+
         init();
 
         function _onSelectedReport() {
+
             vm.report.templateUrl =  vm.getReportTemplate();
             blockUI.start('reportBlockUI');
-            ReportService.GetReportById(vm.report._id).then(function (report) {
-                blockUI.stop();
+            vm.report.isLoading = true;
+           vm.report.reportPromise = ReportService.GetReportById(vm.report._id).then(function (report) {
+               vm.report.isLoading = false;
+               blockUI.stop();
                 if(vm.report._id === '5c0de708d836a80001357602'){
                     vm.reportData = report.data.data;
                 }else{
                     vm.reportData = report.data;
                 }
-            },function (reason) {  blockUI.stop();      console.log("error ",reason) });
+            },function (reason) {
+               vm.report.isLoading = false;
+                blockUI.stop();
+                console.log("error ",reason)
+            });
         }
 
         function _getReportTemplate() {
