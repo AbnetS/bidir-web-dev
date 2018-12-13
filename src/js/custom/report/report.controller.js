@@ -6,40 +6,65 @@
         .module('app.report')
         .controller('ReportController', ReportController);
 
-    ReportController.$inject = ['ReportService', 'blockUI','AlertService'];
+    ReportController.$inject = ['ReportService', 'blockUI','PrintPreviewService'];
 
-    function ReportController( ReportService,blockUI,AlertService )
+    function ReportController( ReportService,blockUI,PrintPreviewService )
     {
         var vm = this;
         vm.onSelectedReport = _onSelectedReport;
-        vm.reports = [
-            {
-                name: 'report 1',
-                data: []
-            },
-            {
-                name: 'report 2',
-                data: []
-            },
-            {
-                name: 'report 3',
-                data: []
-            }
-        ];
+        vm.getReportTemplate = _getReportTemplate;
+        vm.printReport = _printReport;
         init();
 
         function _onSelectedReport() {
-            console.log("report ",vm.report);
+            vm.report.templateUrl =  vm.getReportTemplate();
+            blockUI.start('reportBlockUI');
+            ReportService.GetReportById(vm.report._id).then(function (report) {
+                blockUI.stop();
+                if(vm.report._id === '5c0de708d836a80001357602'){
+                    vm.reportData = report.data.data;
+                }else{
+                    vm.reportData = report.data;
+                }
+            },function (reason) {  blockUI.stop();      console.log("error ",reason) });
+        }
+
+        function _getReportTemplate() {
+            var report = vm.report;
+            if(_.isUndefined(vm.report)) return '';
+            var viewPath = 'app/views/';
+            var templatePath = '';
+            switch (report._id) {
+                case '5c0de708d836a80001357602':
+                    templatePath = viewPath + 'report/templates/client_loan_history_template.html';
+                    break;
+                case '5c0e852ed836a8000135774f':
+                    templatePath = viewPath + 'report/templates/client_loan_cycle_stats_template.html';
+                    break;
+                default:
+                        templatePath = '';
+            }
+            return templatePath;
+        }
+
+        function _printReport(report) {
+            var preview = [{
+                Name: report.title,
+                TemplateUrl: report.templateUrl.replace("template.html","printable.html"),
+                IsCommon: false,
+                IsSelected: false,
+                Data: angular.extend({ Title: report.title}, vm.reportData)
+            }];
+            PrintPreviewService.show(preview);
         }
 
 
         function init() {
+            ReportService.GetAllReports().then(function (response) {
+                vm.reportsList = _.filter(response.data,function (report) {
+                    return report._id === '5c0de708d836a80001357602' || report._id === '5c0e852ed836a8000135774f';
+                });
 
-            ReportService.GetReportById('5c0de708d836a80001357602').then(function (report) {
-                vm.client_loan_history = report.data.data;
-            });
-            ReportService.GetReportById('5c0e852ed836a8000135774f').then(function (report) {
-                vm.client_loan_cycle_stats = report.data;
             });
         }
 

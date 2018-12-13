@@ -1,11 +1,10 @@
 <div class="panel panel-default">
    <div class="panel-heading">
-      <h4>Client Loan Cycle Status</h4>
-
+      <h4 class="text-uppercase">{{vm.report.title}}</h4>
    </div>
    <div class="panel-body">
-      <div class="table-responsive">
-         <table class="table table-hover table-bordered table-striped" ng-repeat="report in vm.client_loan_cycle_stats">
+      <div class="table-responsive" block-ui="vm.reportBlockUI">
+         <table class="table table-hover table-bordered table-striped" ng-repeat="report in vm.reportData">
             <thead>
                <tr class="bg-success">
                   <th colspan="9">{{report.crop}}</th>

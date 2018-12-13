@@ -476,8 +476,8 @@
                                                         'vendor/fullcalendar/dist/gcal.js',
                                                         'vendor/fullcalendar/dist/fullcalendar.css',
                                                         'vendor/angular-ui-calendar/src/calendar.js'], serie: true},
-            {name: 'chart.js',                   files: ['vendor/chart.js/dist/Chart.js',
-                                                         'vendor/angular-chart.js/dist/angular-chart.js'], serie: true},
+            {name: 'chart.js',                   files: ['vendor/chart.js/dist/Chart.min.js',
+                                                         'vendor/angular-chart.js/dist/angular-chart.min.js'], serie: true},
             {name: 'ui-leaflet',                   files: ['vendor/leaflet/dist/leaflet.js',
                                                            'vendor/angular-simple-logger/dist/angular-simple-logger.js',
                                                             'vendor/ui-leaflet/dist/ui-leaflet.js',
@@ -3162,6 +3162,17 @@ function runBlock() {
 })();
 
 /**
+ * Created by Yoni on 12/3/2017.
+ */
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.welcomePage', []);
+
+})();
+/**
  * Created by Yonas on 8/16/2018.
  */
 (function() {
@@ -3177,17 +3188,6 @@ function runBlock() {
 
     angular
         .module('app.report', []);
-
-})();
-/**
- * Created by Yoni on 12/3/2017.
- */
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.welcomePage', []);
 
 })();
 
@@ -3970,7 +3970,7 @@ var API = {
         },
         Report:{
             Report: '',
-            AllReport: 'reports/all'
+            AllReport: 'all'
         }
     }
 };
@@ -6189,6 +6189,139 @@ var INDICATOR = {
 })(window.angular);
 
 /**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.welcomePage')
+        .controller('TaskDetailController', TaskDetailController);
+
+    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items','SweetAlert'];
+
+    function TaskDetailController($mdDialog, WelcomeService ,items,SweetAlert) {
+        var vm = this
+        vm.cancel = _cancel;
+        vm.approveUser = _approveUser;
+        vm.declineUser = _declineUser;
+        vm.task = items.taskInfo;
+        console.log("task ",vm.task);
+        WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
+            // console.log("task related user",response);
+            vm.userInfo = response.data;
+
+        },function(error){
+            console.log("error",error);
+        });
+
+        function _approveUser() {
+            var task = {
+                taskId:vm.task._id ,
+                status: "approved",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
+        }
+
+        function _declineUser() {
+            var task = {
+                taskId:vm.task._id ,
+                status: "declined",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
+        }
+
+        function updateStatus(task){
+            WelcomeService.ChangeTaskStatus(task).then(
+                function(response) {
+                    SweetAlert.swal('Task Status Changed!',
+                        'Task '+ task.status + ' Successfully!',
+                        'success');
+                    console.log("task updated",response);
+                    $mdDialog.hide();
+                },
+                function(error) {
+                    SweetAlert.swal( 'Oops...',
+                        'Something went wrong!',
+                        'error');
+                    console.log("could not be updated", error);
+                }
+            );
+        }
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.welcomePage')
+        .controller('WelcomeController', WelcomeController);
+
+    WelcomeController.$inject = ['$mdDialog', 'WelcomeService','AuthService'];
+
+    function WelcomeController($mdDialog, WelcomeService ,AuthService) {
+        var vm = this;
+
+    }
+
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.welcomePage')
+
+        .service('WelcomeService', WelcomeService);
+    WelcomeService.$inject = ['$http', 'CommonService','AuthService'];
+
+    function WelcomeService($http, CommonService,AuthService) {
+        return {
+            GetTasks: _getTasks,
+            GetUserAccount:_getUserAccount,
+            ChangeTaskStatus:_changeTaskStatus
+        };
+
+        function _getUserAccount(id){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
+        }
+        function _getTasks(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Tasks.GetAll),httpConfig);
+        }
+        function _changeTaskStatus(taskObj) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
+        }
+    }
+
+})(window.angular);
+/**
  * Created by Yonas on 8/16/2018.
  */
 (function(angular) {
@@ -6339,40 +6472,65 @@ var INDICATOR = {
         .module('app.report')
         .controller('ReportController', ReportController);
 
-    ReportController.$inject = ['ReportService', 'blockUI','AlertService'];
+    ReportController.$inject = ['ReportService', 'blockUI','PrintPreviewService'];
 
-    function ReportController( ReportService,blockUI,AlertService )
+    function ReportController( ReportService,blockUI,PrintPreviewService )
     {
         var vm = this;
         vm.onSelectedReport = _onSelectedReport;
-        vm.reports = [
-            {
-                name: 'report 1',
-                data: []
-            },
-            {
-                name: 'report 2',
-                data: []
-            },
-            {
-                name: 'report 3',
-                data: []
-            }
-        ];
+        vm.getReportTemplate = _getReportTemplate;
+        vm.printReport = _printReport;
         init();
 
         function _onSelectedReport() {
-            console.log("report ",vm.report);
+            vm.report.templateUrl =  vm.getReportTemplate();
+            blockUI.start('reportBlockUI');
+            ReportService.GetReportById(vm.report._id).then(function (report) {
+                blockUI.stop();
+                if(vm.report._id === '5c0de708d836a80001357602'){
+                    vm.reportData = report.data.data;
+                }else{
+                    vm.reportData = report.data;
+                }
+            },function (reason) {  blockUI.stop();      console.log("error ",reason) });
+        }
+
+        function _getReportTemplate() {
+            var report = vm.report;
+            if(_.isUndefined(vm.report)) return '';
+            var viewPath = 'app/views/';
+            var templatePath = '';
+            switch (report._id) {
+                case '5c0de708d836a80001357602':
+                    templatePath = viewPath + 'report/templates/client_loan_history_template.html';
+                    break;
+                case '5c0e852ed836a8000135774f':
+                    templatePath = viewPath + 'report/templates/client_loan_cycle_stats_template.html';
+                    break;
+                default:
+                        templatePath = '';
+            }
+            return templatePath;
+        }
+
+        function _printReport(report) {
+            var preview = [{
+                Name: report.title,
+                TemplateUrl: report.templateUrl.replace("template.html","printable.html"),
+                IsCommon: false,
+                IsSelected: false,
+                Data: angular.extend({ Title: report.title}, vm.reportData)
+            }];
+            PrintPreviewService.show(preview);
         }
 
 
         function init() {
+            ReportService.GetAllReports().then(function (response) {
+                vm.reportsList = _.filter(response.data,function (report) {
+                    return report._id === '5c0de708d836a80001357602' || report._id === '5c0e852ed836a8000135774f';
+                });
 
-            ReportService.GetReportById('5c0de708d836a80001357602').then(function (report) {
-                vm.client_loan_history = report.data.data;
-            });
-            ReportService.GetReportById('5c0e852ed836a8000135774f').then(function (report) {
-                vm.client_loan_cycle_stats = report.data;
             });
         }
 
@@ -6408,139 +6566,6 @@ var INDICATOR = {
 
         function _getAllReports(){
             return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.AllReport));
-        }
-    }
-
-})(window.angular);
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.welcomePage')
-        .controller('TaskDetailController', TaskDetailController);
-
-    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items','SweetAlert'];
-
-    function TaskDetailController($mdDialog, WelcomeService ,items,SweetAlert) {
-        var vm = this
-        vm.cancel = _cancel;
-        vm.approveUser = _approveUser;
-        vm.declineUser = _declineUser;
-        vm.task = items.taskInfo;
-        console.log("task ",vm.task);
-        WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
-            // console.log("task related user",response);
-            vm.userInfo = response.data;
-
-        },function(error){
-            console.log("error",error);
-        });
-
-        function _approveUser() {
-            var task = {
-                taskId:vm.task._id ,
-                status: "approved",
-                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
-            };
-            updateStatus(task);
-        }
-
-        function _declineUser() {
-            var task = {
-                taskId:vm.task._id ,
-                status: "declined",
-                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
-            };
-            updateStatus(task);
-        }
-
-        function updateStatus(task){
-            WelcomeService.ChangeTaskStatus(task).then(
-                function(response) {
-                    SweetAlert.swal('Task Status Changed!',
-                        'Task '+ task.status + ' Successfully!',
-                        'success');
-                    console.log("task updated",response);
-                    $mdDialog.hide();
-                },
-                function(error) {
-                    SweetAlert.swal( 'Oops...',
-                        'Something went wrong!',
-                        'error');
-                    console.log("could not be updated", error);
-                }
-            );
-        }
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-    }
-
-}(window.angular));
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.welcomePage')
-        .controller('WelcomeController', WelcomeController);
-
-    WelcomeController.$inject = ['$mdDialog', 'WelcomeService','AuthService'];
-
-    function WelcomeController($mdDialog, WelcomeService ,AuthService) {
-        var vm = this;
-
-    }
-
-}(window.angular));
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.welcomePage')
-
-        .service('WelcomeService', WelcomeService);
-    WelcomeService.$inject = ['$http', 'CommonService','AuthService'];
-
-    function WelcomeService($http, CommonService,AuthService) {
-        return {
-            GetTasks: _getTasks,
-            GetUserAccount:_getUserAccount,
-            ChangeTaskStatus:_changeTaskStatus
-        };
-
-        function _getUserAccount(id){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
-        }
-        function _getTasks(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Tasks.GetAll),httpConfig);
-        }
-        function _changeTaskStatus(taskObj) {
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
         }
     }
 

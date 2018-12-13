@@ -100,7 +100,7 @@ var API = {
         },
         Report:{
             Report: '',
-            AllReport: 'reports/all'
+            AllReport: 'all'
         }
     }
 };

@@ -33,8 +33,5 @@
   "bower_components/underscore/underscore.js",
   "bower_components/moment/min/moment-with-locales.min.js",
   "bower_components/angular-moment/angular-moment.min.js",
-  "bower_components/angular-file-upload/dist/angular-file-upload.js",
-  "bower_components/ngmap/build/scripts/ng-map.min.js",
-  "bower_components/angular-chart.js/dist/angular-chart.js",
-  "bower_components/chart.js/dist/Chart.js"
+  "bower_components/angular-file-upload/dist/angular-file-upload.js"
 ]

@@ -1,14 +1,11 @@
 <h3>
-   <!--<button class="btn btn-primary " type="button">-->
-   <!--<em class="fa fa-plus-circle fa-fw mr-sm"></em>Types of reports</button>-->
    <div class="col-xs-10 col-lg-5 pull-right">
-      <!--<label class="control-label">Select Report Types</label>-->
       <ui-select ng-model="vm.report" theme="bootstrap" on-select="vm.onSelectedReport()" title="select report" style="width: 100%;">
          <ui-select-match allow-clear="true" placeholder="Select report...">
-            {{$select.selected.name}}
+            {{$select.selected.title}}
          </ui-select-match>
-         <ui-select-choices repeat="report in vm.reports | filter: $select.search">
-            <div ng-bind-html="report.name | highlight: $select.search"></div>
+         <ui-select-choices repeat="report in vm.reportsList | filter: $select.search">
+            <span ng-bind-html="report.title | highlight: $select.search"></span>
          </ui-select-choices>
       </ui-select>
    </div>
@@ -16,13 +13,21 @@
 
 
 <div>
+   <div ng-show="vm.report" class="pull-right">
+      <a ng-click="vm.printReport(vm.report)" class="btn btn-default hidden-print">
+         <i class="icon-printer"></i>
+      </a>
+   </div>
 
-   <div ng-include="'app/views/report/templates/client_loan_history_template.html'"></div>
+   <div ng-include="vm.report.templateUrl"></div>
 
-   <br/>
-   <div ng-include="'app/views/report/templates/client_loan_cycle_stats_template.html'"></div>
-
-
-
+   <div ng-show="!vm.report" class="row clearfix">
+      <h4 class="centerPageText-lg">
+         <p>PLEASE! Select Report from the the top right side
+            <i class="fa fa-arrow-circle-up"></i>
+         </p>
+         <a></a>
+      </h4>
+   </div>
 </div>
 
