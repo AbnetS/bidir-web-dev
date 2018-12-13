@@ -50,10 +50,10 @@
         function _printReport(report) {
             var preview = [{
                 Name: report.title,
-                TemplateUrl: report.templateUrl.replace("template.html","printable.html"),
+                TemplateUrl: report.templateUrl,//.replace("template.html","printable.html"),
                 IsCommon: false,
                 IsSelected: false,
-                Data: angular.extend({ Title: report.title}, vm.reportData)
+                Data: angular.extend({ Title: report.title}, {report: vm.report,reportData: vm.reportData} )
             }];
             PrintPreviewService.show(preview);
         }
