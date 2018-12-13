@@ -10,7 +10,7 @@
         return {
             formatDateForRequest:_formatDateForRequest,
             getSeasonalMonitorData:_getSeasonalMonitorData,
-            SaveConfig : _saveConfig,
+            SaveUserConfig : _saveConfig,
             UpdateConfig:_updateConfig,
             GetUserConfig:_getUserConfig,
             DateOptionDefault:_dateOptionDefault,

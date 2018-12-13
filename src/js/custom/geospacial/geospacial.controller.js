@@ -50,7 +50,7 @@
                             AlertService.showError('Oops... Something went wrong', message);
                         });
                 }else{
-                    GeoSpatialService.SaveConfig(vm.config).then(function (response) {
+                    GeoSpatialService.SaveUserConfig(vm.config).then(function (response) {
                             AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
                             vm.config = response.data;
                             vm.visibility.ConfigExists = true;
@@ -127,24 +127,27 @@
             //GET REQUEST(branch,config) FROM API TO GET UID SID
             GeoSpatialService.SearchRequest(vm.config._id,branch._id).then(function (response) {
                 var allRequest = response.data;
+                if(allRequest.length > 0){
+                    _.each(allRequest,function (request) {
+                        var sUID =request.UID;
 
-                _.each(allRequest,function (request) {
-                    var sUID =request.UID;
+                        if(request.indicator === vm.INDICATOR.VI){
+                            branch.vegitationIndex = {
+                                image_url: API.Config.SeasmonBaseUrl + 'info_' + sUID + '_VI_latest.html',
+                                chart_url: API.Config.SeasmonBaseUrl + 'chart_' + sUID + '_VI_latest.html'
+                            };
+                        }
+                        else {
+                            branch.rainfall = {
+                                image_url: API.Config.SeasmonBaseUrl + 'info_' + sUID + '_PRECIP_latest.html',
+                                chart_url: API.Config.SeasmonBaseUrl + 'chart_' + sUID + '_PRECIP_latest.html'
+                            };
+                        }
 
-                    if(request.indicator === vm.INDICATOR.VI){
-                        branch.vegitationIndex = {
-                            image_url: API.Config.SeasmonBaseUrl + 'info_' + sUID + '_VI_latest.html',
-                            chart_url: API.Config.SeasmonBaseUrl + 'chart_' + sUID + '_VI_latest.html'
-                        };
-                    }
-                    else {
-                        branch.rainfall = {
-                            image_url: API.Config.SeasmonBaseUrl + 'info_' + sUID + '_PRECIP_latest.html',
-                            chart_url: API.Config.SeasmonBaseUrl + 'chart_' + sUID + '_PRECIP_latest.html'
-                        };
-                    }
+                    });
+                }
 
-                });
+
 
             }, function (error) { console.log('error', error); });
 
@@ -180,7 +183,7 @@
                 .then(function (response) {
                     branch.vegitationIndex = response.data;
                     branch.vegitationIndex.chart_url =  _.isUndefined(branch.vegitationIndex.image_url)? '': branch.vegitationIndex.image_url.replace('info','chart');
-                    if(_.isUndefined(branch.vegitationIndex.is_registered) || !branch.vegitationIndex.is_registered){
+                    if(!_.isUndefined(branch.vegitationIndex.is_registered) && branch.vegitationIndex.is_registered){
                         SaveRequest({
                             config: vm.config._id,
                             branch: branch._id,
@@ -197,7 +200,7 @@
                 .then(function (response) {
                     branch.rainfall = response.data;
                     branch.rainfall.chart_url = _.isUndefined(branch.rainfall.image_url)? '': branch.rainfall.image_url.replace('info','chart');
-                    if(_.isUndefined(branch.rainfall.is_registered) || !branch.rainfall.is_registered){
+                    if(!_.isUndefined(branch.rainfall.is_registered) && branch.rainfall.is_registered){
                         SaveRequest({
                             config: vm.config._id,
                             branch: branch._id,
