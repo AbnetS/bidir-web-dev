@@ -69,13 +69,13 @@
     'use strict';
 
     angular
-        .module('app.lazyload', []);
+        .module('app.loadingbar', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.loadingbar', []);
+        .module('app.lazyload', []);
 })();
 (function() {
     'use strict';
@@ -305,6 +305,50 @@
     'use strict';
 
     angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.lazyload')
         .config(lazyloadConfig);
 
@@ -485,50 +529,6 @@
           ]
         })
         ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
 
 })();
 /**=========================================================
@@ -3161,16 +3161,6 @@ function runBlock() {
 
 })();
 
-/**
- * Created by Yonas on 8/16/2018.
- */
-(function() {
-    'use strict';
-
-    angular
-        .module('app.profile', []);
-
-})();
 
 (function() {
     'use strict';
@@ -3188,6 +3178,16 @@ function runBlock() {
 
     angular
         .module('app.welcomePage', []);
+
+})();
+/**
+ * Created by Yonas on 8/16/2018.
+ */
+(function() {
+    'use strict';
+
+    angular
+        .module('app.profile', []);
 
 })();
 
@@ -3858,6 +3858,24 @@ function runBlock() {
                 return $sce.trustAsResourceUrl(url);
             };
         }])
+        .filter('ordinal', function(){
+            return function(number){
+                if(isNaN(number) || number < 1){
+                    return number;
+                } else {
+                    var lastDigit = number % 10;
+                    if(lastDigit === 1){
+                        return number + 'st'
+                    } else if(lastDigit === 2){
+                        return number + 'nd'
+                    } else if (lastDigit === 3){
+                        return number + 'rd'
+                    } else if (lastDigit > 3){
+                        return number + 'th'
+                    }
+                }
+            }
+        })
         .filter('titleCase', function () {
         return function (input) {
             input = input || '';
@@ -5309,7 +5327,7 @@ var INDICATOR = {
             return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
         }
         function _getClientApplicationByLoanCycle(clientId,application,loanCycle) {
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Histories) + 'application='+application+'&client='+clientId+'&loan_cycle_number='+loanCycle);
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Histories) + 'application='+application+'&client='+clientId+'&loanCycle='+loanCycle);
         }
         function _getLoanApplications(parameters) {
             return $http.get(CommonService.buildPerPageUrl(API.Service.LOANS,API.Methods.LOANS.Loans,parameters));
@@ -6188,80 +6206,6 @@ var INDICATOR = {
 
 })(window.angular);
 
-/**
- * Created by Yonas on 8/16/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.profile')
-        .controller('ProfileController', ProfileController);
-
-    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService'];
-
-    function ProfileController( ProfileService,   blockUI,AlertService ) {
-        var vm = this;
-        vm.updateProfile = _updateUserProfile;
-
-        vm.user = ProfileService.GetUser();
-
-        function _updateUserProfile(user) {
-            var profile = {
-                _id:user._id,
-                title:user.title,
-                email: user.email,
-                first_name : user.first_name,
-                last_name:user.last_name,
-                grandfather_name:user.grandfather_name,
-                phone:user.phone
-                // picture:""
-            };
-            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
-            myBlockUI.stop();
-            ProfileService.UpdateProfile(profile).then(function (response) {
-                myBlockUI.start();
-                console.log("updated user profile",response);
-                AlertService.showSuccess("User Profile","User Account Info updated successfully" );
-            },function (error) {
-                myBlockUI.stop();
-                console.log("error",error);
-                var message = error.data.error.message;
-                AlertService.showError("User Account Information failed updating",message);
-            });
-        }
-    }
-})(window.angular);
-/**
- * Created by Yonas on 8/17/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.profile')
-
-        .service('ProfileService', ProfileService);
-
-    ProfileService.$inject = ['$http','CommonService','AuthService'];
-
-    function ProfileService($http, CommonService,AuthService) {
-
-        return {
-            GetUser: _getUser,
-            UpdateProfile: _updateProfile
-        };
-
-        function _getUser(){
-            var user = AuthService.GetCurrentUser();
-            return _.isUndefined(user.account)? user.admin:user.account;
-        }
-
-        function _updateProfile(account){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
-        }
-
-    }
-
-})(window.angular);
 (function(angular) {
     "use strict";
 
@@ -6373,13 +6317,13 @@ var INDICATOR = {
         function _getReportTemplate() {
             var report = vm.report;
             if(_.isUndefined(vm.report)) return '';
-            var viewPath = 'app/views/';
+            var viewPath = 'app/views/report/templates/' + report.code +'_template.html';
             var templatePath = '';
-            switch (report._id) {
-                case '5c0de708d836a80001357602':
+            switch (report.code) {
+                case 'client_loan_history':
                     templatePath = viewPath + 'report/templates/client_loan_history_template.html';
                     break;
-                case '5c0e852ed836a8000135774f':
+                case 'client_loan_cycle_stats':
                     templatePath = viewPath + 'report/templates/client_loan_cycle_stats_template.html';
                     break;
                 default:
@@ -6423,7 +6367,6 @@ var INDICATOR = {
     function ReportService($http, CommonService, Colors) {
         return {
             GetLineChartReport:_getLineChartReport,
-            // GetClientHistoryReport:_getClientHistoryReport,
             GetReportById:_getReportById,
             GetAllReports:_getAllReports,
             barColors: [{backgroundColor: Colors.byName('success'), borderColor: Colors.byName('success')}, {backgroundColor: Colors.byName('info'),  borderColor: Colors.byName('info') }]
@@ -6434,9 +6377,6 @@ var INDICATOR = {
         }
         function _getLineChartReport(config){
             return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.Report) + '5c0ce5e7c3bb100001b218e7');
-        }
-        function _getClientHistoryReport(){
-            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.Report) + '5c0de708d836a80001357602?client=5c0e1d76afef1b0001f6a96d');
         }
 
         function _getAllReports(){
@@ -6575,6 +6515,80 @@ var INDICATOR = {
             };
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
         }
+    }
+
+})(window.angular);
+/**
+ * Created by Yonas on 8/16/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.profile')
+        .controller('ProfileController', ProfileController);
+
+    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService'];
+
+    function ProfileController( ProfileService,   blockUI,AlertService ) {
+        var vm = this;
+        vm.updateProfile = _updateUserProfile;
+
+        vm.user = ProfileService.GetUser();
+
+        function _updateUserProfile(user) {
+            var profile = {
+                _id:user._id,
+                title:user.title,
+                email: user.email,
+                first_name : user.first_name,
+                last_name:user.last_name,
+                grandfather_name:user.grandfather_name,
+                phone:user.phone
+                // picture:""
+            };
+            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
+            myBlockUI.stop();
+            ProfileService.UpdateProfile(profile).then(function (response) {
+                myBlockUI.start();
+                console.log("updated user profile",response);
+                AlertService.showSuccess("User Profile","User Account Info updated successfully" );
+            },function (error) {
+                myBlockUI.stop();
+                console.log("error",error);
+                var message = error.data.error.message;
+                AlertService.showError("User Account Information failed updating",message);
+            });
+        }
+    }
+})(window.angular);
+/**
+ * Created by Yonas on 8/17/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.profile')
+
+        .service('ProfileService', ProfileService);
+
+    ProfileService.$inject = ['$http','CommonService','AuthService'];
+
+    function ProfileService($http, CommonService,AuthService) {
+
+        return {
+            GetUser: _getUser,
+            UpdateProfile: _updateProfile
+        };
+
+        function _getUser(){
+            var user = AuthService.GetCurrentUser();
+            return _.isUndefined(user.account)? user.admin:user.account;
+        }
+
+        function _updateProfile(account){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
+        }
+
     }
 
 })(window.angular);
@@ -8777,8 +8791,7 @@ var INDICATOR = {
         vm.clientId =  $stateParams.id;
         vm.visibility = {showMoreClientDetail: false};
         vm.labelBasedOnStatus = LoanManagementService.StyleLabelByStatus;
-        //LOAN CYCLE RELATED
-        vm.loanCycles = LoanManagementService.loanCycles;
+
         vm.onSelectedLoanCycle = _onSelectedLoanCycle;
 
         vm.onTabSelected = _onTabSelected;
@@ -8793,6 +8806,15 @@ var INDICATOR = {
 
         }
 
+        function getLoanCycles(){
+            //LOAN CYCLE RELATED
+            vm.loanCycles = [];
+            _.each(LoanManagementService.loanCycles,function (cycle) {
+                if(cycle.id <= vm.client.loan_cycle_number){
+                    vm.loanCycles.push(cycle);
+                }
+            });
+        }
 
         initialize();
 
@@ -8869,11 +8891,11 @@ var INDICATOR = {
                 .then(function(response){
                     myBlockUI.stop();
                     vm.client = response.data;
-
+                    getLoanCycles();
                     if(_.isUndefined(vm.loanCycle)){
                         CallClientScreeningAPI();
                     }else{
-                        GetClientApplicationByLoanCycle('screening');
+                        GetClientApplicationByLoanCycle('screenings');
                     }
 
                     console.log("client detail",response);
@@ -8910,7 +8932,7 @@ var INDICATOR = {
             myBlockUI.start();
             LoanManagementService.GetClientApplicationByLoanCycle(vm.clientId,application,vm.loanCycle).then(function (response) {
                 myBlockUI.stop();
-                console.log("response.data",response.data);
+                console.log("response.data after filtered by loan cycle",response.data);
                 if(application ==='screening'){
                     vm.clientScreening = response.data;
                 } else if(application ==='loan'){
@@ -9026,7 +9048,6 @@ var INDICATOR = {
 
     angular.module("app.loan_management")
         .controller("ClientManagementController", ClientManagementController);
-
     ClientManagementController.$inject = ['LoanManagementService','$state','$scope','AuthService'];
 
     function ClientManagementController(LoanManagementService,$state,$scope,AuthService) {
@@ -9034,7 +9055,7 @@ var INDICATOR = {
         vm.currentUser = {selected_access_branch:undefined};
         vm.labelBasedOnStatus = LoanManagementService.StyleLabelByStatus;
         vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearch;
+        vm.clearSearch = _clearSearch;
         //CLIENT RELATED
         vm.clientDetail = _clientDetail;
         vm.onSelectedBranch = _onSelectedBranch;
@@ -9067,6 +9088,7 @@ var INDICATOR = {
             callApi();
             GetBranchFilter();
         }
+
 
         function _clearSearch(){
             vm.query.search = "";

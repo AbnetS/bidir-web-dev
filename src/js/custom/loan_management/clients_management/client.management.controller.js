@@ -6,7 +6,6 @@
 
     angular.module("app.loan_management")
         .controller("ClientManagementController", ClientManagementController);
-
     ClientManagementController.$inject = ['LoanManagementService','$state','$scope','AuthService'];
 
     function ClientManagementController(LoanManagementService,$state,$scope,AuthService) {
@@ -14,7 +13,7 @@
         vm.currentUser = {selected_access_branch:undefined};
         vm.labelBasedOnStatus = LoanManagementService.StyleLabelByStatus;
         vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearch;
+        vm.clearSearch = _clearSearch;
         //CLIENT RELATED
         vm.clientDetail = _clientDetail;
         vm.onSelectedBranch = _onSelectedBranch;
@@ -47,6 +46,7 @@
             callApi();
             GetBranchFilter();
         }
+
 
         function _clearSearch(){
             vm.query.search = "";

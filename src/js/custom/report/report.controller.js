@@ -40,13 +40,13 @@
         function _getReportTemplate() {
             var report = vm.report;
             if(_.isUndefined(vm.report)) return '';
-            var viewPath = 'app/views/';
+            var viewPath = 'app/views/report/templates/' + report.code +'_template.html';
             var templatePath = '';
-            switch (report._id) {
-                case '5c0de708d836a80001357602':
+            switch (report.code) {
+                case 'client_loan_history':
                     templatePath = viewPath + 'report/templates/client_loan_history_template.html';
                     break;
-                case '5c0e852ed836a8000135774f':
+                case 'client_loan_cycle_stats':
                     templatePath = viewPath + 'report/templates/client_loan_cycle_stats_template.html';
                     break;
                 default:

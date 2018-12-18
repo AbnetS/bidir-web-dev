@@ -13,8 +13,7 @@
         vm.clientId =  $stateParams.id;
         vm.visibility = {showMoreClientDetail: false};
         vm.labelBasedOnStatus = LoanManagementService.StyleLabelByStatus;
-        //LOAN CYCLE RELATED
-        vm.loanCycles = LoanManagementService.loanCycles;
+
         vm.onSelectedLoanCycle = _onSelectedLoanCycle;
 
         vm.onTabSelected = _onTabSelected;
@@ -29,6 +28,15 @@
 
         }
 
+        function getLoanCycles(){
+            //LOAN CYCLE RELATED
+            vm.loanCycles = [];
+            _.each(LoanManagementService.loanCycles,function (cycle) {
+                if(cycle.id <= vm.client.loan_cycle_number){
+                    vm.loanCycles.push(cycle);
+                }
+            });
+        }
 
         initialize();
 
@@ -105,11 +113,11 @@
                 .then(function(response){
                     myBlockUI.stop();
                     vm.client = response.data;
-
+                    getLoanCycles();
                     if(_.isUndefined(vm.loanCycle)){
                         CallClientScreeningAPI();
                     }else{
-                        GetClientApplicationByLoanCycle('screening');
+                        GetClientApplicationByLoanCycle('screenings');
                     }
 
                     console.log("client detail",response);
@@ -146,7 +154,7 @@
             myBlockUI.start();
             LoanManagementService.GetClientApplicationByLoanCycle(vm.clientId,application,vm.loanCycle).then(function (response) {
                 myBlockUI.stop();
-                console.log("response.data",response.data);
+                console.log("response.data after filtered by loan cycle",response.data);
                 if(application ==='screening'){
                     vm.clientScreening = response.data;
                 } else if(application ==='loan'){
