@@ -14,6 +14,14 @@
         vm.visibility = {showMoreClientDetail: false};
         vm.labelBasedOnStatus = LoanManagementService.StyleLabelByStatus;
 
+        vm.tabsList = [
+            { index: 1, heading:"Screening", code: 'screening', templateUrl:"app/views/loan_management/client_management/tabs/screening.partial.html" },
+            { index: 2, heading:"Loan Application", code: 'loan', templateUrl:"app/views/loan_management/client_management/tabs/loan.partial.html" },
+            { index: 3, heading:"ACAT", code: 'acat', templateUrl:"app/views/loan_management/client_management/tabs/acat.partial.html" }
+        ];
+        vm.activeTab = vm.tabsList[0]; //initially screening tab is active
+        vm.activeTabIndex = vm.activeTab.index;
+
         vm.onSelectedLoanCycle = _onSelectedLoanCycle;
 
         vm.onTabSelected = _onTabSelected;
@@ -23,13 +31,11 @@
         vm.onLoanProposalClick = _onLoanProposalClick;
 
         function _onSelectedLoanCycle(){
-
-         GetClientApplicationByLoanCycle('screening');
-
+             _onTabSelected();
         }
 
         function getLoanCycles(){
-            //LOAN CYCLE RELATED
+            //filter loan cycles by max loan cycle number
             vm.loanCycles = [];
             _.each(LoanManagementService.loanCycles,function (cycle) {
                 if(cycle.id <= vm.client.loan_cycle_number){
@@ -98,7 +104,8 @@
         function initialize() {
             vm.visibility = {
                 showCropPanel:false,
-                showSummaryPanel:false
+                showSummaryPanel:false,
+                showWarningForLoanCycle: false
             };
             vm.query = {
                 search:'',
@@ -113,12 +120,10 @@
                 .then(function(response){
                     myBlockUI.stop();
                     vm.client = response.data;
+
                     getLoanCycles();
-                    if(_.isUndefined(vm.loanCycle)){
-                        CallClientScreeningAPI();
-                    }else{
-                        GetClientApplicationByLoanCycle('screenings');
-                    }
+                    _onTabSelected(vm.activeTab);
+
 
                     console.log("client detail",response);
                 },function(error){
@@ -127,8 +132,10 @@
                 });
         }
 
+
         function CallClientScreeningAPI() {
-            var myBlockUI = blockUI.instances.get('ClientScreeningBlockUI');
+            var blockUIName =  'screeningTabBlockUI';
+            var myBlockUI = blockUI.instances.get(blockUIName);
             myBlockUI.start();
             LoanManagementService.GetClientScreening(vm.clientId).then(function (response) {
                 myBlockUI.stop();
@@ -142,14 +149,7 @@
         }
 
         function GetClientApplicationByLoanCycle(application) {
-            var blockUIName = '';
-            if(application ==='screening'){
-                blockUIName = 'ClientScreeningBlockUI';
-            } else if(application ==='loan'){
-                blockUIName = 'ClientLoanApplicationBlockUI';
-            } else if(application ==='acat'){
-                blockUIName = 'ClientACATBlockUI';
-            }
+            var blockUIName =  application + 'TabBlockUI';
             var myBlockUI = blockUI.instances.get(blockUIName);
             myBlockUI.start();
             LoanManagementService.GetClientApplicationByLoanCycle(vm.clientId,application,vm.loanCycle).then(function (response) {
@@ -163,6 +163,8 @@
                     vm.clientACATs = response.data;
                 }
 
+                vm.visibility.showWarningForLoanCycle = response.data.client.loan_cycle_number !== vm.loanCycle;
+
             },function (error) {
                 myBlockUI.stop();
                 console.log("error fetching data by loan cycle",error);
@@ -170,7 +172,8 @@
         }
 
         function CallClientLoanApplicationAPI() {
-            var myBlockUI = blockUI.instances.get('ClientLoanApplicationBlockUI');
+            var blockUIName =  'loanTabBlockUI';
+            var myBlockUI = blockUI.instances.get(blockUIName);
             myBlockUI.start();
             LoanManagementService.GetClientLoanApplication(vm.clientId)
                 .then(function (response) {
@@ -184,13 +187,14 @@
         }
 
         function CallClientACAT() {
-
-            var myBlockUI = blockUI.instances.get('ClientACATBlockUI');
+            var blockUIName =  'acatTabBlockUI';
+            var myBlockUI = blockUI.instances.get(blockUIName);
             myBlockUI.start();
             LoanManagementService.GetClientACAT(vm.clientId)
                 .then(function(response){
                     myBlockUI.stop();
                     vm.clientACATs = response.data;
+                    if(vm.clientACATs.ACATs.length>0) vm.ACATGroupOnClick(vm.clientACATs.ACATs[0]); //select the first crop
                     console.log("vm.clientACATs ",vm.clientACATs);
                 },function(error){
                     myBlockUI.stop();
@@ -207,34 +211,40 @@
 
         }
 
-        function _onTabSelected(type) {
-            console.log("tab name clicked",type);
-            switch (type){
-                case 'SCREENING':
+
+        function setActiveTabObj() {
+            vm.activeTab = {};
+            vm.activeTab = _.find(vm.tabsList,function (tab) {
+                return tab.index === vm.activeTabIndex;
+                });
+        }
+        function _onTabSelected() {
+            console.log('active tab',vm.activeTabIndex);
+            setActiveTabObj();
+            switch (vm.activeTab.code){
+                case 'screening':
                     if(_.isUndefined(vm.loanCycle)){
                         CallClientScreeningAPI();
                     }else{
-                        GetClientApplicationByLoanCycle('screening');
+                        GetClientApplicationByLoanCycle(vm.activeTab.code);
                     }
                     break;
-                case 'LOAN_APPLICATION':
+                case 'loan':
                     if(_.isUndefined(vm.loanCycle)){
                         CallClientLoanApplicationAPI();
                     }else{
-                        GetClientApplicationByLoanCycle('loan');
+                        GetClientApplicationByLoanCycle(vm.activeTab.code);
                     }
-
                     break;
-                case 'ACAT':
-
+                case 'acat':
                     if(_.isUndefined(vm.loanCycle)){
                         CallClientACAT();
                     }else{
-                        GetClientApplicationByLoanCycle('acat');
+                        GetClientApplicationByLoanCycle(vm.activeTab.code);
                     }
                     break;
                 default:
-                    console.log("tab name clicked",type);
+                    break;
             }
         }
 

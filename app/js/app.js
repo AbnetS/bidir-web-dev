@@ -69,13 +69,13 @@
     'use strict';
 
     angular
-        .module('app.loadingbar', []);
+        .module('app.lazyload', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.lazyload', []);
+        .module('app.loadingbar', []);
 })();
 (function() {
     'use strict';
@@ -305,50 +305,6 @@
     'use strict';
 
     angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.lazyload')
         .config(lazyloadConfig);
 
@@ -529,6 +485,50 @@
           ]
         })
         ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
 
 })();
 /**=========================================================
@@ -3161,6 +3161,16 @@ function runBlock() {
 
 })();
 
+/**
+ * Created by Yonas on 8/16/2018.
+ */
+(function() {
+    'use strict';
+
+    angular
+        .module('app.profile', []);
+
+})();
 
 (function() {
     'use strict';
@@ -3178,16 +3188,6 @@ function runBlock() {
 
     angular
         .module('app.welcomePage', []);
-
-})();
-/**
- * Created by Yonas on 8/16/2018.
- */
-(function() {
-    'use strict';
-
-    angular
-        .module('app.profile', []);
 
 })();
 
@@ -6206,6 +6206,80 @@ var INDICATOR = {
 
 })(window.angular);
 
+/**
+ * Created by Yonas on 8/16/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.profile')
+        .controller('ProfileController', ProfileController);
+
+    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService'];
+
+    function ProfileController( ProfileService,   blockUI,AlertService ) {
+        var vm = this;
+        vm.updateProfile = _updateUserProfile;
+
+        vm.user = ProfileService.GetUser();
+
+        function _updateUserProfile(user) {
+            var profile = {
+                _id:user._id,
+                title:user.title,
+                email: user.email,
+                first_name : user.first_name,
+                last_name:user.last_name,
+                grandfather_name:user.grandfather_name,
+                phone:user.phone
+                // picture:""
+            };
+            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
+            myBlockUI.stop();
+            ProfileService.UpdateProfile(profile).then(function (response) {
+                myBlockUI.start();
+                console.log("updated user profile",response);
+                AlertService.showSuccess("User Profile","User Account Info updated successfully" );
+            },function (error) {
+                myBlockUI.stop();
+                console.log("error",error);
+                var message = error.data.error.message;
+                AlertService.showError("User Account Information failed updating",message);
+            });
+        }
+    }
+})(window.angular);
+/**
+ * Created by Yonas on 8/17/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.profile')
+
+        .service('ProfileService', ProfileService);
+
+    ProfileService.$inject = ['$http','CommonService','AuthService'];
+
+    function ProfileService($http, CommonService,AuthService) {
+
+        return {
+            GetUser: _getUser,
+            UpdateProfile: _updateProfile
+        };
+
+        function _getUser(){
+            var user = AuthService.GetCurrentUser();
+            return _.isUndefined(user.account)? user.admin:user.account;
+        }
+
+        function _updateProfile(account){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
+        }
+
+    }
+
+})(window.angular);
 (function(angular) {
     "use strict";
 
@@ -6519,77 +6593,146 @@ var INDICATOR = {
 
 })(window.angular);
 /**
- * Created by Yonas on 8/16/2018.
+ * Created by Yoni on 3/5/2018.
  */
+
 (function(angular) {
     "use strict";
 
-    angular
-        .module('app.profile')
-        .controller('ProfileController', ProfileController);
+    angular.module("app.acat").controller("CropsController", CropsController);
 
-    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService'];
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
 
-    function ProfileController( ProfileService,   blockUI,AlertService ) {
+    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
         var vm = this;
-        vm.updateProfile = _updateUserProfile;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearch;
 
-        vm.user = ProfileService.GetUser();
+        initialize();
 
-        function _updateUserProfile(user) {
-            var profile = {
-                _id:user._id,
-                title:user.title,
-                email: user.email,
-                first_name : user.first_name,
-                last_name:user.last_name,
-                grandfather_name:user.grandfather_name,
-                phone:user.phone
-                // picture:""
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
             };
-            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
-            myBlockUI.stop();
-            ProfileService.UpdateProfile(profile).then(function (response) {
-                myBlockUI.start();
-                console.log("updated user profile",response);
-                AlertService.showSuccess("User Profile","User Account Info updated successfully" );
-            },function (error) {
-                myBlockUI.stop();
-                console.log("error",error);
-                var message = error.data.error.message;
-                AlertService.showError("User Account Information failed updating",message);
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+        }
+
+
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+       function callApi(){
+        vm.promise =   ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
             });
         }
-    }
-})(window.angular);
-/**
- * Created by Yonas on 8/17/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.profile')
 
-        .service('ProfileService', ProfileService);
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
 
-    ProfileService.$inject = ['$http','CommonService','AuthService'];
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
 
-    function ProfileService($http, CommonService,AuthService) {
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
 
-        return {
-            GetUser: _getUser,
-            UpdateProfile: _updateProfile
-        };
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
 
-        function _getUser(){
-            var user = AuthService.GetCurrentUser();
-            return _.isUndefined(user.account)? user.admin:user.account;
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
         }
 
-        function _updateProfile(account){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
-        }
-
     }
+
+
 
 })(window.angular);
 /**
@@ -7440,149 +7583,6 @@ var INDICATOR = {
         }
 
 
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearch;
-
-        initialize();
-
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-
-            callApi();
-        }
-
-
-        function _paginate (page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-
-       function callApi(){
-        vm.promise =   ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
 
     }
 
@@ -8792,6 +8792,14 @@ var INDICATOR = {
         vm.visibility = {showMoreClientDetail: false};
         vm.labelBasedOnStatus = LoanManagementService.StyleLabelByStatus;
 
+        vm.tabsList = [
+            { index: 1, heading:"Screening", code: 'screening', templateUrl:"app/views/loan_management/client_management/tabs/screening.partial.html" },
+            { index: 2, heading:"Loan Application", code: 'loan', templateUrl:"app/views/loan_management/client_management/tabs/loan.partial.html" },
+            { index: 3, heading:"ACAT", code: 'acat', templateUrl:"app/views/loan_management/client_management/tabs/acat.partial.html" }
+        ];
+        vm.activeTab = vm.tabsList[0]; //initially screening tab is active
+        vm.activeTabIndex = vm.activeTab.index;
+
         vm.onSelectedLoanCycle = _onSelectedLoanCycle;
 
         vm.onTabSelected = _onTabSelected;
@@ -8801,13 +8809,11 @@ var INDICATOR = {
         vm.onLoanProposalClick = _onLoanProposalClick;
 
         function _onSelectedLoanCycle(){
-
-         GetClientApplicationByLoanCycle('screening');
-
+             _onTabSelected();
         }
 
         function getLoanCycles(){
-            //LOAN CYCLE RELATED
+            //filter loan cycles by max loan cycle number
             vm.loanCycles = [];
             _.each(LoanManagementService.loanCycles,function (cycle) {
                 if(cycle.id <= vm.client.loan_cycle_number){
@@ -8876,7 +8882,8 @@ var INDICATOR = {
         function initialize() {
             vm.visibility = {
                 showCropPanel:false,
-                showSummaryPanel:false
+                showSummaryPanel:false,
+                showWarningForLoanCycle: false
             };
             vm.query = {
                 search:'',
@@ -8891,12 +8898,10 @@ var INDICATOR = {
                 .then(function(response){
                     myBlockUI.stop();
                     vm.client = response.data;
+
                     getLoanCycles();
-                    if(_.isUndefined(vm.loanCycle)){
-                        CallClientScreeningAPI();
-                    }else{
-                        GetClientApplicationByLoanCycle('screenings');
-                    }
+                    _onTabSelected(vm.activeTab);
+
 
                     console.log("client detail",response);
                 },function(error){
@@ -8905,8 +8910,10 @@ var INDICATOR = {
                 });
         }
 
+
         function CallClientScreeningAPI() {
-            var myBlockUI = blockUI.instances.get('ClientScreeningBlockUI');
+            var blockUIName =  'screeningTabBlockUI';
+            var myBlockUI = blockUI.instances.get(blockUIName);
             myBlockUI.start();
             LoanManagementService.GetClientScreening(vm.clientId).then(function (response) {
                 myBlockUI.stop();
@@ -8920,14 +8927,7 @@ var INDICATOR = {
         }
 
         function GetClientApplicationByLoanCycle(application) {
-            var blockUIName = '';
-            if(application ==='screening'){
-                blockUIName = 'ClientScreeningBlockUI';
-            } else if(application ==='loan'){
-                blockUIName = 'ClientLoanApplicationBlockUI';
-            } else if(application ==='acat'){
-                blockUIName = 'ClientACATBlockUI';
-            }
+            var blockUIName =  application + 'TabBlockUI';
             var myBlockUI = blockUI.instances.get(blockUIName);
             myBlockUI.start();
             LoanManagementService.GetClientApplicationByLoanCycle(vm.clientId,application,vm.loanCycle).then(function (response) {
@@ -8941,6 +8941,8 @@ var INDICATOR = {
                     vm.clientACATs = response.data;
                 }
 
+                vm.visibility.showWarningForLoanCycle = response.data.client.loan_cycle_number !== vm.loanCycle;
+
             },function (error) {
                 myBlockUI.stop();
                 console.log("error fetching data by loan cycle",error);
@@ -8948,7 +8950,8 @@ var INDICATOR = {
         }
 
         function CallClientLoanApplicationAPI() {
-            var myBlockUI = blockUI.instances.get('ClientLoanApplicationBlockUI');
+            var blockUIName =  'loanTabBlockUI';
+            var myBlockUI = blockUI.instances.get(blockUIName);
             myBlockUI.start();
             LoanManagementService.GetClientLoanApplication(vm.clientId)
                 .then(function (response) {
@@ -8962,13 +8965,14 @@ var INDICATOR = {
         }
 
         function CallClientACAT() {
-
-            var myBlockUI = blockUI.instances.get('ClientACATBlockUI');
+            var blockUIName =  'acatTabBlockUI';
+            var myBlockUI = blockUI.instances.get(blockUIName);
             myBlockUI.start();
             LoanManagementService.GetClientACAT(vm.clientId)
                 .then(function(response){
                     myBlockUI.stop();
                     vm.clientACATs = response.data;
+                    if(vm.clientACATs.ACATs.length>0) vm.ACATGroupOnClick(vm.clientACATs.ACATs[0]); //select the first crop
                     console.log("vm.clientACATs ",vm.clientACATs);
                 },function(error){
                     myBlockUI.stop();
@@ -8985,34 +8989,40 @@ var INDICATOR = {
 
         }
 
-        function _onTabSelected(type) {
-            console.log("tab name clicked",type);
-            switch (type){
-                case 'SCREENING':
+
+        function setActiveTabObj() {
+            vm.activeTab = {};
+            vm.activeTab = _.find(vm.tabsList,function (tab) {
+                return tab.index === vm.activeTabIndex;
+                });
+        }
+        function _onTabSelected() {
+            console.log('active tab',vm.activeTabIndex);
+            setActiveTabObj();
+            switch (vm.activeTab.code){
+                case 'screening':
                     if(_.isUndefined(vm.loanCycle)){
                         CallClientScreeningAPI();
                     }else{
-                        GetClientApplicationByLoanCycle('screening');
+                        GetClientApplicationByLoanCycle(vm.activeTab.code);
                     }
                     break;
-                case 'LOAN_APPLICATION':
+                case 'loan':
                     if(_.isUndefined(vm.loanCycle)){
                         CallClientLoanApplicationAPI();
                     }else{
-                        GetClientApplicationByLoanCycle('loan');
+                        GetClientApplicationByLoanCycle(vm.activeTab.code);
                     }
-
                     break;
-                case 'ACAT':
-
+                case 'acat':
                     if(_.isUndefined(vm.loanCycle)){
                         CallClientACAT();
                     }else{
-                        GetClientApplicationByLoanCycle('acat');
+                        GetClientApplicationByLoanCycle(vm.activeTab.code);
                     }
                     break;
                 default:
-                    console.log("tab name clicked",type);
+                    break;
             }
         }
 
