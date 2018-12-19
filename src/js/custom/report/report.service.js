@@ -18,7 +18,7 @@
             return $http.get(CommonService.buildUrlWithParam(API.Service.REPORT,API.Methods.Report.Report,id));
         }
         function _getLineChartReport(config){
-            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.Report) + '5c0ce5e7c3bb100001b218e7');
+            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.Report) + '5c1917476070e615a1f2a18f');
         }
 
         function _getAllReports(){
