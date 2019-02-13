@@ -1,4 +1,4 @@
-(function(angular) {
+(function (angular) {
     "use strict";
 
 
@@ -6,39 +6,13 @@
         .module('app.geospatial')
         .controller('PlotReportController', PlotReportController);
 
-    PlotReportController.$inject = [ '$scope','GeoSpatialService','SharedService'];
+    PlotReportController.$inject = ['$scope', 'GeoSpatialService', 'SharedService','blockUI'];
 
-    function PlotReportController( $scope,GeoSpatialService,SharedService )
-    {
+    function PlotReportController($scope, GeoSpatialService, SharedService,blockUI) {
         var vm = this;
+        vm.onSelectedBranch = _onSelectedBranch;
 
         init();
-
-
-
-        $scope.addMarkers = function() {
-            angular.extend($scope, {
-                markers: {
-                    m1: {
-                        lat: 8.526,
-                        lng: 39.714889,
-                        message: "static marker"
-                    },
-                    m2: {
-                        lat:9.080,
-                        lng: 38.847,
-                        focus: true,
-                        message: "Hey, drag me if you want",
-                        draggable: true
-                    }
-                }
-            });
-        };
-
-        $scope.removeMarkers = function() {
-            $scope.markers = {};
-        };
-
 
         function init() {
             angular.extend($scope, {
@@ -47,49 +21,59 @@
                 }
             });
             GetBranches();
-            callAPI();
         }
 
         function callAPI() {
-            GeoSpatialService.GetPlotAreaData('5b926c849fb7f20001f1494c').then(function (response) {
-                // console.log('GetPlotAreaData', response);
-                var data = response.data.docs[5];
-                var data1 = response.data.docs[6];
-                var data2 = response.data.docs[7];
+            var myBlockUI = blockUI.instances.get('BlockUIMap');
+            myBlockUI.start('looking up geo locations on branch [' + vm.selectedBranch.name + ']' );
+            GeoSpatialService.GetPlotAreaData(vm.selectedBranch._id).then(function (response) {
+                console.log('GetPlotAreaData', response);
+                myBlockUI.stop();
+                var allData = response.data.docs;
+                var markers = {};
+                //dynamically set markers
+                for (var index = 0; index < allData.length; index++) {
+                    var data = allData[index];
+                    markers['m' + index] = {
+                        lat: data.gps_location.single_point.latitude,
+                        lng: data.gps_location.single_point.longitude,
+                        message: data.crop.name
+                    };
+                    // TESTING GEO LOCATION
+                    // markers['m' + index] = {
+                    //     lat: 9.1274179 + index / 1000,
+                    //     lng: 41.046243 + index / 120,
+                    //     message: data.crop.name
+                    // };
+                }
 
 
                 angular.extend($scope, {
-                    markers: {
-                        m1: {
-                            lat: data.gps_location.single_point.latitude,
-                            lng: data.gps_location.single_point.longitude,
-                            message: data.crop.name
-                        },
-                        m2: {
-                            lat: data1.gps_location.single_point.latitude,
-                            lng: data1.gps_location.single_point.longitude,
-                            message: data1.crop.name
-                        },
-                        m3: {
-                            lat: data2.gps_location.single_point.latitude,
-                            lng: data2.gps_location.single_point.longitude,
-                            message: data2.crop.name
-                        }
-                    },
+                    markers: markers,
                     center: {
-                        lat: data.gps_location.single_point.latitude,
-                        lng: data.gps_location.single_point.longitude,
-                        zoom: 8
+                        //autoDiscover: true
+                        lat: 9.1274179,
+                        lng: 41.0462439,
+                        zoom: 6
                     }
                 });
-            }, function (error) { console.log('error', error); });
+
+            }, function (error) {
+                myBlockUI.stop();
+                console.log('error', error);
+            });
         }
 
+        function _onSelectedBranch() {
+            callAPI();
+        }
 
         function GetBranches() {
             SharedService.GetBranches()
-                .then( function (response) {
+                .then(function (response) {
                         vm.branches = response.data.docs;
+                        vm.selectedBranch = vm.branches[0];
+                        callAPI();
                     },
                     function (error) {
                         console.log("error fetching branches", error);
