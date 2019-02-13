@@ -133,7 +133,7 @@
 
                         if(request.indicator === vm.INDICATOR.VI){
                             branch.vegitationIndex = {
-                                image_url: API.Config.SeasmonBaseUrl + 'info_' + sUID + '_VI_latest.html',
+                                image_url: API.Config.SeasmonBaseUrl + 'info_' + sUID + '_VI_latest.png',
                                 chart_url: API.Config.SeasmonBaseUrl + 'chart_' + sUID + '_VI_latest.html'
                             };
                         }

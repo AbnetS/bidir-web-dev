@@ -13,7 +13,8 @@
                         <div class="form-group" ng-class="{false:'has-error'}[vm.seasonalFilterForm.IsnameValid]">
                            <label class="control-label small">Name</label>
                            <input name="inputName" ng-model="vm.config.name" placeholder="Season name/ configuration name" type="text" class="form-control input-sm">
-                           <small ng-show="!vm.seasonalFilterForm.IsnameValid" class="help-block">Name is required.</small>
+                           <small ng-show="!vm.seasonalFilterForm.IsnameValid" class="help-block">Name is required.
+                           </small>
                         </div>
                      </div>
                   </div>
@@ -32,7 +33,8 @@
                                  </button>
                               </span>
                            </p>
-                           <small ng-show="!vm.seasonalFilterForm.IsfromDateValid" class="help-block">From Date is required.</small>
+                           <small ng-show="!vm.seasonalFilterForm.IsfromDateValid" class="help-block">From Date is required.
+                           </small>
                         </div>
                      </div>
                      <div class="col-lg-6">
@@ -48,16 +50,21 @@
                                  </button>
                               </span>
                            </p>
-                           <small ng-show="!vm.seasonalFilterForm.IstoDateValid" class="help-block">To Date is required.</small>
+                           <small ng-show="!vm.seasonalFilterForm.IstoDateValid" class="help-block">To Date is required.
+                           </small>
                         </div>
                      </div>
                   </div>
                   <div class="row">
                      <p class="col-md-4 pull-right">
-                        <button class="btn btn-primary btn-block" ng-click="vm.saveUserConfig()" type="button">Ok</button>
+                        <button class="btn btn-success btn-block" ng-click="vm.saveUserConfig()" type="button">
+                           Ok
+                        </button>
                      </p>
                      <p class="col-md-4 pull-left">
-                        <button class="btn btn-default btn-block" ng-click="vm.resetConfig()" type="button">Reset</button>
+                        <button class="btn btn-default btn-block" ng-click="vm.resetConfig()" type="button">
+                           Reset
+                        </button>
                      </p>
                   </div>
                </div>
@@ -79,18 +86,16 @@
                   <p class="text-bold text-center text-gray-dark">
                      <i class="fa fa-leaf fa-lg"> </i> Vegetation Index
                   </p>
-                  <div>
-                     <iframe align="middle" style="min-height: 200px; min-width: 150px;" frameborder="0" ng-src="{{branch.vegitationIndex.image_url}}"></iframe>
-                     <a target="_blank" class="btn btn-block  btn-default" ng-href="{{branch.vegitationIndex.chart_url}}">Detail</a>
-                  </div>
+                  <a target="_blank" ng-href="{{branch.vegitationIndex.chart_url}}">
+                     <img ng-src="{{branch.vegitationIndex.image_url}}" class="img-rounded" />
+                  </a>
                </div>
                <div class="col-xs-6" ng-show="branch.rainfall.image_url">
                   <p class="text-bold text-center text-gray-dark">
                      <i class="fa fa-umbrella fa-lg"> </i> Rainfall</p>
-                  <div>
-                     <iframe align="middle" style="min-height: 200px; min-width: 150px;" frameborder="0" ng-src="{{branch.rainfall.image_url}}"></iframe>
-                     <a target="_blank" class="btn btn-block btn-default" ng-href="{{branch.rainfall.chart_url}}">Detail</a>
-                  </div>
+                  <a target="_blank" ng-href="{{branch.rainfall.chart_url}}">
+                     <img ng-src="{{branch.vegitationIndex.image_url}}" class="img-rounded" />
+                  </a>
                </div>
             </div>
          </div>
