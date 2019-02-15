@@ -47,6 +47,12 @@
     'use strict';
 
     angular
+        .module('app.lazyload', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.core', [
             'ngRoute',
             'ngAnimate',
@@ -64,18 +70,6 @@
             'ngMessages',
             'angularMoment'
         ]);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.lazyload', []);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar', []);
 })();
 (function() {
     'use strict';
@@ -138,6 +132,12 @@
     'use strict';
 
     angular
+        .module('app.loadingbar', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.colors')
         .constant('APP_COLORS', {
           'primary':                '#3F51B5',
@@ -184,6 +184,250 @@
 
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.lazyload')
+        .config(lazyloadConfig);
+
+    lazyloadConfig.$inject = ['$ocLazyLoadProvider', 'APP_REQUIRES'];
+    function lazyloadConfig($ocLazyLoadProvider, APP_REQUIRES){
+
+      // Lazy Load modules configuration
+      $ocLazyLoadProvider.config({
+        debug: false,
+        events: true,
+        modules: APP_REQUIRES.modules
+      });
+
+    }
+})();
+(function () {
+    'use strict';
+
+    angular
+        .module('app.lazyload')
+        .constant('APP_REQUIRES', {
+            // jQuery based and standalone scripts
+            scripts: {
+                'whirl': ['vendor/whirl/dist/whirl.css'],
+                'ngmap': ['vendor/ngmap/build/scripts/ng-map.min.js'],
+                'animo': ['vendor/animo.js/animo.js'],
+                'fastclick': ['vendor/fastclick/lib/fastclick.js'],
+                'modernizr': ['vendor/modernizr/modernizr.custom.js'],
+                'animate': ['vendor/animate.css/animate.min.css'],
+                'skycons': ['vendor/skycons/skycons.js'],
+                'icons': ['vendor/fontawesome/css/font-awesome.min.css',
+                    'vendor/simple-line-icons/css/simple-line-icons.css'],
+                'weather-icons': ['vendor/weather-icons/css/weather-icons.min.css',
+                    'vendor/weather-icons/css/weather-icons-wind.min.css'],
+                'sparklines': ['vendor/sparkline/index.js'],
+                'wysiwyg': ['vendor/bootstrap-wysiwyg/bootstrap-wysiwyg.js',
+                    'vendor/bootstrap-wysiwyg/external/jquery.hotkeys.js'],
+                'slimscroll': ['vendor/slimScroll/jquery.slimscroll.min.js'],
+                'screenfull': ['vendor/screenfull/dist/screenfull.js'],
+                'vector-map': ['vendor/ika.jvectormap/jquery-jvectormap-1.2.2.min.js',
+                    'vendor/ika.jvectormap/jquery-jvectormap-1.2.2.css'],
+                'vector-map-maps': ['vendor/ika.jvectormap/jquery-jvectormap-world-mill-en.js',
+                    'vendor/ika.jvectormap/jquery-jvectormap-us-mill-en.js'],
+                'loadGoogleMapsJS': ['vendor/load-google-maps/load-google-maps.js'],
+                'flot-chart': ['vendor/flot/jquery.flot.js'],
+                'flot-chart-plugins': ['vendor/flot.tooltip/js/jquery.flot.tooltip.min.js',
+                    'vendor/flot/jquery.flot.resize.js',
+                    'vendor/flot/jquery.flot.pie.js',
+                    'vendor/flot/jquery.flot.time.js',
+                    'vendor/flot/jquery.flot.categories.js',
+                    'vendor/flot-spline/js/jquery.flot.spline.min.js'],
+                'moment': ['vendor/moment/min/moment-with-locales.min.js',
+                    'vendor/angular-moment/angular-moment.min.js'],
+                'inputmask': ['vendor/jquery.inputmask/dist/jquery.inputmask.bundle.js'],
+                'flatdoc': ['vendor/flatdoc/flatdoc.js'],
+                'codemirror': ['vendor/codemirror/lib/codemirror.js',
+                    'vendor/codemirror/lib/codemirror.css'],
+                // modes for common web files
+                'codemirror-modes-web': ['vendor/codemirror/mode/javascript/javascript.js',
+                    'vendor/codemirror/mode/xml/xml.js',
+                    'vendor/codemirror/mode/htmlmixed/htmlmixed.js',
+                    'vendor/codemirror/mode/css/css.js'],
+                'taginput': ['vendor/bootstrap-tagsinput/dist/bootstrap-tagsinput.css',
+                    'vendor/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js'],
+                'filestyle': ['vendor/bootstrap-filestyle/src/bootstrap-filestyle.js'],
+                'morris': ['vendor/raphael/raphael.js',
+                    'vendor/morris.js/morris.js',
+                    'vendor/morris.js/morris.css'],
+                'loaders.css': ['vendor/loaders.css/loaders.css'],
+                'spinkit': ['vendor/spinkit/css/spinkit.css'],
+                'underscore': ['vendor/underscore/underscore.js'],
+                'selectize': ['vendor/selectize/dist/css/selectize.default.css']
+            },
+            // Angular based script (use the right module name)
+            modules: [
+                {
+                    name: 'md.data.table',
+                    files: ['vendor/angular-material-data-table/dist/md-data-table.min.css',
+                        'vendor/angular-material-data-table/dist/md-data-table.min.js']
+                },
+                {
+                    name: 'blockUI',
+                    files: ["vendor/angular-block-ui/dist/angular-block-ui.css",
+                        "vendor/angular-block-ui/dist/angular-block-ui.js"]
+                },
+                {
+                    name: 'ngFileUpload',
+                    files: ['vendor/ng-file-upload-shim/ng-file-upload-shim.min.js']
+                },
+                {
+                    name: 'toaster', files: ['vendor/ng-file-upload/ng-file-upload.min.js',
+                        'vendor/angularjs-toaster/toaster.css']
+                },
+                {
+                    name: 'localytics.directives', files: ['vendor/chosen_v1.2.0/chosen.jquery.min.js',
+                        'vendor/chosen_v1.2.0/chosen.min.css',
+                        'vendor/angular-chosen-localytics/dist/angular-chosen.js'],
+                    serie: true
+                },
+                {
+                    name: 'ngDialog', files: ['vendor/ngDialog/js/ngDialog.min.js',
+                        'vendor/ngDialog/css/ngDialog.min.css',
+                        'vendor/ngDialog/css/ngDialog-theme-default.min.css']
+                },
+                {name: 'ngWig', files: ['vendor/ngWig/dist/ng-wig.min.js']},
+                {
+                    name: 'ngTable', files: ['vendor/ng-table/dist/ng-table.min.js',
+                        'vendor/ng-table/dist/ng-table.min.css']
+                },
+                {name: 'ngTableExport', files: ['vendor/ng-table-export/ng-table-export.js']},
+                {
+                    name: 'angularBootstrapNavTree',
+                    files: ['vendor/angular-bootstrap-nav-tree/dist/abn_tree_directive.js',
+                        'vendor/angular-bootstrap-nav-tree/dist/abn_tree.css']
+                },
+                {
+                    name: 'xeditable', files: ['vendor/angular-xeditable/dist/js/xeditable.js',
+                        'vendor/angular-xeditable/dist/css/xeditable.css']
+                },
+                {name: 'angularFileUpload', files: ['vendor/angular-file-upload/dist/angular-file-upload.js']},
+                {
+                    name: 'ngImgCrop', files: ['vendor/ng-img-crop/compile/unminified/ng-img-crop.js',
+                        'vendor/ng-img-crop/compile/unminified/ng-img-crop.css']
+                },
+                {
+                    name: 'ui.select', files: ['vendor/angular-ui-select/dist/select.js',
+                        'vendor/angular-ui-select/dist/select.css']
+                },
+                {name: 'ui.codemirror', files: ['vendor/angular-ui-codemirror/ui-codemirror.js']},
+                {
+                    name: 'angular-carousel', files: ['vendor/angular-carousel/dist/angular-carousel.css',
+                        'vendor/angular-carousel/dist/angular-carousel.js']
+                },
+                {name: 'infinite-scroll', files: ['vendor/ngInfiniteScroll/build/ng-infinite-scroll.js']},
+                {
+                    name: 'ui.bootstrap-slider', files: ['vendor/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js',
+                        'vendor/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css',
+                        'vendor/angular-bootstrap-slider/slider.js'], serie: true
+                },
+                {
+                    name: 'ui.grid', files: ['vendor/angular-ui-grid/ui-grid.min.css',
+                        'vendor/angular-ui-grid/ui-grid.min.js']
+                },
+                {
+                    name: 'summernote', files: ['vendor/bootstrap/js/modal.js',
+                        'vendor/bootstrap/js/dropdown.js',
+                        'vendor/bootstrap/js/tooltip.js',
+                        'vendor/summernote/dist/summernote.css',
+                        'vendor/summernote/dist/summernote.js',
+                        'vendor/angular-summernote/dist/angular-summernote.js'
+                    ], serie: true
+                },
+                {
+                    name: 'angular-rickshaw', files: ['vendor/d3/d3.min.js',
+                        'vendor/rickshaw/rickshaw.js',
+                        'vendor/rickshaw/rickshaw.min.css',
+                        'vendor/angular-rickshaw/rickshaw.js'], serie: true
+                },
+                {
+                    name: 'angular-chartist', files: ['vendor/chartist/dist/chartist.min.css',
+                        'vendor/chartist/dist/chartist.js',
+                        'vendor/angular-chartist.js/dist/angular-chartist.js'], serie: true
+                },
+                {name: 'ui.map', files: ['vendor/angular-ui-map/ui-map.js']},
+                {
+                    name: 'datatables', files: ['vendor/datatables/media/css/jquery.dataTables.css',
+                        'vendor/datatables/media/js/jquery.dataTables.js',
+                        'vendor/datatables-buttons/js/dataTables.buttons.js',
+                        //'vendor/datatables-buttons/css/buttons.bootstrap.css',
+                        'vendor/datatables-buttons/js/buttons.bootstrap.js',
+                        'vendor/datatables-buttons/js/buttons.colVis.js',
+                        'vendor/datatables-buttons/js/buttons.flash.js',
+                        'vendor/datatables-buttons/js/buttons.html5.js',
+                        'vendor/datatables-buttons/js/buttons.print.js',
+                        'vendor/angular-datatables/dist/angular-datatables.js',
+                        'vendor/angular-datatables/dist/plugins/buttons/angular-datatables.buttons.js'],
+                    serie: true
+                },
+                {
+                    name: 'angular-jqcloud', files: ['vendor/jqcloud2/dist/jqcloud.css',
+                        'vendor/jqcloud2/dist/jqcloud.js',
+                        'vendor/angular-jqcloud/angular-jqcloud.js']
+                },
+                {
+                    name: 'angularGrid', files: ['vendor/ag-grid/dist/styles/ag-grid.css',
+                        'vendor/ag-grid/dist/ag-grid.js',
+                        'vendor/ag-grid/dist/styles/theme-dark.css',
+                        'vendor/ag-grid/dist/styles/theme-fresh.css']
+                },
+                {
+                    name: 'ng-nestable', files: ['vendor/ng-nestable/src/angular-nestable.js',
+                        'vendor/nestable/jquery.nestable.js']
+                },
+                {name: 'akoenig.deckgrid', files: ['vendor/angular-deckgrid/angular-deckgrid.js']},
+                {
+                    name: 'oitozero.ngSweetAlert', files: ['vendor/sweetalert/dist/sweetalert.css',
+                        'vendor/sweetalert/dist/sweetalert.min.js',
+                        'vendor/angular-sweetalert/SweetAlert.js'], serie: true
+                },
+                {
+                    name: 'bm.bsTour', files: ['vendor/bootstrap-tour/build/css/bootstrap-tour.css',
+                        'vendor/bootstrap-tour/build/js/bootstrap-tour-standalone.js',
+                        'vendor/angular-bootstrap-tour/dist/angular-bootstrap-tour.js'], serie: true
+                },
+                {
+                    name: 'ui.knob', files: ['vendor/angular-knob/src/angular-knob.js',
+                        'vendor/jquery-knob/dist/jquery.knob.min.js']
+                },
+                {name: 'easypiechart', files: ['vendor/jquery.easy-pie-chart/dist/angular.easypiechart.min.js']},
+                {
+                    name: 'colorpicker.module', files: ['vendor/angular-bootstrap-colorpicker/css/colorpicker.css',
+                        'vendor/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js']
+                },
+                {
+                    name: 'ui.sortable', files: ['vendor/jquery-ui/jquery-ui.min.js',
+                        'vendor/angular-ui-sortable/sortable.js'], serie: true
+                },
+                {
+                    name: 'ui.calendar', files: ['vendor/jquery-ui/jquery-ui.min.js',
+                        'vendor/jqueryui-touch-punch/jquery.ui.touch-punch.min.js',
+                        'vendor/fullcalendar/dist/fullcalendar.min.js',
+                        'vendor/fullcalendar/dist/gcal.js',
+                        'vendor/fullcalendar/dist/fullcalendar.css',
+                        'vendor/angular-ui-calendar/src/calendar.js'], serie: true
+                },
+                {
+                    name: 'chart.js', files: ['vendor/chart.js/dist/Chart.min.js',
+                        'vendor/angular-chart.js/dist/angular-chart.min.js'], serie: true
+                },
+                {
+                    name: 'ui-leaflet', files: ['vendor/leaflet/dist/leaflet.js',
+                        'vendor/angular-simple-logger/dist/angular-simple-logger.js',
+                        'vendor/ui-leaflet/dist/ui-leaflet.js',
+                        'vendor/leaflet/dist/leaflet.css'], serie: true
+                }
+            ]
+        })
+    ;
+
+})();
 (function() {
     'use strict';
 
@@ -301,236 +545,6 @@
 })();
 
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.lazyload')
-        .config(lazyloadConfig);
-
-    lazyloadConfig.$inject = ['$ocLazyLoadProvider', 'APP_REQUIRES'];
-    function lazyloadConfig($ocLazyLoadProvider, APP_REQUIRES){
-
-      // Lazy Load modules configuration
-      $ocLazyLoadProvider.config({
-        debug: false,
-        events: true,
-        modules: APP_REQUIRES.modules
-      });
-
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.lazyload')
-        .constant('APP_REQUIRES', {
-          // jQuery based and standalone scripts
-          scripts: {
-            'whirl':              ['vendor/whirl/dist/whirl.css'],
-            'ngmap':              ['vendor/ngmap/build/scripts/ng-map.min.js'],
-            'animo':              ['vendor/animo.js/animo.js'],
-            'fastclick':          ['vendor/fastclick/lib/fastclick.js'],
-            'modernizr':          ['vendor/modernizr/modernizr.custom.js'],
-            'animate':            ['vendor/animate.css/animate.min.css'],
-            'skycons':            ['vendor/skycons/skycons.js'],
-            'icons':              ['vendor/fontawesome/css/font-awesome.min.css',
-                                   'vendor/simple-line-icons/css/simple-line-icons.css'],
-            'weather-icons':      ['vendor/weather-icons/css/weather-icons.min.css',
-                                   'vendor/weather-icons/css/weather-icons-wind.min.css'],
-            'sparklines':         ['vendor/sparkline/index.js'],
-            'wysiwyg':            ['vendor/bootstrap-wysiwyg/bootstrap-wysiwyg.js',
-                                   'vendor/bootstrap-wysiwyg/external/jquery.hotkeys.js'],
-            'slimscroll':         ['vendor/slimScroll/jquery.slimscroll.min.js'],
-            'screenfull':         ['vendor/screenfull/dist/screenfull.js'],
-            'vector-map':         ['vendor/ika.jvectormap/jquery-jvectormap-1.2.2.min.js',
-                                   'vendor/ika.jvectormap/jquery-jvectormap-1.2.2.css'],
-            'vector-map-maps':    ['vendor/ika.jvectormap/jquery-jvectormap-world-mill-en.js',
-                                   'vendor/ika.jvectormap/jquery-jvectormap-us-mill-en.js'],
-            'loadGoogleMapsJS':   ['vendor/load-google-maps/load-google-maps.js'],
-            'flot-chart':         ['vendor/flot/jquery.flot.js'],
-            'flot-chart-plugins': ['vendor/flot.tooltip/js/jquery.flot.tooltip.min.js',
-                                   'vendor/flot/jquery.flot.resize.js',
-                                   'vendor/flot/jquery.flot.pie.js',
-                                   'vendor/flot/jquery.flot.time.js',
-                                   'vendor/flot/jquery.flot.categories.js',
-                                   'vendor/flot-spline/js/jquery.flot.spline.min.js'],
-            'moment' :            ['vendor/moment/min/moment-with-locales.min.js',
-                                    'vendor/angular-moment/angular-moment.min.js'],
-            'inputmask':          ['vendor/jquery.inputmask/dist/jquery.inputmask.bundle.js'],
-            'flatdoc':            ['vendor/flatdoc/flatdoc.js'],
-            'codemirror':         ['vendor/codemirror/lib/codemirror.js',
-                                   'vendor/codemirror/lib/codemirror.css'],
-            // modes for common web files
-            'codemirror-modes-web': ['vendor/codemirror/mode/javascript/javascript.js',
-                                     'vendor/codemirror/mode/xml/xml.js',
-                                     'vendor/codemirror/mode/htmlmixed/htmlmixed.js',
-                                     'vendor/codemirror/mode/css/css.js'],
-            'taginput' :          ['vendor/bootstrap-tagsinput/dist/bootstrap-tagsinput.css',
-                                   'vendor/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js'],
-            'filestyle':          ['vendor/bootstrap-filestyle/src/bootstrap-filestyle.js'],
-            'morris':             ['vendor/raphael/raphael.js',
-                                   'vendor/morris.js/morris.js',
-                                   'vendor/morris.js/morris.css'],
-            'loaders.css':          ['vendor/loaders.css/loaders.css'],
-            'spinkit':              ['vendor/spinkit/css/spinkit.css'],
-            'underscore':           ['vendor/underscore/underscore.js'],
-            'selectize':           ['vendor/selectize/dist/css/selectize.default.css']
-          },
-          // Angular based script (use the right module name)
-          modules: [
-
-            {name: 'md.data.table',
-                                                files: ['vendor/angular-material-data-table/dist/md-data-table.min.css',
-                                                        'vendor/angular-material-data-table/dist/md-data-table.min.js'] },
-              {name: 'blockUI',
-                  files: ["vendor/angular-block-ui/dist/angular-block-ui.css",
-                      "vendor/angular-block-ui/dist/angular-block-ui.js"] },
-            {name: 'ngFileUpload',
-                  files: ['vendor/ng-file-upload-shim/ng-file-upload-shim.min.js'] },
-            {name: 'toaster',                   files: ['vendor/ng-file-upload/ng-file-upload.min.js',
-                                                       'vendor/angularjs-toaster/toaster.css']},
-            {name: 'localytics.directives',     files: ['vendor/chosen_v1.2.0/chosen.jquery.min.js',
-                                                       'vendor/chosen_v1.2.0/chosen.min.css',
-                                                       'vendor/angular-chosen-localytics/dist/angular-chosen.js'],
-                                                        serie: true},
-            {name: 'ngDialog',                  files: ['vendor/ngDialog/js/ngDialog.min.js',
-                                                       'vendor/ngDialog/css/ngDialog.min.css',
-                                                       'vendor/ngDialog/css/ngDialog-theme-default.min.css'] },
-            {name: 'ngWig',                     files: ['vendor/ngWig/dist/ng-wig.min.js'] },
-            {name: 'ngTable',                   files: ['vendor/ng-table/dist/ng-table.min.js',
-                                                        'vendor/ng-table/dist/ng-table.min.css']},
-            {name: 'ngTableExport',             files: ['vendor/ng-table-export/ng-table-export.js']},
-            {name: 'angularBootstrapNavTree',   files: ['vendor/angular-bootstrap-nav-tree/dist/abn_tree_directive.js',
-                                                        'vendor/angular-bootstrap-nav-tree/dist/abn_tree.css']},
-            {name: 'xeditable',                 files: ['vendor/angular-xeditable/dist/js/xeditable.js',
-                                                        'vendor/angular-xeditable/dist/css/xeditable.css']},
-            {name: 'angularFileUpload',         files: ['vendor/angular-file-upload/dist/angular-file-upload.js']},
-            {name: 'ngImgCrop',                 files: ['vendor/ng-img-crop/compile/unminified/ng-img-crop.js',
-                                                        'vendor/ng-img-crop/compile/unminified/ng-img-crop.css']},
-            {name: 'ui.select',                 files: ['vendor/angular-ui-select/dist/select.js',
-                                                        'vendor/angular-ui-select/dist/select.css']},
-            {name: 'ui.codemirror',             files: ['vendor/angular-ui-codemirror/ui-codemirror.js']},
-            {name: 'angular-carousel',          files: ['vendor/angular-carousel/dist/angular-carousel.css',
-                                                        'vendor/angular-carousel/dist/angular-carousel.js']},
-            {name: 'infinite-scroll',           files: ['vendor/ngInfiniteScroll/build/ng-infinite-scroll.js']},
-            {name: 'ui.bootstrap-slider',       files: ['vendor/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js',
-                                                        'vendor/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css',
-                                                        'vendor/angular-bootstrap-slider/slider.js'], serie: true},
-            {name: 'ui.grid',                   files: ['vendor/angular-ui-grid/ui-grid.min.css',
-                                                        'vendor/angular-ui-grid/ui-grid.min.js']},
-            {name: 'summernote',                files: ['vendor/bootstrap/js/modal.js',
-                                                        'vendor/bootstrap/js/dropdown.js',
-                                                        'vendor/bootstrap/js/tooltip.js',
-                                                        'vendor/summernote/dist/summernote.css',
-                                                        'vendor/summernote/dist/summernote.js',
-                                                        'vendor/angular-summernote/dist/angular-summernote.js'
-                                                        ], serie: true},
-            {name: 'angular-rickshaw',          files: ['vendor/d3/d3.min.js',
-                                                        'vendor/rickshaw/rickshaw.js',
-                                                        'vendor/rickshaw/rickshaw.min.css',
-                                                        'vendor/angular-rickshaw/rickshaw.js'], serie: true},
-            {name: 'angular-chartist',          files: ['vendor/chartist/dist/chartist.min.css',
-                                                        'vendor/chartist/dist/chartist.js',
-                                                        'vendor/angular-chartist.js/dist/angular-chartist.js'], serie: true},
-            {name: 'ui.map',                    files: ['vendor/angular-ui-map/ui-map.js']},
-            {name: 'datatables',                files: ['vendor/datatables/media/css/jquery.dataTables.css',
-                                                        'vendor/datatables/media/js/jquery.dataTables.js',
-                                                        'vendor/datatables-buttons/js/dataTables.buttons.js',
-                                                        //'vendor/datatables-buttons/css/buttons.bootstrap.css',
-                                                        'vendor/datatables-buttons/js/buttons.bootstrap.js',
-                                                        'vendor/datatables-buttons/js/buttons.colVis.js',
-                                                        'vendor/datatables-buttons/js/buttons.flash.js',
-                                                        'vendor/datatables-buttons/js/buttons.html5.js',
-                                                        'vendor/datatables-buttons/js/buttons.print.js',
-                                                        'vendor/angular-datatables/dist/angular-datatables.js',
-                                                        'vendor/angular-datatables/dist/plugins/buttons/angular-datatables.buttons.js'],
-                                                        serie: true},
-            {name: 'angular-jqcloud',           files: ['vendor/jqcloud2/dist/jqcloud.css',
-                                                        'vendor/jqcloud2/dist/jqcloud.js',
-                                                        'vendor/angular-jqcloud/angular-jqcloud.js']},
-            {name: 'angularGrid',               files: ['vendor/ag-grid/dist/styles/ag-grid.css',
-                                                        'vendor/ag-grid/dist/ag-grid.js',
-                                                        'vendor/ag-grid/dist/styles/theme-dark.css',
-                                                        'vendor/ag-grid/dist/styles/theme-fresh.css']},
-            {name: 'ng-nestable',               files: ['vendor/ng-nestable/src/angular-nestable.js',
-                                                        'vendor/nestable/jquery.nestable.js']},
-            {name: 'akoenig.deckgrid',          files: ['vendor/angular-deckgrid/angular-deckgrid.js']},
-            {name: 'oitozero.ngSweetAlert',     files: ['vendor/sweetalert/dist/sweetalert.css',
-                                                        'vendor/sweetalert/dist/sweetalert.min.js',
-                                                        'vendor/angular-sweetalert/SweetAlert.js'], serie: true},
-            {name: 'bm.bsTour',                 files: ['vendor/bootstrap-tour/build/css/bootstrap-tour.css',
-                                                        'vendor/bootstrap-tour/build/js/bootstrap-tour-standalone.js',
-                                                        'vendor/angular-bootstrap-tour/dist/angular-bootstrap-tour.js'], serie: true},
-            {name: 'ui.knob',                   files: ['vendor/angular-knob/src/angular-knob.js',
-                                                        'vendor/jquery-knob/dist/jquery.knob.min.js']},
-            {name: 'easypiechart',              files: ['vendor/jquery.easy-pie-chart/dist/angular.easypiechart.min.js']},
-            {name: 'colorpicker.module',        files: ['vendor/angular-bootstrap-colorpicker/css/colorpicker.css',
-                                                        'vendor/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js']},
-            {name: 'ui.sortable',               files: ['vendor/jquery-ui/jquery-ui.min.js',
-                                                        'vendor/angular-ui-sortable/sortable.js'], serie: true},
-            {name: 'ui.calendar',               files: ['vendor/jquery-ui/jquery-ui.min.js',
-                                                        'vendor/jqueryui-touch-punch/jquery.ui.touch-punch.min.js',
-                                                        'vendor/fullcalendar/dist/fullcalendar.min.js',
-                                                        'vendor/fullcalendar/dist/gcal.js',
-                                                        'vendor/fullcalendar/dist/fullcalendar.css',
-                                                        'vendor/angular-ui-calendar/src/calendar.js'], serie: true},
-            {name: 'chart.js',                   files: ['vendor/chart.js/dist/Chart.min.js',
-                                                         'vendor/angular-chart.js/dist/angular-chart.min.js'], serie: true},
-            {name: 'ui-leaflet',                   files: ['vendor/leaflet/dist/leaflet.js',
-                                                           'vendor/angular-simple-logger/dist/angular-simple-logger.js',
-                                                            'vendor/ui-leaflet/dist/ui-leaflet.js',
-                                                            'vendor/leaflet/dist/leaflet.css'], serie: true}
-          ]
-        })
-        ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
-
-})();
 /**=========================================================
  * Module: modals.js
  * Provides a simple way to implement bootstrap modals from templates
@@ -2950,6 +2964,50 @@
     }
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
+
+})();
 /**
  * Created by Yoni on 1/8/2018.
  */
@@ -3057,7 +3115,7 @@
   "use strict";
 
   angular
-    .module("app.common", [])
+    .module("app.common", ['toaster'])
       .config(routeConfig)
       .run(runBlock);
 
@@ -3072,6 +3130,18 @@
 
     angular
         .module('app.banking', []);
+
+})();
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function() {
+    'use strict';
+
+    angular.module('app.loan_management', [
+        'app.clients',
+        'app.processing'
+    ]);
 
 })();
 /**
@@ -3090,33 +3160,20 @@
     };
 
 })();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.geospatial', ['ngSanitize'])
-        .config(["$sceDelegateProvider", function($sceDelegateProvider) {
-            $sceDelegateProvider.resourceUrlWhitelist(['**']);
-            // $sceDelegateProvider.resourceUrlWhitelist([
-            //     // Allow same origin resource loads.
-            //     'self',
-            //     // Allow loading from our assets domain. **.
-            //     'http://ergast.com/**'
-            // ]);
-        }]);
-
-})();
 /**
- * Created by Yonas on 4/27/2018.
+ * Created by Yoni on 11/30/2017.
  */
 (function() {
     'use strict';
 
-    angular.module('app.loan_management', [
-        'app.clients',
-        'app.processing'
-    ]);
+    angular
+        .module('app.manage_roles', [])
+        .run(runBlock)
+        .config(routeConfig);
+
+    function runBlock() {  }
+
+    function routeConfig() {}
 
 })();
 /**
@@ -3132,22 +3189,6 @@
     function configUM() {}
 
 
-
-})();
-/**
- * Created by Yoni on 11/30/2017.
- */
-(function() {
-    'use strict';
-
-    angular
-        .module('app.manage_roles', [])
-        .run(runBlock)
-        .config(routeConfig);
-
-    function runBlock() {  }
-
-    function routeConfig() {}
 
 })();
 (function() {
@@ -3188,6 +3229,23 @@ function runBlock() {
 
     angular
         .module('app.welcomePage', []);
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.geospatial', ['ngSanitize'])
+        .config(["$sceDelegateProvider", function($sceDelegateProvider) {
+            $sceDelegateProvider.resourceUrlWhitelist(['**']);
+            // $sceDelegateProvider.resourceUrlWhitelist([
+            //     // Allow same origin resource loads.
+            //     'self',
+            //     // Allow loading from our assets domain. **.
+            //     'http://ergast.com/**'
+            // ]);
+        }]);
 
 })();
 
@@ -4680,6 +4738,152 @@ var INDICATOR = {
 
 })(window.angular);
 /**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.loan_management')
+
+        .service('LoanManagementService', LoanManagementService);
+
+    LoanManagementService.$inject = ['$http', 'CommonService'];
+
+    function LoanManagementService($http, CommonService) {
+        return {
+            GetLoanApplications: _getLoanApplications,
+            GetClientLoanApplication:_getClientLoanApplication,
+            SaveClientLoanApplication:_saveClientLoanApplication,
+
+            GetScreenings: _getScreenings,
+            GetClientScreening:_getClientScreening,
+            GetClientApplicationByLoanCycle:_getClientApplicationByLoanCycle,
+
+            SaveClientScreening:_saveClientScreening,
+            //CLIENT MANAGEMENT RELATED SERVICES DECLARATION
+            GetClients: _getClients,
+            SaveClient: _saveClient,
+            UpdateClient: _updateClient,
+            GetClientDetail:_getClientDetail,
+            SearchClient:_searchClient,
+            GetClientByLoanCycle:_getClientByLoanCycle,
+            GetBranches: _getBranches,
+
+            GetACATCollections: _getACATCollections,
+            GetClientACAT:_getClientACAT,
+            GetClientLoanProposals:_getClientLoanProposals,
+            GetCrops:_getCrops,
+
+            StyleLabelByStatus: _styleLabelByStatus,
+            loanCycles: [{id:1,name:'1st Loan Cycle'},{id:2,name:'2nd Loan Cycle'},{id:3,name:'3rd Loan Cycle'},{id:4,name:'4th Loan Cycle'},{id:5,name:'5th Loan Cycle'}]
+        };
+
+        function _getScreenings(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening,parameters));
+        }
+        function _saveClientScreening(screening,id) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,id),screening);
+        }
+
+
+        function _getClientScreening(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
+        }
+        function _getClientApplicationByLoanCycle(clientId,application,loanCycle) {
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Histories) + 'application='+application+'&client='+clientId+'&loanCycle='+loanCycle);
+        }
+        function _getLoanApplications(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.LOANS,API.Methods.LOANS.Loans,parameters));
+        }
+        function _getClientLoanApplication(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Clients,clientId));
+        }
+        function _saveClientLoanApplication(loan_application,id) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Loans,id),loan_application);
+        }
+
+
+
+        //CLIENT MANAGEMENT RELATED SERVICES
+        function _searchClient(searchText) {
+            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
+        }
+        function _getClientByLoanCycle(loanCycle) {
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.Client) + '/search?loan_cycle_number=' + loanCycle);
+        }
+
+        function _getClientDetail(id){
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
+        }
+        function _getBranches(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+        }
+        function _getClients(parameters){
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,parameters));
+        }
+        function _saveClient(client) {
+            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients + '/create'),client);
+        }
+        function _updateClient(client) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,client._id),client);
+        }
+
+
+        function _styleLabelByStatus(clientStatus) {
+            var style = '';
+            if(_.isUndefined(clientStatus))
+                return '';
+            switch (clientStatus.toLowerCase()){
+                case  'new':
+                    style =  'label bg-gray';
+                    break;
+                case  'submitted':
+                    style =  'label bg-primary-dark';
+                    break;
+                case  'approved':
+                    style =  'label bg-green-dark';
+                    break;
+                case 'screening_inprogress':
+                case 'declined_under_review':
+                    style =  'label label-warning';
+                    break;
+                case 'loan_application_accepted':
+                    style =  'label bg-info-dark';
+                    break;
+                case 'eligible':
+                    style =  'label label-success';
+                    break;
+                case 'ineligible':
+                case 'declined_final':
+                    style =  'label label-danger';
+                    break;
+                case 'loan_application_new':
+                    style =  'label bg-purple-dark';
+                    break;
+                default:
+                    style =  'label label-inverse';
+            }
+            return style;
+        }
+
+        function _getACATCollections(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.ACAT,API.Methods.ACAT.Clients,parameters));
+        }
+        function _getClientACAT(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Clients,clientId));
+        }
+        function _getClientLoanProposals(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProposals,clientId));
+        }
+
+        function _getCrops() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
+        }
+
+    }
+
+
+})(window.angular);
+/**
  * Created by Yoni on 2/9/2018.
  */
 (function(angular) {
@@ -4849,562 +5053,280 @@ var INDICATOR = {
 
 
 })(window.angular);
-(function (angular) {
+/**
+ * Created by Yoni on 12/10/2017.
+ */
+
+(function(angular) {
     "use strict";
+
     angular
-        .module('app.geospatial')
-        .controller('GeospatialController', GeoSpatialController);
+        .module('app.manage_roles')
+        .controller('CreateRoleController', CreateRoleController);
 
-    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI', 'SharedService', 'CommonService', 'AlertService','$scope','$templateCache'];
-
-    function GeoSpatialController(GeoSpatialService, blockUI, SharedService, CommonService, AlertService,$scope,$templateCache) {
+    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService','blockUI','$mdPanel'];
+    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService,blockUI,$mdPanel) {
         var vm = this;
-        vm.INDICATOR = INDICATOR;
-        vm.currentUser = GeoSpatialService.CurrentUser;
-        vm.saveUserConfig = _saveUserConfig;
-        vm.resetConfig = _resetConfig;
+        vm.cancel = _cancel;
+        vm.saveRole = _saveRole;
+        vm.changeModuleStyle = _modulesStyle;
+        vm.showFilterDialog = _showFilterDialog;
+        vm.showFilter = false;
+        vm.isEdit = items !== null;
+        vm.role = items !== null?items:null;
 
-        init();
 
-        // // We can use panel id name for the boolean flag to [un]collapse the panel
-        // $scope.$watch('panelDemo1',function(newVal){
-        //     console.log('panelDemo1 collapsed: ' + newVal);
-        // });
 
-        function _resetConfig() {
-            vm.config = undefined;
+        initialize();
+
+        function setPermissions() {
+            _.each(vm.role.permissions, function(oldPermission){
+                _.each(vm.permissions, function(permission) {
+                    if(permission.name === oldPermission.name && !permission.checked){
+                        permission.checked = permission.name === oldPermission.name;
+                    }
+                });
+            });
         }
 
-        function _saveUserConfig() {
+        function preparePermissions() {
+            vm.role.permissions = _.filter(vm.permissions,function(permission){
+                return permission.checked? permission._id : null;
+            });
+        }
 
-            vm.IsValidData = CommonService.Validation.ValidateForm(vm.seasonalFilterForm, vm.config);
-
-            if (vm.IsValidData) {
-                vm.config.user = vm.currentUser._id;
-                vm.config.from_date = vm.config.fromDate;
-                vm.config.to_date = vm.config.toDate;
-
-                vm.visibility.showSmiley = true;
-                vm.visibility.showInfoText = false;
-                vm.visibility.showWarning = false;
-
-                if(vm.config._id){
-                    GeoSpatialService.UpdateConfig(vm.config).then(function (response) {
-                            AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
-                            vm.config = response.data;
-                            vm.visibility.ConfigExists = true;
-                            GetHumanizedGeoSpatialStatus();
-                        }
-                        , function (error) {
-                            console.log('error', error);
-                            var message = error.data.error.message;
-                            AlertService.showError('Oops... Something went wrong', message);
-                        });
-                }else{
-                    GeoSpatialService.SaveUserConfig(vm.config).then(function (response) {
-                            AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
-                            vm.config = response.data;
-                            vm.visibility.ConfigExists = true;
-                            GetHumanizedGeoSpatialStatus();
-                        }
-                        , function (error) {
-                            console.log('error', error);
-                            var message = error.data.error.message;
-                            AlertService.showError('Oops... Something went wrong', message);
-                        });
+        function initialize(){
+           if(vm.isEdit){
+               var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
+               myLoadingBlockUI.start("Loading Role and Permissions");
+           }
+            var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
+            if(permissionFromStore !== null){
+                vm.permissions = permissionFromStore;
+                if(vm.isEdit){
+                    setPermissions();
+                    myLoadingBlockUI.stop();
                 }
 
-            } else {
-                vm.visibility.showWarning = true;
-                vm.visibility.showInfoText = false;
+            }else {
+                ManageRoleService.GetPermissions().then(function(response){
+                    vm.permissions = response.data.docs;
+                    ManageRoleService.StorePermissions(vm.permissions);
+                    console.log("permissions from api",vm.permissions);
+                    if(vm.isEdit){
+                        setPermissions();
+                        myLoadingBlockUI.stop();
+                    }
+                },function(error){
+                    if(vm.isEdit){
+                        myLoadingBlockUI.stop();
+                    }
+                    console.log("error permissions",error);
+                });
+
             }
 
         }
 
-        function init() {
-            vm.config = {};
-            vm.visibility = {
-                showSmiley: true,
-                showInfoText: true,
-                ConfigExists: false };
-            vm.seasonalFilterForm = {
-                IsfromDateValid: true,
-                IstoDateValid: true,
-                IsnameValid: true
-            };
-
-            //DATE OPTION
-            vm.dtOption = GeoSpatialService.DateOptionDefault();
-            GetUserConfig();
-
-        }
-        function GetUserConfig() {
-            GeoSpatialService.GetUserConfig().then(function (response) {
-                if (response.data.length > 0) {
-                    vm.config = response.data[0];
-                    vm.config.fromDate = new Date(vm.config.from_date);
-                    vm.config.toDate = new Date(vm.config.to_date);
-                    vm.visibility.ConfigExists = true;
-                    prepareBranchesData();
-                }else {
-                    vm.visibility.ConfigExists = false;
-                }
-            }, function (reason) {
-                console.log(reason)
-            });
-        }
-
-        function prepareBranchesData() {
-
-            SharedService.GetBranches()
-                .then( function (response) {
-                        vm.branches = response.data.docs;
-                        _.each(vm.branches,function (branch) {
-                            branch.regions = _.map(branch.weredas,function (woreda) {
-                                return woreda.w_code;
-                            }).join(":");
-                            ConstructGeoSpatialUrls(branch);
-                        });
+        function _saveRole() {
+            var myBlockUI = blockUI.instances.get('RoleBlockUI');
+            myBlockUI.start();
+            preparePermissions();
+            if(vm.isEdit){
+                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
+                        myBlockUI.stop();
+                        $mdDialog.hide();
+                        AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
                     },
                     function (error) {
-                        console.log("error fetching branches", error);
+                        myBlockUI.stop();
+                    var message = error.data.error.message;
+                        AlertService.showError("Failed to update Role",message);
+                        console.log("could not be saved", error);
                     });
+            }else {
 
-        }
-
-
-        function ConstructGeoSpatialUrls(branch) {
-
-            //GET REQUEST(branch,config) FROM API TO GET UID SID
-            GeoSpatialService.SearchRequest(vm.config._id,branch._id).then(function (response) {
-                var allRequest = response.data;
-                if(allRequest.length > 0){
-                    _.each(allRequest,function (request) {
-                        var sUID =request.UID;
-
-                        if(request.indicator === vm.INDICATOR.VI){
-                            branch.vegitationIndex = {
-                                image_url: API.Config.SeasmonBaseUrl + 'info_' + sUID + '_VI_latest.png',
-                                chart_url: API.Config.SeasmonBaseUrl + 'chart_' + sUID + '_VI_latest.html'
-                            };
-                        }
-                        else {
-                            branch.rainfall = {
-                                image_url: API.Config.SeasmonBaseUrl + 'info_' + sUID + '_PRECIP_latest.html',
-                                chart_url: API.Config.SeasmonBaseUrl + 'chart_' + sUID + '_PRECIP_latest.html'
-                            };
-                        }
-
-                    });
-                }
-
-
-
-            }, function (error) { console.log('error', error); });
-
-        }
-
-        function GetHumanizedGeoSpatialStatus() {
-
-            SharedService.GetBranches()
-                .then( function (response) {
-                        vm.branches = response.data.docs;
-                        _.each(vm.branches,function (branch) {
-                            branch.regions = _.map(branch.weredas,function (woreda) {
-                                return woreda.w_code;
-                            }).join(":");
-                            RequestGeoSpatialByBranch(branch);
-                        });
+                ManageRoleService.SaveRole( vm.role).then(function (data) {
+                        myBlockUI.stop();
+                        AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
+                        $mdDialog.hide();
                     },
                     function (error) {
-                        console.log("error fetching branches", error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to Save Role",message);
+                        console.log("could not be saved", error);
                     });
-
+            }
         }
 
-       function RequestGeoSpatialByBranch(branch) {
-            var configVI = {
-                indicator: vm.INDICATOR.VI,
-                start_date: GeoSpatialService.formatDateForRequest(vm.config.from_date),
-                end_date:  GeoSpatialService.formatDateForRequest(vm.config.to_date),
-                regions: branch.regions
-            };
-            //GET VI DATA
-            branch.vegitationIndexPromise =  GeoSpatialService.getSeasonalMonitorData(configVI)
-                .then(function (response) {
-                    branch.vegitationIndex = response.data;
-                    branch.vegitationIndex.chart_url =  _.isUndefined(branch.vegitationIndex.image_url)? '': branch.vegitationIndex.image_url.replace('info','chart');
-                    if(!_.isUndefined(branch.vegitationIndex.is_registered) && branch.vegitationIndex.is_registered){
-                        SaveRequest({
-                            config: vm.config._id,
-                            branch: branch._id,
-                            indicator: configVI.indicator,
-                            UID: branch.vegitationIndex.suid});
-                    }
+        function _showFilterDialog(show) {
 
-                }, function (error) { console.log("error", error);});
-
-            var configRainfall = angular.copy(configVI);
-            configRainfall.indicator = vm.INDICATOR.RAINFALL;
-            //GET RAINFALL DATA
-            branch.rainfallPromise = GeoSpatialService.getSeasonalMonitorData(configRainfall)
-                .then(function (response) {
-                    branch.rainfall = response.data;
-                    branch.rainfall.chart_url = _.isUndefined(branch.rainfall.image_url)? '': branch.rainfall.image_url.replace('info','chart');
-                    if(!_.isUndefined(branch.rainfall.is_registered) && branch.rainfall.is_registered){
-                        SaveRequest({
-                            config: vm.config._id,
-                            branch: branch._id,
-                            indicator: configRainfall.indicator,
-                            UID: branch.rainfall.suid});
-                    }
-
-                }, function (error) { console.log("error", error);});
-        }
-
-       function SaveRequest(request) {
-           GeoSpatialService.SaveRequest(request).then(function (response) {
-               console.log('response', response);
-               }, function (error) { console.log('error', error); });
-       }
-    }
-
-})(window.angular);
-(function (angular) {
-    "use strict";
-
-
-    angular
-        .module('app.geospatial')
-        .controller('PlotReportController', PlotReportController);
-
-    PlotReportController.$inject = ['$scope', 'GeoSpatialService', 'SharedService','blockUI'];
-
-    function PlotReportController($scope, GeoSpatialService, SharedService,blockUI) {
-        var vm = this;
-        vm.onSelectedBranch = _onSelectedBranch;
-
-        init();
-
-        function init() {
-            angular.extend($scope, {
-                center: {
-                    autoDiscover: true
-                }
-            });
-            GetBranches();
-        }
-
-        function callAPI() {
-            var myBlockUI = blockUI.instances.get('BlockUIMap');
-            myBlockUI.start('looking up geo locations on branch [' + vm.selectedBranch.name + ']' );
-            GeoSpatialService.GetPlotAreaData(vm.selectedBranch._id).then(function (response) {
-                console.log('GetPlotAreaData', response);
-                myBlockUI.stop();
-                var allData = response.data.docs;
-                var markers = {};
-                //dynamically set markers
-                for (var index = 0; index < allData.length; index++) {
-                    var data = allData[index];
-                    markers['m' + index] = {
-                        lat: data.gps_location.single_point.latitude,
-                        lng: data.gps_location.single_point.longitude,
-                        message: data.crop.name
-                    };
-                    // TESTING GEO LOCATION
-                    // markers['m' + index] = {
-                    //     lat: 9.1274179 + index / 1000,
-                    //     lng: 41.046243 + index / 120,
-                    //     message: data.crop.name
-                    // };
-                }
-
-
-                angular.extend($scope, {
-                    markers: markers,
-                    center: {
-                        //autoDiscover: true
-                        lat: 9.1274179,
-                        lng: 41.0462439,
-                        zoom: 6
-                    }
-                });
-
-            }, function (error) {
-                myBlockUI.stop();
-                console.log('error', error);
-            });
-        }
-
-        function _onSelectedBranch() {
-            callAPI();
-        }
-
-        function GetBranches() {
-            SharedService.GetBranches()
-                .then(function (response) {
-                        vm.branches = response.data.docs;
-                        vm.selectedBranch = vm.branches[0];
-                        callAPI();
-                    },
-                    function (error) {
-                        console.log("error fetching branches", error);
-                    });
-        }
-
-    }
-
-})(window.angular);
-(function(angular) {
-    'use strict';
-    angular.module('app.geospatial')
-
-        .service('GeoSpatialService', GeoSpatialService);
-
-    GeoSpatialService.$inject = ['$http','CommonService','AuthService','$rootScope'];
-
-    function GeoSpatialService($http, CommonService, AuthService,$rootScope) {
-        return {
-            formatDateForRequest:_formatDateForRequest,
-            getSeasonalMonitorData:_getSeasonalMonitorData,
-            SaveUserConfig : _saveConfig,
-            UpdateConfig:_updateConfig,
-            GetUserConfig:_getUserConfig,
-            DateOptionDefault:_dateOptionDefault,
-            SaveRequest:_saveRequest,
-            SearchRequest:_searchRequest,
-            CurrentUser: _getUser(),
-            AccessBranches:  AuthService.GetAccessBranches(),
-            GetPlotAreaData:_getPlotAreaData
-        };
-
-        function _getUser() {
-            return  AuthService.GetCurrentUser();
-        }
-
-        function _getUserConfig(){
-            var user = $rootScope.currentUser._id;// AuthService.GetCurrentUser();
-            return $http.get(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config, 'search?user=' + user));
-        }
-
-        function _saveConfig(config){
-            return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
-        }
-        function _updateConfig(config){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config,config._id),{
-                user : config.user,
-                from_date : config.from_date,
-                to_date : config.to_date});
-        }
-
-        function _getSeasonalMonitorData(config) {
-            var request = {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': undefined
-                },
-                url: API.Config.SeasonalMonitoringBaseUrl +  'indicator='+config.indicator+'&start_date='+config.start_date+'&end_date='+config.end_date+'&regions=' +config.regions};
-            return $http(request);
-        }
-
-        function _formatDateForRequest(date) {
-            var d = new Date(date),
-                month = '-' +  ("0" + (d.getMonth() + 1)).slice(-2) ,
-                day = '-' + ("0" + d.getDate()).slice(-2),
-                year = d.getFullYear();
-
-            if (month.length < 2) month = '0' + month;
-            if (day.length < 2) day = '0' + day;
-
-            return [year, month, day].join('');
-        }
-
-        function _dateOptionDefault() {
-            var vm = this;
-            vm.dtOption = {};
-            vm.dtOption.dateOptions = {
-                dateDisabled: false, formatYear: "yy",
-                maxDate: new Date(2020, 5, 22), startingDay: 1
-            };
-            vm.dtOption.format = "shortDate";
-            vm.dtOption.altInputFormats = ["M!/d!/yyyy"];
-            vm.dtOption.popup = {opened: false};
-            vm.dtOption.fromPopup = {opened: false};
-            vm.dtOption.open = function () {
-                vm.dtOption.popup.opened = true;
-            };
-            vm.dtOption.fromOpen = function () {
-                vm.dtOption.fromPopup.opened = true;
-            };
-            vm.dtOption.clear = function () {
-                vm.dtOption.dt = null;
-            };
-
-            return vm.dtOption;
-        }
-
-        function _saveRequest(request) {
-            return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Request),request);
-        }
-        function _searchRequest(config_id,branch_id) {
-            return $http.get(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Search) + 'config='+config_id+'&branch=' + branch_id);
-        }
-
-        function _getPlotAreaData(branch) {
-            return $http.get(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.Empty) + 'search?branch='+branch+'&fields=crop,client,gps_location');
-        }
-
-    }
-
-
-})(window.angular);
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.loan_management')
-
-        .service('LoanManagementService', LoanManagementService);
-
-    LoanManagementService.$inject = ['$http', 'CommonService'];
-
-    function LoanManagementService($http, CommonService) {
-        return {
-            GetLoanApplications: _getLoanApplications,
-            GetClientLoanApplication:_getClientLoanApplication,
-            SaveClientLoanApplication:_saveClientLoanApplication,
-
-            GetScreenings: _getScreenings,
-            GetClientScreening:_getClientScreening,
-            GetClientApplicationByLoanCycle:_getClientApplicationByLoanCycle,
-
-            SaveClientScreening:_saveClientScreening,
-            //CLIENT MANAGEMENT RELATED SERVICES DECLARATION
-            GetClients: _getClients,
-            SaveClient: _saveClient,
-            UpdateClient: _updateClient,
-            GetClientDetail:_getClientDetail,
-            SearchClient:_searchClient,
-            GetClientByLoanCycle:_getClientByLoanCycle,
-            GetBranches: _getBranches,
-
-            GetACATCollections: _getACATCollections,
-            GetClientACAT:_getClientACAT,
-            GetClientLoanProposals:_getClientLoanProposals,
-            GetCrops:_getCrops,
-
-            StyleLabelByStatus: _styleLabelByStatus,
-            loanCycles: [{id:1,name:'1st Loan Cycle'},{id:2,name:'2nd Loan Cycle'},{id:3,name:'3rd Loan Cycle'},{id:4,name:'4th Loan Cycle'},{id:5,name:'5th Loan Cycle'}]
-        };
-
-        function _getScreenings(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening,parameters));
-        }
-        function _saveClientScreening(screening,id) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,id),screening);
-        }
-
-
-        function _getClientScreening(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
-        }
-        function _getClientApplicationByLoanCycle(clientId,application,loanCycle) {
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Histories) + 'application='+application+'&client='+clientId+'&loanCycle='+loanCycle);
-        }
-        function _getLoanApplications(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.LOANS,API.Methods.LOANS.Loans,parameters));
-        }
-        function _getClientLoanApplication(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Clients,clientId));
-        }
-        function _saveClientLoanApplication(loan_application,id) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Loans,id),loan_application);
         }
 
 
 
-        //CLIENT MANAGEMENT RELATED SERVICES
-        function _searchClient(searchText) {
-            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
-        }
-        function _getClientByLoanCycle(loanCycle) {
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.Client) + '/search?loan_cycle_number=' + loanCycle);
-        }
-
-        function _getClientDetail(id){
-            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
-        }
-        function _getBranches(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
-        }
-        function _getClients(parameters){
-            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,parameters));
-        }
-        function _saveClient(client) {
-            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients + '/create'),client);
-        }
-        function _updateClient(client) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,client._id),client);
-        }
-
-
-        function _styleLabelByStatus(clientStatus) {
+        function _modulesStyle(module){
             var style = '';
-            if(_.isUndefined(clientStatus))
-                return '';
-            switch (clientStatus.toLowerCase()){
-                case  'new':
-                    style =  'label bg-gray';
+            switch (module){
+                case 'SCREENING':
+                    style =  'label label-primary';
                     break;
-                case  'submitted':
-                    style =  'label bg-primary-dark';
+                case 'SCREENING_MODULE':
+                    style =  'label label-primary';
                     break;
-                case  'approved':
-                    style =  'label bg-green-dark';
-                    break;
-                case 'screening_inprogress':
-                case 'declined_under_review':
-                    style =  'label label-warning';
-                    break;
-                case 'loan_application_accepted':
-                    style =  'label bg-info-dark';
-                    break;
-                case 'eligible':
-                    style =  'label label-success';
-                    break;
-                case 'ineligible':
-                case 'declined_final':
+                case 'FORM_BUILDER':
                     style =  'label label-danger';
                     break;
-                case 'loan_application_new':
-                    style =  'label bg-purple-dark';
+                case 'USER_MANAGEMENT':
+                    style =  'label label-green';
+                    break;
+                case 'CLIENT_MANAGEMENT':
+                    style =  'label label-warning';
+                    break;
+                case 'LOAN_MODULE':
+                    style =  'label label-purple';
                     break;
                 default:
-                    style =  'label label-inverse';
+                    style =  'label label-default';
             }
             return style;
         }
 
-        function _getACATCollections(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.ACAT,API.Methods.ACAT.Clients,parameters));
+        function _cancel() {
+            $mdDialog.cancel();
         }
-        function _getClientACAT(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Clients,clientId));
-        }
-        function _getClientLoanProposals(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProposals,clientId));
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('ManageRoleController', ManageRoleController);
+
+    ManageRoleController.$inject = ['ManageRoleService', '$mdDialog', 'RouteHelpers'];
+
+    function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
+    {
+        var vm = this;
+        vm.addRole = _addRole;
+        vm.editRole = _editRole;
+
+        fetchRoles();
+
+       function fetchRoles() {
+           ManageRoleService.GetRoles().then(function(response){
+               vm.roles = response.data.docs;
+               // console.log("vm.roles on RM",vm.roles);
+           },function(error){
+               console.log("error role",error);
+           });
+       }
+
+        function _addRole(ev){
+
+            $mdDialog.show({
+                locals: {
+                    items: null
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
         }
 
-        function _getCrops() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
+        function _editRole(role,ev) {
+            $mdDialog.show({
+                locals: {
+                    items: role
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
+        }
+
+
+
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 12/11/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.manage_roles')
+
+        .service('ManageRoleService', ManageRoleService);
+    ManageRoleService.$inject = ['$http', 'CommonService','AuthService','StorageService','APP_CONSTANTS'];
+
+    function ManageRoleService($http, CommonService,AuthService,StorageService,APP_CONSTANTS) {
+        return {
+            GetRoles: _getRoles,
+            GetPermissions: _getPermissions,
+            GetPermissionsbyGroup:_getPermissionsbyGroup,
+            SaveRole: _saveRole,
+            UpdateRole:_updateRole,
+            StorePermissions:_storePermissions,
+            GetPermissionsFromStore:_getPermissionsFromStorage
+        };
+
+        function _getRoles(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
+        }
+
+        function _getPermissions(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions));
+        }
+        function _getPermissionsbyGroup(){
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup));
+        }
+
+        function _saveRole(role) {
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role);
+        }
+
+        function _updateRole(role) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role);
+        }
+
+        function _storePermissions(permissions) {
+            return StorageService.Set(APP_CONSTANTS.StorageKey.PERMISSIONS, permissions);
+        }
+        function _getPermissionsFromStorage() {
+            return !_.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS)) ? StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS) : null;
         }
 
     }
 
-
 })(window.angular);
+
 /**
  * Created by Yoni on 11/30/2017.
  */
@@ -5829,280 +5751,6 @@ var INDICATOR = {
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id), user);
         }
         
-    }
-
-})(window.angular);
-
-/**
- * Created by Yoni on 12/10/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_roles')
-        .controller('CreateRoleController', CreateRoleController);
-
-    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService','blockUI','$mdPanel'];
-    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService,blockUI,$mdPanel) {
-        var vm = this;
-        vm.cancel = _cancel;
-        vm.saveRole = _saveRole;
-        vm.changeModuleStyle = _modulesStyle;
-        vm.showFilterDialog = _showFilterDialog;
-        vm.showFilter = false;
-        vm.isEdit = items !== null;
-        vm.role = items !== null?items:null;
-
-
-
-        initialize();
-
-        function setPermissions() {
-            _.each(vm.role.permissions, function(oldPermission){
-                _.each(vm.permissions, function(permission) {
-                    if(permission.name === oldPermission.name && !permission.checked){
-                        permission.checked = permission.name === oldPermission.name;
-                    }
-                });
-            });
-        }
-
-        function preparePermissions() {
-            vm.role.permissions = _.filter(vm.permissions,function(permission){
-                return permission.checked? permission._id : null;
-            });
-        }
-
-        function initialize(){
-           if(vm.isEdit){
-               var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
-               myLoadingBlockUI.start("Loading Role and Permissions");
-           }
-            var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
-            if(permissionFromStore !== null){
-                vm.permissions = permissionFromStore;
-                if(vm.isEdit){
-                    setPermissions();
-                    myLoadingBlockUI.stop();
-                }
-
-            }else {
-                ManageRoleService.GetPermissions().then(function(response){
-                    vm.permissions = response.data.docs;
-                    ManageRoleService.StorePermissions(vm.permissions);
-                    console.log("permissions from api",vm.permissions);
-                    if(vm.isEdit){
-                        setPermissions();
-                        myLoadingBlockUI.stop();
-                    }
-                },function(error){
-                    if(vm.isEdit){
-                        myLoadingBlockUI.stop();
-                    }
-                    console.log("error permissions",error);
-                });
-
-            }
-
-        }
-
-        function _saveRole() {
-            var myBlockUI = blockUI.instances.get('RoleBlockUI');
-            myBlockUI.start();
-            preparePermissions();
-            if(vm.isEdit){
-                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
-                        myBlockUI.stop();
-                        $mdDialog.hide();
-                        AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
-                    },
-                    function (error) {
-                        myBlockUI.stop();
-                    var message = error.data.error.message;
-                        AlertService.showError("Failed to update Role",message);
-                        console.log("could not be saved", error);
-                    });
-            }else {
-
-                ManageRoleService.SaveRole( vm.role).then(function (data) {
-                        myBlockUI.stop();
-                        AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
-                        $mdDialog.hide();
-                    },
-                    function (error) {
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to Save Role",message);
-                        console.log("could not be saved", error);
-                    });
-            }
-        }
-
-        function _showFilterDialog(show) {
-
-        }
-
-
-
-        function _modulesStyle(module){
-            var style = '';
-            switch (module){
-                case 'SCREENING':
-                    style =  'label label-primary';
-                    break;
-                case 'SCREENING_MODULE':
-                    style =  'label label-primary';
-                    break;
-                case 'FORM_BUILDER':
-                    style =  'label label-danger';
-                    break;
-                case 'USER_MANAGEMENT':
-                    style =  'label label-green';
-                    break;
-                case 'CLIENT_MANAGEMENT':
-                    style =  'label label-warning';
-                    break;
-                case 'LOAN_MODULE':
-                    style =  'label label-purple';
-                    break;
-                default:
-                    style =  'label label-default';
-            }
-            return style;
-        }
-
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 11/30/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_roles')
-        .controller('ManageRoleController', ManageRoleController);
-
-    ManageRoleController.$inject = ['ManageRoleService', '$mdDialog', 'RouteHelpers'];
-
-    function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
-    {
-        var vm = this;
-        vm.addRole = _addRole;
-        vm.editRole = _editRole;
-
-        fetchRoles();
-
-       function fetchRoles() {
-           ManageRoleService.GetRoles().then(function(response){
-               vm.roles = response.data.docs;
-               // console.log("vm.roles on RM",vm.roles);
-           },function(error){
-               console.log("error role",error);
-           });
-       }
-
-        function _addRole(ev){
-
-            $mdDialog.show({
-                locals: {
-                    items: null
-                },
-                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateRoleController',
-                controllerAs: 'vm'
-            })
-                .then(function (answer) {
-                    fetchRoles();
-                }, function () {
-                });
-        }
-
-        function _editRole(role,ev) {
-            $mdDialog.show({
-                locals: {
-                    items: role
-                },
-                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateRoleController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                    fetchRoles();
-                }, function () {
-                });
-        }
-
-
-
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 12/11/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.manage_roles')
-
-        .service('ManageRoleService', ManageRoleService);
-    ManageRoleService.$inject = ['$http', 'CommonService','AuthService','StorageService','APP_CONSTANTS'];
-
-    function ManageRoleService($http, CommonService,AuthService,StorageService,APP_CONSTANTS) {
-        return {
-            GetRoles: _getRoles,
-            GetPermissions: _getPermissions,
-            GetPermissionsbyGroup:_getPermissionsbyGroup,
-            SaveRole: _saveRole,
-            UpdateRole:_updateRole,
-            StorePermissions:_storePermissions,
-            GetPermissionsFromStore:_getPermissionsFromStorage
-        };
-
-        function _getRoles(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
-        }
-
-        function _getPermissions(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions));
-        }
-        function _getPermissionsbyGroup(){
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup));
-        }
-
-        function _saveRole(role) {
-            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role);
-        }
-
-        function _updateRole(role) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role);
-        }
-
-        function _storePermissions(permissions) {
-            return StorageService.Set(APP_CONSTANTS.StorageKey.PERMISSIONS, permissions);
-        }
-        function _getPermissionsFromStorage() {
-            return !_.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS)) ? StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS) : null;
-        }
-
     }
 
 })(window.angular);
@@ -6574,6 +6222,557 @@ var INDICATOR = {
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
         }
     }
+
+})(window.angular);
+(function (angular) {
+    "use strict";
+    angular
+        .module('app.geospatial')
+        .controller('GeospatialController', GeoSpatialController);
+
+    GeoSpatialController.$inject = ['GeoSpatialService', 'blockUI', 'SharedService', 'CommonService', 'AlertService','$scope','$templateCache'];
+
+    function GeoSpatialController(GeoSpatialService, blockUI, SharedService, CommonService, AlertService,$scope,$templateCache) {
+        var vm = this;
+        vm.INDICATOR = INDICATOR;
+        vm.currentUser = GeoSpatialService.CurrentUser;
+        vm.saveUserConfig = _saveUserConfig;
+        vm.resetConfig = _resetConfig;
+
+        init();
+
+        // // We can use panel id name for the boolean flag to [un]collapse the panel
+        // $scope.$watch('panelDemo1',function(newVal){
+        //     console.log('panelDemo1 collapsed: ' + newVal);
+        // });
+
+        function _resetConfig() {
+            vm.config = undefined;
+        }
+
+        function _saveUserConfig() {
+
+            vm.IsValidData = CommonService.Validation.ValidateForm(vm.seasonalFilterForm, vm.config);
+
+            if (vm.IsValidData) {
+                vm.config.user = vm.currentUser._id;
+                vm.config.from_date = vm.config.fromDate;
+                vm.config.to_date = vm.config.toDate;
+
+                vm.visibility.showSmiley = true;
+                vm.visibility.showInfoText = false;
+                vm.visibility.showWarning = false;
+
+                if(vm.config._id){
+                    GeoSpatialService.UpdateConfig(vm.config).then(function (response) {
+                            AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
+                            vm.config = response.data;
+                            vm.visibility.ConfigExists = true;
+                            GetHumanizedGeoSpatialStatus();
+                        }
+                        , function (error) {
+                            console.log('error', error);
+                            var message = error.data.error.message;
+                            AlertService.showError('Oops... Something went wrong', message);
+                        });
+                }else{
+                    GeoSpatialService.SaveUserConfig(vm.config).then(function (response) {
+                            AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
+                            vm.config = response.data;
+                            vm.visibility.ConfigExists = true;
+                            GetHumanizedGeoSpatialStatus();
+                        }
+                        , function (error) {
+                            console.log('error', error);
+                            var message = error.data.error.message;
+                            AlertService.showError('Oops... Something went wrong', message);
+                        });
+                }
+
+            } else {
+                vm.visibility.showWarning = true;
+                vm.visibility.showInfoText = false;
+            }
+
+        }
+
+        function init() {
+            vm.config = {};
+            vm.visibility = {
+                showSmiley: true,
+                showInfoText: true,
+                ConfigExists: false };
+            vm.seasonalFilterForm = {
+                IsfromDateValid: true,
+                IstoDateValid: true,
+                IsnameValid: true
+            };
+
+            //DATE OPTION
+            vm.dtOption = GeoSpatialService.DateOptionDefault();
+            GetUserConfig();
+
+        }
+        function GetUserConfig() {
+            GeoSpatialService.GetUserConfig().then(function (response) {
+                if (response.data.length > 0) {
+                    vm.config = response.data[0];
+                    vm.config.fromDate = new Date(vm.config.from_date);
+                    vm.config.toDate = new Date(vm.config.to_date);
+                    vm.visibility.ConfigExists = true;
+                    prepareBranchesData();
+                }else {
+                    vm.visibility.ConfigExists = false;
+                }
+            }, function (reason) {
+                console.log(reason)
+            });
+        }
+
+        function prepareBranchesData() {
+
+            SharedService.GetBranches()
+                .then( function (response) {
+                        vm.branches = response.data.docs;
+                        _.each(vm.branches,function (branch) {
+                            branch.regions = _.map(branch.weredas,function (woreda) {
+                                return woreda.w_code;
+                            }).join(":");
+                            ConstructGeoSpatialUrls(branch);
+                        });
+                    },
+                    function (error) {
+                        console.log("error fetching branches", error);
+                    });
+
+        }
+
+
+        function ConstructGeoSpatialUrls(branch) {
+
+            //GET REQUEST(branch,config) FROM API TO GET UID SID
+            GeoSpatialService.SearchRequest(vm.config._id,branch._id).then(function (response) {
+                var allRequest = response.data;
+                if(allRequest.length > 0){
+                    _.each(allRequest,function (request) {
+                        var sUID =request.UID;
+
+                        if(request.indicator === vm.INDICATOR.VI){
+                            branch.vegitationIndex = {
+                                image_url: API.Config.SeasmonBaseUrl + 'info_' + sUID + '_VI_latest.png',
+                                chart_url: API.Config.SeasmonBaseUrl + 'chart_' + sUID + '_VI_latest.html'
+                            };
+                        }
+                        else {
+                            branch.rainfall = {
+                                image_url: API.Config.SeasmonBaseUrl + 'info_' + sUID + '_PRECIP_latest.html',
+                                chart_url: API.Config.SeasmonBaseUrl + 'chart_' + sUID + '_PRECIP_latest.html'
+                            };
+                        }
+
+                    });
+                }
+
+
+
+            }, function (error) { console.log('error', error); });
+
+        }
+
+        function GetHumanizedGeoSpatialStatus() {
+
+            SharedService.GetBranches()
+                .then( function (response) {
+                        vm.branches = response.data.docs;
+                        _.each(vm.branches,function (branch) {
+                            branch.regions = _.map(branch.weredas,function (woreda) {
+                                return woreda.w_code;
+                            }).join(":");
+                            RequestGeoSpatialByBranch(branch);
+                        });
+                    },
+                    function (error) {
+                        console.log("error fetching branches", error);
+                    });
+
+        }
+
+       function RequestGeoSpatialByBranch(branch) {
+            var configVI = {
+                indicator: vm.INDICATOR.VI,
+                start_date: GeoSpatialService.formatDateForRequest(vm.config.from_date),
+                end_date:  GeoSpatialService.formatDateForRequest(vm.config.to_date),
+                regions: branch.regions
+            };
+            //GET VI DATA
+            branch.vegitationIndexPromise =  GeoSpatialService.getSeasonalMonitorData(configVI)
+                .then(function (response) {
+                    branch.vegitationIndex = response.data;
+                    branch.vegitationIndex.chart_url =  _.isUndefined(branch.vegitationIndex.image_url)? '': branch.vegitationIndex.image_url.replace('info','chart');
+                    if(!_.isUndefined(branch.vegitationIndex.is_registered) && branch.vegitationIndex.is_registered){
+                        SaveRequest({
+                            config: vm.config._id,
+                            branch: branch._id,
+                            indicator: configVI.indicator,
+                            UID: branch.vegitationIndex.suid});
+                    }
+
+                }, function (error) { console.log("error", error);});
+
+            var configRainfall = angular.copy(configVI);
+            configRainfall.indicator = vm.INDICATOR.RAINFALL;
+            //GET RAINFALL DATA
+            branch.rainfallPromise = GeoSpatialService.getSeasonalMonitorData(configRainfall)
+                .then(function (response) {
+                    branch.rainfall = response.data;
+                    branch.rainfall.chart_url = _.isUndefined(branch.rainfall.image_url)? '': branch.rainfall.image_url.replace('info','chart');
+                    if(!_.isUndefined(branch.rainfall.is_registered) && branch.rainfall.is_registered){
+                        SaveRequest({
+                            config: vm.config._id,
+                            branch: branch._id,
+                            indicator: configRainfall.indicator,
+                            UID: branch.rainfall.suid});
+                    }
+
+                }, function (error) { console.log("error", error);});
+        }
+
+       function SaveRequest(request) {
+           GeoSpatialService.SaveRequest(request).then(function (response) {
+               console.log('response', response);
+               }, function (error) { console.log('error', error); });
+       }
+    }
+
+})(window.angular);
+(function (angular) {
+    "use strict";
+
+
+    angular
+        .module('app.geospatial')
+        .controller('PlotReportController', PlotReportController);
+
+    PlotReportController.$inject = ['$scope', 'GeoSpatialService', 'SharedService','blockUI','NotifyService'];
+
+    function PlotReportController($scope, GeoSpatialService, SharedService,blockUI,NotifyService) {
+        var vm = this;
+        vm.onSelectedBranch = _onSelectedBranch;
+
+        init();
+
+        function init() {
+            angular.extend($scope, {
+                center: {
+                    autoDiscover: true
+                }
+            });
+            GetBranches();
+        }
+
+        function callAPI() {
+            var myBlockUI = blockUI.instances.get('BlockUIMap');
+            myBlockUI.start('looking up geo locations on branch [' + vm.selectedBranch.name + ']' );
+            GeoSpatialService.GetPlotAreaData(vm.selectedBranch._id).then(function (response) {
+                console.log('GetPlotAreaData', response);
+
+                var allData = response.data.docs;
+                var markers = {};
+                //dynamically set markers
+                for (var index = 0; index < allData.length; index++) {
+                    var data = allData[index];
+                    if(data.gps_location.single_point.status !==  "NO ATTEMPT"){
+                        markers['m' + index] = {
+                            lat: data.gps_location.single_point.latitude,
+                            lng: data.gps_location.single_point.longitude,
+                            message: data.crop.name
+                        };
+                    }
+                }
+
+                NotifyService.showInfo("GeoLocation",_.keys(markers).length + " locations found on " + vm.selectedBranch.name);
+
+                myBlockUI.stop();
+                angular.extend($scope, {
+                    markers: markers,
+                    center: {
+                        //autoDiscover: true
+                        lat: 9.1274179,
+                        lng: 41.0462439,
+                        zoom: 6
+                    }
+                });
+
+            }, function (error) {
+                myBlockUI.stop();
+                console.log('error', error);
+            });
+        }
+
+        function _onSelectedBranch() {
+            callAPI();
+        }
+
+        function GetBranches() {
+            SharedService.GetBranches()
+                .then(function (response) {
+                        vm.branches = response.data.docs;
+                        vm.selectedBranch = vm.branches[0];
+                        callAPI();
+                    },
+                    function (error) {
+                        console.log("error fetching branches", error);
+                    });
+        }
+
+    }
+
+})(window.angular);
+(function(angular) {
+    'use strict';
+    angular.module('app.geospatial')
+
+        .service('GeoSpatialService', GeoSpatialService);
+
+    GeoSpatialService.$inject = ['$http','CommonService','AuthService','$rootScope'];
+
+    function GeoSpatialService($http, CommonService, AuthService,$rootScope) {
+        return {
+            formatDateForRequest:_formatDateForRequest,
+            getSeasonalMonitorData:_getSeasonalMonitorData,
+            SaveUserConfig : _saveConfig,
+            UpdateConfig:_updateConfig,
+            GetUserConfig:_getUserConfig,
+            DateOptionDefault:_dateOptionDefault,
+            SaveRequest:_saveRequest,
+            SearchRequest:_searchRequest,
+            CurrentUser: _getUser(),
+            AccessBranches:  AuthService.GetAccessBranches(),
+            GetPlotAreaData:_getPlotAreaData
+        };
+
+        function _getUser() {
+            return  AuthService.GetCurrentUser();
+        }
+
+        function _getUserConfig(){
+            var user = $rootScope.currentUser._id;// AuthService.GetCurrentUser();
+            return $http.get(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config, 'search?user=' + user));
+        }
+
+        function _saveConfig(config){
+            return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.SaveConfig),config);
+        }
+        function _updateConfig(config){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config,config._id),{
+                user : config.user,
+                from_date : config.from_date,
+                to_date : config.to_date});
+        }
+
+        function _getSeasonalMonitorData(config) {
+            var request = {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': undefined
+                },
+                url: API.Config.SeasonalMonitoringBaseUrl +  'indicator='+config.indicator+'&start_date='+config.start_date+'&end_date='+config.end_date+'&regions=' +config.regions};
+            return $http(request);
+        }
+
+        function _formatDateForRequest(date) {
+            var d = new Date(date),
+                month = '-' +  ("0" + (d.getMonth() + 1)).slice(-2) ,
+                day = '-' + ("0" + d.getDate()).slice(-2),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('');
+        }
+
+        function _dateOptionDefault() {
+            var vm = this;
+            vm.dtOption = {};
+            vm.dtOption.dateOptions = {
+                dateDisabled: false, formatYear: "yy",
+                maxDate: new Date(2020, 5, 22), startingDay: 1
+            };
+            vm.dtOption.format = "shortDate";
+            vm.dtOption.altInputFormats = ["M!/d!/yyyy"];
+            vm.dtOption.popup = {opened: false};
+            vm.dtOption.fromPopup = {opened: false};
+            vm.dtOption.open = function () {
+                vm.dtOption.popup.opened = true;
+            };
+            vm.dtOption.fromOpen = function () {
+                vm.dtOption.fromPopup.opened = true;
+            };
+            vm.dtOption.clear = function () {
+                vm.dtOption.dt = null;
+            };
+
+            return vm.dtOption;
+        }
+
+        function _saveRequest(request) {
+            return $http.post(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Request),request);
+        }
+        function _searchRequest(config_id,branch_id) {
+            return $http.get(CommonService.buildUrl(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Search) + 'config='+config_id+'&branch=' + branch_id);
+        }
+
+        function _getPlotAreaData(branch) {
+            return $http.get(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.Empty) + 'search?branch='+branch+'&fields=crop,client,gps_location');
+        }
+
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+        }
+
+
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+       function callApi(){
+        vm.promise =   ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
+
+    }
+
+
 
 })(window.angular);
 /**
@@ -7431,149 +7630,6 @@ var INDICATOR = {
 
 })(window.angular);
 /**
- * Created by Yoni on 3/5/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearch;
-
-        initialize();
-
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-
-            callApi();
-        }
-
-
-        function _paginate (page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-
-       function callApi(){
-        vm.promise =   ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
-
-    }
-
-
-
-})(window.angular);
-/**
  * Created by Yoni on 12/3/2017.
  */
 (function () {
@@ -7772,6 +7828,43 @@ var INDICATOR = {
     }
 
 })(window.angular);
+(function () {
+    'use strict';
+    angular.module('app.common').factory('NotifyService', NotifyService);
+
+    NotifyService.$inject = ['toaster'];
+
+    function NotifyService(toaster) {
+        var toasterType = {
+            error: 'error',
+            info: 'info',
+            warning: 'warning',
+            success: 'success'
+        };
+        return {
+            showError: error,
+            showInfo: info,
+            showWarning: warning,
+            showSuccess: success
+        };
+
+        function error(title, message) {
+            toaster.pop(toasterType.error, title, message);
+        }
+
+        function info(title, message) {
+            toaster.pop(toasterType.info, title, message);
+        }
+
+        function warning(title, message) {
+            toaster.pop(toasterType.warning, title, message);
+        }
+
+        function success(title, message) {
+            toaster.pop(toasterType.success, title, message);
+        }
+    }
+})();
 /**
  * Created by Yoni on 12/30/2017.
  */
@@ -8029,6 +8122,474 @@ var INDICATOR = {
 
 })(window.angular);
 
+/**
+ * Created by Yoni on 1/9/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.clients").controller("ClientDetailController", ClientDetailController);
+
+    ClientDetailController.$inject = ['LoanManagementService','$stateParams','blockUI','PrintPreviewService'];
+
+    function ClientDetailController(LoanManagementService,$stateParams,blockUI,PrintPreviewService) {
+        var vm = this;
+        vm.clientId =  $stateParams.id;
+        vm.visibility = {showMoreClientDetail: false};
+        vm.labelBasedOnStatus = LoanManagementService.StyleLabelByStatus;
+
+        vm.tabsList = [
+            { index: 1, heading:"Screening", code: 'screening', templateUrl:"app/views/loan_management/client_management/tabs/screening.partial.html" },
+            { index: 2, heading:"Loan Application", code: 'loan', templateUrl:"app/views/loan_management/client_management/tabs/loan.partial.html" },
+            { index: 3, heading:"ACAT", code: 'acat', templateUrl:"app/views/loan_management/client_management/tabs/acat.partial.html" }
+        ];
+        vm.activeTab = vm.tabsList[0]; //initially screening tab is active
+        vm.activeTabIndex = vm.activeTab.index;
+
+        vm.onSelectedLoanCycle = _onSelectedLoanCycle;
+
+        vm.onTabSelected = _onTabSelected;
+        vm.printLaonProcess = _print;
+
+        vm.ACATGroupOnClick = _aCATGroupOnClick;
+        vm.onLoanProposalClick = _onLoanProposalClick;
+
+        function _onSelectedLoanCycle(){
+             _onTabSelected();
+        }
+
+        function getLoanCycles(){
+            //filter loan cycles by max loan cycle number
+            vm.loanCycles = [];
+            _.each(LoanManagementService.loanCycles,function (cycle) {
+                if(cycle.id <= vm.client.loan_cycle_number){
+                    vm.loanCycles.push(cycle);
+                }
+            });
+        }
+
+        initialize();
+
+        function _print(type) {
+            var preview = [];
+            if(type === 'SCREENING'){
+                preview = [{
+                    Name: "Screening",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "Screening Form Result for " +
+                                                    vm.clientScreening.client.first_name + " " +
+                                                    vm.clientScreening.client.last_name + " " +
+                                                    vm.clientScreening.client.grandfather_name}, vm.clientScreening)
+                }];
+                PrintPreviewService.show(preview);
+            }else if(type === 'ACAT_CROP'){
+                preview = [{
+                    Name: "ACAT Summary",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.acat.summary.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "ACAT Summary for " +
+                    vm.clientACATs.client.first_name + " " +
+                    vm.clientACATs.client.last_name + " " +
+                    vm.clientACATs.client.grandfather_name}, vm.selectedClientACAT)
+                }];
+                PrintPreviewService.show(preview);
+            }else if(type === 'ACAT_TOTAL'){
+                preview = [{
+                    Name: "ACAT Summary",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.acat.total.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "ACAT And Loan Proposal Summary for " +
+                    vm.clientACATs.client.first_name + " " +
+                    vm.clientACATs.client.last_name + " " +
+                    vm.clientACATs.client.grandfather_name}, vm.clientACATs,{loanProposals: vm.clientLoanProposals})
+                }];
+                PrintPreviewService.show(preview);
+            } else{
+                preview = [{
+                    Name: "Loan Application",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "Loan Application Form Result for " +
+                    vm.client.loan_application.client.first_name + " " +
+                    vm.client.loan_application.client.last_name + " " +
+                    vm.client.loan_application.client.grandfather_name}, vm.client.loan_application)
+                }];
+                PrintPreviewService.show(preview);
+            }
+
+
+        }
+
+        function initialize() {
+            vm.visibility = {
+                showCropPanel:false,
+                showSummaryPanel:false,
+                showWarningForLoanCycle: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            var myBlockUI = blockUI.instances.get('ClientBlockUI');
+            myBlockUI.start();
+
+            LoanManagementService.GetClientDetail(vm.clientId)
+                .then(function(response){
+                    myBlockUI.stop();
+                    vm.client = response.data;
+
+                    getLoanCycles();
+                    _onTabSelected(vm.activeTab);
+
+
+                    console.log("client detail",response);
+                },function(error){
+                    myBlockUI.stop();
+                    console.log("error getting client detail",error);
+                });
+        }
+
+
+        function CallClientScreeningAPI() {
+            var blockUIName =  'screeningTabBlockUI';
+            var myBlockUI = blockUI.instances.get(blockUIName);
+            myBlockUI.start();
+            LoanManagementService.GetClientScreening(vm.clientId).then(function (response) {
+                myBlockUI.stop();
+                vm.clientScreening = response.data;
+                console.log("screening",vm.clientScreening);
+
+            },function (error) {
+                myBlockUI.stop();
+                console.log("error fetching screening",error);
+            });
+        }
+
+        function GetClientApplicationByLoanCycle(application) {
+            var blockUIName =  application + 'TabBlockUI';
+            var myBlockUI = blockUI.instances.get(blockUIName);
+            myBlockUI.start();
+            LoanManagementService.GetClientApplicationByLoanCycle(vm.clientId,application,vm.loanCycle).then(function (response) {
+                myBlockUI.stop();
+                console.log("response.data after filtered by loan cycle",response.data);
+                if(application ==='screening'){
+                    vm.clientScreening = response.data;
+                } else if(application ==='loan'){
+                    vm.client.loan_application = response.data;
+                } else if(application ==='acat'){
+                    vm.clientACATs = response.data;
+                }
+
+                vm.visibility.showWarningForLoanCycle = response.data.client.loan_cycle_number !== vm.loanCycle;
+
+            },function (error) {
+                myBlockUI.stop();
+                console.log("error fetching data by loan cycle",error);
+            });
+        }
+
+        function CallClientLoanApplicationAPI() {
+            var blockUIName =  'loanTabBlockUI';
+            var myBlockUI = blockUI.instances.get(blockUIName);
+            myBlockUI.start();
+            LoanManagementService.GetClientLoanApplication(vm.clientId)
+                .then(function (response) {
+                    myBlockUI.stop();
+                    vm.client.loan_application = response.data;
+                    console.log("vm.client.loan_application",vm.client);
+                },function (error) {
+                    myBlockUI.stop();
+                    console.log(" error .loan_application",error);
+                });
+        }
+
+        function CallClientACAT() {
+            var blockUIName =  'acatTabBlockUI';
+            var myBlockUI = blockUI.instances.get(blockUIName);
+            myBlockUI.start();
+            LoanManagementService.GetClientACAT(vm.clientId)
+                .then(function(response){
+                    myBlockUI.stop();
+                    vm.clientACATs = response.data;
+                    if(vm.clientACATs.ACATs.length>0) vm.ACATGroupOnClick(vm.clientACATs.ACATs[0]); //select the first crop
+                    console.log("vm.clientACATs ",vm.clientACATs);
+                },function(error){
+                    myBlockUI.stop();
+                    console.log("error getting client acat ",error);
+                });
+
+            LoanManagementService.GetClientLoanProposals(vm.clientId)
+                .then(function(response){
+                    vm.clientLoanProposals = response.data;
+                    console.log("clientLoanProposals",vm.clientLoanProposals);
+                },function(error){
+                    console.log("error getting  clientLoanProposals ",error);
+                });
+
+        }
+
+
+        function setActiveTabObj() {
+            vm.activeTab = {};
+            vm.activeTab = _.find(vm.tabsList,function (tab) {
+                return tab.index === vm.activeTabIndex;
+                });
+        }
+        function _onTabSelected() {
+            console.log('active tab',vm.activeTabIndex);
+            setActiveTabObj();
+            switch (vm.activeTab.code){
+                case 'screening':
+                    if(_.isUndefined(vm.loanCycle)){
+                        CallClientScreeningAPI();
+                    }else{
+                        GetClientApplicationByLoanCycle(vm.activeTab.code);
+                    }
+                    break;
+                case 'loan':
+                    if(_.isUndefined(vm.loanCycle)){
+                        CallClientLoanApplicationAPI();
+                    }else{
+                        GetClientApplicationByLoanCycle(vm.activeTab.code);
+                    }
+                    break;
+                case 'acat':
+                    if(_.isUndefined(vm.loanCycle)){
+                        CallClientACAT();
+                    }else{
+                        GetClientApplicationByLoanCycle(vm.activeTab.code);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        function _aCATGroupOnClick(selectedClientACAT,index) {
+            vm.selectedClientACAT = selectedClientACAT;
+            ShowCropPanel();
+            console.log("vm.selectedClientACAT",vm.selectedClientACAT);
+        }
+        function _onLoanProposalClick(loanProduct) {
+            ShowSummaryPanel();
+            vm.selectedLoanProduct = loanProduct;
+            console.log("vm.selectedClientACAT",vm.selectedLoanProduct );
+            vm.list = { settingActive: 10 };
+        }
+
+        function ShowCropPanel() {
+            vm.visibility.showCropPanel = true;
+            vm.visibility.showSummaryPanel = false;
+        }
+        function ShowSummaryPanel() {
+            vm.visibility.showCropPanel = false;
+            vm.visibility.showSummaryPanel = true;
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.loan_management")
+        .controller("ClientManagementController", ClientManagementController);
+    ClientManagementController.$inject = ['LoanManagementService','$state','$scope','AuthService'];
+
+    function ClientManagementController(LoanManagementService,$state,$scope,AuthService) {
+        var vm = this;
+        vm.currentUser = {selected_access_branch:undefined};
+        vm.labelBasedOnStatus = LoanManagementService.StyleLabelByStatus;
+        vm.paginate = _paginate;
+        vm.clearSearch = _clearSearch;
+        //CLIENT RELATED
+        vm.clientDetail = _clientDetail;
+        vm.onSelectedBranch = _onSelectedBranch;
+        vm.onSelectedLoanCycle = _onSelectedLoanCycle;
+
+
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.loanCycles = LoanManagementService.loanCycles;
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+            GetBranchFilter();
+        }
+
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function GetBranchFilter() {
+            if(AuthService.IsSuperuser()){
+                LoanManagementService.GetBranches().then(function(response){
+                    vm.currentUser.user_access_branches = response.data.docs;
+                },function(error){
+                    vm.currentUser.user_access_branches = [];
+                    console.log("error on GetBranchFilter",error);
+                });
+            }
+            else {
+                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
+            }
+        }
+
+        function callApi(){
+            vm.clientPromise = LoanManagementService.GetClients(vm.query).then(function(response){
+                vm.clients = response.data.docs;
+                vm.clientsCopy = angular.copy(vm.clients);
+                vm.query.total_docs_count =  response.data.total_docs_count;
+            },function (error) {
+                console.log("error callApi vm.clients",error);
+            });
+        }
+
+        function SearchApi(SearchText){
+            vm.clientPromise = LoanManagementService.SearchClient(SearchText)
+                .then(function(response){
+                    vm.clients = response.data.docs;
+                    vm.clientsCount = response.data.total_docs_count;
+                    vm.query.total_docs_count =  response.data.total_docs_count;
+                    console.log(response);
+                },function (error) {
+                    vm.clients = vm.clientsCopy;
+                    console.log("error",error);
+                });
+        }
+
+        function _clientDetail(client,ev) {
+            $state.go('app.client_detail',{id:client._id});
+        }
+
+        function _onSelectedBranch(){
+            vm.clients = vm.clientsCopy;
+
+            vm.clients = _.filter(vm.clients,function(client){
+                if(!_.isUndefined(client.branch) && client.branch !== null){
+                    return client.branch._id === vm.currentUser.selected_access_branch._id;
+                }
+            });
+
+        }
+        function _onSelectedLoanCycle(){
+
+            vm.clientPromise = LoanManagementService.GetClientByLoanCycle(vm.currentUser.loanCycle)
+                .then(function(response){
+                    vm.clients = response.data.docs;
+                    vm.clientsCount = response.data.total_docs_count;
+                    console.log(response);
+                },function (error) {
+                    vm.clients = vm.clientsCopy;
+                    console.log("error",error);
+                });
+        }
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                //make sure at least two characters are entered
+                if(newValue.length > 2){
+                    SearchApi(newValue);
+                }else{
+                    vm.clients = vm.clientsCopy;
+                }
+
+            }
+        });
+
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("LoanProcessingController", LoanProcessingController);
+
+    LoanProcessingController.$inject = ['$state'];
+
+    function LoanProcessingController( $state ) {
+        var vm = this;
+        vm.visibility = {
+            showScreeningDetail:false,
+            showClientDetail:true,
+            showLoanApplicationDetail:false,
+            showACATDetail:false
+        };
+
+        vm.setActiveTab = _setActiveTab;
+
+        function _setActiveTab(route,index){
+            vm.selectedTab = index; //SET ACTIVE TAB
+            $state.go(route); //REDIRECT TO CHILD VIEW
+        }
+
+
+
+        initialize();
+
+        function initialize() {
+            vm.tabs = [ { title:'Manage Clients',code:'CLIENT', route: 'app.loan_processing.clients' },
+                { title:'Screenings',code:'SCREENING', route: 'app.loan_processing.screenings'},
+                { title:'Loan Applications',code:'LOAN_APPLICATION', route: 'app.loan_processing.loan_applications' },
+                { title:'ACAT Processor',code:'ACAT_PROCESSOR', route: 'app.loan_processing.acat'}
+            ];
+            _.forEach(vm.tabs,function (tab,index) {
+               if(!_.isUndefined($state.current.name) && tab.route === $state.current.name ) {
+                   vm.selectedTab = index; //SET ACTIVE TAB BASED ON STATE
+               }
+            });
+
+        }
+    }
+
+
+
+})(window.angular);
 /**
  * Created by Yoni on 1/29/2018.
  */
@@ -8760,474 +9321,95 @@ var INDICATOR = {
 
 
 })(window.angular);
-/**
- * Created by Yoni on 1/9/2018.
- */
 (function(angular) {
-    "use strict";
+  "use strict";
 
-    angular.module("app.clients").controller("ClientDetailController", ClientDetailController);
+    angular.module("app.mfi").controller("BranchController", BranchController);
 
-    ClientDetailController.$inject = ['LoanManagementService','$stateParams','blockUI','PrintPreviewService'];
+    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
 
-    function ClientDetailController(LoanManagementService,$stateParams,blockUI,PrintPreviewService) {
-        var vm = this;
-        vm.clientId =  $stateParams.id;
-        vm.visibility = {showMoreClientDetail: false};
-        vm.labelBasedOnStatus = LoanManagementService.StyleLabelByStatus;
+  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
+    var vm = this;
 
-        vm.tabsList = [
-            { index: 1, heading:"Screening", code: 'screening', templateUrl:"app/views/loan_management/client_management/tabs/screening.partial.html" },
-            { index: 2, heading:"Loan Application", code: 'loan', templateUrl:"app/views/loan_management/client_management/tabs/loan.partial.html" },
-            { index: 3, heading:"ACAT", code: 'acat', templateUrl:"app/views/loan_management/client_management/tabs/acat.partial.html" }
-        ];
-        vm.activeTab = vm.tabsList[0]; //initially screening tab is active
-        vm.activeTabIndex = vm.activeTab.index;
+    vm.addBranch = addBranch;
+    vm.editBranch = _editBranch;
+    vm.changeStatus = _changeStatus;
 
-        vm.onSelectedLoanCycle = _onSelectedLoanCycle;
+     getBranches();
 
-        vm.onTabSelected = _onTabSelected;
-        vm.printLaonProcess = _print;
-
-        vm.ACATGroupOnClick = _aCATGroupOnClick;
-        vm.onLoanProposalClick = _onLoanProposalClick;
-
-        function _onSelectedLoanCycle(){
-             _onTabSelected();
+    function getBranches() {
+      MainService.GetBranches().then(
+        function(response) {
+          vm.branches = response.data.docs;
+        },
+        function(error) {
+          console.log("error", error);
         }
+      );
 
-        function getLoanCycles(){
-            //filter loan cycles by max loan cycle number
-            vm.loanCycles = [];
-            _.each(LoanManagementService.loanCycles,function (cycle) {
-                if(cycle.id <= vm.client.loan_cycle_number){
-                    vm.loanCycles.push(cycle);
-                }
-            });
-        }
-
-        initialize();
-
-        function _print(type) {
-            var preview = [];
-            if(type === 'SCREENING'){
-                preview = [{
-                    Name: "Screening",
-                    TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
-                    IsCommon: false,
-                    IsSelected: false,
-                    Data: angular.extend({ Title: "Screening Form Result for " +
-                                                    vm.clientScreening.client.first_name + " " +
-                                                    vm.clientScreening.client.last_name + " " +
-                                                    vm.clientScreening.client.grandfather_name}, vm.clientScreening)
-                }];
-                PrintPreviewService.show(preview);
-            }else if(type === 'ACAT_CROP'){
-                preview = [{
-                    Name: "ACAT Summary",
-                    TemplateUrl: "app/views/loan_management/client_management/printables/client.acat.summary.html",
-                    IsCommon: false,
-                    IsSelected: false,
-                    Data: angular.extend({ Title: "ACAT Summary for " +
-                    vm.clientACATs.client.first_name + " " +
-                    vm.clientACATs.client.last_name + " " +
-                    vm.clientACATs.client.grandfather_name}, vm.selectedClientACAT)
-                }];
-                PrintPreviewService.show(preview);
-            }else if(type === 'ACAT_TOTAL'){
-                preview = [{
-                    Name: "ACAT Summary",
-                    TemplateUrl: "app/views/loan_management/client_management/printables/client.acat.total.html",
-                    IsCommon: false,
-                    IsSelected: false,
-                    Data: angular.extend({ Title: "ACAT And Loan Proposal Summary for " +
-                    vm.clientACATs.client.first_name + " " +
-                    vm.clientACATs.client.last_name + " " +
-                    vm.clientACATs.client.grandfather_name}, vm.clientACATs,{loanProposals: vm.clientLoanProposals})
-                }];
-                PrintPreviewService.show(preview);
-            } else{
-                preview = [{
-                    Name: "Loan Application",
-                    TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
-                    IsCommon: false,
-                    IsSelected: false,
-                    Data: angular.extend({ Title: "Loan Application Form Result for " +
-                    vm.client.loan_application.client.first_name + " " +
-                    vm.client.loan_application.client.last_name + " " +
-                    vm.client.loan_application.client.grandfather_name}, vm.client.loan_application)
-                }];
-                PrintPreviewService.show(preview);
-            }
-
-
-        }
-
-        function initialize() {
-            vm.visibility = {
-                showCropPanel:false,
-                showSummaryPanel:false,
-                showWarningForLoanCycle: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-
-            var myBlockUI = blockUI.instances.get('ClientBlockUI');
-            myBlockUI.start();
-
-            LoanManagementService.GetClientDetail(vm.clientId)
-                .then(function(response){
-                    myBlockUI.stop();
-                    vm.client = response.data;
-
-                    getLoanCycles();
-                    _onTabSelected(vm.activeTab);
-
-
-                    console.log("client detail",response);
-                },function(error){
-                    myBlockUI.stop();
-                    console.log("error getting client detail",error);
-                });
-        }
-
-
-        function CallClientScreeningAPI() {
-            var blockUIName =  'screeningTabBlockUI';
-            var myBlockUI = blockUI.instances.get(blockUIName);
-            myBlockUI.start();
-            LoanManagementService.GetClientScreening(vm.clientId).then(function (response) {
-                myBlockUI.stop();
-                vm.clientScreening = response.data;
-                console.log("screening",vm.clientScreening);
-
-            },function (error) {
-                myBlockUI.stop();
-                console.log("error fetching screening",error);
-            });
-        }
-
-        function GetClientApplicationByLoanCycle(application) {
-            var blockUIName =  application + 'TabBlockUI';
-            var myBlockUI = blockUI.instances.get(blockUIName);
-            myBlockUI.start();
-            LoanManagementService.GetClientApplicationByLoanCycle(vm.clientId,application,vm.loanCycle).then(function (response) {
-                myBlockUI.stop();
-                console.log("response.data after filtered by loan cycle",response.data);
-                if(application ==='screening'){
-                    vm.clientScreening = response.data;
-                } else if(application ==='loan'){
-                    vm.client.loan_application = response.data;
-                } else if(application ==='acat'){
-                    vm.clientACATs = response.data;
-                }
-
-                vm.visibility.showWarningForLoanCycle = response.data.client.loan_cycle_number !== vm.loanCycle;
-
-            },function (error) {
-                myBlockUI.stop();
-                console.log("error fetching data by loan cycle",error);
-            });
-        }
-
-        function CallClientLoanApplicationAPI() {
-            var blockUIName =  'loanTabBlockUI';
-            var myBlockUI = blockUI.instances.get(blockUIName);
-            myBlockUI.start();
-            LoanManagementService.GetClientLoanApplication(vm.clientId)
-                .then(function (response) {
-                    myBlockUI.stop();
-                    vm.client.loan_application = response.data;
-                    console.log("vm.client.loan_application",vm.client);
-                },function (error) {
-                    myBlockUI.stop();
-                    console.log(" error .loan_application",error);
-                });
-        }
-
-        function CallClientACAT() {
-            var blockUIName =  'acatTabBlockUI';
-            var myBlockUI = blockUI.instances.get(blockUIName);
-            myBlockUI.start();
-            LoanManagementService.GetClientACAT(vm.clientId)
-                .then(function(response){
-                    myBlockUI.stop();
-                    vm.clientACATs = response.data;
-                    if(vm.clientACATs.ACATs.length>0) vm.ACATGroupOnClick(vm.clientACATs.ACATs[0]); //select the first crop
-                    console.log("vm.clientACATs ",vm.clientACATs);
-                },function(error){
-                    myBlockUI.stop();
-                    console.log("error getting client acat ",error);
-                });
-
-            LoanManagementService.GetClientLoanProposals(vm.clientId)
-                .then(function(response){
-                    vm.clientLoanProposals = response.data;
-                    console.log("clientLoanProposals",vm.clientLoanProposals);
-                },function(error){
-                    console.log("error getting  clientLoanProposals ",error);
-                });
-
-        }
-
-
-        function setActiveTabObj() {
-            vm.activeTab = {};
-            vm.activeTab = _.find(vm.tabsList,function (tab) {
-                return tab.index === vm.activeTabIndex;
-                });
-        }
-        function _onTabSelected() {
-            console.log('active tab',vm.activeTabIndex);
-            setActiveTabObj();
-            switch (vm.activeTab.code){
-                case 'screening':
-                    if(_.isUndefined(vm.loanCycle)){
-                        CallClientScreeningAPI();
-                    }else{
-                        GetClientApplicationByLoanCycle(vm.activeTab.code);
-                    }
-                    break;
-                case 'loan':
-                    if(_.isUndefined(vm.loanCycle)){
-                        CallClientLoanApplicationAPI();
-                    }else{
-                        GetClientApplicationByLoanCycle(vm.activeTab.code);
-                    }
-                    break;
-                case 'acat':
-                    if(_.isUndefined(vm.loanCycle)){
-                        CallClientACAT();
-                    }else{
-                        GetClientApplicationByLoanCycle(vm.activeTab.code);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        function _aCATGroupOnClick(selectedClientACAT,index) {
-            vm.selectedClientACAT = selectedClientACAT;
-            ShowCropPanel();
-            console.log("vm.selectedClientACAT",vm.selectedClientACAT);
-        }
-        function _onLoanProposalClick(loanProduct) {
-            ShowSummaryPanel();
-            vm.selectedLoanProduct = loanProduct;
-            console.log("vm.selectedClientACAT",vm.selectedLoanProduct );
-            vm.list = { settingActive: 10 };
-        }
-
-        function ShowCropPanel() {
-            vm.visibility.showCropPanel = true;
-            vm.visibility.showSummaryPanel = false;
-        }
-        function ShowSummaryPanel() {
-            vm.visibility.showCropPanel = false;
-            vm.visibility.showSummaryPanel = true;
-        }
     }
 
-
-})(window.angular);
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.loan_management")
-        .controller("ClientManagementController", ClientManagementController);
-    ClientManagementController.$inject = ['LoanManagementService','$state','$scope','AuthService'];
-
-    function ClientManagementController(LoanManagementService,$state,$scope,AuthService) {
-        var vm = this;
-        vm.currentUser = {selected_access_branch:undefined};
-        vm.labelBasedOnStatus = LoanManagementService.StyleLabelByStatus;
-        vm.paginate = _paginate;
-        vm.clearSearch = _clearSearch;
-        //CLIENT RELATED
-        vm.clientDetail = _clientDetail;
-        vm.onSelectedBranch = _onSelectedBranch;
-        vm.onSelectedLoanCycle = _onSelectedLoanCycle;
-
-
-
-        initialize();
-
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.loanCycles = LoanManagementService.loanCycles;
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-
-            callApi();
-            GetBranchFilter();
-        }
-
-
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-        function _paginate (page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-
-        function GetBranchFilter() {
-            if(AuthService.IsSuperuser()){
-                LoanManagementService.GetBranches().then(function(response){
-                    vm.currentUser.user_access_branches = response.data.docs;
-                },function(error){
-                    vm.currentUser.user_access_branches = [];
-                    console.log("error on GetBranchFilter",error);
-                });
-            }
-            else {
-                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
-            }
-        }
-
-        function callApi(){
-            vm.clientPromise = LoanManagementService.GetClients(vm.query).then(function(response){
-                vm.clients = response.data.docs;
-                vm.clientsCopy = angular.copy(vm.clients);
-                vm.query.total_docs_count =  response.data.total_docs_count;
-            },function (error) {
-                console.log("error callApi vm.clients",error);
-            });
-        }
-
-        function SearchApi(SearchText){
-            vm.clientPromise = LoanManagementService.SearchClient(SearchText)
-                .then(function(response){
-                    vm.clients = response.data.docs;
-                    vm.clientsCount = response.data.total_docs_count;
-                    vm.query.total_docs_count =  response.data.total_docs_count;
-                    console.log(response);
-                },function (error) {
-                    vm.clients = vm.clientsCopy;
-                    console.log("error",error);
-                });
-        }
-
-        function _clientDetail(client,ev) {
-            $state.go('app.client_detail',{id:client._id});
-        }
-
-        function _onSelectedBranch(){
-            vm.clients = vm.clientsCopy;
-
-            vm.clients = _.filter(vm.clients,function(client){
-                if(!_.isUndefined(client.branch) && client.branch !== null){
-                    return client.branch._id === vm.currentUser.selected_access_branch._id;
-                }
-            });
-
-        }
-        function _onSelectedLoanCycle(){
-
-            vm.clientPromise = LoanManagementService.GetClientByLoanCycle(vm.currentUser.loanCycle)
-                .then(function(response){
-                    vm.clients = response.data.docs;
-                    vm.clientsCount = response.data.total_docs_count;
-                    console.log(response);
-                },function (error) {
-                    vm.clients = vm.clientsCopy;
-                    console.log("error",error);
-                });
-        }
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                //make sure at least two characters are entered
-                if(newValue.length > 2){
-                    SearchApi(newValue);
-                }else{
-                    vm.clients = vm.clientsCopy;
-                }
-
-            }
+    function addBranch(ev) {
+        $mdDialog.show({
+            locals: {items: null},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
         });
 
     }
 
-
-})(window.angular);
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("LoanProcessingController", LoanProcessingController);
-
-    LoanProcessingController.$inject = ['$state'];
-
-    function LoanProcessingController( $state ) {
-        var vm = this;
-        vm.visibility = {
-            showScreeningDetail:false,
-            showClientDetail:true,
-            showLoanApplicationDetail:false,
-            showACATDetail:false
-        };
-
-        vm.setActiveTab = _setActiveTab;
-
-        function _setActiveTab(route,index){
-            vm.selectedTab = index; //SET ACTIVE TAB
-            $state.go(route); //REDIRECT TO CHILD VIEW
-        }
-
-
-
-        initialize();
-
-        function initialize() {
-            vm.tabs = [ { title:'Manage Clients',code:'CLIENT', route: 'app.loan_processing.clients' },
-                { title:'Screenings',code:'SCREENING', route: 'app.loan_processing.screenings'},
-                { title:'Loan Applications',code:'LOAN_APPLICATION', route: 'app.loan_processing.loan_applications' },
-                { title:'ACAT Processor',code:'ACAT_PROCESSOR', route: 'app.loan_processing.acat'}
-            ];
-            _.forEach(vm.tabs,function (tab,index) {
-               if(!_.isUndefined($state.current.name) && tab.route === $state.current.name ) {
-                   vm.selectedTab = index; //SET ACTIVE TAB BASED ON STATE
-               }
-            });
-
-        }
+    function _editBranch(selectedBranch,ev) {
+        $mdDialog.show({
+            locals: {items: selectedBranch},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
     }
 
+    function _changeStatus(ChangeStatus) {
+      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
+      MainService.UpdateBranch(ChangeStatus).then(
+        function(response) {
 
+          AlertService.showSuccess(
+              "Updated branch status",
+              "Updated Status successfully."
+          );
+          // console.log("updated successfully", response);
 
+        },
+        function(error) {
+          // console.log("could not be updated", error);
+          AlertService.showError(
+            "Status not changed. Please try again.",
+            "ERROR"
+          );
+        }
+      );
+
+    }
+
+  }
 })(window.angular);
+
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -9556,95 +9738,6 @@ var INDICATOR = {
 
 
 })(window.angular);
-(function(angular) {
-  "use strict";
-
-    angular.module("app.mfi").controller("BranchController", BranchController);
-
-    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
-
-  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
-    var vm = this;
-
-    vm.addBranch = addBranch;
-    vm.editBranch = _editBranch;
-    vm.changeStatus = _changeStatus;
-
-     getBranches();
-
-    function getBranches() {
-      MainService.GetBranches().then(
-        function(response) {
-          vm.branches = response.data.docs;
-        },
-        function(error) {
-          console.log("error", error);
-        }
-      );
-
-    }
-
-    function addBranch(ev) {
-        $mdDialog.show({
-            locals: {items: null},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-
-    }
-
-    function _editBranch(selectedBranch,ev) {
-        $mdDialog.show({
-            locals: {items: selectedBranch},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-    }
-
-    function _changeStatus(ChangeStatus) {
-      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
-      MainService.UpdateBranch(ChangeStatus).then(
-        function(response) {
-
-          AlertService.showSuccess(
-              "Updated branch status",
-              "Updated Status successfully."
-          );
-          // console.log("updated successfully", response);
-
-        },
-        function(error) {
-          // console.log("could not be updated", error);
-          AlertService.showError(
-            "Status not changed. Please try again.",
-            "ERROR"
-          );
-        }
-      );
-
-    }
-
-  }
-})(window.angular);
-
 (function(angular) {
   "use strict";
 
