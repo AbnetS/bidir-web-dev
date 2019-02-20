@@ -120,7 +120,7 @@
                 .then(function(response){
                     myBlockUI.stop();
                     vm.client = response.data;
-
+                    vm.loanCycle =  vm.client.loan_cycle_number;
                     getLoanCycles();
                     _onTabSelected(vm.activeTab);
 
