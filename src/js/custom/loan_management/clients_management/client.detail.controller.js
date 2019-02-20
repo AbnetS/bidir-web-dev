@@ -41,6 +41,7 @@
                 if(cycle.id <= vm.client.loan_cycle_number){
                     vm.loanCycles.push(cycle);
                 }
+                vm.loanCycle = cycle.id === vm.client.loan_cycle_number?cycle.id.toString():"1";
             });
         }
 
@@ -152,6 +153,9 @@
             var blockUIName =  application + 'TabBlockUI';
             var myBlockUI = blockUI.instances.get(blockUIName);
             myBlockUI.start();
+            vm.clientScreening = undefined; // reset on every load
+            vm.client.loan_application = undefined;// reset on every load
+            vm.clientACATs = undefined;// reset on every load
             LoanManagementService.GetClientApplicationByLoanCycle(vm.clientId,application,vm.loanCycle).then(function (response) {
                 myBlockUI.stop();
                 console.log("response.data after filtered by loan cycle",response.data);
@@ -175,6 +179,7 @@
             var blockUIName =  'loanTabBlockUI';
             var myBlockUI = blockUI.instances.get(blockUIName);
             myBlockUI.start();
+            vm.client.loan_application = undefined; // reset on every load
             LoanManagementService.GetClientLoanApplication(vm.clientId)
                 .then(function (response) {
                     myBlockUI.stop();
@@ -190,6 +195,7 @@
             var blockUIName =  'acatTabBlockUI';
             var myBlockUI = blockUI.instances.get(blockUIName);
             myBlockUI.start();
+            vm.clientACATs = undefined; // reset on every load
             LoanManagementService.GetClientACAT(vm.clientId)
                 .then(function(response){
                     myBlockUI.stop();

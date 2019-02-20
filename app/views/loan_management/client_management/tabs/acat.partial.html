@@ -1,6 +1,6 @@
 <div class="row" block-ui="acatTabBlockUI">
 
-   <div class="col-md-3">
+   <div class="col-md-3" ng-show="vm.clientACATs.ACATs.length > 0">
       <div class="panel b">
          <div class="panel-heading  text-bold">
             Crops
@@ -31,15 +31,20 @@
       </div>
       <div>
          <!--IF CROP IS NOT SELECTED-->
-         <div ng-if="!vm.visibility.showCropPanel && !vm.visibility.showSummaryPanel">
+         <div ng-if="vm.clientACATs.ACATs.length>0 && !vm.visibility.showCropPanel && !vm.visibility.showSummaryPanel">
             <h4 class="centerPageText">
                PLEASE!
                <strong>SELECT CROP FROM THE LEFT SIDE</strong>
                <a><i class="fa fa-arrow-left"></i></a>
             </h4>
          </div>
+         <div ng-if="vm.clientACATs.ACATs.length === 0 || !vm.clientACATs.ACATs">
+            <h4 class="centerPageText">
+               <strong>CAN'T FIND ACAT FOR SELECTED LOAN CYCLE...</strong>
+            </h4>
+         </div>
 
-         <div ng-if="vm.selectedClientACAT && vm.visibility.showCropPanel && !vm.visibility.showSummaryPanel">
+         <div ng-if="vm.clientACATs.ACATs.length>0 && vm.selectedClientACAT && vm.visibility.showCropPanel && !vm.visibility.showSummaryPanel">
             <!--COST , REVENUE & YIELD CONSUPTION-->
             <div class="panel b">
                <div class="panel-heading bb">
@@ -271,7 +276,7 @@
       </div>
 
       <!--SHOW SUMMARY-->
-      <div ng-show="vm.visibility.showSummaryPanel && !vm.visibility.showCropPanel">
+      <div ng-show="vm.clientACATs.ACATs.length>0 && vm.visibility.showSummaryPanel && !vm.visibility.showCropPanel">
          <div class="col-lg-12">
             <div class="pull-right">
                <a ng-click="vm.printLaonProcess('ACAT_TOTAL')" class="btn btn-default hidden-print">

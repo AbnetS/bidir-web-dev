@@ -12,7 +12,10 @@
         </small>
         <div class="pull-right">
             <label class="control-label">Loan Cycle</label>
-            <select  name="LoanCycleSelect" id="LoanCycleSelectId" ng-change="vm.onSelectedLoanCycle()" ng-model="vm.loanCycle">
+            <select  name="LoanCycleSelect"
+                     id="LoanCycleSelectId"
+                     ng-change="vm.onSelectedLoanCycle()"
+                     ng-model="vm.loanCycle">
                 <option  ng-repeat="lc in vm.loanCycles" value="{{lc.id}}">{{lc.name}}</option>
             </select>
         </div>
