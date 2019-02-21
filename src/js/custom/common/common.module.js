@@ -2,7 +2,7 @@
   "use strict";
 
   angular
-    .module("app.common", ['toaster'])
+    .module("app.common", [])
       .config(routeConfig)
       .run(runBlock);
 
