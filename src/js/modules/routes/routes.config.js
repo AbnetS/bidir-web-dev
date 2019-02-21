@@ -243,6 +243,18 @@
                 }
 
             })
+
+            .state("app.group_loan", {
+                url: "/group_loan",
+                title: "Group Loan",
+                templateUrl:helper.basepath('loan_management/group_loan/group.loan.html'),
+                controller: "GroupLoanController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
+
             .state("app.report", {
                 url: "/report",
                 title: "Report",
