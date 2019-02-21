@@ -41,7 +41,10 @@
                 if(cycle.id <= vm.client.loan_cycle_number){
                     vm.loanCycles.push(cycle);
                 }
-                vm.loanCycle = cycle.id === vm.client.loan_cycle_number?cycle.id.toString():"1";
+                if(cycle.id === vm.client.loan_cycle_number){
+                    vm.loanCycle = cycle.id.toString();
+                }
+
             });
         }
 
