@@ -41,6 +41,12 @@
     'use strict';
 
     angular
+        .module('app.colors', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.core', [
             'ngRoute',
             'ngAnimate',
@@ -58,12 +64,6 @@
             'ngMessages',
             'angularMoment'
         ]);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
 })();
 (function() {
     'use strict';
@@ -103,15 +103,15 @@
     'use strict';
 
     angular
-        .module('app.settings', []);
+        .module('app.routes', [
+            'app.lazyload'
+        ]);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.routes', [
-            'app.lazyload'
-        ]);
+        .module('app.settings', []);
 })();
 (function() {
     'use strict';
@@ -132,6 +132,56 @@
         .module('app.utils', [
           'app.colors'
           ]);
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
 })();
 
 (function() {
@@ -255,56 +305,6 @@
     'use strict';
 
     angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
-
-(function() {
-    'use strict';
-
-    angular
         .module('app.lazyload')
         .config(lazyloadConfig);
 
@@ -395,8 +395,8 @@
                     files: ['vendor/ng-file-upload-shim/ng-file-upload-shim.min.js']
                 },
                 {
-                    name: 'toaster', files: ['vendor/ng-file-upload/ng-file-upload.min.js',
-                        'vendor/angularjs-toaster/toaster.css']
+                    name: 'toaster', files: ['vendor/angularjs-toaster/toaster.min.js',
+                                            'vendor/angularjs-toaster/toaster.min.css']
                 },
                 {
                     name: 'localytics.directives', files: ['vendor/chosen_v1.2.0/chosen.jquery.min.js',
@@ -1581,82 +1581,6 @@
     }
 
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.settings')
-        .run(settingsRun);
-
-    settingsRun.$inject = ['$rootScope', 'AuthService'];
-
-    function settingsRun($rootScope, AuthService){
-
-
-      // User Settings
-      // -----------------------------------
-      $rootScope.user = {
-        name:     'Yonas',
-        job:      'System Admin',
-        picture:  'app/img/user/02.jpg'
-      };
-
-      // Hides/show user avatar on sidebar from any element
-      $rootScope.toggleUserBlock = function(){
-        $rootScope.$broadcast('toggleUserBlock');
-      };
-      $rootScope.logoutUser = function (){
-            AuthService.Logout();
-      };
-
-      // Global Settings
-      // -----------------------------------
-      $rootScope.app = {
-        name: 'Bidir Web',
-        description: 'Bidir Web App',
-        year: ((new Date()).getFullYear()),
-        layout: {
-          isFixed: true,
-          isCollapsed: false,
-          isBoxed: false,
-          isRTL: false,
-          horizontal: false,
-          isFloat: false,
-          asideHover: false,
-          theme: 'app/css/theme-d.css',
-          asideScrollbar: false,
-          isCollapsedText: false
-        },
-        useFullLayout: false,
-        hiddenFooter: false,
-        offsidebarOpen: false,
-        asideToggled: false,
-        viewAnimation: 'ng-fadeInUp'
-      };
-
-      // Setup the layout mode
-      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
-
-      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
-      // if( angular.isDefined($localStorage.layout) )
-      //   $rootScope.app.layout = $localStorage.layout;
-      // else
-      //   $localStorage.layout = $rootScope.app.layout;
-      //
-      // $rootScope.$watch('app.layout', function () {
-      //   $localStorage.layout = $rootScope.app.layout;
-      // }, true);
-
-      // Close submenu when sidebar change from collapsed to normal
-      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
-        if( newValue === false )
-          $rootScope.$broadcast('closeSidebarMenu');
-      });
-
-    }
-
-})();
-
 /**=========================================================
  * Module: helpers.js
  * Provides helper functions for routes definition
@@ -2122,6 +2046,82 @@
 
 })();
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.settings')
+        .run(settingsRun);
+
+    settingsRun.$inject = ['$rootScope', 'AuthService'];
+
+    function settingsRun($rootScope, AuthService){
+
+
+      // User Settings
+      // -----------------------------------
+      $rootScope.user = {
+        name:     'Yonas',
+        job:      'System Admin',
+        picture:  'app/img/user/02.jpg'
+      };
+
+      // Hides/show user avatar on sidebar from any element
+      $rootScope.toggleUserBlock = function(){
+        $rootScope.$broadcast('toggleUserBlock');
+      };
+      $rootScope.logoutUser = function (){
+            AuthService.Logout();
+      };
+
+      // Global Settings
+      // -----------------------------------
+      $rootScope.app = {
+        name: 'Bidir Web',
+        description: 'Bidir Web App',
+        year: ((new Date()).getFullYear()),
+        layout: {
+          isFixed: true,
+          isCollapsed: false,
+          isBoxed: false,
+          isRTL: false,
+          horizontal: false,
+          isFloat: false,
+          asideHover: false,
+          theme: 'app/css/theme-d.css',
+          asideScrollbar: false,
+          isCollapsedText: false
+        },
+        useFullLayout: false,
+        hiddenFooter: false,
+        offsidebarOpen: false,
+        asideToggled: false,
+        viewAnimation: 'ng-fadeInUp'
+      };
+
+      // Setup the layout mode
+      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
+
+      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
+      // if( angular.isDefined($localStorage.layout) )
+      //   $rootScope.app.layout = $localStorage.layout;
+      // else
+      //   $localStorage.layout = $rootScope.app.layout;
+      //
+      // $rootScope.$watch('app.layout', function () {
+      //   $localStorage.layout = $rootScope.app.layout;
+      // }, true);
+
+      // Close submenu when sidebar change from collapsed to normal
+      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
+        if( newValue === false )
+          $rootScope.$broadcast('closeSidebarMenu');
+      });
+
+    }
+
+})();
 
 /**=========================================================
  * Module: sidebar-menu.js
@@ -3100,22 +3100,6 @@
             .primaryPalette('blue');
     }
 })();
-/**
- * Created by Yoni on 3/5/2018.
- */
-
-(function() {
-    "use strict";
-
-    angular.module("app.acat", [
-    ]).run(runBlock).config(config);
-
-    function runBlock() {}
-    function config() {
-    }
-
-})();
-
 (function() {
     'use strict';
 
@@ -3135,6 +3119,22 @@
   function routeConfig() {}
 
 })(window.angular);
+
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function() {
+    "use strict";
+
+    angular.module("app.acat", [
+    ]).run(runBlock).config(config);
+
+    function runBlock() {}
+    function config() {
+    }
+
+})();
 
 
 (function() {
@@ -3319,89 +3319,6 @@ function runBlock() {
         }
 
     }
-
-})(window.angular);
-/**
- * Created by Yoni on 3/11/2018.
- */
-
-(function(angular) {
-    'use strict';
-    angular.module('app.forms')
-
-        .service('ACATService', ACATService);
-
-    ACATService.$inject = ['$http','CommonService'];
-
-    function ACATService($http, CommonService) {
-        return {
-            GetCrops:_getCrops,
-            SaveCrop:_createCrop,
-            UpdateCrop:_updateCrop,
-            GetAllACATList: _getAllACAT,
-            GetACATById: _getACATById,
-            CreateACAT:_createACAT,
-            UpdateACAT:_updateACAT,
-            AddCostList:_addCostList,
-            UpdateCostList:_updateCostList,
-            RemoveCostListLinear:_removeCostListLinear,
-            RemoveCostListGroup:_removeCostGroupList,
-            RemoveCostGroup:_removeCostGroup,
-            UpdateCostGroup:_updateCostGroup,
-            ResetCostList:_resetCostList
-        };
-
-
-        function _getCrops() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
-        }
-        function _createCrop(crop){
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateCrop), crop);
-        }
-        function _updateCrop(crop){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Crop,crop._id), crop);
-        }
-        function _getACATById(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,id));
-        }
-        function _getAllACAT() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
-        }
-        function _addCostList(cost) {
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
-        }
-
-        function _updateCostList(cost){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
-        }
-        function _createACAT(acat) {
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
-        }
-        function _updateACAT(acat) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,acat._id), acat);
-        }
-
-        function _removeCostListLinear(cost_list){
-            var item = {  item_id: cost_list.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + ACAT_COST_LIST_TYPE.LINEAR, item);
-        }
-        function _removeCostGroupList(group_cost_list){
-            var item = {  item_id: group_cost_list.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,group_cost_list._id) +'/items', item);
-        }
-        function _removeCostGroup(group){
-            var item = {  item_id: group.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group._id) +'/group', item);
-        }
-
-        function _updateCostGroup(group) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,'grouped') +'/' +group._id, group);
-        }
-        function _resetCostList(cost_list) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
-        }
-    }
-
 
 })(window.angular);
 (function(angular) {
@@ -4308,6 +4225,89 @@ var INDICATOR = {
 
 })();
 
+/**
+ * Created by Yoni on 3/11/2018.
+ */
+
+(function(angular) {
+    'use strict';
+    angular.module('app.forms')
+
+        .service('ACATService', ACATService);
+
+    ACATService.$inject = ['$http','CommonService'];
+
+    function ACATService($http, CommonService) {
+        return {
+            GetCrops:_getCrops,
+            SaveCrop:_createCrop,
+            UpdateCrop:_updateCrop,
+            GetAllACATList: _getAllACAT,
+            GetACATById: _getACATById,
+            CreateACAT:_createACAT,
+            UpdateACAT:_updateACAT,
+            AddCostList:_addCostList,
+            UpdateCostList:_updateCostList,
+            RemoveCostListLinear:_removeCostListLinear,
+            RemoveCostListGroup:_removeCostGroupList,
+            RemoveCostGroup:_removeCostGroup,
+            UpdateCostGroup:_updateCostGroup,
+            ResetCostList:_resetCostList
+        };
+
+
+        function _getCrops() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
+        }
+        function _createCrop(crop){
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateCrop), crop);
+        }
+        function _updateCrop(crop){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Crop,crop._id), crop);
+        }
+        function _getACATById(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,id));
+        }
+        function _getAllACAT() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
+        }
+        function _addCostList(cost) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
+        }
+
+        function _updateCostList(cost){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
+        }
+        function _createACAT(acat) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
+        }
+        function _updateACAT(acat) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,acat._id), acat);
+        }
+
+        function _removeCostListLinear(cost_list){
+            var item = {  item_id: cost_list.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + ACAT_COST_LIST_TYPE.LINEAR, item);
+        }
+        function _removeCostGroupList(group_cost_list){
+            var item = {  item_id: group_cost_list.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,group_cost_list._id) +'/items', item);
+        }
+        function _removeCostGroup(group){
+            var item = {  item_id: group.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group._id) +'/group', item);
+        }
+
+        function _updateCostGroup(group) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,'grouped') +'/' +group._id, group);
+        }
+        function _resetCostList(cost_list) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
+        }
+    }
+
+
+})(window.angular);
 (function(angular) {
     "use strict";
 
@@ -6645,6 +6645,499 @@ var INDICATOR = {
 
 })(window.angular);
 /**
+ * Created by Yoni on 12/3/2017.
+ */
+(function () {
+    'use strict';
+    angular.module('app.common').factory('AlertService', AlertService);
+
+    AlertService.$inject = ['SweetAlert']
+    function AlertService(SweetAlert) {
+        // init();
+        return {
+            showError: error,
+            showInfo: info,
+            showWarning: warning,
+            showSuccess: success,
+            errorHandler: errorHandler,
+            showConfirm: showConfirm,
+            showConfirmForDelete: _showConfirmForDelete
+        };
+        function error(title,message) {
+            SweetAlert.swal(title,message, "error");
+        }
+        function info(title,message) {
+            SweetAlert.swal(title,message, "info");
+        }
+        function warning(title,message) {
+            SweetAlert.swal({title: title, text: message, type: "warning", confirmButtonText: "Ok"});
+        }
+        function showConfirm(message, title, confirmText, confirmationType, closeOnConfirm) {
+            closeOnConfirm = typeof closeOnConfirm === "undefined" || typeof closeOnConfirm !== "boolean" ? true : closeOnConfirm;
+            confirmationType = typeof confirmationType === "undefined" || typeof confirmationType !== "string" ? "warning" : confirmationType;
+            return SweetAlert.swal({
+                title: title,
+                text: message,
+                type: confirmationType,
+                showCancelButton: true,
+                confirmButtonColor: "#009688",
+                confirmButtonText: confirmText,
+                closeOnConfirm: closeOnConfirm,
+                showLoaderOnConfirm: true
+            });
+        }
+        function _showConfirmForDelete(message, title, confirmText, confirmationType, closeOnConfirm,responseHandler) {
+            closeOnConfirm = typeof closeOnConfirm === "undefined" || typeof closeOnConfirm !== "boolean" ? true : closeOnConfirm;
+            confirmationType = typeof confirmationType === "undefined" || typeof confirmationType !== "string" ? "warning" : confirmationType;
+            return SweetAlert.swal({
+                title: title,
+                text: message,
+                type: confirmationType,
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: confirmText,
+                closeOnConfirm: closeOnConfirm,
+                showLoaderOnConfirm: true
+            },responseHandler);
+        }
+        function success(title,message) {
+            SweetAlert.swal(title,message, "success");
+        }
+        function errorHandler(response) {
+            var msg = 'Server was unable to process the request';
+            var exMsg = '';
+            if (response.data && response.data.Message)
+                msg = response.data.Message;
+            if (response.ExceptionMessage)
+                msg = response.ExceptionMessage;
+            if (response.data && response.data.ExceptionMessage)
+                exMsg = response.data.ExceptionMessage;
+            error(msg + ' ' + exMsg, "Error");
+        }
+
+        function init() {
+            SweetAlert.setDefaults({confirmButtonColor: '#0096884'});
+        }
+    }
+})();
+(function(angular) {
+
+    'use strict';
+
+    angular.module('app.common')
+        .factory('CommonService', CommonService);
+
+    function CommonService() {
+        var factory = {
+            buildUrl: _buildUrl,
+            buildPaginatedUrl:_buildPaginatedUrl,
+            buildPerPageUrl:_buildPerPageUrl,
+            buildUrlWithParam: _buildUrlWithParam,
+            buildUrlForSearch: _buildUrlForSearch,
+            Validation: {
+              ComputeValidation: function (validationObject) {
+                  var isValid = true;
+                  var properties = _.allKeys(validationObject);
+                  _.each(properties, function (property) {
+                      isValid = isValid && validationObject[property];
+                  });
+                  return isValid;
+              },
+              ResetValidationObject: function (validationObject) {
+                  var properties = _.allKeys(validationObject);
+                  _.each(properties, function (property) {
+                      validationObject[property] = true;
+                  });
+              },
+              ValidateForm: function (validationObject, referenceObject) {
+                  var isValid = true;
+                  var properties = _.allKeys(validationObject);
+                  var validateSingleObject= function (objValue) {
+                      if(_.isString(objValue)){
+                          return !_.isUndefined(objValue) && !_.isNull(objValue) && objValue.length > 0;
+                      }
+
+                      if(_.isNumber(objValue)){
+                          return !_.isUndefined(objValue) && !_.isNull(objValue) && !_.isNaN(objValue);
+                      }
+
+                      if(_.isDate(objValue)){
+                          return !_.isUndefined(objValue) && !_.isNull(objValue);
+                      }
+
+                      if(_.isObject(objValue)){
+
+                          return !_.isUndefined(objValue) && !_.isNull(objValue)&& !_.isEmpty(objValue);
+                      }
+
+                      return !_.isUndefined(objValue) && !_.isNull(objValue);
+                  };
+
+                  _.each(properties, function (property) {
+                      var index = property.indexOf('Valid');
+                      if(index != -1) {
+                          var objProperty = property.substring(2, index);
+                      }
+                      if (_.has(referenceObject, objProperty)) {
+                          var objValue = referenceObject[objProperty];
+                          validationObject[property] = validateSingleObject(objValue);
+                      }else{
+                          // console.log('Validation failed for: ',objProperty);
+                          validationObject[property] = false;
+                          isValid = false;
+                      }
+                      isValid = isValid && validationObject[property];
+                  });
+                  return isValid;
+              }
+          }
+        };
+
+        return factory;
+
+
+        function _buildUrl(service,url) {
+          return API.Config.BaseUrl + service +'/' + url;
+        }
+        function _buildPaginatedUrl(service,url) {
+            var parameters = {start:1,limit:100};
+            return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
+                API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
+        }
+        function _buildPerPageUrl(service,url,parameters) {
+            return url === '' ? API.Config.BaseUrl + service + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page : API.Config.BaseUrl + service + '/' + url + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page;
+        }
+        function _buildUrlWithParam(service,url, id) {
+            return url===''?API.Config.BaseUrl + service + '/' + id : API.Config.BaseUrl + service +'/'+ url + '/' + id;
+        }
+        function _buildUrlForSearch(service,url, searchText) {
+            return API.Config.BaseUrl + service +'/'+ url + '/search?search=' + searchText;
+        }
+    }
+
+})(window.angular);
+
+/**
+ * Created by Yoni on 3/9/2018.
+ */
+(function(angular) {
+
+    'use strict';
+
+    focusService.$inject = ["$timeout", "$window"];
+    angular.module('app.common')
+        .factory('focus', focusService);
+
+    function focusService($timeout, $window) {
+        return function(id) {
+            // timeout makes sure that is invoked after any other event has been triggered.
+            // e.g. click events that need to run before the focus or
+            // inputs elements that are in a disabled state but are enabled when those events
+            // are triggered.
+            $timeout(function() {
+                var element = $window.document.getElementById(id);
+                if(element)
+                    element.focus();
+            });
+        };
+    }
+
+})(window.angular);
+(function () {
+    'use strict';
+    angular.module('app.common').factory('NotifyService', NotifyService);
+
+    NotifyService.$inject = ['toaster'];
+
+    function NotifyService(toaster) {
+        var toasterType = {
+            error: 'error',
+            info: 'info',
+            warning: 'warning',
+            success: 'success'
+        };
+        return {
+            showError: error,
+            showInfo: info,
+            showWarning: warning,
+            showSuccess: success
+        };
+
+        function error(title, message) {
+            toaster.pop(toasterType.error, title, message);
+        }
+
+        function info(title, message) {
+            toaster.pop(toasterType.info, title, message);
+        }
+
+        function warning(title, message) {
+            toaster.pop(toasterType.warning, title, message);
+        }
+
+        function success(title, message) {
+            toaster.pop(toasterType.success, title, message);
+        }
+    }
+})();
+/**
+ * Created by Yoni on 12/30/2017.
+ */
+
+
+(function(angular) {
+
+    'use strict';
+
+    angular.module('app.common')
+        .factory('PermissionService', PermissionService);
+
+    PermissionService.$inject = ['AuthService'];
+
+    function PermissionService(AuthService) {
+        var factory = {
+            hasThisPermission:_hasThisPermission,
+            hasThesePermissions:_hasThesePermissions,
+            permissions:_permissions,
+            permittedModules:_permittedModules,
+            hasThisModule:_hasThisModule,
+            validateSubModules:_validateSubModules
+        };
+
+        return factory;
+
+
+        function _permissions() {
+            var user =  AuthService.GetCurrentUser();
+            var response = {
+                isSuper: false,
+                permissions:[]
+            };
+
+            if(!_.isUndefined(user) && user !== null){
+                if(!_.isUndefined(user.account)){
+                    response.isSuper = false;
+                    response.permissions =  user.account.role.permissions;
+                    return response;
+                }
+                else if (!_.isUndefined(user.admin)) {
+                    response  = {
+                        isSuper: true,//superadmin
+                        permissions:[]
+                    };
+                    return response;
+                } else {
+                    return response;
+                }
+            }else{
+                return null;
+            }
+
+        }
+
+        function _permittedModules(){
+
+            var permissions = _permissions().permissions;
+            var moduleObj = _.uniq(permissions,function(permi){
+                return permi.module;
+            });
+
+            return _.pluck(moduleObj, 'module');
+        }
+
+        function _validateSubModules(){
+            var permissions = _permissions().permissions;
+            var moduleObj = _.uniq(permissions,function(permi){
+                permi.entityPermission =_.isUndefined(permi.entity)? '': permi.module + '_' + permi.entity;
+                return permi.entityPermission;
+            });
+            return _.pluck(moduleObj, 'entityPermission');
+        }
+
+        function _hasThisPermission(permission) {
+            var allPermissions = _permissions();
+            var hasPermission = false;
+            
+            if(allPermissions.isSuper){
+                hasPermission = true;
+            }else{
+                var permissions = _.map(allPermissions.permissions, function(perm) {
+                    return perm.module + '_' + perm.entity + '_'+ perm.operation;
+                });
+            hasPermission = _.contains(permissions, permission);
+            }
+            return hasPermission;
+        }
+
+        function _hasThisModule(module) {
+            var allModules = _permittedModules();
+            var hasModule = module === 'all'? true:_.contains(allModules, module);
+            return hasModule;
+        }
+
+        function _hasThesePermissions(permissions) {
+            var hasPermission = false;
+            _.each(permissions, function(permission) {
+                //return true if user has access to one of the permissions
+                hasPermission = hasPermission || _hasThisPermission(permission);
+            });
+            return hasPermission;
+        }
+
+
+
+    }
+
+})(window.angular);
+(function() {
+    angular.module("app.common")
+        .factory("PrintPreviewService", printPreviewService);
+
+    printPreviewService.$inject = ["$mdDialog", "$mdMedia", "PrintService", "$rootScope"];
+
+    function printPreviewService($mdDialog, $mdMedia, printService, $rootScope) {
+        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')); // && $scope.customFullscreen;
+        return {
+            show: function(model) {
+                $mdDialog.show({
+                    controller: ["$scope", "$mdDialog", "$rootScope", function($scope, $mdDialog, $rootScope) {
+
+                        $scope.removeItem = removeItem;
+
+                        $scope.printables = model;
+                        $scope.preparedBy = 'super admin';
+                        $scope.Name = 'Buusaa Gonofaa Microfinance Share Company';
+                        $scope.ShowLogoOnPrintOut = true;
+                        $scope.CurrentDate = '30-Mar-2018';
+                        $scope.Address = {
+                            Location:'Addis Ababa, Ethiopia',
+                            Phonenumber:'(255) 555-555555'
+                        };
+
+                        $scope.cancel = function() {
+                            $mdDialog.cancel();
+                        };
+                        $scope.print = function(printableDiv) {
+                            printService.print(printableDiv);
+                            $mdDialog.hide(printableDiv);
+                        };
+
+                        function removeItem(list, item) {
+                            item.HideRow = true;
+                        }
+                    }],
+                    skipHide: true,
+                    templateUrl: 'app/views/common/templates/print.preview.tmpl.html',
+                    parent: angular.element(document.body),
+                    fullscreen: useFullScreen
+                });
+            },
+            close: function(msg) {
+
+            },
+            getPreviewContent: function(model) {
+
+            }
+        };
+    }
+})();
+(function() {
+    angular.module("app.common").factory("PrintService", printService);
+
+    printService.$inject = ["$rootScope"];
+
+    function printService($rootScope) {
+
+        function closePrint() {
+            document.body.removeChild(this.__container__);
+        }
+
+        function setPrint() {
+            this.contentWindow.__container__ = this;
+            this.contentWindow.onbeforeunload = closePrint;
+            this.contentWindow.onafterprint = closePrint;
+            this.contentWindow.focus(); // Required for IE
+            this.contentWindow.print();
+        }
+
+        return {
+            print: function(printableDiv) {
+
+                var printContents = document.getElementById(printableDiv).innerHTML;
+                var oHiddFrame = document.createElement("iframe");
+
+                oHiddFrame.style.visibility = "hidden";
+                oHiddFrame.style.position = "fixed";
+                oHiddFrame.style.right = "0";
+                oHiddFrame.style.bottom = "0";
+                document.body.appendChild(oHiddFrame);
+                oHiddFrame.onload = setPrint;
+
+                var frameDoc = oHiddFrame.document;
+                if (oHiddFrame.contentWindow)
+                    frameDoc = oHiddFrame.contentWindow.document; // IE
+
+                $.ajax({
+                    url: "app/views/common/templates/print.container.tmpl.html",
+                    success: function(result) {
+                        if (!_.isNull(result) || !_.isUndefined(result)) {
+                            var content = result.replace('@PrintContent', printContents);
+                            // Write into iframe
+                            frameDoc.open();
+                            frameDoc.writeln(content);
+                            frameDoc.close();
+                        }
+                    }
+                });
+
+
+            }
+        };
+    }
+})();
+(function(angular) {
+    'use strict';
+
+    angular.module('app.common')
+        .service('StorageService', StorageService);
+
+    StorageService.$inject = ['$localStorage'];
+
+    function StorageService($localStorage) {
+        var servce = {
+            Get: get,
+            Set: set,
+            Remove: remove,
+            Reset: reset
+        };
+
+        return servce;
+
+        function get(key) {
+            var val = $localStorage[key];
+
+            if (!angular.isUndefined(val)) {
+                return JSON.parse(val);
+            } else return null;
+
+        }
+
+        function set(key, value) {
+            $localStorage[key] = JSON.stringify(value);
+        }
+
+        function remove(key) {
+            delete $localStorage[key];
+        }
+
+        function reset() {
+            $localStorage.$reset();
+        }
+    }
+
+})(window.angular);
+
+/**
  * Created by Yoni on 3/5/2018.
  */
 (function(angular) {
@@ -7642,499 +8135,6 @@ var INDICATOR = {
 
 })(window.angular);
 /**
- * Created by Yoni on 12/3/2017.
- */
-(function () {
-    'use strict';
-    angular.module('app.common').factory('AlertService', AlertService);
-
-    AlertService.$inject = ['SweetAlert']
-    function AlertService(SweetAlert) {
-        // init();
-        return {
-            showError: error,
-            showInfo: info,
-            showWarning: warning,
-            showSuccess: success,
-            errorHandler: errorHandler,
-            showConfirm: showConfirm,
-            showConfirmForDelete: _showConfirmForDelete
-        };
-        function error(title,message) {
-            SweetAlert.swal(title,message, "error");
-        }
-        function info(title,message) {
-            SweetAlert.swal(title,message, "info");
-        }
-        function warning(title,message) {
-            SweetAlert.swal({title: title, text: message, type: "warning", confirmButtonText: "Ok"});
-        }
-        function showConfirm(message, title, confirmText, confirmationType, closeOnConfirm) {
-            closeOnConfirm = typeof closeOnConfirm === "undefined" || typeof closeOnConfirm !== "boolean" ? true : closeOnConfirm;
-            confirmationType = typeof confirmationType === "undefined" || typeof confirmationType !== "string" ? "warning" : confirmationType;
-            return SweetAlert.swal({
-                title: title,
-                text: message,
-                type: confirmationType,
-                showCancelButton: true,
-                confirmButtonColor: "#009688",
-                confirmButtonText: confirmText,
-                closeOnConfirm: closeOnConfirm,
-                showLoaderOnConfirm: true
-            });
-        }
-        function _showConfirmForDelete(message, title, confirmText, confirmationType, closeOnConfirm,responseHandler) {
-            closeOnConfirm = typeof closeOnConfirm === "undefined" || typeof closeOnConfirm !== "boolean" ? true : closeOnConfirm;
-            confirmationType = typeof confirmationType === "undefined" || typeof confirmationType !== "string" ? "warning" : confirmationType;
-            return SweetAlert.swal({
-                title: title,
-                text: message,
-                type: confirmationType,
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: confirmText,
-                closeOnConfirm: closeOnConfirm,
-                showLoaderOnConfirm: true
-            },responseHandler);
-        }
-        function success(title,message) {
-            SweetAlert.swal(title,message, "success");
-        }
-        function errorHandler(response) {
-            var msg = 'Server was unable to process the request';
-            var exMsg = '';
-            if (response.data && response.data.Message)
-                msg = response.data.Message;
-            if (response.ExceptionMessage)
-                msg = response.ExceptionMessage;
-            if (response.data && response.data.ExceptionMessage)
-                exMsg = response.data.ExceptionMessage;
-            error(msg + ' ' + exMsg, "Error");
-        }
-
-        function init() {
-            SweetAlert.setDefaults({confirmButtonColor: '#0096884'});
-        }
-    }
-})();
-(function(angular) {
-
-    'use strict';
-
-    angular.module('app.common')
-        .factory('CommonService', CommonService);
-
-    function CommonService() {
-        var factory = {
-            buildUrl: _buildUrl,
-            buildPaginatedUrl:_buildPaginatedUrl,
-            buildPerPageUrl:_buildPerPageUrl,
-            buildUrlWithParam: _buildUrlWithParam,
-            buildUrlForSearch: _buildUrlForSearch,
-            Validation: {
-              ComputeValidation: function (validationObject) {
-                  var isValid = true;
-                  var properties = _.allKeys(validationObject);
-                  _.each(properties, function (property) {
-                      isValid = isValid && validationObject[property];
-                  });
-                  return isValid;
-              },
-              ResetValidationObject: function (validationObject) {
-                  var properties = _.allKeys(validationObject);
-                  _.each(properties, function (property) {
-                      validationObject[property] = true;
-                  });
-              },
-              ValidateForm: function (validationObject, referenceObject) {
-                  var isValid = true;
-                  var properties = _.allKeys(validationObject);
-                  var validateSingleObject= function (objValue) {
-                      if(_.isString(objValue)){
-                          return !_.isUndefined(objValue) && !_.isNull(objValue) && objValue.length > 0;
-                      }
-
-                      if(_.isNumber(objValue)){
-                          return !_.isUndefined(objValue) && !_.isNull(objValue) && !_.isNaN(objValue);
-                      }
-
-                      if(_.isDate(objValue)){
-                          return !_.isUndefined(objValue) && !_.isNull(objValue);
-                      }
-
-                      if(_.isObject(objValue)){
-
-                          return !_.isUndefined(objValue) && !_.isNull(objValue)&& !_.isEmpty(objValue);
-                      }
-
-                      return !_.isUndefined(objValue) && !_.isNull(objValue);
-                  };
-
-                  _.each(properties, function (property) {
-                      var index = property.indexOf('Valid');
-                      if(index != -1) {
-                          var objProperty = property.substring(2, index);
-                      }
-                      if (_.has(referenceObject, objProperty)) {
-                          var objValue = referenceObject[objProperty];
-                          validationObject[property] = validateSingleObject(objValue);
-                      }else{
-                          // console.log('Validation failed for: ',objProperty);
-                          validationObject[property] = false;
-                          isValid = false;
-                      }
-                      isValid = isValid && validationObject[property];
-                  });
-                  return isValid;
-              }
-          }
-        };
-
-        return factory;
-
-
-        function _buildUrl(service,url) {
-          return API.Config.BaseUrl + service +'/' + url;
-        }
-        function _buildPaginatedUrl(service,url) {
-            var parameters = {start:1,limit:100};
-            return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
-                API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
-        }
-        function _buildPerPageUrl(service,url,parameters) {
-            return url === '' ? API.Config.BaseUrl + service + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page : API.Config.BaseUrl + service + '/' + url + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page;
-        }
-        function _buildUrlWithParam(service,url, id) {
-            return url===''?API.Config.BaseUrl + service + '/' + id : API.Config.BaseUrl + service +'/'+ url + '/' + id;
-        }
-        function _buildUrlForSearch(service,url, searchText) {
-            return API.Config.BaseUrl + service +'/'+ url + '/search?search=' + searchText;
-        }
-    }
-
-})(window.angular);
-
-/**
- * Created by Yoni on 3/9/2018.
- */
-(function(angular) {
-
-    'use strict';
-
-    focusService.$inject = ["$timeout", "$window"];
-    angular.module('app.common')
-        .factory('focus', focusService);
-
-    function focusService($timeout, $window) {
-        return function(id) {
-            // timeout makes sure that is invoked after any other event has been triggered.
-            // e.g. click events that need to run before the focus or
-            // inputs elements that are in a disabled state but are enabled when those events
-            // are triggered.
-            $timeout(function() {
-                var element = $window.document.getElementById(id);
-                if(element)
-                    element.focus();
-            });
-        };
-    }
-
-})(window.angular);
-(function () {
-    'use strict';
-    angular.module('app.common').factory('NotifyService', NotifyService);
-
-    NotifyService.$inject = ['toaster'];
-
-    function NotifyService(toaster) {
-        var toasterType = {
-            error: 'error',
-            info: 'info',
-            warning: 'warning',
-            success: 'success'
-        };
-        return {
-            showError: error,
-            showInfo: info,
-            showWarning: warning,
-            showSuccess: success
-        };
-
-        function error(title, message) {
-            toaster.pop(toasterType.error, title, message);
-        }
-
-        function info(title, message) {
-            toaster.pop(toasterType.info, title, message);
-        }
-
-        function warning(title, message) {
-            toaster.pop(toasterType.warning, title, message);
-        }
-
-        function success(title, message) {
-            toaster.pop(toasterType.success, title, message);
-        }
-    }
-})();
-/**
- * Created by Yoni on 12/30/2017.
- */
-
-
-(function(angular) {
-
-    'use strict';
-
-    angular.module('app.common')
-        .factory('PermissionService', PermissionService);
-
-    PermissionService.$inject = ['AuthService'];
-
-    function PermissionService(AuthService) {
-        var factory = {
-            hasThisPermission:_hasThisPermission,
-            hasThesePermissions:_hasThesePermissions,
-            permissions:_permissions,
-            permittedModules:_permittedModules,
-            hasThisModule:_hasThisModule,
-            validateSubModules:_validateSubModules
-        };
-
-        return factory;
-
-
-        function _permissions() {
-            var user =  AuthService.GetCurrentUser();
-            var response = {
-                isSuper: false,
-                permissions:[]
-            };
-
-            if(!_.isUndefined(user) && user !== null){
-                if(!_.isUndefined(user.account)){
-                    response.isSuper = false;
-                    response.permissions =  user.account.role.permissions;
-                    return response;
-                }
-                else if (!_.isUndefined(user.admin)) {
-                    response  = {
-                        isSuper: true,//superadmin
-                        permissions:[]
-                    };
-                    return response;
-                } else {
-                    return response;
-                }
-            }else{
-                return null;
-            }
-
-        }
-
-        function _permittedModules(){
-
-            var permissions = _permissions().permissions;
-            var moduleObj = _.uniq(permissions,function(permi){
-                return permi.module;
-            });
-
-            return _.pluck(moduleObj, 'module');
-        }
-
-        function _validateSubModules(){
-            var permissions = _permissions().permissions;
-            var moduleObj = _.uniq(permissions,function(permi){
-                permi.entityPermission =_.isUndefined(permi.entity)? '': permi.module + '_' + permi.entity;
-                return permi.entityPermission;
-            });
-            return _.pluck(moduleObj, 'entityPermission');
-        }
-
-        function _hasThisPermission(permission) {
-            var allPermissions = _permissions();
-            var hasPermission = false;
-            
-            if(allPermissions.isSuper){
-                hasPermission = true;
-            }else{
-                var permissions = _.map(allPermissions.permissions, function(perm) {
-                    return perm.module + '_' + perm.entity + '_'+ perm.operation;
-                });
-            hasPermission = _.contains(permissions, permission);
-            }
-            return hasPermission;
-        }
-
-        function _hasThisModule(module) {
-            var allModules = _permittedModules();
-            var hasModule = module === 'all'? true:_.contains(allModules, module);
-            return hasModule;
-        }
-
-        function _hasThesePermissions(permissions) {
-            var hasPermission = false;
-            _.each(permissions, function(permission) {
-                //return true if user has access to one of the permissions
-                hasPermission = hasPermission || _hasThisPermission(permission);
-            });
-            return hasPermission;
-        }
-
-
-
-    }
-
-})(window.angular);
-(function() {
-    angular.module("app.common")
-        .factory("PrintPreviewService", printPreviewService);
-
-    printPreviewService.$inject = ["$mdDialog", "$mdMedia", "PrintService", "$rootScope"];
-
-    function printPreviewService($mdDialog, $mdMedia, printService, $rootScope) {
-        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')); // && $scope.customFullscreen;
-        return {
-            show: function(model) {
-                $mdDialog.show({
-                    controller: ["$scope", "$mdDialog", "$rootScope", function($scope, $mdDialog, $rootScope) {
-
-                        $scope.removeItem = removeItem;
-
-                        $scope.printables = model;
-                        $scope.preparedBy = 'super admin';
-                        $scope.Name = 'Buusaa Gonofaa Microfinance Share Company';
-                        $scope.ShowLogoOnPrintOut = true;
-                        $scope.CurrentDate = '30-Mar-2018';
-                        $scope.Address = {
-                            Location:'Addis Ababa, Ethiopia',
-                            Phonenumber:'(255) 555-555555'
-                        };
-
-                        $scope.cancel = function() {
-                            $mdDialog.cancel();
-                        };
-                        $scope.print = function(printableDiv) {
-                            printService.print(printableDiv);
-                            $mdDialog.hide(printableDiv);
-                        };
-
-                        function removeItem(list, item) {
-                            item.HideRow = true;
-                        }
-                    }],
-                    skipHide: true,
-                    templateUrl: 'app/views/common/templates/print.preview.tmpl.html',
-                    parent: angular.element(document.body),
-                    fullscreen: useFullScreen
-                });
-            },
-            close: function(msg) {
-
-            },
-            getPreviewContent: function(model) {
-
-            }
-        };
-    }
-})();
-(function() {
-    angular.module("app.common").factory("PrintService", printService);
-
-    printService.$inject = ["$rootScope"];
-
-    function printService($rootScope) {
-
-        function closePrint() {
-            document.body.removeChild(this.__container__);
-        }
-
-        function setPrint() {
-            this.contentWindow.__container__ = this;
-            this.contentWindow.onbeforeunload = closePrint;
-            this.contentWindow.onafterprint = closePrint;
-            this.contentWindow.focus(); // Required for IE
-            this.contentWindow.print();
-        }
-
-        return {
-            print: function(printableDiv) {
-
-                var printContents = document.getElementById(printableDiv).innerHTML;
-                var oHiddFrame = document.createElement("iframe");
-
-                oHiddFrame.style.visibility = "hidden";
-                oHiddFrame.style.position = "fixed";
-                oHiddFrame.style.right = "0";
-                oHiddFrame.style.bottom = "0";
-                document.body.appendChild(oHiddFrame);
-                oHiddFrame.onload = setPrint;
-
-                var frameDoc = oHiddFrame.document;
-                if (oHiddFrame.contentWindow)
-                    frameDoc = oHiddFrame.contentWindow.document; // IE
-
-                $.ajax({
-                    url: "app/views/common/templates/print.container.tmpl.html",
-                    success: function(result) {
-                        if (!_.isNull(result) || !_.isUndefined(result)) {
-                            var content = result.replace('@PrintContent', printContents);
-                            // Write into iframe
-                            frameDoc.open();
-                            frameDoc.writeln(content);
-                            frameDoc.close();
-                        }
-                    }
-                });
-
-
-            }
-        };
-    }
-})();
-(function(angular) {
-    'use strict';
-
-    angular.module('app.common')
-        .service('StorageService', StorageService);
-
-    StorageService.$inject = ['$localStorage'];
-
-    function StorageService($localStorage) {
-        var servce = {
-            Get: get,
-            Set: set,
-            Remove: remove,
-            Reset: reset
-        };
-
-        return servce;
-
-        function get(key) {
-            var val = $localStorage[key];
-
-            if (!angular.isUndefined(val)) {
-                return JSON.parse(val);
-            } else return null;
-
-        }
-
-        function set(key, value) {
-            $localStorage[key] = JSON.stringify(value);
-        }
-
-        function remove(key) {
-            delete $localStorage[key];
-        }
-
-        function reset() {
-            $localStorage.$reset();
-        }
-    }
-
-})(window.angular);
-
-/**
  * Created by Yoni on 1/29/2018.
  */
 (function(angular) {
@@ -8866,60 +8866,6 @@ var INDICATOR = {
 
 })(window.angular);
 /**
- * Created by Yonas on 20/2/2019.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("GroupLoanController", GroupLoanController);
-
-    GroupLoanController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
-
-    function GroupLoanController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
-        var vm = this;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearchText;
-
-        initialize();
-
-        function initialize() {
-            vm.visibility = { showClientDetail: false };
-            vm.civilStatuses = CIVIL_STATUSES;
-            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
-            vm.filter = {show : false};
-            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
-            vm.query = { search:'',   page:1,  per_page:10 };
-            vm.months = MONTHS_CONST;
-            callAPI();
-        }
-
-        function callAPI() {
-
-        }
-
-        function _paginate(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
-        }
-        function _clearSearchText() {
-            vm.query.search = '';
-            vm.filter.show = false;
-        }
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("searching clients for ",newValue);
-            }
-        });
-
-    }
-
-})(window.angular);
-/**
  * Created by Yoni on 1/9/2018.
  */
 (function(angular) {
@@ -9342,6 +9288,60 @@ var INDICATOR = {
 
     }
 
+
+})(window.angular);
+/**
+ * Created by Yonas on 20/2/2019.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("GroupLoanController", GroupLoanController);
+
+    GroupLoanController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
+
+    function GroupLoanController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
+        var vm = this;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearchText;
+
+        initialize();
+
+        function initialize() {
+            vm.visibility = { showClientDetail: false };
+            vm.civilStatuses = CIVIL_STATUSES;
+            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
+            vm.filter = {show : false};
+            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
+            vm.query = { search:'',   page:1,  per_page:10 };
+            vm.months = MONTHS_CONST;
+            callAPI();
+        }
+
+        function callAPI() {
+
+        }
+
+        function _paginate(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        }
+        function _clearSearchText() {
+            vm.query.search = '';
+            vm.filter.show = false;
+        }
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("searching clients for ",newValue);
+            }
+        });
+
+    }
 
 })(window.angular);
 /**

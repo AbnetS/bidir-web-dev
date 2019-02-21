@@ -73,8 +73,8 @@
                     files: ['vendor/ng-file-upload-shim/ng-file-upload-shim.min.js']
                 },
                 {
-                    name: 'toaster', files: ['vendor/ng-file-upload/ng-file-upload.min.js',
-                        'vendor/angularjs-toaster/toaster.css']
+                    name: 'toaster', files: ['vendor/angularjs-toaster/toaster.min.js',
+                                            'vendor/angularjs-toaster/toaster.min.css']
                 },
                 {
                     name: 'localytics.directives', files: ['vendor/chosen_v1.2.0/chosen.jquery.min.js',
