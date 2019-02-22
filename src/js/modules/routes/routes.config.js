@@ -248,6 +248,7 @@
                 url: "/group_loan",
                 title: "Group Loan",
                 templateUrl:helper.basepath('loan_management/group_loan/group.loan.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select','moment'),
                 controller: "GroupLoanController",
                 controllerAs: 'vm',
                 data: {

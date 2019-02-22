@@ -16,7 +16,8 @@ var API = {
         FORM:'forms',
         ACAT:'acat',
         GEOSPATIAL: 'geospatial',
-        REPORT:'reports'
+        REPORT:'reports',
+        GROUPS: 'groups'
     },
     Methods: {
         Auth: {
@@ -101,6 +102,9 @@ var API = {
         Report:{
             Report: '',
             AllReport: 'all'
+        },
+        Group:{
+            Group: ''
         }
     }
 };

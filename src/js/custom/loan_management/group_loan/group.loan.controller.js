@@ -13,22 +13,25 @@
         var vm = this;
         vm.paginate = _paginate;
         vm.clearSearchText = _clearSearchText;
+        vm.groupDetail = _groupDetail;
 
         initialize();
 
         function initialize() {
             vm.visibility = { showClientDetail: false };
-            vm.civilStatuses = CIVIL_STATUSES;
             vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
             vm.filter = {show : false};
             vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
             vm.query = { search:'',   page:1,  per_page:10 };
-            vm.months = MONTHS_CONST;
             callAPI();
         }
 
         function callAPI() {
-
+            vm.groupLoansPromise = LoanManagementService.GetGroupLoans(vm.query).then(function (response) {
+                vm.groupLoans = response.data.docs;
+                vm.groupLoansCopy = angular.copy(vm.groupLoans);
+                vm.query.total_docs_count =  response.data.total_docs_count;
+            },function (error) {  })
         }
 
         function _paginate(page, pageSize) {
@@ -48,6 +51,10 @@
                 console.log("searching clients for ",newValue);
             }
         });
+
+        function _groupDetail(group) {
+
+        }
 
     }
 
