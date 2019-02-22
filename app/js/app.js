@@ -69,13 +69,13 @@
     'use strict';
 
     angular
-        .module('app.loadingbar', []);
+        .module('app.lazyload', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.lazyload', []);
+        .module('app.loadingbar', []);
 })();
 (function() {
     'use strict';
@@ -301,50 +301,6 @@
 })();
 
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
-
-})();
 (function() {
     'use strict';
 
@@ -587,6 +543,50 @@
             ]
         })
     ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
 
 })();
 /**=========================================================
@@ -3021,6 +3021,16 @@
 })();
 
 /**
+ * Created by Yonas on 5/7/2018.
+ */
+(function() {
+    'use strict';
+
+    angular.module('app.processing', [
+    ]);
+
+})();
+/**
  * Created by Yoni on 1/8/2018.
  */
 (function() {
@@ -3036,16 +3046,6 @@
 
 })();
 
-/**
- * Created by Yonas on 5/7/2018.
- */
-(function() {
-    'use strict';
-
-    angular.module('app.processing', [
-    ]);
-
-})();
 (function() {
     'use strict';
 
@@ -5364,7 +5364,7 @@ var INDICATOR = {
             GetCrops:_getCrops,
 
             StyleLabelByStatus: _styleLabelByStatus,
-            loanCycles: [{id:1,name:'1st Loan Cycle'},{id:2,name:'2nd Loan Cycle'},{id:3,name:'3rd Loan Cycle'},{id:4,name:'4th Loan Cycle'},{id:5,name:'5th Loan Cycle'}]
+            loanCycles: [{id:1,name:'1st Loan Cycle'},{id:2,name:'2nd Loan Cycle'},{id:3,name:'3rd Loan Cycle'},{id:4,name:'4th Loan Cycle'},{id:5,name:'5th Loan Cycle'},{id:6,name:'6th Loan Cycle'},{id:7,name:'7th Loan Cycle'},{id:8,name:'8th Loan Cycle'},{id:9,name:'9th Loan Cycle'},{id:10,name:'10th Loan Cycle'}]
         };
 
         function _getScreenings(parameters) {
@@ -6647,6 +6647,149 @@ var INDICATOR = {
 /**
  * Created by Yoni on 3/5/2018.
  */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+        }
+
+
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+       function callApi(){
+        vm.promise =   ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
 (function(angular) {
     "use strict";
 
@@ -7492,149 +7635,6 @@ var INDICATOR = {
         }
 
 
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearch;
-
-        initialize();
-
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-
-            callApi();
-        }
-
-
-        function _paginate (page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-
-       function callApi(){
-        vm.promise =   ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
 
     }
 
@@ -8866,6 +8866,109 @@ var INDICATOR = {
 
 })(window.angular);
 /**
+ * Created by Yonas on 20/2/2019.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("GroupLoanController", GroupLoanController);
+
+    GroupLoanController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
+
+    function GroupLoanController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
+        var vm = this;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearchText;
+
+        initialize();
+
+        function initialize() {
+            vm.visibility = { showClientDetail: false };
+            vm.civilStatuses = CIVIL_STATUSES;
+            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
+            vm.filter = {show : false};
+            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
+            vm.query = { search:'',   page:1,  per_page:10 };
+            vm.months = MONTHS_CONST;
+            callAPI();
+        }
+
+        function callAPI() {
+
+        }
+
+        function _paginate(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        }
+        function _clearSearchText() {
+            vm.query.search = '';
+            vm.filter.show = false;
+        }
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("searching clients for ",newValue);
+            }
+        });
+
+    }
+
+})(window.angular);
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("LoanProcessingController", LoanProcessingController);
+
+    LoanProcessingController.$inject = ['$state'];
+
+    function LoanProcessingController( $state ) {
+        var vm = this;
+        vm.visibility = {
+            showScreeningDetail:false,
+            showClientDetail:true,
+            showLoanApplicationDetail:false,
+            showACATDetail:false
+        };
+
+        vm.setActiveTab = _setActiveTab;
+
+        function _setActiveTab(route,index){
+            vm.selectedTab = index; //SET ACTIVE TAB
+            $state.go(route); //REDIRECT TO CHILD VIEW
+        }
+
+
+
+        initialize();
+
+        function initialize() {
+            vm.tabs = [ { title:'Manage Clients',code:'CLIENT', route: 'app.loan_processing.clients' },
+                { title:'Screenings',code:'SCREENING', route: 'app.loan_processing.screenings'},
+                { title:'Loan Applications',code:'LOAN_APPLICATION', route: 'app.loan_processing.loan_applications' },
+                { title:'ACAT Processor',code:'ACAT_PROCESSOR', route: 'app.loan_processing.acat'}
+            ];
+            _.forEach(vm.tabs,function (tab,index) {
+               if(!_.isUndefined($state.current.name) && tab.route === $state.current.name ) {
+                   vm.selectedTab = index; //SET ACTIVE TAB BASED ON STATE
+               }
+            });
+
+        }
+    }
+
+
+
+})(window.angular);
+/**
  * Created by Yoni on 1/9/2018.
  */
 (function(angular) {
@@ -8995,7 +9098,6 @@ var INDICATOR = {
                     getLoanCycles();
                     _onTabSelected(vm.activeTab);
 
-
                     console.log("client detail",response);
                 },function(error){
                     myBlockUI.stop();
@@ -9028,7 +9130,7 @@ var INDICATOR = {
             vm.clientACATs = undefined;// reset on every load
             LoanManagementService.GetClientApplicationByLoanCycle(vm.clientId,application,vm.loanCycle).then(function (response) {
                 myBlockUI.stop();
-                console.log("response.data after filtered by loan cycle",response.data);
+
                 if(application ==='screening'){
                     vm.clientScreening = response.data;
                 } else if(application ==='loan'){
@@ -9037,7 +9139,6 @@ var INDICATOR = {
                     vm.clientACATs = response.data;
                 }
 
-                vm.visibility.showWarningForLoanCycle = response.data.client.loan_cycle_number !== vm.loanCycle;
 
             },function (error) {
                 myBlockUI.stop();
@@ -9093,6 +9194,7 @@ var INDICATOR = {
             vm.activeTab = _.find(vm.tabsList,function (tab) {
                 return tab.index === vm.activeTabIndex;
                 });
+            vm.visibility.showWarningForLoanCycle = vm.loanCycle !==  vm.client.loan_cycle_number.toString();
         }
         function _onTabSelected() {
             console.log('active tab',vm.activeTabIndex);
@@ -9290,109 +9392,6 @@ var INDICATOR = {
         });
 
     }
-
-
-})(window.angular);
-/**
- * Created by Yonas on 20/2/2019.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("GroupLoanController", GroupLoanController);
-
-    GroupLoanController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
-
-    function GroupLoanController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
-        var vm = this;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearchText;
-
-        initialize();
-
-        function initialize() {
-            vm.visibility = { showClientDetail: false };
-            vm.civilStatuses = CIVIL_STATUSES;
-            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
-            vm.filter = {show : false};
-            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
-            vm.query = { search:'',   page:1,  per_page:10 };
-            vm.months = MONTHS_CONST;
-            callAPI();
-        }
-
-        function callAPI() {
-
-        }
-
-        function _paginate(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
-        }
-        function _clearSearchText() {
-            vm.query.search = '';
-            vm.filter.show = false;
-        }
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("searching clients for ",newValue);
-            }
-        });
-
-    }
-
-})(window.angular);
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("LoanProcessingController", LoanProcessingController);
-
-    LoanProcessingController.$inject = ['$state'];
-
-    function LoanProcessingController( $state ) {
-        var vm = this;
-        vm.visibility = {
-            showScreeningDetail:false,
-            showClientDetail:true,
-            showLoanApplicationDetail:false,
-            showACATDetail:false
-        };
-
-        vm.setActiveTab = _setActiveTab;
-
-        function _setActiveTab(route,index){
-            vm.selectedTab = index; //SET ACTIVE TAB
-            $state.go(route); //REDIRECT TO CHILD VIEW
-        }
-
-
-
-        initialize();
-
-        function initialize() {
-            vm.tabs = [ { title:'Manage Clients',code:'CLIENT', route: 'app.loan_processing.clients' },
-                { title:'Screenings',code:'SCREENING', route: 'app.loan_processing.screenings'},
-                { title:'Loan Applications',code:'LOAN_APPLICATION', route: 'app.loan_processing.loan_applications' },
-                { title:'ACAT Processor',code:'ACAT_PROCESSOR', route: 'app.loan_processing.acat'}
-            ];
-            _.forEach(vm.tabs,function (tab,index) {
-               if(!_.isUndefined($state.current.name) && tab.route === $state.current.name ) {
-                   vm.selectedTab = index; //SET ACTIVE TAB BASED ON STATE
-               }
-            });
-
-        }
-    }
-
 
 
 })(window.angular);

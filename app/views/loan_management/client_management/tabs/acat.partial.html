@@ -38,11 +38,6 @@
                <a><i class="fa fa-arrow-left"></i></a>
             </h4>
          </div>
-         <div ng-if="vm.clientACATs.ACATs.length === 0 || !vm.clientACATs.ACATs">
-            <h4 class="centerPageText">
-               <strong>CAN'T FIND ACAT FOR SELECTED LOAN CYCLE...</strong>
-            </h4>
-         </div>
 
          <div ng-if="vm.clientACATs.ACATs.length>0 && vm.selectedClientACAT && vm.visibility.showCropPanel && !vm.visibility.showSummaryPanel">
             <!--COST , REVENUE & YIELD CONSUPTION-->
@@ -393,5 +388,11 @@
          </div>
       </div>
 
+   </div>
+
+   <div class="col-md-12" ng-show="vm.clientACATs.ACATs.length === 0 || !vm.clientACATs.ACATs">
+      <h4 class="centerPageText">
+         <strong>CAN'T FIND ACAT FOR SELECTED LOAN CYCLE...</strong>
+      </h4>
    </div>
 </div>

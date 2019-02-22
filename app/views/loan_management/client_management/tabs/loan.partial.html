@@ -1,4 +1,4 @@
-<div class="row" ng-if="vm.client.loan_application" block-ui="loanTabBlockUI">
+<div class="row" ng-show="vm.client.loan_application.sections.length > 0" block-ui="loanTabBlockUI">
    <div class="col-lg-12">
       <div class="pull-left">
          <a ng-click="vm.printLaonProcess('LOAN_APPLICATION')" class="btn btn-default hidden-print">
@@ -41,7 +41,7 @@
 
 </div>
 
-<div ng-if="vm.client.loan_application.sections === 0 || !vm.client.loan_application.sections">
+<div ng-show="vm.client.loan_application || vm.client.loan_application.sections.length === 0">
    <h4 class="centerPageText">
       <strong>CAN'T FIND LOAN APPLICATION FOR SELECTED LOAN CYCLE...</strong>
    </h4>

@@ -2,9 +2,6 @@
     <small>Manage clients information.</small>
 </h3>
 
-
-
-
 <div class="panel panel-default">
     <div class="panel-heading">
         <small>
@@ -195,13 +192,12 @@
 
     <!--TAB STARTED-->
     <div class="row">
-        <div ng-show="vm.loanCycle && vm.visibility.showWarningForLoanCycle" ng-include="'historicLoanCycle'"></div>
+        <div ng-show="vm.visibility.showWarningForLoanCycle" ng-include="'historicLoanCycle'"></div>
         <uib-tabset justified="true" active="vm.activeTabIndex">
             <uib-tab index="tab.index" ng-repeat="tab in vm.tabsList"
                      heading="{{tab.heading}}" ng-click="vm.onTabSelected()">
                 <ng-include src="tab.templateUrl"> </ng-include>
             </uib-tab>
-
     </div>
 </div>
 </div>
