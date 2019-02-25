@@ -255,6 +255,17 @@
                     authenticate: true
                 }
             })
+            .state("app.group_loan_detail", {
+                url: "/group_loan/:id",
+                title: "Group Loan Detail",
+                templateUrl:helper.basepath('loan_management/group_loan/group.loan.detail.html'),
+                resolve:helper.resolveFor('md.data.table','ui.select','moment'),
+                controller: "GroupLoanController",
+                controllerAs: 'vm',
+                data: {
+                    authenticate: true
+                }
+            })
 
             .state("app.report", {
                 url: "/report",

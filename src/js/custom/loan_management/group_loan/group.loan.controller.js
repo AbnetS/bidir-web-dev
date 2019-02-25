@@ -7,13 +7,14 @@
     angular.module("app.processing")
         .controller("GroupLoanController", GroupLoanController);
 
-    GroupLoanController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
+    GroupLoanController.$inject = ['LoanManagementService','$scope','$state'];
 
-    function GroupLoanController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
+    function GroupLoanController(LoanManagementService,$scope,$state) {
         var vm = this;
         vm.paginate = _paginate;
         vm.clearSearchText = _clearSearchText;
         vm.groupDetail = _groupDetail;
+        vm.StyleLabelByStatus = LoanManagementService.StyleLabelByStatus;
 
         initialize();
 
@@ -52,8 +53,8 @@
             }
         });
 
-        function _groupDetail(group) {
-
+        function _groupDetail(group,ev) {
+            $state.go('app.group_loan_detail',{id:group.id})
         }
 
     }
