@@ -9,3 +9,99 @@
    </ul>
    Group Loan Detail
 </h3>
+
+
+<div class="panel panel-default">
+   <div class="panel-heading">
+   </div>
+   <div class="panel-body">
+      <div class="row">
+         <!--DETAIL-->
+         <div class="col-md-6">
+            <p class="lead bb">Details</p>
+            <form class="form-horizontal p-20">
+
+               <div class="form-group">
+                  <div class="col-sm-4">Group Name:</div>
+                  <div class="col-sm-8">
+                     <strong>{{vm.groupLoan.name}}</strong>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <div class="col-sm-4">Leader:</div>
+                  <div class="col-sm-8">
+                     <strong>{{vm.groupLoan.leader}}</strong>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <div class="col-sm-4">Number of Members:</div>
+                  <div class="col-sm-8">
+                     <strong>{{vm.groupLoan.no_of_members}}</strong>
+                  </div>
+               </div>
+
+               <div class="form-group">
+                  <div class="col-sm-4">Loan Cycle:</div>
+                  <div class="col-sm-8">
+                     <span class="label label-green">{{vm.groupLoan.loan_cycle_number | ordinal}}</span>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <div class="col-sm-4">Total Amount:</div>
+                  <div class="col-sm-8">
+                     <strong>$ {{vm.groupLoan.total_amount | number}}</strong>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <!--DETAIL-->
+         <div class="col-md-6">
+            <p class="lead bb">Details</p>
+            <form class="form-horizontal p-20">
+               <div class="form-group">
+                  <div class="col-sm-4">Status:</div>
+                  <div class="col-sm-8">
+                     <span ng-class="vm.StyleLabelByStatus(vm.groupLoan.status)">{{vm.groupLoan.status | ReplaceUnderscore}}</span>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <div class="col-sm-4">Branch:</div>
+                  <div class="col-sm-8">
+                     <strong>
+                        {{vm.groupLoan.branch.name}}
+                     </strong>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <div class="col-sm-4">Created By:</div>
+                  <div class="col-sm-8">
+                     <strong>{{vm.groupLoan.created_by.role | ReplaceUnderscore}}</strong>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <div class="col-sm-4">Created Date:</div>
+                  <div class="col-sm-8">
+                     <strong>{{vm.groupLoan.date_created | date:'medium'}}</strong>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <div class="col-sm-4">Last Updated:</div>
+                  <div class="col-sm-8">
+                     <strong>{{vm.groupLoan.last_modified | date:'medium'}}</strong>
+                  </div>
+               </div>
+            </form>
+         </div>
+      </div>
+
+      <!--TAB STARTED-->
+      <div class="row">
+         <uib-tabset justified="true" active="vm.activeTabIndex">
+            <uib-tab index="tab.index" ng-repeat="tab in vm.tabsList" heading="{{tab.heading}}" ng-click="vm.onTabSelected()">
+               <ng-include src="tab.templateUrl"></ng-include>
+            </uib-tab>
+      </div>
+   </div>
+</div>
+
+

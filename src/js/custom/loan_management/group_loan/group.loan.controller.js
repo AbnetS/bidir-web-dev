@@ -53,8 +53,8 @@
             }
         });
 
-        function _groupDetail(group,ev) {
-            $state.go('app.group_loan_detail',{id:group.id})
+        function _groupDetail(group) {
+            $state.go('app.group_loan_detail',{id: group._id});
         }
 
     }

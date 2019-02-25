@@ -260,7 +260,7 @@
                 title: "Group Loan Detail",
                 templateUrl:helper.basepath('loan_management/group_loan/group.loan.detail.html'),
                 resolve:helper.resolveFor('md.data.table','ui.select','moment'),
-                controller: "GroupLoanController",
+                controller: "GroupLoanDetailController",
                 controllerAs: 'vm',
                 data: {
                     authenticate: true

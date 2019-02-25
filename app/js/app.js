@@ -41,12 +41,6 @@
     'use strict';
 
     angular
-        .module('app.colors', []);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.core', [
             'ngRoute',
             'ngAnimate',
@@ -82,6 +76,12 @@
 
     angular
         .module('app.maps', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
 })();
 (function() {
     'use strict';
@@ -132,56 +132,6 @@
         .module('app.utils', [
           'app.colors'
           ]);
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
 })();
 
 (function() {
@@ -752,6 +702,56 @@
 
         }
     }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
 })();
 
 
@@ -1927,7 +1927,7 @@
                 title: "Group Loan Detail",
                 templateUrl:helper.basepath('loan_management/group_loan/group.loan.detail.html'),
                 resolve:helper.resolveFor('md.data.table','ui.select','moment'),
-                controller: "GroupLoanController",
+                controller: "GroupLoanDetailController",
                 controllerAs: 'vm',
                 data: {
                     authenticate: true
@@ -3232,16 +3232,6 @@
 
 
 })();
-/**
- * Created by Yonas on 8/16/2018.
- */
-(function() {
-    'use strict';
-
-    angular
-        .module('app.profile', []);
-
-})();
 (function() {
   "use strict";
 
@@ -3253,6 +3243,16 @@ function runBlock() {
 
 })();
 
+/**
+ * Created by Yonas on 8/16/2018.
+ */
+(function() {
+    'use strict';
+
+    angular
+        .module('app.profile', []);
+
+})();
 
 (function() {
     'use strict';
@@ -6205,80 +6205,6 @@ var INDICATOR = {
 
 })(window.angular);
 
-/**
- * Created by Yonas on 8/16/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.profile')
-        .controller('ProfileController', ProfileController);
-
-    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService'];
-
-    function ProfileController( ProfileService,   blockUI,AlertService ) {
-        var vm = this;
-        vm.updateProfile = _updateUserProfile;
-
-        vm.user = ProfileService.GetUser();
-
-        function _updateUserProfile(user) {
-            var profile = {
-                _id:user._id,
-                title:user.title,
-                email: user.email,
-                first_name : user.first_name,
-                last_name:user.last_name,
-                grandfather_name:user.grandfather_name,
-                phone:user.phone
-                // picture:""
-            };
-            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
-            myBlockUI.stop();
-            ProfileService.UpdateProfile(profile).then(function (response) {
-                myBlockUI.start();
-                console.log("updated user profile",response);
-                AlertService.showSuccess("User Profile","User Account Info updated successfully" );
-            },function (error) {
-                myBlockUI.stop();
-                console.log("error",error);
-                var message = error.data.error.message;
-                AlertService.showError("User Account Information failed updating",message);
-            });
-        }
-    }
-})(window.angular);
-/**
- * Created by Yonas on 8/17/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.profile')
-
-        .service('ProfileService', ProfileService);
-
-    ProfileService.$inject = ['$http','CommonService','AuthService'];
-
-    function ProfileService($http, CommonService,AuthService) {
-
-        return {
-            GetUser: _getUser,
-            UpdateProfile: _updateProfile
-        };
-
-        function _getUser(){
-            var user = AuthService.GetCurrentUser();
-            return _.isUndefined(user.account)? user.admin:user.account;
-        }
-
-        function _updateProfile(account){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
-        }
-
-    }
-
-})(window.angular);
 (function(angular) {
   'use strict';
   angular.module('app.mfi')
@@ -6362,6 +6288,80 @@ var INDICATOR = {
 
 })(window.angular);
 
+/**
+ * Created by Yonas on 8/16/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.profile')
+        .controller('ProfileController', ProfileController);
+
+    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService'];
+
+    function ProfileController( ProfileService,   blockUI,AlertService ) {
+        var vm = this;
+        vm.updateProfile = _updateUserProfile;
+
+        vm.user = ProfileService.GetUser();
+
+        function _updateUserProfile(user) {
+            var profile = {
+                _id:user._id,
+                title:user.title,
+                email: user.email,
+                first_name : user.first_name,
+                last_name:user.last_name,
+                grandfather_name:user.grandfather_name,
+                phone:user.phone
+                // picture:""
+            };
+            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
+            myBlockUI.stop();
+            ProfileService.UpdateProfile(profile).then(function (response) {
+                myBlockUI.start();
+                console.log("updated user profile",response);
+                AlertService.showSuccess("User Profile","User Account Info updated successfully" );
+            },function (error) {
+                myBlockUI.stop();
+                console.log("error",error);
+                var message = error.data.error.message;
+                AlertService.showError("User Account Information failed updating",message);
+            });
+        }
+    }
+})(window.angular);
+/**
+ * Created by Yonas on 8/17/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.profile')
+
+        .service('ProfileService', ProfileService);
+
+    ProfileService.$inject = ['$http','CommonService','AuthService'];
+
+    function ProfileService($http, CommonService,AuthService) {
+
+        return {
+            GetUser: _getUser,
+            UpdateProfile: _updateProfile
+        };
+
+        function _getUser(){
+            var user = AuthService.GetCurrentUser();
+            return _.isUndefined(user.account)? user.admin:user.account;
+        }
+
+        function _updateProfile(account){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
+        }
+
+    }
+
+})(window.angular);
 (function(angular) {
     "use strict";
 
@@ -6672,6 +6672,149 @@ var INDICATOR = {
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
         }
     }
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+        }
+
+
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+       function callApi(){
+        vm.promise =   ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
+
+    }
+
+
 
 })(window.angular);
 /**
@@ -7522,149 +7665,6 @@ var INDICATOR = {
         }
 
 
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearch;
-
-        initialize();
-
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-
-            callApi();
-        }
-
-
-        function _paginate (page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-
-       function callApi(){
-        vm.promise =   ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
 
     }
 
@@ -9377,8 +9377,49 @@ var INDICATOR = {
             }
         });
 
-        function _groupDetail(group,ev) {
-            $state.go('app.group_loan_detail',{id:group.id})
+        function _groupDetail(group) {
+            $state.go('app.group_loan_detail',{id: group._id});
+        }
+
+    }
+
+})(window.angular);
+/**
+ * Created by Yonas on 20/2/2019.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("GroupLoanDetailController", GroupLoanDetailController);
+
+    GroupLoanDetailController.$inject = ['LoanManagementService','$scope','$stateParams'];
+
+    function GroupLoanDetailController(LoanManagementService,$scope,$stateParams) {
+        var vm = this;
+        vm.StyleLabelByStatus = LoanManagementService.StyleLabelByStatus;
+
+        vm.tabsList = [
+            { index: 1, heading:"Members", code: 'members', templateUrl:"app/views/loan_management/group_loan/tabs/members.partial.html" },
+            { index: 2, heading:"Screening", code: 'screening', templateUrl:"app/views/loan_management/group_loan/tabs/screening.partial.html" },
+            { index: 3, heading:"Loan Application", code: 'loan', templateUrl:"app/views/loan_management/group_loan/tabs/loan.partial.html" },
+            { index: 4, heading:"ACAT", code: 'acat', templateUrl:"app/views/loan_management/group_loan/tabs/acat.partial.html" }
+        ];
+        vm.activeTab = vm.tabsList[0]; //initially screening tab is active
+        vm.activeTabIndex = vm.activeTab.index;
+
+        initialize();
+
+        function initialize() {
+            vm.groupLoanId = $stateParams.id;
+            callAPI();
+        }
+
+        function callAPI() {
+            vm.groupPromise = LoanManagementService.GetGroupLoan(vm.groupLoanId).then(function (response) {
+                console.log(response);
+                vm.groupLoan = response.data;
+            },function (error) {  })
         }
 
     }
@@ -9433,95 +9474,6 @@ var INDICATOR = {
 
 
 })(window.angular);
-(function(angular) {
-  "use strict";
-
-    angular.module("app.mfi").controller("BranchController", BranchController);
-
-    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
-
-  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
-    var vm = this;
-
-    vm.addBranch = addBranch;
-    vm.editBranch = _editBranch;
-    vm.changeStatus = _changeStatus;
-
-     getBranches();
-
-    function getBranches() {
-      MainService.GetBranches().then(
-        function(response) {
-          vm.branches = response.data.docs;
-        },
-        function(error) {
-          console.log("error", error);
-        }
-      );
-
-    }
-
-    function addBranch(ev) {
-        $mdDialog.show({
-            locals: {items: null},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-
-    }
-
-    function _editBranch(selectedBranch,ev) {
-        $mdDialog.show({
-            locals: {items: selectedBranch},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-    }
-
-    function _changeStatus(ChangeStatus) {
-      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
-      MainService.UpdateBranch(ChangeStatus).then(
-        function(response) {
-
-          AlertService.showSuccess(
-              "Updated branch status",
-              "Updated Status successfully."
-          );
-          // console.log("updated successfully", response);
-
-        },
-        function(error) {
-          // console.log("could not be updated", error);
-          AlertService.showError(
-            "Status not changed. Please try again.",
-            "ERROR"
-          );
-        }
-      );
-
-    }
-
-  }
-})(window.angular);
-
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -9853,6 +9805,95 @@ var INDICATOR = {
 (function(angular) {
   "use strict";
 
+    angular.module("app.mfi").controller("BranchController", BranchController);
+
+    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
+
+  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
+    var vm = this;
+
+    vm.addBranch = addBranch;
+    vm.editBranch = _editBranch;
+    vm.changeStatus = _changeStatus;
+
+     getBranches();
+
+    function getBranches() {
+      MainService.GetBranches().then(
+        function(response) {
+          vm.branches = response.data.docs;
+        },
+        function(error) {
+          console.log("error", error);
+        }
+      );
+
+    }
+
+    function addBranch(ev) {
+        $mdDialog.show({
+            locals: {items: null},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+
+    }
+
+    function _editBranch(selectedBranch,ev) {
+        $mdDialog.show({
+            locals: {items: selectedBranch},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+    }
+
+    function _changeStatus(ChangeStatus) {
+      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
+      MainService.UpdateBranch(ChangeStatus).then(
+        function(response) {
+
+          AlertService.showSuccess(
+              "Updated branch status",
+              "Updated Status successfully."
+          );
+          // console.log("updated successfully", response);
+
+        },
+        function(error) {
+          // console.log("could not be updated", error);
+          AlertService.showError(
+            "Status not changed. Please try again.",
+            "ERROR"
+          );
+        }
+      );
+
+    }
+
+  }
+})(window.angular);
+
+(function(angular) {
+  "use strict";
+
   angular.module("app.mfi").controller("MFIController", MFIController);
 
   MFIController.$inject = ['AlertService', '$scope','MainService','CommonService','blockUI'];
@@ -9952,175 +9993,6 @@ var INDICATOR = {
   }
 })(window.angular);
 
-/**
- * Created by Yonas on 7/2/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("ClientsController", ClientsController);
-
-    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
-
-    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
-        var vm = this;
-        vm.clientDetailEdit = _clientDetailEdit;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearchText;
-        vm.saveClient = _saveClient;
-        vm.backToClientList = _backToClientList;
-
-
-
-        initialize();
-
-        function initialize() {
-            initializeDatePicker();
-            vm.visibility = { showClientDetail: false };
-            vm.civilStatuses = CIVIL_STATUSES;
-            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
-            vm.filter = {show : false};
-            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
-
-            vm.query = { search:'',   page:1,  per_page:10 };
-            vm.months = MONTHS_CONST;
-            callAPI();
-            getBranches();
-        }
-
-        function callAPI() {
-            var myBlockUI = blockUI.instances.get('clientsBlockUI');
-            myBlockUI.start();
-
-            vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
-                vm.clients = response.data.docs;
-                vm.query.total_pages = response.data.total_pages;
-                vm.query.total_docs_count = response.data.total_docs_count;
-                myBlockUI.stop();
-                console.log("clients",vm.clients);
-            });
-        }
-
-        function _clientDetailEdit(client,ev) {
-            console.log("client detail",client);
-            vm.visibility.showClientDetail = true;
-            //data set
-            vm.selectedClient = client;
-            var dt = new Date(client.date_of_birth);
-            vm.selectedClient.date_of_birth = dt;
-            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
-            vm.selectedClient.gender = client.gender.toLowerCase();
-            vm.selected_branch = client.branch;
-        }
-
-        function _backToClientList() {
-            vm.visibility = { showClientDetail: false };
-        }
-        function _saveClient() {
-
-            if(_.isUndefined(vm.selected_branch)){
-                AlertService.showWarning("Warning!","Please Select Branch....");
-            }else{
-                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
-                myBlockUI.start();
-                var client = vm.selectedClient;
-                client.branch = vm.selected_branch._id;
-                client.created_by =  undefined;
-
-
-                if( _.isUndefined(vm.selectedClient._id)){
-                    //ADD NEW CLIENT INFORMATION
-                    LoanManagementService.SaveClient(client).then(function (response) {
-                        console.log("save client",response);
-                        myBlockUI.stop();
-                        vm.visibility = { showClientDetail: false };
-                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
-
-                    },function (error) {
-                        console.log("save client error",error);
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to save client",message);
-
-                    });
-                }else{
-                    //UPDATE CLIENT INFORMATION
-                    LoanManagementService.UpdateClient(client).then(function (response) {
-                        console.log("save client",response);
-                        myBlockUI.stop();
-                        vm.visibility = { showClientDetail: false };
-                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
-                    },function (error) {
-                        console.log("Updated client error",error);
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to update Client",message);
-
-                    });
-                }
-
-
-            }
-
-        }
-
-        function getBranches() {
-            SharedService.GetBranches().then(function(response){
-                vm.branches = response.data.docs;
-                console.log("vm.branches",vm.branches);
-            },function(error){
-                console.log("error",error);
-            });
-        }
-
-        /**
-         *
-         *  Paging parameters and methods
-         */
-        function _paginate(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
-        }
-        function _clearSearchText() {
-            vm.query.search = '';
-            vm.filter.show = false;
-        }
-        function initializeDatePicker() {
-            vm.clear = function() {
-                vm.dt = null;
-            };
-
-            vm.dateOptions = {
-                dateDisabled: false,
-                formatYear: "yy",
-                maxDate: new Date(2020, 5, 22),
-                startingDay: 1
-            };
-
-            vm.openPopup = function() {
-                vm.popup1.opened = true;
-            };
-
-            vm.dateFormat = "dd-MMMM-yyyy";
-            vm.altInputFormats = ["M!/d!/yyyy"];
-
-            vm.popup1 = {
-                opened: false
-            };
-        }
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("searching clients for ",newValue);
-            }
-        });
-
-    }
-
-})(window.angular);
 (function (angular) {
     "use strict";
 
@@ -10502,6 +10374,175 @@ var INDICATOR = {
     }
 
 
+
+})(window.angular);
+/**
+ * Created by Yonas on 7/2/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("ClientsController", ClientsController);
+
+    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
+
+    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
+        var vm = this;
+        vm.clientDetailEdit = _clientDetailEdit;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearchText;
+        vm.saveClient = _saveClient;
+        vm.backToClientList = _backToClientList;
+
+
+
+        initialize();
+
+        function initialize() {
+            initializeDatePicker();
+            vm.visibility = { showClientDetail: false };
+            vm.civilStatuses = CIVIL_STATUSES;
+            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
+            vm.filter = {show : false};
+            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
+
+            vm.query = { search:'',   page:1,  per_page:10 };
+            vm.months = MONTHS_CONST;
+            callAPI();
+            getBranches();
+        }
+
+        function callAPI() {
+            var myBlockUI = blockUI.instances.get('clientsBlockUI');
+            myBlockUI.start();
+
+            vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
+                vm.clients = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+                myBlockUI.stop();
+                console.log("clients",vm.clients);
+            });
+        }
+
+        function _clientDetailEdit(client,ev) {
+            console.log("client detail",client);
+            vm.visibility.showClientDetail = true;
+            //data set
+            vm.selectedClient = client;
+            var dt = new Date(client.date_of_birth);
+            vm.selectedClient.date_of_birth = dt;
+            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
+            vm.selectedClient.gender = client.gender.toLowerCase();
+            vm.selected_branch = client.branch;
+        }
+
+        function _backToClientList() {
+            vm.visibility = { showClientDetail: false };
+        }
+        function _saveClient() {
+
+            if(_.isUndefined(vm.selected_branch)){
+                AlertService.showWarning("Warning!","Please Select Branch....");
+            }else{
+                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
+                myBlockUI.start();
+                var client = vm.selectedClient;
+                client.branch = vm.selected_branch._id;
+                client.created_by =  undefined;
+
+
+                if( _.isUndefined(vm.selectedClient._id)){
+                    //ADD NEW CLIENT INFORMATION
+                    LoanManagementService.SaveClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
+                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
+
+                    },function (error) {
+                        console.log("save client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to save client",message);
+
+                    });
+                }else{
+                    //UPDATE CLIENT INFORMATION
+                    LoanManagementService.UpdateClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
+                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
+                    },function (error) {
+                        console.log("Updated client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to update Client",message);
+
+                    });
+                }
+
+
+            }
+
+        }
+
+        function getBranches() {
+            SharedService.GetBranches().then(function(response){
+                vm.branches = response.data.docs;
+                console.log("vm.branches",vm.branches);
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        /**
+         *
+         *  Paging parameters and methods
+         */
+        function _paginate(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        }
+        function _clearSearchText() {
+            vm.query.search = '';
+            vm.filter.show = false;
+        }
+        function initializeDatePicker() {
+            vm.clear = function() {
+                vm.dt = null;
+            };
+
+            vm.dateOptions = {
+                dateDisabled: false,
+                formatYear: "yy",
+                maxDate: new Date(2020, 5, 22),
+                startingDay: 1
+            };
+
+            vm.openPopup = function() {
+                vm.popup1.opened = true;
+            };
+
+            vm.dateFormat = "dd-MMMM-yyyy";
+            vm.altInputFormats = ["M!/d!/yyyy"];
+
+            vm.popup1 = {
+                opened: false
+            };
+        }
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("searching clients for ",newValue);
+            }
+        });
+
+    }
 
 })(window.angular);
 /**
