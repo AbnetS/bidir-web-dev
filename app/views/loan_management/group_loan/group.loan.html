@@ -12,69 +12,154 @@
 
 
 <div class="row">
-   <div class="col-lg-3 col-md-4" ng-repeat="group in vm.groupLoans">
-      <div class="panel b">
-         <div class="panel-heading">
-            <div class="pull-right">
-               <div ng-class="vm.StyleLabelByStatus(group.status)">{{group.status}}</div>
+   <!--<div class="col-lg-3 col-md-4"-->
+   <!--ng-repeat="group in vm.groupLoans">-->
+   <!--<div class="panel b">-->
+   <!--<div class="panel-heading">-->
+   <!--<div class="pull-right">-->
+   <!--<div ng-class="vm.StyleLabelByStatus(group.status)" >{{group.status}}</div>-->
+   <!--</div>-->
+   <!--<h4 class="m0">{{group.name | uppercase}}</h4>-->
+   <!--<small class="text-muted">last updated <span am-time-ago="group.last_modified"></span></small>-->
+
+
+   <!--</div>-->
+   <!--<div class="panel-body">  </div>-->
+   <!--<table class="table bb">-->
+   <!--<tbody>-->
+   <!--<tr>-->
+   <!--<td>-->
+   <!--<strong>Created date</strong>-->
+   <!--</td>-->
+   <!--<td>{{group.date_created | date}}</td>-->
+   <!--</tr>-->
+   <!--<tr>-->
+   <!--<td>-->
+   <!--<strong>Members </strong> <span class="label label-inverse pull-right" ng-if="group.members.length > 0 ">{{group.members.length}}</span>-->
+   <!--</td>-->
+   <!--<td>-->
+   <!--<em ng-if="group.members.length === 0">  No members so far </em>-->
+   <!--<span ng-repeat="i in group.members | limitTo: 4">-->
+   <!--<a class="inline">-->
+   <!--<img class="img-circle thumb24" src="app/img/user/01.png" alt="project member"/>-->
+   <!--</a>-->
+   <!--</span>-->
+   <!--<a ng-show="group.members.length > 4" class="inline" ng-click="vm.groupDetail(group)">-->
+   <!--<strong>+{{group.members.length - 4}}</strong>-->
+   <!--</a>-->
+   <!--</td>-->
+   <!--</tr>-->
+   <!--<tr>-->
+   <!--<td>-->
+   <!--<strong>Leader</strong>-->
+   <!--</td>-->
+   <!--<td>-->
+   <!--<p>-->
+   <!--<img class="img-circle thumb24" src="app/img/user/03.png" alt="group leader"/>-->
+   <!--<span> {{group.leader}} </span>-->
+   <!--</p>-->
+   <!--</td>-->
+   <!--</tr>-->
+   <!--<tr>-->
+   <!--<td>-->
+   <!--<strong>Total Amount</strong>-->
+   <!--</td>-->
+   <!--<td>-->
+   <!--<span> $ {{group.total_amount | number }}  </span>-->
+   <!--</td>-->
+   <!--</tr>-->
+   <!--</tbody>-->
+   <!--</table>-->
+   <!--<div class="panel-footer text-center">-->
+   <!--<button class="mb-sm btn btn-outline btn-block btn-inverse" ng-click="vm.groupDetail(group)" type="button">Detail</button>-->
+   <!--</div>-->
+   <!--</div>-->
+   <!--</div>-->
+
+   <div class="row">
+      <div class="col-lg-12">
+         <md-toolbar class="md-table-toolbar md-default" ng-show="vm.filter.show">
+            <div class="md-toolbar-tools">
+               <md-button class="md-icon-button" ng-click="vm.search()">
+                  <i class="fa fa-search"></i>
+               </md-button>
+
+               <!-- Input Text -->
+               <md-input-container flex>
+                  <input id="search-input" type="text" ng-model="vm.query.search" />
+               </md-input-container>
+
+               <md-button class="md-icon-button" ng-click="vm.clearSearch()">
+                  <i class="fa fa-times"></i>
+               </md-button>
             </div>
-            <h4 class="m0">{{group.name | uppercase}}</h4>
-            <small class="text-muted">last updated
-               <span am-time-ago="group.last_modified"></span>
-            </small>
+         </md-toolbar>
 
+         <md-toolbar class="md-table-toolbar md-default" ng-hide="vm.filter.show">
+            <div class="md-toolbar-tools">
+               <h2 class="md-title">Group Loans List</h2>
 
-         </div>
-         <div class="panel-body"></div>
-         <table class="table bb">
-            <tbody>
-               <tr>
-                  <td>
-                     <strong>Created date</strong>
-                  </td>
-                  <td>{{group.date_created | date}}</td>
-               </tr>
-               <tr>
-                  <td>
-                     <strong>Members</strong>
-                     <span class="label label-inverse pull-right" ng-if="group.members.length > 0 ">{{group.no_of_members}}</span>
-                  </td>
-                  <td>
-                     <em ng-if="group.members.length === 0">No members so far</em>
-                     <span ng-repeat="i in group.members | limitTo: 5">
-                        <a class="inline">
-                           <img class="img-circle thumb24" src="app/img/user/01.png" alt="project member" />
+               <div flex="" class="flex"></div>
+               <button class="md-icon-button md-button md-ink-ripple" type="button" ng-click="vm.filter.show = true">
+                  <i class="fa fa-filter"></i>
+                  <div class="md-ripple-container"></div>
+               </button>
+            </div>
+         </md-toolbar>
+
+         <md-table-container>
+            <table md-table md-progress="vm.groupLoansPromise" class="table-hover">
+               <thead md-head class="bg-grey md-head">
+                  <tr md-row>
+                     <th md-column style="width:3%;">
+                        <span>No</span>
+                     </th>
+                     <th md-column>
+                        <span>Name</span>
+                     </th>
+                     <th md-column>
+                        <span>Leader</span>
+                     </th>
+                     <th md-column>
+                        <span>Members</span>
+                     </th>
+                     <th md-column>
+                        <span>Total Amount</span>
+                     </th>
+                     <th md-column>
+                        <span>Status</span>
+                     </th>
+                     <th md-column>
+                        <span>Created By</span>
+                     </th>
+                     <th md-column>
+                        <span>Last Updated</span>
+                     </th>
+                     <th md-column>Action</th>
+                  </tr>
+               </thead>
+               <tbody md-body>
+                  <tr md-row ng-repeat="group in vm.groupLoans">
+                     <td md-cell>{{vm.query.per_page * (vm.query.page - 1) + $index + 1}}</td>
+                     <td md-cell>{{group.name }}</td>
+                     <td md-cell>{{group.leader }}</td>
+                     <td md-cell>{{group.no_of_members}}</td>
+                     <td md-cell>{{group.total_amount | number }}</td>
+                     <td md-cell>{{group.status}}</td>
+                     <td md-cell>{{group.created_by.role | ReplaceUnderscore }}</td>
+                     <td md-cell>{{group.last_modified | date}}</td>
+                     <td md-cell>
+                        <a ng-click="vm.groupDetail(group,$event)">
+                           <i class="fa fa-eye"></i>
                         </a>
-                     </span>
-                     <a ng-show="group.members.length > 5" class="inline" ng-click="vm.groupDetail(group)">
-                        <strong>+{{group.members.length - 5}}</strong>
-                     </a>
-                  </td>
-               </tr>
-               <tr>
-                  <td>
-                     <strong>Leader</strong>
-                  </td>
-                  <td>
-                     <p>
-                        <img class="img-circle thumb24" src="app/img/user/03.png" alt="group leader" />
-                        <span>{{group.leader}}</span>
-                     </p>
-                  </td>
-               </tr>
-               <tr>
-                  <td>
-                     <strong>Total Amount</strong>
-                  </td>
-                  <td>
-                     <span>$ {{group.total_amount | number }}</span>
-                  </td>
-               </tr>
-            </tbody>
-         </table>
-         <div class="panel-footer text-center">
-            <button class="mb-sm btn btn-outline btn-block btn-inverse" ng-click="vm.groupDetail(group)" type="button">Detail</button>
-         </div>
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+         </md-table-container>
+
+         <md-table-pagination md-limit="vm.query.per_page" md-limit-options="vm.pageSizes" md-page="vm.query.page" md-total="{{vm.query.total_docs_count}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" md-on-paginate="vm.paginate">
+         </md-table-pagination>
       </div>
    </div>
 </div>
