@@ -133,14 +133,14 @@
 
                         if(request.indicator === vm.INDICATOR.VI){
                             branch.vegitationIndex = {
-                                image_url: API.Config.SeasmonBaseUrl + 'info_' + sUID + '_VI_latest.png',
+                                image_url:  API.Config.SeasmonBaseUrl + 'info_' + sUID + '_VI_latest.png',
                                 chart_url: API.Config.SeasmonBaseUrl + 'chart_' + sUID + '_VI_latest.html'
                             };
                         }
                         else {
                             branch.rainfall = {
-                                image_url: API.Config.SeasmonBaseUrl + 'info_' + sUID + '_PRECIP_latest.html',
-                                chart_url: API.Config.SeasmonBaseUrl + 'chart_' + sUID + '_PRECIP_latest.html'
+                                image_url:  API.Config.SeasmonBaseUrl + 'info_' + sUID + '_PRECIP_latest.html',
+                                chart_url:  API.Config.SeasmonBaseUrl + 'chart_' + sUID + '_PRECIP_latest.html'
                             };
                         }
 
