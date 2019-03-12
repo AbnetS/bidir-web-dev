@@ -139,15 +139,13 @@
                         }
                         else {
                             branch.rainfall = {
-                                image_url:  API.Config.SeasmonBaseUrl + 'info_' + sUID + '_PRECIP_latest.html',
+                                image_url:  API.Config.SeasmonBaseUrl + 'info_' + sUID + '_PRECIP_latest.png',
                                 chart_url:  API.Config.SeasmonBaseUrl + 'chart_' + sUID + '_PRECIP_latest.html'
                             };
                         }
 
                     });
                 }
-
-
 
             }, function (error) { console.log('error', error); });
 
@@ -182,7 +180,7 @@
             branch.vegitationIndexPromise =  GeoSpatialService.getSeasonalMonitorData(configVI)
                 .then(function (response) {
                     branch.vegitationIndex = response.data;
-                    branch.vegitationIndex.chart_url =  _.isUndefined(branch.vegitationIndex.image_url)? '': branch.vegitationIndex.image_url.replace('info','chart');
+                    // branch.vegitationIndex.chart_url =  _.isUndefined(branch.vegitationIndex.image_url)? '': branch.vegitationIndex.image_url.replace('info','chart');
                     if(!_.isUndefined(branch.vegitationIndex.is_registered) && branch.vegitationIndex.is_registered){
                         SaveRequest({
                             config: vm.config._id,
@@ -199,7 +197,7 @@
             branch.rainfallPromise = GeoSpatialService.getSeasonalMonitorData(configRainfall)
                 .then(function (response) {
                     branch.rainfall = response.data;
-                    branch.rainfall.chart_url = _.isUndefined(branch.rainfall.image_url)? '': branch.rainfall.image_url.replace('info','chart');
+                    // branch.rainfall.chart_url = _.isUndefined(branch.rainfall.image_url)? '': branch.rainfall.image_url.replace('info','chart');
                     if(!_.isUndefined(branch.rainfall.is_registered) && branch.rainfall.is_registered){
                         SaveRequest({
                             config: vm.config._id,
