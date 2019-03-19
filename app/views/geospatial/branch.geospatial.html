@@ -10,9 +10,9 @@
                <div class="panel-body">
                   <div class="row">
                      <div class="col-lg-12">
-                        <div class="form-group" ng-class="{false:'has-error'}[vm.seasonalFilterForm.IsnameValid]">
+                        <div class="form-group" ng-disabled="vm.config" ng-class="{false:'has-error'}[vm.seasonalFilterForm.IsnameValid]">
                            <label class="control-label small">Name</label>
-                           <input name="inputName" ng-model="vm.config.name" placeholder="Season name/ configuration name" type="text" class="form-control input-sm">
+                           <input name="inputName" ng-disabled="vm.disableConfig" ng-model="vm.config.name" placeholder="Season name/ configuration name" type="text" class="form-control input-sm">
                            <small ng-show="!vm.seasonalFilterForm.IsnameValid" class="help-block">Name is required.
                            </small>
                         </div>
@@ -25,8 +25,8 @@
                            <label>From Date</label>
                            <span ng-show="vm.visibility.showWarning" class="control-label required" aria-required="true">*</span>
                            <p class="input-group">
-                              <input class="form-control" type="text" ng-required="true" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.config.fromDate" is-open="vm.dtOption.fromPopup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close" alt-input-formats="vm.dtOption.altInputFormats"
-                              />
+                              <input class="form-control" type="text" ng-required="true" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.config.fromDate" ng-disabled="vm.disableConfig" is-open="vm.dtOption.fromPopup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close"
+                              alt-input-formats="vm.dtOption.altInputFormats" />
                               <span class="input-group-btn">
                                  <button type="button" class="btn btn-default" ng-click="vm.dtOption.fromOpen()">
                                     <i class="fa fa-calendar"></i>
@@ -42,8 +42,8 @@
                            <label>To Date</label>
                            <span ng-show="vm.visibility.showWarning" class="control-label required" aria-required="true">*</span>
                            <p class="input-group">
-                              <input class="form-control" type="text" ng-required="true" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.config.toDate" is-open="vm.dtOption.popup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close" alt-input-formats="vm.dtOption.altInputFormats"
-                              />
+                              <input class="form-control" type="text" ng-required="true" uib-datepicker-popup="{{vm.dtOption.format}}" ng-model="vm.config.toDate" ng-disabled="vm.disableConfig" is-open="vm.dtOption.popup.opened" datepicker-options="vm.dtOption.dateOptions" close-text="Close"
+                              alt-input-formats="vm.dtOption.altInputFormats" />
                               <span class="input-group-btn">
                                  <button type="button" class="btn btn-default" ng-click="vm.dtOption.open()">
                                     <i class="fa fa-calendar"></i>
@@ -57,7 +57,7 @@
                   </div>
                   <div class="row">
                      <p class="col-md-4 pull-right">
-                        <button class="btn btn-success btn-block" ng-click="vm.saveUserConfig()" type="button">
+                        <button ng-disabled="vm.disableConfig" class="btn btn-success btn-block" ng-click="vm.saveUserConfig()" type="button">
                            Ok
                         </button>
                      </p>

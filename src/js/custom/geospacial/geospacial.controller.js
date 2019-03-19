@@ -21,7 +21,16 @@
         // });
 
         function _resetConfig() {
-            vm.config = undefined;
+            //reset fields only for update case
+            if(vm.visibility.ConfigExists){
+                var id = vm.config._id;
+                vm.config = undefined;
+                vm.config = {_id:id};
+
+            }else {
+                vm.config = undefined;
+            }
+            vm.disableConfig = false;
         }
 
         function _saveUserConfig() {
@@ -42,6 +51,7 @@
                             AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
                             vm.config = response.data;
                             vm.visibility.ConfigExists = true;
+                            vm.disableConfig = true;
                             GetHumanizedGeoSpatialStatus();
                         }
                         , function (error) {
@@ -81,6 +91,7 @@
                 IstoDateValid: true,
                 IsnameValid: true
             };
+            vm.editMode = false;
 
             //DATE OPTION
             vm.dtOption = GeoSpatialService.DateOptionDefault();
@@ -94,6 +105,7 @@
                     vm.config.fromDate = new Date(vm.config.from_date);
                     vm.config.toDate = new Date(vm.config.to_date);
                     vm.visibility.ConfigExists = true;
+                    vm.disableConfig = true;
                     prepareBranchesData();
                 }else {
                     vm.visibility.ConfigExists = false;
