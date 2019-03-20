@@ -35,6 +35,7 @@
         }
         function _updateConfig(config){
             return $http.put(CommonService.buildUrlWithParam(API.Service.GEOSPATIAL,API.Methods.GeoSpatial.Config,config._id),{
+                name : config.name,
                 user : config.user,
                 from_date : config.from_date,
                 to_date : config.to_date});
