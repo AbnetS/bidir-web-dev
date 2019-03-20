@@ -69,9 +69,10 @@
 
         function init() {
             ReportService.GetAllReports().then(function (response) {
-                vm.reportsList = _.filter(response.data,function (report) {
-                    return report._id === '5c0de708d836a80001357602' || report._id === '5c0e852ed836a8000135774f';
-                });
+                vm.reportsList = response.data;
+                // _.filter(response.data,function (report) {
+                //     return report._id === '5c0de708d836a80001357602' || report._id === '5c0e852ed836a8000135774f';
+                // });
 
             });
         }

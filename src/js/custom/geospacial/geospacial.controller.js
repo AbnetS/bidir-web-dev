@@ -50,6 +50,8 @@
                     GeoSpatialService.UpdateConfig(vm.config).then(function (response) {
                             AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
                             vm.config = response.data;
+                            vm.config.fromDate = new Date(vm.config.from_date);
+                            vm.config.toDate = new Date(vm.config.to_date);
                             vm.visibility.ConfigExists = true;
                             vm.disableConfig = true;
                             GetHumanizedGeoSpatialStatus();
@@ -63,6 +65,8 @@
                     GeoSpatialService.SaveUserConfig(vm.config).then(function (response) {
                             AlertService.showSuccess('Configuration Information', "User Configuration Updated Successfully");
                             vm.config = response.data;
+                            vm.config.fromDate = new Date(vm.config.from_date);
+                            vm.config.toDate = new Date(vm.config.to_date);
                             vm.visibility.ConfigExists = true;
                             GetHumanizedGeoSpatialStatus();
                         }
