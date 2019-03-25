@@ -41,7 +41,7 @@
 
 </div>
 
-<div ng-show="vm.client.loan_application || vm.client.loan_application.sections.length === 0">
+<div ng-show="!vm.client.loan_application.sections ||  vm.client.loan_application.sections.length === 0">
    <h4 class="centerPageText">
       <strong>CAN'T FIND LOAN APPLICATION FOR SELECTED LOAN CYCLE...</strong>
    </h4>
