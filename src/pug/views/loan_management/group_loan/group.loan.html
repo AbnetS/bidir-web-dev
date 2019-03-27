@@ -61,18 +61,16 @@
                         </div>
                     </md-toolbar>
 
-                    <!--<md-toolbar class="md-table-toolbar md-default" ng-hide="vm.filter.show">-->
-                        <!--<div class="md-toolbar-tools">-->
-
-
-                            <!--<div flex="" class="flex"></div>-->
-                            <!--<button class="md-icon-button md-button md-ink-ripple" type="button"-->
-                                    <!--ng-click="vm.filter.show = true">-->
-                                <!--<i class="fa fa-filter"></i>-->
-                                <!--<div class="md-ripple-container"></div>-->
-                            <!--</button>-->
-                        <!--</div>-->
-                    <!--</md-toolbar>-->
+                    <md-toolbar class="md-table-toolbar md-default" ng-hide="vm.filter.show">
+                        <div class="md-toolbar-tools">
+                            <div flex="" class="flex"></div>
+                            <button class="md-icon-button md-button md-ink-ripple" type="button"
+                                    ng-click="vm.filter.show = true">
+                                <i class="fa fa-filter"></i>
+                                <div class="md-ripple-container"></div>
+                            </button>
+                        </div>
+                    </md-toolbar>
 
                     <md-table-container>
                         <table md-table md-progress="vm.groupLoansPromise" class="table-hover">

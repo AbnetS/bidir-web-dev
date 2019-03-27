@@ -17,9 +17,15 @@
         vm.StyleLabelByStatus = LoanManagementService.StyleLabelByStatus;
         vm.loanCycles = LoanManagementService.loanCycles;
         vm.onSelectedLoanCycle = _onSelectedLoanCycle;
+        vm.clearSearch = _clearSearch;
 
         initialize();
 
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            // callApi();
+        }
         function initialize() {
             vm.visibility = { showClientDetail: false };
             vm.currentUser = {selected_access_branch:undefined};
