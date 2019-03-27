@@ -17,7 +17,7 @@
         vm.tabsList = [
             { index: 1, heading:"Screening", code: 'screening', templateUrl:"app/views/loan_management/client_management/tabs/screening.partial.html" },
             { index: 2, heading:"Loan Application", code: 'loan', templateUrl:"app/views/loan_management/client_management/tabs/loan.partial.html" },
-            { index: 3, heading:"ACAT", code: 'acat', templateUrl:"app/views/loan_management/client_management/tabs/acat.partial.html" }
+            { index: 3, heading:"A-CAT", code: 'acat', templateUrl:"app/views/loan_management/client_management/tabs/acat.partial.html" }
         ];
         vm.activeTab = vm.tabsList[0]; //initially screening tab is active
         vm.activeTabIndex = vm.activeTab.index;
@@ -131,7 +131,6 @@
                     getLoanCycles();
                     _onTabSelected(vm.activeTab);
 
-                    console.log("client detail",response);
                 },function(error){
                     myBlockUI.stop();
                     console.log("error getting client detail",error);
@@ -146,8 +145,6 @@
             LoanManagementService.GetClientScreening(vm.clientId).then(function (response) {
                 myBlockUI.stop();
                 vm.clientScreening = response.data;
-                console.log("screening",vm.clientScreening);
-
             },function (error) {
                 myBlockUI.stop();
                 console.log("error fetching screening",error);
@@ -172,7 +169,6 @@
                     vm.clientACATs = response.data;
                 }
 
-
             },function (error) {
                 myBlockUI.stop();
                 console.log("error fetching data by loan cycle",error);
@@ -188,7 +184,6 @@
                 .then(function (response) {
                     myBlockUI.stop();
                     vm.client.loan_application = response.data;
-                    console.log("vm.client.loan_application",vm.client);
                 },function (error) {
                     myBlockUI.stop();
                     console.log(" error .loan_application",error);
@@ -204,17 +199,13 @@
                 .then(function(response){
                     myBlockUI.stop();
                     vm.clientACATs = response.data;
-                    if(vm.clientACATs.ACATs.length>0) vm.ACATGroupOnClick(vm.clientACATs.ACATs[0]); //select the first crop
-                    console.log("vm.clientACATs ",vm.clientACATs);
                 },function(error){
                     myBlockUI.stop();
-                    console.log("error getting client acat ",error);
                 });
 
             LoanManagementService.GetClientLoanProposals(vm.clientId)
                 .then(function(response){
                     vm.clientLoanProposals = response.data;
-                    console.log("clientLoanProposals",vm.clientLoanProposals);
                 },function(error){
                     console.log("error getting  clientLoanProposals ",error);
                 });
@@ -262,7 +253,6 @@
         function _aCATGroupOnClick(selectedClientACAT,index) {
             vm.selectedClientACAT = selectedClientACAT;
             ShowCropPanel();
-            console.log("vm.selectedClientACAT",vm.selectedClientACAT);
         }
         function _onLoanProposalClick(loanProduct) {
             ShowSummaryPanel();
