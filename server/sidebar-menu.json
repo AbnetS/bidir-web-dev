@@ -45,7 +45,7 @@
     "sref": "#",
     "icon": "fa fa-spinner",
     "submenu": [
-      {"text": "Clients List",   "sref": "app.clients" ,     "permission": "CLIENT_MANAGEMENT_CLIENT"},
+      {"text": "Individual Clients List",   "sref": "app.clients" ,     "permission": "CLIENT_MANAGEMENT_CLIENT"},
       {"text": "Group Loan",     "sref": "app.group_loan" ,  "permission": "CLIENT_MANAGEMENT_CLIENT"},
       {"text": "Loan Processing","sref": "app.loan_processing.clients" ,   "permission": "SCREENING_MODULE_SCREENING"}
     ]
@@ -56,17 +56,17 @@
     "sref": "#",
     "icon": "fa fa-table",
     "submenu": [
-      {"text": "Form List",     "sref": "app.forms" ,   "permission": "FORM_BUILDER_FORM"}
+      {"text": "Forms",     "sref": "app.forms" ,   "permission": "FORM_BUILDER_FORM"}
     ]
   },
   {
-    "text": "ACAT",
+    "text": "A-CAT",
     "module": "ACAT_BUILDER",
     "sref": "#",
     "icon": "fa fa-cubes",
     "submenu": [
       {"text": "Manage Crop",     "sref": "app.crop" ,   "permission": "ACAT_BUILDER_CROP"},
-      {"text": "ACAT Builder",     "sref": "app.acat" ,   "permission": "ACAT_BUILDER_ACAT"}
+      {"text": "A-CAT Builder",     "sref": "app.acat" ,   "permission": "ACAT_BUILDER_ACAT"}
     ]
   },
   {
