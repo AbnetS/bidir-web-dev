@@ -1,6 +1,6 @@
-<div class="block-center mt-xl wd-xl" ng-controller="LoginFormController as vm">
+<div class="block-center mt-login wd-xl" ng-controller="LoginFormController as vm">
    <!-- START panel-->
-   <div class="panel panel-inverse panel-flat">
+   <div class="panel panel-inverse">
       <div class="panel-heading text-center">
          <a href="#">
             <img class="block-center img-rounded" src="/app/img/logo.png" alt="Image" />
@@ -10,11 +10,14 @@
          <p class="text-center pv">SIGN IN TO CONTINUE.</p>
          <form class="form-validate mb-lg" role="form"  name="vm.loginForm" block-ui="loginFormBlockUI">
             <div class="form-group has-feedback">
-               <input class="form-control" ng-model="vm.user.username" type="text" name="username" placeholder="Username" required>
+               <label for="username">Username</label>
+               <input id="username" class="form-control" ng-model="vm.user.username" type="text" name="username" placeholder="Username" required>
+
                <span class="fa fa-envelope form-control-feedback text-muted"></span>
                <span class="text-danger" ng-show="vm.loginForm.username.$dirty &amp;&amp; vm.loginForm.username.$error.required">username is required</span>
             </div>
             <div class="form-group has-feedback">
+               <label for="password">Password</label>
                <input class="form-control" id="password" ng-model="vm.user.password"  type="password" name="password"  placeholder="Password" required>
                <span class="fa fa-lock form-control-feedback text-muted"></span>
                <span class="text-danger" ng-show="vm.loginForm.password.$dirty &amp;&amp; vm.loginForm.password.$error.required">password is required</span>
