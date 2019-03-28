@@ -1,7 +1,5 @@
 (function(angular) {
     "use strict";
-
-
     angular
         .module('app.report')
         .controller('ReportController', ReportController);
@@ -12,24 +10,18 @@
     {
         var vm = this;
         vm.onSelectedReport = _onSelectedReport;
-        vm.getReportTemplate = _getReportTemplate;
         vm.printReport = _printReport;
 
         init();
 
         function _onSelectedReport() {
-
-            vm.report.templateUrl =  vm.getReportTemplate();
+            SetReportTemplateUrl();
             blockUI.start('reportBlockUI');
             vm.report.isLoading = true;
-           vm.report.reportPromise = ReportService.GetReportById(vm.report._id).then(function (report) {
+            vm.report.reportPromise = ReportService.GetReportById(vm.report._id).then(function (report) {
                vm.report.isLoading = false;
                blockUI.stop();
-                if(vm.report._id === '5c0de708d836a80001357602'){
-                    vm.reportData = report.data.data;
-                }else{
-                    vm.reportData = report.data;
-                }
+               vm.reportData = report.data;
             },function (reason) {
                vm.report.isLoading = false;
                 blockUI.stop();
@@ -37,22 +29,10 @@
             });
         }
 
-        function _getReportTemplate() {
-            var report = vm.report;
-            if(_.isUndefined(vm.report)) return '';
-            var viewPath = 'app/views/report/templates/' + report.code +'_template.html';
-            var templatePath = '';
-            switch (report.code) {
-                case 'client_loan_history':
-                    templatePath = viewPath + 'report/templates/client_loan_history_template.html';
-                    break;
-                case 'client_loan_cycle_stats':
-                    templatePath = viewPath + 'report/templates/client_loan_cycle_stats_template.html';
-                    break;
-                default:
-                        templatePath = '';
+        function SetReportTemplateUrl() {
+            if(!_.isUndefined(vm.report)){
+                vm.report.templateUrl =  'app/views/report/templates/' + vm.report.type.toLowerCase() +'_template.html';
             }
-            return templatePath;
         }
 
         function _printReport(report) {
@@ -70,10 +50,6 @@
         function init() {
             ReportService.GetAllReports().then(function (response) {
                 vm.reportsList = response.data;
-                // _.filter(response.data,function (report) {
-                //     return report._id === '5c0de708d836a80001357602' || report._id === '5c0e852ed836a8000135774f';
-                // });
-
             });
         }
 
