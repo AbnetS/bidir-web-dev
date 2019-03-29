@@ -266,6 +266,43 @@
                     authenticate: true
                 }
             })
+            .state("app.group_loan_detail.members", {
+                url: "/members",
+                views: {
+                    "groupTabContent": {
+                        templateUrl: helper.basepath('loan_management/group_loan/tabs/members.partial.html'),
+                        controller: "GroupLoanDetailController",
+                        controllerAs: "vm"
+                    }
+                }})
+            .state("app.group_loan_detail.screenings", {
+                url: "/screenings",
+                views: {
+                    "groupTabContent": {
+                        templateUrl: helper.basepath('loan_management/group_loan/tabs/screenings.partial.html'),
+                        controller: "GroupLoanDetailController",
+                        controllerAs: "vm"
+                    }
+                }})
+            .state("app.group_loan_detail.loan", {
+                url: "/loan",
+                views: {
+                    "groupTabContent": {
+                        templateUrl: helper.basepath('loan_management/group_loan/tabs/loan.partial.html'),
+                        controller: "GroupLoanDetailController",
+                        controllerAs: "vm"
+                    }
+                }})
+            .state("app.group_loan_detail.acat", {
+                url: "/a-cat",
+                views: {
+                    "groupTabContent": {
+                        templateUrl: helper.basepath('loan_management/group_loan/tabs/acat.partial.html'),
+                        controller: "GroupLoanDetailController",
+                        controllerAs: "vm"
+                    }
+                }})
+
 
             .state("app.report", {
                 url: "/report",

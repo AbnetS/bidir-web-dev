@@ -38,7 +38,9 @@
             loanCycles: [{id:1,name:'1st Loan Cycle'},{id:2,name:'2nd Loan Cycle'},{id:3,name:'3rd Loan Cycle'},{id:4,name:'4th Loan Cycle'},{id:5,name:'5th Loan Cycle'},{id:6,name:'6th Loan Cycle'},{id:7,name:'7th Loan Cycle'},{id:8,name:'8th Loan Cycle'},{id:9,name:'9th Loan Cycle'},{id:10,name:'10th Loan Cycle'}],
             //GROUP LOAN
             GetGroupLoans:_getGroupLoans,
-            GetGroupLoan:_getGroupLoan
+            GetGroupLoan:_getGroupLoan,
+            GetGroupScreening:_getGroupScreening
+
         };
 
         function _getScreenings(parameters) {
@@ -153,6 +155,12 @@
         function _getGroupLoan(id) {
             return $http.get(CommonService.buildUrlWithParam(API.Service.GROUPS,API.Methods.Group.Group,id));
         }
+
+        function _getGroupScreening(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.GROUPS,API.Methods.Group.Group,id) + '/screenings');
+        }
+
+
 
     }
 

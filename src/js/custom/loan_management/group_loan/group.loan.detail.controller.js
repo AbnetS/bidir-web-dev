@@ -7,34 +7,50 @@
     angular.module("app.processing")
         .controller("GroupLoanDetailController", GroupLoanDetailController);
 
-    GroupLoanDetailController.$inject = ['LoanManagementService','$scope','$stateParams'];
+    GroupLoanDetailController.$inject = ['LoanManagementService','$scope','$stateParams','$state'];
 
-    function GroupLoanDetailController(LoanManagementService,$scope,$stateParams) {
+    function GroupLoanDetailController(LoanManagementService,$scope,$stateParams,$state) {
         var vm = this;
         vm.StyleLabelByStatus = LoanManagementService.StyleLabelByStatus;
+        vm.onTabSelected = _onTabSelected;
 
         vm.tabsList = [
-            { index: 1, heading:"Members", code: 'members', templateUrl:"app/views/loan_management/group_loan/tabs/members.partial.html" },
-            { index: 2, heading:"Screening", code: 'screening', templateUrl:"app/views/loan_management/group_loan/tabs/screening.partial.html" },
-            { index: 3, heading:"Loan Application", code: 'loan', templateUrl:"app/views/loan_management/group_loan/tabs/loan.partial.html" },
-            { index: 4, heading:"ACAT", code: 'acat', templateUrl:"app/views/loan_management/group_loan/tabs/acat.partial.html" }
+            {   heading:"Members",  code: 'members', route: 'app.group_loan_detail.members' },
+            {   heading:"Screening", code: 'screening', route: 'app.group_loan_detail.screenings' },
+            {   heading:"Loan Application", code: 'loan', route: 'app.group_loan_detail.loan' },
+            {   heading:"A-CAT", code: 'acat', route: 'app.group_loan_detail.acat'  }
         ];
-        vm.activeTab = vm.tabsList[0]; //initially screening tab is active
-        vm.activeTabIndex = vm.activeTab.index;
+        vm.selectedTab = 0; //initially screening tab is active
 
         initialize();
 
         function initialize() {
+            vm.groupLoan = {};
             vm.groupLoanId = $stateParams.id;
             callAPI();
         }
 
         function callAPI() {
             vm.groupPromise = LoanManagementService.GetGroupLoan(vm.groupLoanId).then(function (response) {
-                console.log(response);
-                vm.groupLoan = response.data;
+                vm.groupLoan.group = response.data;
+                // $state.go(vm.tabsList[0].route);
+                GetGroupScreening();
+
             },function (error) {  })
         }
+
+        function GetGroupScreening() {
+            vm.groupScreeningPromise = LoanManagementService.GetGroupScreening(vm.groupLoanId).then(function (response) {
+                vm.groupLoan.screenings = response.data.screenings;
+            },function (error) {})
+        }
+
+        function _onTabSelected(route,index) {
+            vm.selectedTab = index; //SET ACTIVE TAB
+            $state.go(route); //REDIRECT TO CHILD VIEW
+        }
+
+
 
     }
 

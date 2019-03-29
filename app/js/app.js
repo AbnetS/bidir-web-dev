@@ -1933,6 +1933,43 @@
                     authenticate: true
                 }
             })
+            .state("app.group_loan_detail.members", {
+                url: "/members",
+                views: {
+                    "groupTabContent": {
+                        templateUrl: helper.basepath('loan_management/group_loan/tabs/members.partial.html'),
+                        controller: "GroupLoanDetailController",
+                        controllerAs: "vm"
+                    }
+                }})
+            .state("app.group_loan_detail.screenings", {
+                url: "/screenings",
+                views: {
+                    "groupTabContent": {
+                        templateUrl: helper.basepath('loan_management/group_loan/tabs/screenings.partial.html'),
+                        controller: "GroupLoanDetailController",
+                        controllerAs: "vm"
+                    }
+                }})
+            .state("app.group_loan_detail.loan", {
+                url: "/loan",
+                views: {
+                    "groupTabContent": {
+                        templateUrl: helper.basepath('loan_management/group_loan/tabs/loan.partial.html'),
+                        controller: "GroupLoanDetailController",
+                        controllerAs: "vm"
+                    }
+                }})
+            .state("app.group_loan_detail.acat", {
+                url: "/a-cat",
+                views: {
+                    "groupTabContent": {
+                        templateUrl: helper.basepath('loan_management/group_loan/tabs/acat.partial.html'),
+                        controller: "GroupLoanDetailController",
+                        controllerAs: "vm"
+                    }
+                }})
+
 
             .state("app.report", {
                 url: "/report",
@@ -5398,7 +5435,9 @@ var INDICATOR = {
             loanCycles: [{id:1,name:'1st Loan Cycle'},{id:2,name:'2nd Loan Cycle'},{id:3,name:'3rd Loan Cycle'},{id:4,name:'4th Loan Cycle'},{id:5,name:'5th Loan Cycle'},{id:6,name:'6th Loan Cycle'},{id:7,name:'7th Loan Cycle'},{id:8,name:'8th Loan Cycle'},{id:9,name:'9th Loan Cycle'},{id:10,name:'10th Loan Cycle'}],
             //GROUP LOAN
             GetGroupLoans:_getGroupLoans,
-            GetGroupLoan:_getGroupLoan
+            GetGroupLoan:_getGroupLoan,
+            GetGroupScreening:_getGroupScreening
+
         };
 
         function _getScreenings(parameters) {
@@ -5513,6 +5552,12 @@ var INDICATOR = {
         function _getGroupLoan(id) {
             return $http.get(CommonService.buildUrlWithParam(API.Service.GROUPS,API.Methods.Group.Group,id));
         }
+
+        function _getGroupScreening(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.GROUPS,API.Methods.Group.Group,id) + '/screenings');
+        }
+
+
 
     }
 
@@ -9420,34 +9465,50 @@ var INDICATOR = {
     angular.module("app.processing")
         .controller("GroupLoanDetailController", GroupLoanDetailController);
 
-    GroupLoanDetailController.$inject = ['LoanManagementService','$scope','$stateParams'];
+    GroupLoanDetailController.$inject = ['LoanManagementService','$scope','$stateParams','$state'];
 
-    function GroupLoanDetailController(LoanManagementService,$scope,$stateParams) {
+    function GroupLoanDetailController(LoanManagementService,$scope,$stateParams,$state) {
         var vm = this;
         vm.StyleLabelByStatus = LoanManagementService.StyleLabelByStatus;
+        vm.onTabSelected = _onTabSelected;
 
         vm.tabsList = [
-            { index: 1, heading:"Members", code: 'members', templateUrl:"app/views/loan_management/group_loan/tabs/members.partial.html" },
-            { index: 2, heading:"Screening", code: 'screening', templateUrl:"app/views/loan_management/group_loan/tabs/screening.partial.html" },
-            { index: 3, heading:"Loan Application", code: 'loan', templateUrl:"app/views/loan_management/group_loan/tabs/loan.partial.html" },
-            { index: 4, heading:"ACAT", code: 'acat', templateUrl:"app/views/loan_management/group_loan/tabs/acat.partial.html" }
+            {   heading:"Members",  code: 'members', route: 'app.group_loan_detail.members' },
+            {   heading:"Screening", code: 'screening', route: 'app.group_loan_detail.screenings' },
+            {   heading:"Loan Application", code: 'loan', route: 'app.group_loan_detail.loan' },
+            {   heading:"A-CAT", code: 'acat', route: 'app.group_loan_detail.acat'  }
         ];
-        vm.activeTab = vm.tabsList[0]; //initially screening tab is active
-        vm.activeTabIndex = vm.activeTab.index;
+        vm.selectedTab = 0; //initially screening tab is active
 
         initialize();
 
         function initialize() {
+            vm.groupLoan = {};
             vm.groupLoanId = $stateParams.id;
             callAPI();
         }
 
         function callAPI() {
             vm.groupPromise = LoanManagementService.GetGroupLoan(vm.groupLoanId).then(function (response) {
-                console.log(response);
-                vm.groupLoan = response.data;
+                vm.groupLoan.group = response.data;
+                // $state.go(vm.tabsList[0].route);
+                GetGroupScreening();
+
             },function (error) {  })
         }
+
+        function GetGroupScreening() {
+            vm.groupScreeningPromise = LoanManagementService.GetGroupScreening(vm.groupLoanId).then(function (response) {
+                vm.groupLoan.screenings = response.data.screenings;
+            },function (error) {})
+        }
+
+        function _onTabSelected(route,index) {
+            vm.selectedTab = index; //SET ACTIVE TAB
+            $state.go(route); //REDIRECT TO CHILD VIEW
+        }
+
+
 
     }
 
