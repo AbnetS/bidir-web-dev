@@ -14,7 +14,7 @@
                     {{member.first_name}} {{member.last_name}} {{member.grandfather_name}}</p>
                 <i ng-class="member.gender === 'male' || member.gender === 'Male'?'fa fa-lg fa-border fa-male bg-info-dark':'fa fa-border fa-lg fa-female bg-pink-dark'"></i>
                 <p> Woreda:  {{member.woreda}} |  Kebele: {{member.kebele}}</p>
-                <p>Created on {{member.date_created | date}}</p>
+                <p class="small">Created on {{member.date_created | date}}</p>
             </div>
             <div class="panel-body bt">
                 <div class="row">

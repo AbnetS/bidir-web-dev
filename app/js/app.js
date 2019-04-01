@@ -9474,18 +9474,25 @@ var INDICATOR = {
         vm.onTabSelected = _onTabSelected;
 
         vm.tabsList = [
-            {   heading:"Members",  code: 'members', route: 'app.group_loan_detail.members' },
-            {   heading:"Screening", code: 'screening', route: 'app.group_loan_detail.screenings' },
-            {   heading:"Loan Application", code: 'loan', route: 'app.group_loan_detail.loan' },
-            {   heading:"A-CAT", code: 'acat', route: 'app.group_loan_detail.acat'  }
+            { id:0,  heading:"Members",  code: 'members', route: 'app.group_loan_detail.members' },
+            { id:1,  heading:"Screening", code: 'screening', route: 'app.group_loan_detail.screenings' },
+            { id:2,  heading:"Loan Application", code: 'loan', route: 'app.group_loan_detail.loan' },
+            { id:3,  heading:"A-CAT", code: 'acat', route: 'app.group_loan_detail.acat'  }
         ];
         // vm.selectedTab = 0; //initially screening tab is active
+
 
         initialize();
 
         function initialize() {
             vm.groupLoan = {};
             vm.groupLoanId = $stateParams.id;
+            _.each(vm.tabsList,function (selectedTab) {
+                if($state.current.name === selectedTab.route){
+                    vm.selectedTab = selectedTab.id;
+                }
+            });
+
             callAPI();
         }
 
