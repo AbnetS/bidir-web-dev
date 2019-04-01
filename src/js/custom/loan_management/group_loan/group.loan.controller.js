@@ -82,7 +82,7 @@
         });
 
         function _groupDetail(group) {
-            $state.go('app.group_loan_detail',{id: group._id});
+            $state.go('app.group_loan_detail.members',{id: group._id});
         }
 
         $scope.$watch(angular.bind(vm, function () {

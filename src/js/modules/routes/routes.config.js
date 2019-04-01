@@ -262,6 +262,7 @@
                 resolve:helper.resolveFor('md.data.table','ui.select','moment'),
                 controller: "GroupLoanDetailController",
                 controllerAs: 'vm',
+                redirectTo: 'app.group_loan_detail.members',
                 data: {
                     authenticate: true
                 }

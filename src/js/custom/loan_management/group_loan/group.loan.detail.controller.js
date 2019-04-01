@@ -20,14 +20,13 @@
             {   heading:"Loan Application", code: 'loan', route: 'app.group_loan_detail.loan' },
             {   heading:"A-CAT", code: 'acat', route: 'app.group_loan_detail.acat'  }
         ];
-        vm.selectedTab = 0; //initially screening tab is active
+        // vm.selectedTab = 0; //initially screening tab is active
 
         initialize();
 
         function initialize() {
             vm.groupLoan = {};
             vm.groupLoanId = $stateParams.id;
-            vm.selectedTab = 0;
             callAPI();
         }
 
@@ -35,7 +34,6 @@
             vm.groupPromise = LoanManagementService.GetGroupLoan(vm.groupLoanId).then(function (response) {
                 vm.groupLoan.group = response.data;
                 GetGroupScreening();
-                // GetGroupLoans();
             },function (error) {  })
         }
 
