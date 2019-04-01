@@ -1,21 +1,27 @@
-<div class="row" >
+<div class="col-lg-12" >
+    <p></p>
     <!-- Aside panel-->
-    <div class="col-lg-3 col-md-4" ng-repeat="member in vm.groupLoan.group.members">
+    <div class="col-lg-4 col-md-4 col-sm-6"
+         ng-repeat="member in vm.groupLoan.group.members">
         <div class="panel b text-center">
             <div class="panel-body">
-                <img class="img-circle thumb64" src="app/img/user/02.jpg" />
+                <img class="img-circle thumb32"
+                     ng-src="{{member.picture}}"
+                     src="/app/img/user/02.jpg"
+                     alt="Client Picture">
+
                 <p class="h4 text-bold mb0">
-                    <i ng-class="member.gender === 'male' || member.gender === 'Male'?'fa  fa-border fa-male':'fa fa-border fa-female'"></i>
                     {{member.first_name}} {{member.last_name}} {{member.grandfather_name}}</p>
-                <p>{{member.woreda}}, {{member.kebele}}</p>
+                <i ng-class="member.gender === 'male' || member.gender === 'Male'?'fa fa-lg fa-border fa-male bg-info-dark':'fa fa-border fa-lg fa-female bg-pink-dark'"></i>
+                <p> Woreda:  {{member.woreda}} |  Kebele: {{member.kebele}}</p>
                 <p>Created on {{member.date_created | date}}</p>
             </div>
             <div class="panel-body bt">
                 <div class="row">
-                    <div class="col-xs-6 br">
-                        <strong>{{member.loan_cycle_number | ordinal}} Loan Cycle</strong>
+                    <div class="col-sm-4 br hidden-xs">
+                        <strong>{{member.loan_cycle_number | ordinal}} Cycle</strong>
                     </div>
-                    <div class="col-xs-6">
+                    <div class="col-sm-8">
                         <span ng-class="vm.StyleLabelByStatus(member.status)">
                             {{member.status  | ReplaceUnderscore}}</span>
 
