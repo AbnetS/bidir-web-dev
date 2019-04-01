@@ -27,23 +27,30 @@
         function initialize() {
             vm.groupLoan = {};
             vm.groupLoanId = $stateParams.id;
+            vm.selectedTab = 0;
             callAPI();
         }
 
         function callAPI() {
             vm.groupPromise = LoanManagementService.GetGroupLoan(vm.groupLoanId).then(function (response) {
                 vm.groupLoan.group = response.data;
-                // $state.go(vm.tabsList[0].route);
                 GetGroupScreening();
-
+                // GetGroupLoans();
             },function (error) {  })
         }
 
         function GetGroupScreening() {
-            vm.groupScreeningPromise = LoanManagementService.GetGroupScreening(vm.groupLoanId).then(function (response) {
+            vm.groupScreeningPromise = LoanManagementService.GetGroupScreening('screenings',vm.groupLoanId).then(function (response) {
                 vm.groupLoan.screenings = response.data.screenings;
             },function (error) {})
+            vm.groupLoanPromise = LoanManagementService.GetGroupScreening('loans',vm.groupLoanId).then(function (response) {
+                vm.groupLoan.loans = response.data.loans;
+            },function (error) {})
+            vm.groupAcatPromise = LoanManagementService.GetGroupScreening('acat',vm.groupLoanId).then(function (response) {
+                vm.groupLoan.loans = response.data.acats;
+            },function (error) {})
         }
+
 
         function _onTabSelected(route,index) {
             vm.selectedTab = index; //SET ACTIVE TAB
