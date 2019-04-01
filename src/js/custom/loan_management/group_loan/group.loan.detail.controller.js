@@ -42,13 +42,13 @@
         function GetGroupScreening() {
             vm.groupScreeningPromise = LoanManagementService.GetGroupScreening('screenings',vm.groupLoanId).then(function (response) {
                 vm.groupLoan.screenings = response.data.screenings;
-            },function (error) {})
+            },function (error) {});
             vm.groupLoanPromise = LoanManagementService.GetGroupScreening('loans',vm.groupLoanId).then(function (response) {
                 vm.groupLoan.loans = response.data.loans;
-            },function (error) {})
+            },function (error) {});
             vm.groupAcatPromise = LoanManagementService.GetGroupScreening('acat',vm.groupLoanId).then(function (response) {
-                vm.groupLoan.loans = response.data.acats;
-            },function (error) {})
+                vm.groupLoan.acats = response.data.acats;
+            },function (error) {});
         }
 
 
