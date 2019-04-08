@@ -1,8 +1,7 @@
-<div class="col-lg-12">
-
+<div class="col-lg-12" ng-show="!vm.visibility.showLoanDetail">
 
     <div ng-show="vm.groupLoan.loans.length > 0">
-        <h4> Loans</h4>
+        <h4 class="mv-lg pv-lg text-dark">Loans</h4>
 
         <md-table-container>
             <table md-table md-progress="vm.groupLoanPromise" class="table-hover">
@@ -34,7 +33,7 @@
                     </td>
 
                     <td md-cell>
-                        <a ng-click="vm.screeningDetail(screening,$event)">
+                        <a ng-click="vm.loanProcessDetail(screening,'loan',$event)">
                             <i class="fa fa-eye"></i> View
                         </a>
                     </td>
@@ -48,4 +47,14 @@
             <strong>CAN'T FIND LOAN APPLICATIONS...</strong>
         </h4>
     </div>
+</div>
+
+<div class="col-md-12" ng-show="vm.visibility.showLoanDetail">
+    <div class="mt-lg">
+        <a ng-click="vm.backToList('loan')"><i class="fa fa-arrow-left "></i> Back </a>
+        <div class="pull-right">
+            <span class="label label-inverse" am-time-ago="vm.loanApplication.last_modified"></span>
+        </div>
+    </div>
+    <ng-include src="'app/views/loan_management/group_loan/tabs/loan.detail.partial.html'"> </ng-include>
 </div>

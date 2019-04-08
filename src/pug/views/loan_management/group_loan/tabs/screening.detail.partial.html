@@ -1,5 +1,4 @@
-<div class="row" block-ui="screeningTabBlockUI">
-
+<div class="row" ng-show="vm.clientScreening.questions.length > 0">
 
     <!--QUESTION HEADER-->
     <div class="col-lg-12">
@@ -25,7 +24,11 @@
                       layout-data="vm.clientScreening.layout"
                       row-no="$index + 1" is-readonly="true">
         </question-row>
-
-
     </div>
+</div>
+
+<div  ng-show="!vm.clientScreening.questions ||  vm.clientScreening.questions.length === 0">
+    <h4 class="centerPageText">
+        <strong>CAN'T FIND SCREENING...</strong>
+    </h4>
 </div>

@@ -25,12 +25,10 @@
 
         initialize();
 
+
+
         function initialize() {
-            vm.visibility = {
-                showScreeningDetail: false,
-                showLoanDetail: false,
-                showAcatDetail: false
-            };
+            ResetVisibility();
             vm.groupLoan = {};
             vm.groupLoanId = $stateParams.id;
             _.each(vm.tabsList,function (selectedTab) {
@@ -42,7 +40,13 @@
 
             callAPI();
         }
-
+        function ResetVisibility() {
+            vm.visibility = {
+                showScreeningDetail: false,
+                showLoanDetail: false,
+                showACATDetail: false
+            };
+        }
         function callAPI() {
             vm.groupPromise = LoanManagementService.GetGroupLoan(vm.groupLoanId).then(function (response) {
                 vm.groupLoan.group = response.data;
@@ -76,6 +80,7 @@
         function _onTabSelected(tab,index) {
             vm.selectedTab = index; //SET ACTIVE TAB
             vm.selectedTabObj = tab;
+            ResetVisibility();
             GetData(tab.code); // get data for selected tab
             $state.go(tab.route); //REDIRECT TO CHILD VIEW
 
@@ -88,8 +93,12 @@
                     vm.visibility.showScreeningDetail = true;
                     break;
                 case 'loan':
-                    vm.clientLoan = stageData;
+                    vm.loanApplication = stageData;
                     vm.visibility.showLoanDetail = true;
+                    break;
+                case 'acat':
+                    // vm.loanApplication = stageData;
+                    // vm.visibility.showLoanDetail = true;
                     break;
                 default:
                     break;
