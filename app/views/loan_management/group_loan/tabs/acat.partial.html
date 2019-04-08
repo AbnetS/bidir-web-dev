@@ -1,7 +1,15 @@
 <div class="col-lg-12">
 
    <div ng-show="vm.groupLoan.acats.length > 0">
-      <h4 class="mv-lg pv-lg text-dark">A-CAT</h4>
+      <div class="col-lg-12">
+         <div class="pull-left">
+            <h4 class="mv-lg pv-lg text-dark">A-CAT</h4>
+         </div>
+         <div class="pull-right">
+            <span>{{vm.groupACATStatus }}</span>
+         </div>
+      </div>
+
       <md-table-container>
          <table md-table md-progress="vm.groupAcatPromise" class="table-hover">
             <thead md-head class="bg-grey md-head">
@@ -19,7 +27,7 @@
                      <span>Branch</span>
                   </th>
                   <th md-column>
-                     <span>Status</span>
+                     <span>A-CAT Status</span>
                   </th>
                   <th md-column>Action</th>
                </tr>
