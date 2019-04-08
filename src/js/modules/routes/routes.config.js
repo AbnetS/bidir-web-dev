@@ -272,7 +272,6 @@
                 views: {
                     "groupTabContent": {
                         templateUrl: helper.basepath('loan_management/group_loan/tabs/members.partial.html'),
-                        controller: "GroupLoanDetailController",
                         controllerAs: "vm"
                     }
                 }})
@@ -281,7 +280,6 @@
                 views: {
                     "groupTabContent": {
                         templateUrl: helper.basepath('loan_management/group_loan/tabs/screenings.partial.html'),
-                        controller: "GroupLoanDetailController",
                         controllerAs: "vm"
                     }
                 }})
@@ -290,7 +288,6 @@
                 views: {
                     "groupTabContent": {
                         templateUrl: helper.basepath('loan_management/group_loan/tabs/loan.partial.html'),
-                        controller: "GroupLoanDetailController",
                         controllerAs: "vm"
                     }
                 }})
@@ -299,7 +296,6 @@
                 views: {
                     "groupTabContent": {
                         templateUrl: helper.basepath('loan_management/group_loan/tabs/acat.partial.html'),
-                        controller: "GroupLoanDetailController",
                         controllerAs: "vm"
                     }
                 }})

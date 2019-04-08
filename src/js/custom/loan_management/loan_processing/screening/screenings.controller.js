@@ -79,7 +79,6 @@
                     vm.visibility.showClientACAT=false;
                     break;
             }
-
         }
         function _saveScreeningForm(client,screening_status) {
 

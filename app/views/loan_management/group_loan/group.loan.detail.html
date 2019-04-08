@@ -61,7 +61,7 @@
                <div class="form-group">
                   <div class="col-sm-4">Status:</div>
                   <div class="col-sm-8">
-                     <span class="text-uppercase" ng-class="vm.StyleLabelByStatus(vm.groupLoan.group.status)">{{vm.groupLoan.group.status | ReplaceUnderscore}}</span>
+                     <span class="text-uppercase" ng-class="vm.styleLabelByStatus(vm.groupLoan.group.status)">{{vm.groupLoan.group.status | ReplaceUnderscore}}</span>
                   </div>
                </div>
                <div class="form-group">
@@ -97,7 +97,7 @@
       <!--TAB STARTED-->
       <div class="row">
          <uib-tabset justified="true" active="vm.selectedTab">
-            <uib-tab ng-repeat="tab in vm.tabsList" index="$index" heading="{{tab.heading}}" ng-click="vm.onTabSelected(tab.route,$index)">
+            <uib-tab ng-repeat="tab in vm.tabsList" index="$index" heading="{{tab.heading}}" ng-click="vm.onTabSelected(tab,$index)">
             </uib-tab>
             <div class="col-lg-12" ui-view="groupTabContent"></div>
          </uib-tabset>

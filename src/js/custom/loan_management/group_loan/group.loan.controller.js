@@ -11,11 +11,12 @@
 
     function GroupLoanController(LoanManagementService,$scope,$state,AuthService) {
         var vm = this;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearchText;
-        vm.groupDetail = _groupDetail;
         vm.StyleLabelByStatus = LoanManagementService.StyleLabelByStatus;
         vm.loanCycles = LoanManagementService.loanCycles;
+
+        vm.paginate = _paginate;
+        vm.groupDetail = _groupDetail;
+
         vm.onSelectedLoanCycle = _onSelectedLoanCycle;
         vm.clearSearch = _clearSearch;
 
@@ -26,6 +27,7 @@
             vm.filter.show = false;
             // callApi();
         }
+
         function initialize() {
             vm.visibility = { showClientDetail: false };
             vm.currentUser = {selected_access_branch:undefined};
@@ -67,10 +69,6 @@
             vm.query.page = page;
             vm.query.per_page = pageSize;
             callAPI();
-        }
-        function _clearSearchText() {
-            vm.query.search = '';
-            vm.filter.show = false;
         }
 
         $scope.$watch(angular.bind(vm, function () {
