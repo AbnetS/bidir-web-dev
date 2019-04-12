@@ -59,19 +59,29 @@
                 case 'screening':
                     vm.groupScreeningPromise = LoanManagementService.GetGroupScreening('screenings',vm.groupLoanId).then(function (response) {
                         vm.groupLoan.screenings = response.data.screenings;
-                        vm.groupScreeningStatus = response.data.status;
+                        vm.groupScreening =  {
+                            status: response.data.status,
+                            last_modified: response.data.last_modified
+                        };
+
                     },function (error) {});
                     break;
                 case 'loan':
                     vm.groupLoanPromise = LoanManagementService.GetGroupScreening('loans',vm.groupLoanId).then(function (response) {
                         vm.groupLoan.loans = response.data.loans;
-                        vm.groupLoanStatus = response.data.status;
+                        vm.groupLoanInfo =  {
+                            status: response.data.status,
+                            last_modified: response.data.last_modified
+                        };
                     },function (error) {});
                     break;
                 case 'acat':
                     vm.groupAcatPromise = LoanManagementService.GetGroupScreening('acat',vm.groupLoanId).then(function (response) {
                         vm.groupLoan.acats = response.data.acats;
-                        vm.groupACATStatus = response.data.status;
+                        vm.groupACAT =  {
+                            status: response.data.status,
+                            last_modified: response.data.last_modified
+                        };
                     },function (error) {});
                     break;
                 default:
@@ -100,8 +110,8 @@
                     vm.visibility.showLoanDetail = true;
                     break;
                 case 'acat':
-                    // vm.loanApplication = stageData;
-                    // vm.visibility.showLoanDetail = true;
+                    vm.acat = stageData;
+                    vm.visibility.showACATDetail = true;
                     break;
                 default:
                     break;

@@ -3,7 +3,10 @@
     <div ng-show="vm.groupLoan.screenings.length > 0">
         <div class="col-lg-12 mv-lg ">
             <h4 class="pull-left text-dark">Screenings</h4>
-            <span class="pull-right label label-inverse" >{{vm.groupScreeningStatus }}</span>
+            <div class="pull-right">
+                <span class="label label-info" >{{vm.groupScreening.status }}</span>
+                <span class="label label-inverse" am-time-ago="vm.groupScreening.last_modified"></span>
+            </div>
         </div>
         <div class="col-lg-12">
             <md-table-container>
