@@ -14,7 +14,7 @@
                         <th md-column ><span>Full Name</span></th>
                         <th md-column  ><span>Civil Status</span></th>
                         <th md-column  ><span>Branch</span></th>
-                        <th md-column  ><span>Loan Status</span></th>
+                        <th md-column  ><span>Loan Application Status</span></th>
                         <th md-column  >Action</th>
                     </tr>
                     </thead>
@@ -32,7 +32,7 @@
                         <td md-cell>{{screening.client.civil_status}}</td>
                         <td md-cell>{{screening.client.branch.name }}</td>
                         <td md-cell>
-                            <span ng-class="vm.labelBasedOnStatus(screening.client.status)">{{screening.client.status | ReplaceUnderscore}}</span>
+                            <span ng-class="vm.labelBasedOnStatus(screening.status)">{{screening.status | ReplaceUnderscore}}</span>
                         </td>
 
                         <td md-cell>
