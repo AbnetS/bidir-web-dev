@@ -57,7 +57,7 @@
         function GetData(tabCode) {
             switch (tabCode) {
                 case 'screening':
-                    vm.groupScreeningPromise = LoanManagementService.GetGroupScreening('screenings',vm.groupLoanId).then(function (response) {
+                    vm.groupScreeningPromise = LoanManagementService.GetGroupDataByLoanProcessStage('screenings',vm.groupLoanId).then(function (response) {
                         vm.groupLoan.screenings = response.data.screenings;
                         vm.groupScreening =  {
                             status: response.data.status,
@@ -67,7 +67,7 @@
                     },function (error) {});
                     break;
                 case 'loan':
-                    vm.groupLoanPromise = LoanManagementService.GetGroupScreening('loans',vm.groupLoanId).then(function (response) {
+                    vm.groupLoanPromise = LoanManagementService.GetGroupDataByLoanProcessStage('loans',vm.groupLoanId).then(function (response) {
                         vm.groupLoan.loans = response.data.loans;
                         vm.groupLoanInfo =  {
                             status: response.data.status,
@@ -76,7 +76,7 @@
                     },function (error) {});
                     break;
                 case 'acat':
-                    vm.groupAcatPromise = LoanManagementService.GetGroupScreening('acat',vm.groupLoanId).then(function (response) {
+                    vm.groupAcatPromise = LoanManagementService.GetGroupDataByLoanProcessStage('acats',vm.groupLoanId).then(function (response) {
                         vm.groupLoan.acats = response.data.acats;
                         vm.groupACAT =  {
                             status: response.data.status,
@@ -125,6 +125,9 @@
                     break;
                 case 'loan':
                     vm.visibility.showLoanDetail = false;
+                    break;
+                case 'acat':
+                    vm.visibility.showACATDetail = false;
                     break;
             }
         }

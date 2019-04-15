@@ -39,7 +39,7 @@
             //GROUP LOAN
             GetGroupLoans:_getGroupLoans,
             GetGroupLoan:_getGroupLoan,
-            GetGroupScreening:_getGroupScreening
+            GetGroupDataByLoanProcessStage:_getGroupDataByLoanProcessStage
 
         };
 
@@ -156,7 +156,7 @@
             return $http.get(CommonService.buildUrlWithParam(API.Service.GROUPS,API.Methods.Group.Group,id));
         }
 
-        function _getGroupScreening(type,groupId) {
+        function _getGroupDataByLoanProcessStage(type,groupId) {
             return $http.get(CommonService.buildUrlWithParam(API.Service.GROUPS,API.Methods.Group.Group,groupId) + '/' + type);
         }
 
