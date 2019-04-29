@@ -12,10 +12,20 @@
     Reports</h3>
 
 <md-progress-linear md-mode="indeterminate" ng-show="vm.report.isLoading"></md-progress-linear>
+
+
+
+<p></p>
 <div>
     <div ng-show="vm.reportData.length>0" class="pull-right">
-        <a ng-click="vm.printReport(vm.report)" class="btn btn-default hidden-print">
-            <i class="icon-printer"></i></a>
+        <!--<a ng-click="vm.printReport(vm.report)" class="btn btn-default hidden-print">-->
+            <!--<i class="icon-printer"></i></a>-->
+        <div class="pull-right">
+            <button ng-click="vm.convertPdf()"> Download PDF</button>
+            <button ng-click="vm.convertPdf()"> Download Document</button>
+            <md-progress-circular md-mode="indeterminate" ng-show="vm.report.pdfLoading"></md-progress-circular>
+            <embed ng-src="{{vm.pdfFile}}" style="width:720px;height:580px;"></embed>
+        </div>
     </div>
 
     <div ng-include="vm.report.templateUrl" ng-show="vm.reportData && vm.reportData.length>0"></div>

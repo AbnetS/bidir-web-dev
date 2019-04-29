@@ -4,9 +4,9 @@
         .module('app.report')
         .controller('ReportController', ReportController);
 
-    ReportController.$inject = ['ReportService', 'blockUI','PrintPreviewService'];
+    ReportController.$inject = ['ReportService', 'blockUI','PrintPreviewService','$sce'];
 
-    function ReportController( ReportService,blockUI,PrintPreviewService )
+    function ReportController( ReportService,blockUI,PrintPreviewService,$sce )
     {
         var vm = this;
         vm.onSelectedReport = _onSelectedReport;
@@ -51,6 +51,23 @@
             ReportService.GetAllReports().then(function (response) {
                 vm.reportsList = response.data;
             });
+        }
+        vm.convertPdf = _convertPdf;
+        function _convertPdf() {
+            vm.report = {
+                pdfLoading:true
+            };
+            ReportService.GetReportPDF().then(function (response) {
+                vm.pdfFile = openPDF(response.data);
+                vm.report.pdfLoading = false;
+            });
+        }
+
+        function openPDF(data, fileName) {
+            // {type: 'application/pdf'}
+            var file = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+            var fileURL = URL.createObjectURL(file);
+            return $sce.trustAsResourceUrl(fileURL);
         }
 
     }
