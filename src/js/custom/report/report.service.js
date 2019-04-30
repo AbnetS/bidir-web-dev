@@ -25,14 +25,12 @@
         function _getAllReports(){
             return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.AllReport));
         }
-        function _getReportPDF(){
+        function _getReportPDF(id){
             return $http({
-                url: CommonService.buildUrl(API.Service.REPORT,'sample'),
-                method: 'POST',
-                // headers: { 'Accept': 'application/pdf' },
+                url: CommonService.buildUrlWithParam(API.Service.REPORT,API.Methods.Report.Report,id) + '/pdf',
+                method: 'GET',
                 responseType: 'arraybuffer'
             });
-
         }
     }
 
