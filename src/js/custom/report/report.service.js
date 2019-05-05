@@ -25,9 +25,9 @@
         function _getAllReports(){
             return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.AllReport));
         }
-        function _getReportPDF(id){
+        function _getReportPDF(id,format){
             return $http({
-                url: CommonService.buildUrlWithParam(API.Service.REPORT,API.Methods.Report.Report,id) + '/pdf',
+                url: CommonService.buildUrlWithParam(API.Service.REPORT,API.Methods.Report.Report,id) + '/' + format,
                 method: 'GET',
                 responseType: 'arraybuffer'
             });

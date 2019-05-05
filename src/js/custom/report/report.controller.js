@@ -15,16 +15,21 @@
         };
         vm.onSelectedReport = _onSelectedReport;
         vm.printReport = _printReport;
+        vm.downloadDocument = _downloadDocument;
 
         init();
 
         function _onSelectedReport() {
+            vm.downloadDocument();
+        }
+
+        function _downloadDocument() {
             vm.report.isLoading = true;
-            vm.report.reportPromise =  ReportService.GetReportPDF(vm.report._id).then(function (response) {
+            vm.report.reportPromise =  ReportService.GetReportPDF(vm.report._id,'docx').then(function (response) {
                 vm.pdfFile = openPDF(response.data);
                 vm.report.isLoading = false;
-                vm.reportData = response.data;
 
+                // window.open(vm.pdfFile, '_self', '');
             });
         }
 
@@ -46,7 +51,7 @@
         }
 
         function openPDF(data) {
-            var file = new Blob([data], vm.FILE_TYPE.PDF);
+            var file = new Blob([data], vm.FILE_TYPE.DOC);
             var fileURL = URL.createObjectURL(file);
             return $sce.trustAsResourceUrl(fileURL);
         }
