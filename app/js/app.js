@@ -6510,17 +6510,19 @@ var INDICATOR = {
         init();
 
         function _onSelectedReport() {
-            vm.downloadDocument();
+
         }
 
         function _downloadDocument() {
             vm.report.isLoading = true;
+            var myBlockUI = blockUI.instances.get('reportDownload');
+            myBlockUI.start('Downloading...');
             vm.report.reportPromise =  ReportService.GetReportPDF(vm.report._id,'docx').then(function (response) {
                 vm.pdfFile = openPDF(response.data);
                 vm.report.isLoading = false;
-
-                // window.open(vm.pdfFile, '_self', '');
-            });
+                window.open(vm.pdfFile, '_self', '');
+                myBlockUI.stop();
+            },function () { myBlockUI.stop(); });
         }
 
         function _printReport(report) {
@@ -6717,6 +6719,149 @@ var INDICATOR = {
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
         }
     }
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+        }
+
+
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+       function callApi(){
+        vm.promise =   ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
+
+    }
+
+
 
 })(window.angular);
 /**
@@ -7567,149 +7712,6 @@ var INDICATOR = {
         }
 
 
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearch;
-
-        initialize();
-
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-
-            callApi();
-        }
-
-
-        function _paginate (page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-
-       function callApi(){
-        vm.promise =   ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
 
     }
 
@@ -10169,175 +10171,6 @@ var INDICATOR = {
   }
 })(window.angular);
 
-/**
- * Created by Yonas on 7/2/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("ClientsController", ClientsController);
-
-    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
-
-    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
-        var vm = this;
-        vm.clientDetailEdit = _clientDetailEdit;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearchText;
-        vm.saveClient = _saveClient;
-        vm.backToClientList = _backToClientList;
-
-
-
-        initialize();
-
-        function initialize() {
-            initializeDatePicker();
-            vm.visibility = { showClientDetail: false };
-            vm.civilStatuses = CIVIL_STATUSES;
-            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
-            vm.filter = {show : false};
-            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
-
-            vm.query = { search:'',   page:1,  per_page:10 };
-            vm.months = MONTHS_CONST;
-            callAPI();
-            getBranches();
-        }
-
-        function callAPI() {
-            var myBlockUI = blockUI.instances.get('clientsBlockUI');
-            myBlockUI.start();
-
-            vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
-                vm.clients = response.data.docs;
-                vm.query.total_pages = response.data.total_pages;
-                vm.query.total_docs_count = response.data.total_docs_count;
-                myBlockUI.stop();
-                console.log("clients",vm.clients);
-            });
-        }
-
-        function _clientDetailEdit(client,ev) {
-            console.log("client detail",client);
-            vm.visibility.showClientDetail = true;
-            //data set
-            vm.selectedClient = client;
-            var dt = new Date(client.date_of_birth);
-            vm.selectedClient.date_of_birth = dt;
-            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
-            vm.selectedClient.gender = client.gender.toLowerCase();
-            vm.selected_branch = client.branch;
-        }
-
-        function _backToClientList() {
-            vm.visibility = { showClientDetail: false };
-        }
-        function _saveClient() {
-
-            if(_.isUndefined(vm.selected_branch)){
-                AlertService.showWarning("Warning!","Please Select Branch....");
-            }else{
-                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
-                myBlockUI.start();
-                var client = vm.selectedClient;
-                client.branch = vm.selected_branch._id;
-                client.created_by =  undefined;
-
-
-                if( _.isUndefined(vm.selectedClient._id)){
-                    //ADD NEW CLIENT INFORMATION
-                    LoanManagementService.SaveClient(client).then(function (response) {
-                        console.log("save client",response);
-                        myBlockUI.stop();
-                        vm.visibility = { showClientDetail: false };
-                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
-
-                    },function (error) {
-                        console.log("save client error",error);
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to save client",message);
-
-                    });
-                }else{
-                    //UPDATE CLIENT INFORMATION
-                    LoanManagementService.UpdateClient(client).then(function (response) {
-                        console.log("save client",response);
-                        myBlockUI.stop();
-                        vm.visibility = { showClientDetail: false };
-                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
-                    },function (error) {
-                        console.log("Updated client error",error);
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to update Client",message);
-
-                    });
-                }
-
-
-            }
-
-        }
-
-        function getBranches() {
-            SharedService.GetBranches().then(function(response){
-                vm.branches = response.data.docs;
-                console.log("vm.branches",vm.branches);
-            },function(error){
-                console.log("error",error);
-            });
-        }
-
-        /**
-         *
-         *  Paging parameters and methods
-         */
-        function _paginate(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
-        }
-        function _clearSearchText() {
-            vm.query.search = '';
-            vm.filter.show = false;
-        }
-        function initializeDatePicker() {
-            vm.clear = function() {
-                vm.dt = null;
-            };
-
-            vm.dateOptions = {
-                dateDisabled: false,
-                formatYear: "yy",
-                maxDate: new Date(2020, 5, 22),
-                startingDay: 1
-            };
-
-            vm.openPopup = function() {
-                vm.popup1.opened = true;
-            };
-
-            vm.dateFormat = "dd-MMMM-yyyy";
-            vm.altInputFormats = ["M!/d!/yyyy"];
-
-            vm.popup1 = {
-                opened: false
-            };
-        }
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("searching clients for ",newValue);
-            }
-        });
-
-    }
-
-})(window.angular);
 (function (angular) {
     "use strict";
 
@@ -10573,6 +10406,175 @@ var INDICATOR = {
 
 })(window.angular);
 /**
+ * Created by Yonas on 7/2/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("ClientsController", ClientsController);
+
+    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
+
+    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
+        var vm = this;
+        vm.clientDetailEdit = _clientDetailEdit;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearchText;
+        vm.saveClient = _saveClient;
+        vm.backToClientList = _backToClientList;
+
+
+
+        initialize();
+
+        function initialize() {
+            initializeDatePicker();
+            vm.visibility = { showClientDetail: false };
+            vm.civilStatuses = CIVIL_STATUSES;
+            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
+            vm.filter = {show : false};
+            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
+
+            vm.query = { search:'',   page:1,  per_page:10 };
+            vm.months = MONTHS_CONST;
+            callAPI();
+            getBranches();
+        }
+
+        function callAPI() {
+            var myBlockUI = blockUI.instances.get('clientsBlockUI');
+            myBlockUI.start();
+
+            vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
+                vm.clients = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+                myBlockUI.stop();
+                console.log("clients",vm.clients);
+            });
+        }
+
+        function _clientDetailEdit(client,ev) {
+            console.log("client detail",client);
+            vm.visibility.showClientDetail = true;
+            //data set
+            vm.selectedClient = client;
+            var dt = new Date(client.date_of_birth);
+            vm.selectedClient.date_of_birth = dt;
+            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
+            vm.selectedClient.gender = client.gender.toLowerCase();
+            vm.selected_branch = client.branch;
+        }
+
+        function _backToClientList() {
+            vm.visibility = { showClientDetail: false };
+        }
+        function _saveClient() {
+
+            if(_.isUndefined(vm.selected_branch)){
+                AlertService.showWarning("Warning!","Please Select Branch....");
+            }else{
+                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
+                myBlockUI.start();
+                var client = vm.selectedClient;
+                client.branch = vm.selected_branch._id;
+                client.created_by =  undefined;
+
+
+                if( _.isUndefined(vm.selectedClient._id)){
+                    //ADD NEW CLIENT INFORMATION
+                    LoanManagementService.SaveClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
+                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
+
+                    },function (error) {
+                        console.log("save client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to save client",message);
+
+                    });
+                }else{
+                    //UPDATE CLIENT INFORMATION
+                    LoanManagementService.UpdateClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
+                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
+                    },function (error) {
+                        console.log("Updated client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to update Client",message);
+
+                    });
+                }
+
+
+            }
+
+        }
+
+        function getBranches() {
+            SharedService.GetBranches().then(function(response){
+                vm.branches = response.data.docs;
+                console.log("vm.branches",vm.branches);
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        /**
+         *
+         *  Paging parameters and methods
+         */
+        function _paginate(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        }
+        function _clearSearchText() {
+            vm.query.search = '';
+            vm.filter.show = false;
+        }
+        function initializeDatePicker() {
+            vm.clear = function() {
+                vm.dt = null;
+            };
+
+            vm.dateOptions = {
+                dateDisabled: false,
+                formatYear: "yy",
+                maxDate: new Date(2020, 5, 22),
+                startingDay: 1
+            };
+
+            vm.openPopup = function() {
+                vm.popup1.opened = true;
+            };
+
+            vm.dateFormat = "dd-MMMM-yyyy";
+            vm.altInputFormats = ["M!/d!/yyyy"];
+
+            vm.popup1 = {
+                opened: false
+            };
+        }
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("searching clients for ",newValue);
+            }
+        });
+
+    }
+
+})(window.angular);
+/**
  * Created by Yonas on 7/3/2018.
  */
 (function(angular) {
@@ -10721,148 +10723,6 @@ var INDICATOR = {
 
 
 })(window.angular);
-(function(angular) {
-  'use strict';
-
-    angular.module('app.mfi')
-        .controller('CreateBranchController', CreateBranchController);
-
-    CreateBranchController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService','blockUI','SharedService'];
-
-  function CreateBranchController($mdDialog, items,AlertService,CommonService,MainService,blockUI,SharedService) {
-      var vm = this;
-      vm.cancel = _cancel;
-      vm.saveBranch = _saveBranch;
-      vm.isEdit = items !== null;
-      vm.branch = items !== null?items:null;
-      vm.MFIBranchForm = {
-          IsnameValid: true,
-          IslocationValid: true
-      };
-
-      init();
-
-      function GetWoredas() {
-          SharedService.GetWoredas().then(function (response) {
-              vm.woredas = response.data.docs;
-              },function (reason) { console.log("reason",reason) });
-      }
-
-      function _saveBranch() {
-          vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFIBranchForm, vm.branch);
-
-          if(vm.branchForm.inputEmail.$error.email){
-              AlertService.showWarning("Branch validation failed","Please provide valid email address");
-          }else if(vm.IsValidData){
-              var myBlockUI = blockUI.instances.get('CreateBranchBlockUI')
-              myBlockUI.start();
-              vm.branch.weredas = _.pluck(vm.branch.selectedWoredas, '_id');
-              if(!vm.isEdit){
-                  //Save new branch API
-                  MainService.CreateBranch(vm.branch).then(
-                      function(data) {
-                          myBlockUI.stop();
-                          $mdDialog.hide();
-                          AlertService.showSuccess(
-                              "success",
-                              "Saved! Branch saved successfully."
-                          );
-                      },
-                      function(response) {
-                          myBlockUI.stop();
-                          var message = response.data.error.message;
-                          console.log("could not be saved", response.data);
-                          AlertService.showError(
-                              "ERROR",
-                              "Could not be saved!, " + message
-                          );
-                      }
-                  )
-              }else {
-
-                  var upBranch = {
-                      _id: vm.branch._id,
-                      name: vm.branch.name,
-                      location: vm.branch.location,
-                      branch_type: vm.branch.branch_type,
-                      opening_date: vm.branch.opening_date
-                  };
-                  upBranch.weredas = _.pluck(vm.branch.selectedWoredas, '_id');
-
-                      if(!_.isUndefined(vm.branch.email)){
-                        upBranch.email =vm.branch.email;
-                      }
-                      if(_.isString(vm.branch.phone) && vm.branch.phone !== ""){
-                        upBranch.phone =vm.branch.phone;
-                      }
-                      //Update branch api
-                      MainService.UpdateBranch(upBranch).then(
-                        function(response) {
-                            myBlockUI.stop();
-                          AlertService.showSuccess(
-                            "Branch Updated",
-                            "Branch updated successfully."
-                          );
-                          $mdDialog.hide();
-                        },
-                        function(response) {
-                            myBlockUI.stop();
-                            var message = response.data.error.message;
-                          console.log("could not be updated", response.data);
-                          AlertService.showError(
-                              "Could not update Branch",
-                              message
-                          );
-                        }
-                      );
-
-              }
-
-          } else {
-              AlertService.showError("Failed to create branch","Please fill the required fields and try again.");
-          }
-      }
-
-      vm.clear = function() {
-          vm.dt = null;
-      };
-      vm.dateOptions = {
-          dateDisabled: false,
-          formatYear: "yy",
-          maxDate: new Date(2020, 5, 22),
-          startingDay: 1
-      };
-      vm.openDatePicker = function() {
-          vm.popup1.opened = true;
-      };
-      vm.format = "dd-MMMM-yyyy";
-      vm.altInputFormats = ["d!/M!/yyyy"];
-      vm.popup1 = {
-          opened: false
-      };
-
-      function _cancel() {
-          $mdDialog.cancel();
-      }
-
-      function init(){
-          vm.branchTypes =['Select Branch Type','Satellite office','Rural Service','Regional office','Urban office'];
-          GetWoredas();
-          if(vm.isEdit)
-          {
-              var dt =_.isUndefined(vm.branch.opening_date)?undefined: new Date(vm.branch.opening_date);
-              vm.branch.opening_date = dt;
-              vm.branch.selectedWoredas = vm.branch.weredas;
-          }else{
-              vm.branch = { branch_type : vm.branchTypes[0] }; //SET DEFAULT SELECT OPTION FOR BRANCH TYPE
-          }
-      }
-  }
-
-
-
-})(window.angular);
-
 /**
  * Created by Yonas on 7/3/2018.
  */
@@ -11035,6 +10895,147 @@ var INDICATOR = {
         }
 
     }
+
+
+
+})(window.angular);
+(function(angular) {
+  'use strict';
+
+    angular.module('app.mfi')
+        .controller('CreateBranchController', CreateBranchController);
+
+    CreateBranchController.$inject = ['$mdDialog','items','AlertService','CommonService','MainService','blockUI','SharedService'];
+
+  function CreateBranchController($mdDialog, items,AlertService,CommonService,MainService,blockUI,SharedService) {
+      var vm = this;
+      vm.cancel = _cancel;
+      vm.saveBranch = _saveBranch;
+      vm.isEdit = items !== null;
+      vm.branch = items !== null?items:null;
+      vm.MFIBranchForm = {
+          IsnameValid: true,
+          IslocationValid: true
+      };
+
+      init();
+
+      function GetWoredas() {
+          SharedService.GetWoredas().then(function (response) {
+              vm.woredas = response.data.docs;
+              },function (reason) { console.log("reason",reason) });
+      }
+
+      function _saveBranch() {
+          vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFIBranchForm, vm.branch);
+
+          if(vm.branchForm.inputEmail.$error.email){
+              AlertService.showWarning("Branch validation failed","Please provide valid email address");
+          }else if(vm.IsValidData){
+              var myBlockUI = blockUI.instances.get('CreateBranchBlockUI')
+              myBlockUI.start();
+              vm.branch.weredas = _.pluck(vm.branch.selectedWoredas, '_id');
+              if(!vm.isEdit){
+                  //Save new branch API
+                  MainService.CreateBranch(vm.branch).then(
+                      function(data) {
+                          myBlockUI.stop();
+                          $mdDialog.hide();
+                          AlertService.showSuccess(
+                              "success",
+                              "Saved! Branch saved successfully."
+                          );
+                      },
+                      function(response) {
+                          myBlockUI.stop();
+                          var message = response.data.error.message;
+                          console.log("could not be saved", response.data);
+                          AlertService.showError(
+                              "ERROR",
+                              "Could not be saved!, " + message
+                          );
+                      }
+                  )
+              }else {
+
+                  var upBranch = {
+                      _id: vm.branch._id,
+                      name: vm.branch.name,
+                      location: vm.branch.location,
+                      branch_type: vm.branch.branch_type,
+                      opening_date: vm.branch.opening_date
+                  };
+                  upBranch.weredas = _.pluck(vm.branch.selectedWoredas, '_id');
+
+                      if(!_.isUndefined(vm.branch.email)){
+                        upBranch.email =vm.branch.email;
+                      }
+                      if(_.isString(vm.branch.phone) && vm.branch.phone !== ""){
+                        upBranch.phone =vm.branch.phone;
+                      }
+                      //Update branch api
+                      MainService.UpdateBranch(upBranch).then(
+                        function(response) {
+                            myBlockUI.stop();
+                          AlertService.showSuccess(
+                            "Branch Updated",
+                            "Branch updated successfully."
+                          );
+                          $mdDialog.hide();
+                        },
+                        function(response) {
+                            myBlockUI.stop();
+                            var message = response.data.error.message;
+                          console.log("could not be updated", response.data);
+                          AlertService.showError(
+                              "Could not update Branch",
+                              message
+                          );
+                        }
+                      );
+
+              }
+
+          } else {
+              AlertService.showError("Failed to create branch","Please fill the required fields and try again.");
+          }
+      }
+
+      vm.clear = function() {
+          vm.dt = null;
+      };
+      vm.dateOptions = {
+          dateDisabled: false,
+          formatYear: "yy",
+          maxDate: new Date(2020, 5, 22),
+          startingDay: 1
+      };
+      vm.openDatePicker = function() {
+          vm.popup1.opened = true;
+      };
+      vm.format = "dd-MMMM-yyyy";
+      vm.altInputFormats = ["d!/M!/yyyy"];
+      vm.popup1 = {
+          opened: false
+      };
+
+      function _cancel() {
+          $mdDialog.cancel();
+      }
+
+      function init(){
+          vm.branchTypes =['Select Branch Type','Satellite office','Rural Service','Regional office','Urban office'];
+          GetWoredas();
+          if(vm.isEdit)
+          {
+              var dt =_.isUndefined(vm.branch.opening_date)?undefined: new Date(vm.branch.opening_date);
+              vm.branch.opening_date = dt;
+              vm.branch.selectedWoredas = vm.branch.weredas;
+          }else{
+              vm.branch = { branch_type : vm.branchTypes[0] }; //SET DEFAULT SELECT OPTION FOR BRANCH TYPE
+          }
+      }
+  }
 
 
 

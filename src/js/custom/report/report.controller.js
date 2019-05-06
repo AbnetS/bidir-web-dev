@@ -20,17 +20,19 @@
         init();
 
         function _onSelectedReport() {
-            vm.downloadDocument();
+
         }
 
         function _downloadDocument() {
             vm.report.isLoading = true;
+            var myBlockUI = blockUI.instances.get('reportDownload');
+            myBlockUI.start('Downloading...');
             vm.report.reportPromise =  ReportService.GetReportPDF(vm.report._id,'docx').then(function (response) {
                 vm.pdfFile = openPDF(response.data);
                 vm.report.isLoading = false;
-
-                // window.open(vm.pdfFile, '_self', '');
-            });
+                window.open(vm.pdfFile, '_self', '');
+                myBlockUI.stop();
+            },function () { myBlockUI.stop(); });
         }
 
         function _printReport(report) {
