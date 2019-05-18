@@ -392,7 +392,8 @@
                 },
                 {
                     name: 'ngFileUpload',
-                    files: ['vendor/ng-file-upload-shim/ng-file-upload-shim.min.js']
+                    files: ['vendor/ng-file-upload/ng-file-upload.min.js',
+                        'vendor/ng-file-upload-shim/ng-file-upload-shim.min.js']
                 },
                 {
                     name: 'toaster', files: ['vendor/angularjs-toaster/toaster.min.js',
@@ -3190,6 +3191,22 @@
         .module('app.banking', []);
 
 })();
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function() {
+    "use strict";
+
+    config.$inject = ["$mdIconProvider"];
+    angular.module("app.forms", [
+    ]).run(runBlock).config(config);
+
+    function runBlock() {}
+    function config($mdIconProvider) {
+        $mdIconProvider.iconSet("avatars", 'app/img/icons/avatar-icons.svg',128);
+    };
+
+})();
 
 (function() {
     'use strict';
@@ -3262,19 +3279,13 @@ function runBlock() {
 })();
 
 /**
- * Created by Yoni on 1/29/2018.
+ * Created by Yonas on 8/16/2018.
  */
 (function() {
-    "use strict";
+    'use strict';
 
-    config.$inject = ["$mdIconProvider"];
-    angular.module("app.forms", [
-    ]).run(runBlock).config(config);
-
-    function runBlock() {}
-    function config($mdIconProvider) {
-        $mdIconProvider.iconSet("avatars", 'app/img/icons/avatar-icons.svg',128);
-    };
+    angular
+        .module('app.profile', []);
 
 })();
 
@@ -3294,16 +3305,6 @@ function runBlock() {
 
     angular
         .module('app.welcomePage', []);
-
-})();
-/**
- * Created by Yonas on 8/16/2018.
- */
-(function() {
-    'use strict';
-
-    angular
-        .module('app.profile', []);
 
 })();
 
@@ -4799,6 +4800,176 @@ var INDICATOR = {
     }
 
 })(window.angular);
+/**
+ * Created by Yoni on 2/9/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.forms')
+        .constant('MW_QUESTION_TYPES', [
+            {name:'Fill In Blank',url:'fib',code:'FILL_IN_BLANK',type:'text'},
+            {name:'Yes/No Question',code:'YES_NO',url:'yn',type:'yn',options:['Yes','No']},
+            {name:'Multiple Choice',url:'mc',code:'MULTIPLE_CHOICE',options:[],type:'checkbox'},
+            {name:'Single Choice',url:'sc',code:'SINGLE_CHOICE',options:[],type:'select'},
+            {name:'Grouped Question',url:'GROUPED',code:'GROUPED',type:'grouped'}])
+        .constant('MW_FORM_TYPES', [
+            {name:'ACAT',code:'ACAT'},
+            {name:'Loan Application',code:'LOAN_APPLICATION'},
+            {name:'Screening',code:'SCREENING'},
+            {name:'Group Application',code:'GROUP_APPLICATION'},
+            {name:'Test',code:'TEST'}]);
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.forms").controller("FormsController", FormsController);
+
+    FormsController.$inject = ['FormService','$state'];
+
+    function FormsController(FormService,$state) {
+        var vm = this;
+        vm.forms = [];
+        vm.paginate = _paginate;
+        vm.editForm = _editForm;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+            callApi();//fetch first page data initially
+        }
+
+        function _paginate (page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+        function callApi() {
+             vm.promise = FormService.GetFormsPerPage(vm.query).then(function (response) {
+                vm.forms = response.data.docs;
+                _.forEach(vm.forms,function (form) {
+                    if(form.has_sections){
+                        form.sectionCount = form.sections.length;
+                        var questionCount = 0;
+                        _.forEach(form.sections,function (sec) {
+                            questionCount = questionCount + sec.questions.length;
+                        });
+                        form.questionCount = questionCount;
+                    }else{
+                        form.questionCount = form.questions.length;
+                    }
+                })
+            },function (error) {
+                console.log(error);
+            })
+        }
+
+        function _editForm(form, ev) {
+            $state.go('app.builder',{id:form._id});
+            console.log("edit Form",form);
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.forms')
+
+        .service('FormService', FormService);
+
+    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES','MW_FORM_TYPES'];
+
+    function FormService($http, CommonService,MW_QUESTION_TYPES,MW_FORM_TYPES) {
+        return {
+            GetFormsPerPage: _getFormsPerPage,
+            CreateForm:_createForm,
+            GetForm:_getForm,
+            UpdateForm:_updateForm,
+            GetQuestion:_getQuestion,
+            CreateQuestion:_createQuestion,
+            UpdateQuestion:_updateQuestion,
+            DeleteQuestion:_deleteQuestion,
+            CreateSection:_createSection,
+            UpdateSection:_updateSection,
+            RemoveSection:_removeSection,
+            QuestionTypes: MW_QUESTION_TYPES,
+            FormTypes: MW_FORM_TYPES
+        };
+        function _getFormsPerPage(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
+        }
+        function _getForm(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM, API.Methods.Form.All, id));
+        }
+        function _updateForm(form) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,form._id), form);
+        }
+        function _createForm(form){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
+        }
+        //------QUESTION-----------
+        function _getQuestion(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,id));
+        }
+        function _createQuestion(question,type){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question) + '/' + type, question);
+        }
+        function _updateQuestion(question) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id), question);
+        }
+        function _deleteQuestion(question) {
+          return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id + '?form=' + question.form));
+        }
+
+
+        //    ------SECTION--------
+        function _createSection(section){
+            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Section), section);
+        }
+        function _updateSection(section) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id), section);
+        }
+        function _removeSection(section) {
+            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id + '?form=' + section.form));
+        }
+    }
+
+
+})(window.angular);
 (function (angular) {
     "use strict";
     angular
@@ -6176,173 +6347,77 @@ var INDICATOR = {
 })(window.angular);
 
 /**
- * Created by Yoni on 2/9/2018.
+ * Created by Yonas on 8/16/2018.
  */
 (function(angular) {
     "use strict";
 
     angular
-        .module('app.forms')
-        .constant('MW_QUESTION_TYPES', [
-            {name:'Fill In Blank',url:'fib',code:'FILL_IN_BLANK',type:'text'},
-            {name:'Yes/No Question',code:'YES_NO',url:'yn',type:'yn',options:['Yes','No']},
-            {name:'Multiple Choice',url:'mc',code:'MULTIPLE_CHOICE',options:[],type:'checkbox'},
-            {name:'Single Choice',url:'sc',code:'SINGLE_CHOICE',options:[],type:'select'},
-            {name:'Grouped Question',url:'GROUPED',code:'GROUPED',type:'grouped'}])
-        .constant('MW_FORM_TYPES', [
-            {name:'ACAT',code:'ACAT'},
-            {name:'Loan Application',code:'LOAN_APPLICATION'},
-            {name:'Screening',code:'SCREENING'},
-            {name:'Group Application',code:'GROUP_APPLICATION'},
-            {name:'Test',code:'TEST'}]);
-})(window.angular);
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    "use strict";
+        .module('app.profile')
+        .controller('ProfileController', ProfileController);
 
-    angular.module("app.forms").controller("FormsController", FormsController);
+    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService'];
 
-    FormsController.$inject = ['FormService','$state'];
-
-    function FormsController(FormService,$state) {
+    function ProfileController( ProfileService,   blockUI,AlertService ) {
         var vm = this;
-        vm.forms = [];
-        vm.paginate = _paginate;
-        vm.editForm = _editForm;
-        vm.clearSearchText = _clearSearch;
+        vm.updateProfile = _updateUserProfile;
 
-        initialize();
+        vm.user = ProfileService.GetUser();
 
-
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
+        function _updateUserProfile(user) {
+            var profile = {
+                _id:user._id,
+                title:user.title,
+                email: user.email,
+                first_name : user.first_name,
+                last_name:user.last_name,
+                grandfather_name:user.grandfather_name,
+                phone:user.phone
+                // picture:""
             };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-            callApi();//fetch first page data initially
-        }
-
-        function _paginate (page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-
-        function callApi() {
-             vm.promise = FormService.GetFormsPerPage(vm.query).then(function (response) {
-                vm.forms = response.data.docs;
-                _.forEach(vm.forms,function (form) {
-                    if(form.has_sections){
-                        form.sectionCount = form.sections.length;
-                        var questionCount = 0;
-                        _.forEach(form.sections,function (sec) {
-                            questionCount = questionCount + sec.questions.length;
-                        });
-                        form.questionCount = questionCount;
-                    }else{
-                        form.questionCount = form.questions.length;
-                    }
-                })
+            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
+            myBlockUI.stop();
+            ProfileService.UpdateProfile(profile).then(function (response) {
+                myBlockUI.start();
+                console.log("updated user profile",response);
+                AlertService.showSuccess("User Profile","User Account Info updated successfully" );
             },function (error) {
-                console.log(error);
-            })
-        }
-
-        function _editForm(form, ev) {
-            $state.go('app.builder',{id:form._id});
-            console.log("edit Form",form);
+                myBlockUI.stop();
+                console.log("error",error);
+                var message = error.data.error.message;
+                AlertService.showError("User Account Information failed updating",message);
+            });
         }
     }
-
-
 })(window.angular);
 /**
- * Created by Yoni on 1/29/2018.
+ * Created by Yonas on 8/17/2018.
  */
 (function(angular) {
     'use strict';
-    angular.module('app.forms')
+    angular.module('app.profile')
 
-        .service('FormService', FormService);
+        .service('ProfileService', ProfileService);
 
-    FormService.$inject = ['$http','CommonService','MW_QUESTION_TYPES','MW_FORM_TYPES'];
+    ProfileService.$inject = ['$http','CommonService','AuthService'];
 
-    function FormService($http, CommonService,MW_QUESTION_TYPES,MW_FORM_TYPES) {
+    function ProfileService($http, CommonService,AuthService) {
+
         return {
-            GetFormsPerPage: _getFormsPerPage,
-            CreateForm:_createForm,
-            GetForm:_getForm,
-            UpdateForm:_updateForm,
-            GetQuestion:_getQuestion,
-            CreateQuestion:_createQuestion,
-            UpdateQuestion:_updateQuestion,
-            DeleteQuestion:_deleteQuestion,
-            CreateSection:_createSection,
-            UpdateSection:_updateSection,
-            RemoveSection:_removeSection,
-            QuestionTypes: MW_QUESTION_TYPES,
-            FormTypes: MW_FORM_TYPES
+            GetUser: _getUser,
+            UpdateProfile: _updateProfile
         };
-        function _getFormsPerPage(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.FORM, API.Methods.Form.All, parameters));
-        }
-        function _getForm(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM, API.Methods.Form.All, id));
-        }
-        function _updateForm(form) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.All,form._id), form);
-        }
-        function _createForm(form){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create), form);
-        }
-        //------QUESTION-----------
-        function _getQuestion(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,id));
-        }
-        function _createQuestion(question,type){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Question) + '/' + type, question);
-        }
-        function _updateQuestion(question) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id), question);
-        }
-        function _deleteQuestion(question) {
-          return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Question,question._id + '?form=' + question.form));
+
+        function _getUser(){
+            var user = AuthService.GetCurrentUser();
+            return _.isUndefined(user.account)? user.admin:user.account;
         }
 
+        function _updateProfile(account){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
+        }
 
-        //    ------SECTION--------
-        function _createSection(section){
-            return $http.post(CommonService.buildUrl(API.Service.FORM,API.Methods.Form.Create_Section), section);
-        }
-        function _updateSection(section) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id), section);
-        }
-        function _removeSection(section) {
-            return $http.delete(CommonService.buildUrlWithParam(API.Service.FORM,API.Methods.Form.Section,section._id + '?form=' + section.form));
-        }
     }
-
 
 })(window.angular);
 (function(angular) {
@@ -6644,80 +6719,6 @@ var INDICATOR = {
             };
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
         }
-    }
-
-})(window.angular);
-/**
- * Created by Yonas on 8/16/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.profile')
-        .controller('ProfileController', ProfileController);
-
-    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService'];
-
-    function ProfileController( ProfileService,   blockUI,AlertService ) {
-        var vm = this;
-        vm.updateProfile = _updateUserProfile;
-
-        vm.user = ProfileService.GetUser();
-
-        function _updateUserProfile(user) {
-            var profile = {
-                _id:user._id,
-                title:user.title,
-                email: user.email,
-                first_name : user.first_name,
-                last_name:user.last_name,
-                grandfather_name:user.grandfather_name,
-                phone:user.phone
-                // picture:""
-            };
-            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
-            myBlockUI.stop();
-            ProfileService.UpdateProfile(profile).then(function (response) {
-                myBlockUI.start();
-                console.log("updated user profile",response);
-                AlertService.showSuccess("User Profile","User Account Info updated successfully" );
-            },function (error) {
-                myBlockUI.stop();
-                console.log("error",error);
-                var message = error.data.error.message;
-                AlertService.showError("User Account Information failed updating",message);
-            });
-        }
-    }
-})(window.angular);
-/**
- * Created by Yonas on 8/17/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.profile')
-
-        .service('ProfileService', ProfileService);
-
-    ProfileService.$inject = ['$http','CommonService','AuthService'];
-
-    function ProfileService($http, CommonService,AuthService) {
-
-        return {
-            GetUser: _getUser,
-            UpdateProfile: _updateProfile
-        };
-
-        function _getUser(){
-            var user = AuthService.GetCurrentUser();
-            return _.isUndefined(user.account)? user.admin:user.account;
-        }
-
-        function _updateProfile(account){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
-        }
-
     }
 
 })(window.angular);
@@ -8212,6 +8213,737 @@ var INDICATOR = {
 })(window.angular);
 
 /**
+ * Created by Yoni on 1/29/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.forms").controller("FormBuilderController", FormBuilderController);
+
+    FormBuilderController.$inject = ['FormService','$mdDialog','RouteHelpers','$stateParams','AlertService','blockUI','$scope','$state'];
+
+    function FormBuilderController(FormService,$mdDialog,RouteHelpers,$stateParams,AlertService,blockUI,$scope,$state) {
+        var vm = this;
+        vm.isEdit = $stateParams.id !== "0";
+        vm.formId = $stateParams.id;
+        vm.formTypes = FormService.FormTypes;
+
+        //QUESTION RELATED
+        vm.addQuestion = _addQuestion;
+        vm.editQuestion = _editQuestion;
+
+        vm.saveForm = _saveForm;
+        vm.typeStyle = _typeStyle;
+
+        //Section related
+        vm.selectSection = _selectSection;
+        vm.addSection = _addSection;
+        vm.saveSection = _saveSection;
+        vm.editSection = _editSection;
+        vm.removeSection = _removeSection;
+        vm.cancelSection = _cancelSection;
+
+        //QUESTION ORDERING RELATED
+        $scope.sortableOptions = {
+            placeholder: 'ui-state-highlight',
+            update: function(e, ui) {
+            },
+            stop: function(e, ui) {
+                vm.selected_section.questions.map(function(question,index){
+                    question.number = index;
+                    UpdateQuestionOrder(question);
+                });
+            }
+        };
+        $scope.sectionSortableOptions = {
+            placeholder: 'ui-state-highlight',
+            stop: function(e, ui) {
+                console.log("stop ordering questions");
+                vm.formData.questions.map(function(question,index){
+                    question.number = index;
+                    UpdateQuestionOrder(question);
+                });
+            }
+        };
+
+        function UpdateQuestionOrder(question) {
+            FormService.UpdateQuestion(question).then(
+                function (response) {
+                    // console.log("saving ordered [" + question.question_text + "] ",response);
+                },function (error) {
+                    console.log("error saving order question [" + question.question_text + "] ",error);
+                }
+            )
+        }
+
+        initialize();
+
+        function _saveForm() {
+            var myBlockUI = blockUI.instances.get('formBuilderBlockUI');
+            myBlockUI.start();
+
+            if(vm.isEdit){
+
+                var editForm = {
+                    _id:vm.formData._id,
+                    title:vm.formData.title,
+                    subtitle:vm.formData.subtitle,
+                    purpose:vm.formData.purpose,
+                    layout:vm.formData.layout,
+                    has_sections:vm.formData.has_sections
+                };
+
+                FormService.UpdateForm(editForm).then(function (response) {
+                    myBlockUI.stop();
+                    vm.formData = response.data;
+                    vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+                    AlertService.showSuccess("FORM UPDATED","Form updated successfully");
+                    $state.go('app.builder',{id:vm.formData._id},{inherit:true});
+                },function (error) {
+                    myBlockUI.stop();
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to Save Form",message);
+                    console.log("error",error);
+                });
+
+            }else
+                {
+
+                var preparedForm = {
+                    title:vm.formData.title,
+                    subtitle:vm.formData.subtitle,
+                    purpose:vm.formData.purpose,
+                    layout:vm.formData.layout,
+                    has_sections:vm.formData.has_sections,
+                    type: vm.formData.selected_formType.code,
+                    questions: []
+                };
+
+                FormService.CreateForm(preparedForm).then(function (response) {
+                    myBlockUI.stop();
+                    vm.formData = response.data;
+                    vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+                    AlertService.showSuccess("FORM CREATED","Form created successfully");
+                    $state.go('app.builder',{id:vm.formData._id},{inherit:true});
+                },function (error) {
+                    myBlockUI.stop();
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to Save Form",message);
+                    console.log("error",error);
+                });
+
+            }
+
+        }
+
+
+        function _addQuestion(sectionData,ev) {
+            $mdDialog.show({
+                locals: {data: {question:null,form: {_id: vm.formData._id,questions:vm.formData.has_sections?vm.selected_section.questions:vm.formData.questions},section:sectionData,number:vm.maxOrderNumber}},
+                templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'QuestionBuilderController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                console.log("call api to refresh");
+                callAPI();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+
+        }
+        function _editQuestion(question,ev) {
+            $mdDialog.show({
+                locals: {data: {question:question,form: {_id: vm.formData._id,questions:vm.formData.has_sections?vm.selected_section.questions:vm.formData.questions},number:vm.maxOrderNumber}},
+                templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'QuestionBuilderController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callAPI();
+            }, function () {
+            });
+        }
+
+        function initialize() {
+
+            if(vm.isEdit){
+                callAPI();
+            }else{
+                vm.formData = {
+                    has_sections:0,
+                    layout:'TWO_COLUMNS'
+                };
+            }
+        }
+
+        function callAPI() {
+            var myBlockUIOnStart = blockUI.instances.get('formBuilderBlockUI');
+            myBlockUIOnStart.start();
+            FormService.GetForm(vm.formId).then(function (response) {
+                vm.formData = response.data;
+                //REFRESH SELECTED SECTION
+                if(vm.formData.sections.length > 0 && !_.isUndefined(vm.selected_section)){
+                    vm.selected_section = _.first(_.filter(vm.formData.sections,function (section) {
+                        return section._id === vm.selected_section._id;
+                    }));
+                }
+
+                if(vm.formData.has_sections){
+                    GetMaximumOrderNumberForSection();
+
+                }else{
+
+                    if(vm.formData.questions.length > 0){
+                        vm.maxOrderNumber = _.max(vm.formData.questions,function (qn) {
+                            return qn.number;
+                        }).number;
+                    }else{
+                        vm.maxOrderNumber = 0;
+                    }
+
+                    console.log("max number for question without section",vm.maxOrderNumber);
+                }
+
+                vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
+
+                myBlockUIOnStart.stop();
+
+            },function (error) {
+                myBlockUIOnStart.stop();
+                console.log("error",error);
+            });
+        }
+
+        function GetMaximumOrderNumberForSection() {
+            if(!_.isUndefined(vm.selected_section)){
+
+                if(vm.selected_section.questions.length > 0){
+                    vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
+                        return qn.number;
+                    }).number;
+                }else {
+                    vm.maxOrderNumber = 0;
+                }
+
+            }else{
+                vm.maxOrderNumber = 0;
+            }
+        }
+        function getFormTypeObj(code) {
+            return _.first(_.filter(vm.formTypes,function (type) {
+                return type.code === code;
+            }));
+        }
+
+        function _typeStyle(type){
+            var style = '';
+            switch (type.trim()){
+                case 'Fill In Blank':
+                case 'FILL_IN_BLANK':
+                    style =  'label bg-green-dark';
+                    break;
+                case 'Yes/No':
+                case 'YES_NO':
+                    style =  'label bg-info';
+                    break;
+                case 'GROUPED':
+                    style =  'label bg-warning-dark';
+                    break;
+                case 'SINGLE_CHOICE':
+                    style =  'label bg-primary';
+                    break;
+                case 'MULTIPLE_CHOICE':
+                    style =  'label bg-pink-dark';
+                    break;
+                default:
+                    style =  'label bg-inverse';
+            }
+            return style;
+        }
+
+        //------SECTION RELATED---------
+
+        function _addSection() {
+            vm.selected_section = {};
+            vm.showSectionForm = true;
+        }
+        function _selectSection(selectedSection) {
+            vm.showSectionForm = false;
+            vm.selected_section = selectedSection;
+            vm.selected_section.form = vm.formId; //This is important for remove section
+            GetMaximumOrderNumberForSection();
+            // vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
+            //     return qn.number;
+            // }).number;
+            console.log("max number for question with section on select",vm.maxOrderNumber);
+        }
+
+        function _saveSection(section) {
+            section.form = vm.formId;
+            if( _.isUndefined(section._id)){
+
+            FormService.CreateSection(section).then(function (response) {
+                vm.selected_section = response.data;
+                vm.selected_section.form = vm.formId; //set to which form it belongs
+                vm.showSectionForm = false;
+                AlertService.showSuccess("SECTION","Section Created successfully");
+                callAPI();//REFRESH FORM DATA
+            },function (error) {
+                console.log("error when saving section",error);
+            });
+
+            }else {
+                FormService.UpdateSection(section).then(function (response) {
+                    vm.selected_section = response.data;
+                    vm.selected_section.form = vm.formId; //set to which form it belongs
+                    vm.showSectionForm = false;
+                    callAPI();//REFRESH FORM DATA
+                    AlertService.showSuccess("SECTION","Section Updated successfully");
+                    console.log("saved section",response);
+                },function (error) {
+                    console.log("error when saving section",error);
+                });
+            }
+        }
+        function _editSection(section) {
+            vm.selected_section = section;
+            vm.selected_section.form = vm.formId;
+            vm.showSectionForm = true;
+        }
+        function _cancelSection() {
+            vm.showSectionForm = false;
+        }
+
+        function _removeSection(section) {
+            AlertService.showConfirmForDelete("You are about to DELETE SECTION, All Questions under this section will be removed",
+                "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
+                    if(isConfirm){
+                        vm.selected_section.form = vm.formId; //set to which form it belongs
+                        FormService.RemoveSection(section).then(function(response){
+                            vm.showSectionForm = false;
+                            callAPI();
+                            AlertService.showSuccess("SECTION","Section Deleted successfully");
+                            vm.selected_section = undefined;
+                        },function(error){
+                            console.log("Section deleting error",error);
+                            var message = error.data.error.message;
+                            AlertService.showError("Failed to DELETE Section",message);
+                        });
+                    }
+
+                });
+        }
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 2/9/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.forms").controller("QuestionBuilderController", QuestionBuilderController);
+
+    QuestionBuilderController.$inject = ['FormService','$mdDialog','data','AlertService','$scope'];
+
+    function QuestionBuilderController(FormService,$mdDialog,data,AlertService,$scope) {
+        var vm = this;
+        vm.questionTypes = FormService.QuestionTypes;
+        vm.readOnly = false;
+
+        vm.saveQuestion = _saveQuestion;
+        vm.cancel = _cancel;
+        vm.addAnother = _addAnother;
+        vm.showQuestionOn = _showQuestionOn;
+        vm.removeQuestion = _removeQuestion;
+
+        vm.questionTypeChanged = _questionTypeChanged;
+
+        //Sub Question related
+        vm.showSubQuestion = false;//used for grouped questions
+        vm.toggleAddSubQuestion = _toggleAddSubQuestion;
+        vm.addToSubQuestion = _addToSubQuestion;
+        vm.editSubQuestion = _editSubQuestion;
+        vm.removeSubQuestion = _removeSubQuestion;
+        vm.cancelSubQuestion = _cancelSubQuestion;
+        vm.subQuestionValidationSelected = _subQuestionValidationSelected;
+
+
+        //SC & MC related
+        vm.addRadio = _addRadio;
+        vm.removeOption = _removeOption;
+        vm.editOption = _editOption;
+
+        //SUB QUESTION ORDERING RELATED
+        $scope.sortableSubQuestions = {
+            placeholder: 'ui-state-highlight',
+            update: function(e, ui) {
+              console.log("update")
+            },
+            stop: function(e, ui) {
+                vm.sub_question_list.map(function(question,index){
+                    question.number = index;
+                    FormService.UpdateQuestion(question).then(
+                        function (response) {
+                            // console.log("saving ordered [" + question.question_text + "] ",response);
+                        },function (error) {
+                            console.log("error saving order question [" + question.question_text + "] ",error);
+                        }
+                    )
+                });
+            }
+        };
+
+        initialize();
+
+        function initialize() {
+            vm.sub_question_list = [];
+            vm.fibvalidation = [{name:'NONE',code:'text'},{name:'ALPHANUMERIC',code:'text'},{name:'NUMERIC',code:'number'},{name:'ALPHABETIC',code:'text'}];
+            vm.isEdit = data.question !== null;
+            vm.form = data.form;
+            vm.maxOrderNumber = data.number;
+            vm.isSubEdit = false;
+            vm.sub_question = {};
+            vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
+                return val.name === 'NONE'; //set sub question validation default to NONE
+            }));
+            vm.questionList = _.filter(data.form.questions,function (question) {
+                return question.options.length > 0 && (question.type === QUESTION_TYPE.YES_NO || question.type === QUESTION_TYPE.SINGLE_CHOICE);
+               //question list used for WHEN is selected
+            });
+
+            if(vm.isEdit){
+                vm.question = data.question;
+                if(!_.isUndefined(vm.question.sub_questions)){
+                    vm.sub_question_list = vm.question.sub_questions;
+                }
+                if(vm.question.prerequisites.length === 1){
+                    var prereq = vm.question.prerequisites[0];
+                    FormService.GetQuestion(prereq.question).then(function (response) {
+                        vm.selected_question = response.data;
+                        vm.selected_question.selected_value =  prereq.answer;
+                    })
+                }
+                vm.question.form = data.form._id;
+                vm.question.selected_type = getQuestionTypeObj(vm.question.type);
+                SetValidationObj(false);
+            }else {
+                vm.question = {
+                    show: 1,
+                    required:0,
+                    options:[]
+                };
+
+                vm.question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
+                    return val.name === 'NONE'; //set question validation default to NONE
+                }));
+
+                if(data.section.has_section){
+                    vm.question.section = data.section.sectionId;
+                }
+
+            }
+        }
+
+        function _saveQuestion() {
+            var preparedQn = {
+                question_text:vm.question.question_text,
+                remark:vm.question.remark,
+                required:vm.question.required,
+                show:vm.question.show,
+                measurement_unit: !_.isUndefined(vm.question.measurement_unit)? vm.question.measurement_unit:null,
+                form:vm.form._id
+            };
+            if(vm.question.selected_type.code === QUESTION_TYPE.FILL_IN_BLANK){
+                preparedQn.validation_factor = vm.question.selected_validation.name;
+            }
+            else if(vm.question.selected_type.code === QUESTION_TYPE.YES_NO){
+                preparedQn.options = vm.question.selected_type.options;
+            }
+            if(!_.isUndefined(vm.question.options) && vm.question.options.length > 0 ){
+                preparedQn.options = vm.question.options;
+            }
+            //SET PREREQUISITE IF SHOW IS FALSE
+            if(vm.question.show === "0" || !vm.question.show){
+                if(!_.isUndefined(vm.selected_question) &&
+                    !_.isUndefined(vm.selected_question.selected_value)){
+                    var prerequisite = {
+                        question:vm.selected_question._id,
+                        answer:vm.selected_question.selected_value
+                    };
+                    preparedQn.prerequisites = [];
+                    preparedQn.prerequisites.push(prerequisite);
+                }
+            }else{
+                preparedQn.prerequisites = [];
+            }
+
+            if(!vm.isEdit){
+                preparedQn.section = vm.question.section;
+                preparedQn.number = GetNextQuestionOrderNumber();
+                FormService.CreateQuestion(preparedQn,vm.question.selected_type.url).then(function (response) {
+                    console.log("Question created",response);
+                    vm.maxOrderNumber = preparedQn.number;
+                    vm.question = response.data;
+                    vm.showSubQuestion = true;
+                    if(vm.question.type === QUESTION_TYPE.GROUPED){
+                        saveSubQuestionList();
+                    }
+                    $mdDialog.hide();
+                    AlertService.showSuccess("Question Created","Question Created successfully");
+                },function (error) {
+                    console.log("Question create error",error);
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to Save Question",message);
+                });
+
+            }else
+                {
+                preparedQn._id = vm.question._id;
+
+                FormService.UpdateQuestion(preparedQn).then(function (response) {
+                    if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED){
+                        saveSubQuestionList();
+                    }
+                    $mdDialog.hide();
+                    AlertService.showSuccess("Question Updated","Question Updated successfully");
+                },function (error) {
+                    console.log("qn update error",error);
+                    var message = error.data.error.message;
+                    AlertService.showError("Failed to Update Question",message);
+
+                });
+            }
+        }
+        function _removeQuestion(question,$event) {
+            AlertService.showConfirmForDelete("You are about to DELETE this Question?",
+                "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
+                    question.form = vm.form._id;
+
+                if(isConfirm){
+                    FormService.DeleteQuestion(question).then(function(response){
+                        AlertService.showSuccess("Question","Question Deleted successfully");
+                        $mdDialog.hide();
+                    },function(error){
+                        console.log("qn deleting error",error);
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to DELETE Question",message);
+                    })
+                }
+
+                });
+
+        }
+
+        //SC AND MC OPTIONS RELATED
+        function _addRadio(newValue) {
+            // If value is undefined, cancel.
+            if (newValue === undefined || newValue === '') {
+                return;
+            }
+            // Push it to radioOptions
+            if(!_.isUndefined(vm.oldOption)){
+                var oldOptionIndex =  vm.question.options.indexOf(vm.oldOption);
+                if(oldOptionIndex !== -1 ){
+                    vm.question.options.splice(oldOptionIndex, 1);
+                }
+                vm.isOptionEdit = false;
+            }
+
+            var index =  vm.question.options.indexOf(newValue);
+            if(index === -1) {
+                vm.question.options.push(newValue);
+            }
+            console.log("question",vm.question.options);
+            // vm.isOptionEdit
+            // Clear input contents
+            vm.newRadioValue = '';
+        }
+        function _removeOption(option) {
+            var index = vm.question.options.indexOf(option);
+            if(index !== -1){
+                vm.question.options.splice(index,1);
+            }
+        }
+        function _editOption(option) {
+            vm.isOptionEdit = true;
+            vm.newRadioValue = option;
+            vm.oldOption = option;
+        }
+
+        //SUB QUESTIONS RELATED
+        function _toggleAddSubQuestion() {
+            vm.showSubQuestion = true;
+            if(vm.isSubEdit){
+                vm.sub_question = {};
+                vm.isSubEdit = false
+            }
+        }
+        function _addToSubQuestion() {
+
+            var subQuestion = {
+                question_text:vm.sub_question.question_text,
+                parent_question:vm.question._id,
+                required:vm.question.required,
+                show:true,
+                measurement_unit: !_.isUndefined(vm.sub_question.measurement_unit)? vm.sub_question.measurement_unit:null,
+                validation_factor: vm.sub_question.selected_validation.name,
+                sub_question_type: 'fib',
+                form:vm.form._id
+            };
+            //TODO check obj b4 adding
+            vm.sub_question_list.push(subQuestion);
+            vm.vallidationCopy = vm.sub_question.selected_validation;
+            vm.sub_question = {};
+            vm.sub_question.selected_validation = vm.vallidationCopy;
+            vm.showSubQuestion = false;
+        }
+        function _cancelSubQuestion() {
+            vm.sub_question = {};
+            vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
+                return val.name === 'NONE'; //set sub question validation default to NONE
+            }));
+            vm.showSubQuestion = false;
+        }
+        function saveSubQuestionList() {
+            _.forEach(vm.sub_question_list,function (subQn) {
+                if(!_.isUndefined(subQn._id)){
+                    FormService.UpdateQuestion(subQn).then(function (response) {
+                        // console.log(subQn.question_text + "Updated",response);
+                    },function (error) {
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to Save Sub Question",message);
+                    });
+                }else {
+                    subQn.number = setSubQuestionOrderNumber();
+                    subQn.parent_question = vm.question._id;
+                    vm.maxSubOrderNumber = subQn.number;
+                    FormService.CreateQuestion(subQn,subQn.sub_question_type).then(function (response) {
+                        // console.log(subQn.question_text + "sub question created",response);
+                    },function (error) {
+                        console.log("sub question error create",error);
+                    });
+                }
+            });
+        }
+        function _editSubQuestion(question,ev) {
+            vm.isSubEdit = true;
+            vm.showSubQuestion = true;
+            vm.sub_question = question;
+            SetValidationObj(true);
+            console.log("vm.sub_question.selected_validation",vm.sub_question);
+        }
+
+        function spliceQuestionFromList(question) {
+            var subQuestionIndex =  vm.sub_question_list.indexOf(question);
+            if(subQuestionIndex !== -1 ){
+                vm.sub_question_list.splice(subQuestionIndex, 1);
+            }
+        }
+
+        function _removeSubQuestion(question, ev) {
+            AlertService.showConfirmForDelete("You are about to REMOVE this Question?",
+                "Are you sure?", "Yes, REMOVE it!", "warning", true,function (isConfirm) {
+
+                    if(isConfirm){
+                        if(_.isUndefined(question._id)){
+                            // vm.sub_question
+                            if(_.isUndefined(vm.question.sub_questions)){
+                                spliceQuestionFromList(question);
+                            }else{
+                                var subIndex =  vm.question.sub_questions.indexOf(question);
+                                if(subIndex !== -1 ){
+                                    vm.question.sub_questions.splice(subIndex, 1);
+                                }
+                            }
+
+                        }else{
+                            question.form = vm.form._id;
+                            FormService.DeleteQuestion(question).then(function(response){
+                                spliceQuestionFromList(question);
+                                AlertService.showSuccess("SUB QUESTION","Sub Question Deleted successfully");
+                            },function(error){
+                                console.log("qn deleting error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("Failed to DELETE Question",message);
+                            })
+                        }
+                    }
+
+                });
+
+        }
+        function _subQuestionValidationSelected() {
+          console.log("vm.sub_question.selected_validation",vm.sub_question.selected_validation)
+        }
+
+
+
+        function _addAnother() {
+            console.log("question",vm.question);
+        }
+        function _showQuestionOn() {
+            console.log("Question show",vm.question.show);
+        }
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+        function _questionTypeChanged() {
+            // if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED && !vm.isEdit){
+            //     vm.showSubQuestion = true;
+            // }
+        }
+
+
+
+        function getQuestionTypeObj(typeName) {
+            return _.first(_.filter(vm.questionTypes,function (type) {
+                return type.name === typeName || type.code === typeName;
+            }));
+        }
+        function SetValidationObj(isSubQuestion) {
+            if(isSubQuestion){
+                vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function (val) {
+                    return val.name === vm.sub_question.validation_factor;
+                }));
+            }else{
+                if(vm.question.selected_type.code === QUESTION_TYPE.FILL_IN_BLANK){
+                    vm.question.selected_validation = _.first(_.filter(vm.fibvalidation,function (val) {
+                        return val.name === vm.question.validation_factor;
+                    }));
+                }
+            }
+
+        }
+
+        function setSubQuestionOrderNumber() {
+            var maxNo = _.max(vm.question.sub_questions,function(sub){
+                return sub.number;
+            });
+            vm.maxSubOrderNumber = _.isUndefined(vm.maxSubOrderNumber)?maxNo.number: vm.maxSubOrderNumber;
+            var number =  _.isEmpty(vm.maxSubOrderNumber)? 0 :  parseInt(vm.maxSubOrderNumber) + 1;
+            return _.isUndefined(number)? 0 : number;
+        }
+        function GetNextQuestionOrderNumber() {
+            return vm.maxOrderNumber + 1;
+        }
+
+    }
+
+
+})(window.angular);
+/**
  * Created by Yoni on 1/9/2018.
  */
 (function(angular) {
@@ -9440,737 +10172,6 @@ var INDICATOR = {
   }
 })(window.angular);
 
-/**
- * Created by Yoni on 1/29/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.forms").controller("FormBuilderController", FormBuilderController);
-
-    FormBuilderController.$inject = ['FormService','$mdDialog','RouteHelpers','$stateParams','AlertService','blockUI','$scope','$state'];
-
-    function FormBuilderController(FormService,$mdDialog,RouteHelpers,$stateParams,AlertService,blockUI,$scope,$state) {
-        var vm = this;
-        vm.isEdit = $stateParams.id !== "0";
-        vm.formId = $stateParams.id;
-        vm.formTypes = FormService.FormTypes;
-
-        //QUESTION RELATED
-        vm.addQuestion = _addQuestion;
-        vm.editQuestion = _editQuestion;
-
-        vm.saveForm = _saveForm;
-        vm.typeStyle = _typeStyle;
-
-        //Section related
-        vm.selectSection = _selectSection;
-        vm.addSection = _addSection;
-        vm.saveSection = _saveSection;
-        vm.editSection = _editSection;
-        vm.removeSection = _removeSection;
-        vm.cancelSection = _cancelSection;
-
-        //QUESTION ORDERING RELATED
-        $scope.sortableOptions = {
-            placeholder: 'ui-state-highlight',
-            update: function(e, ui) {
-            },
-            stop: function(e, ui) {
-                vm.selected_section.questions.map(function(question,index){
-                    question.number = index;
-                    UpdateQuestionOrder(question);
-                });
-            }
-        };
-        $scope.sectionSortableOptions = {
-            placeholder: 'ui-state-highlight',
-            stop: function(e, ui) {
-                console.log("stop ordering questions");
-                vm.formData.questions.map(function(question,index){
-                    question.number = index;
-                    UpdateQuestionOrder(question);
-                });
-            }
-        };
-
-        function UpdateQuestionOrder(question) {
-            FormService.UpdateQuestion(question).then(
-                function (response) {
-                    // console.log("saving ordered [" + question.question_text + "] ",response);
-                },function (error) {
-                    console.log("error saving order question [" + question.question_text + "] ",error);
-                }
-            )
-        }
-
-        initialize();
-
-        function _saveForm() {
-            var myBlockUI = blockUI.instances.get('formBuilderBlockUI');
-            myBlockUI.start();
-
-            if(vm.isEdit){
-
-                var editForm = {
-                    _id:vm.formData._id,
-                    title:vm.formData.title,
-                    subtitle:vm.formData.subtitle,
-                    purpose:vm.formData.purpose,
-                    layout:vm.formData.layout,
-                    has_sections:vm.formData.has_sections
-                };
-
-                FormService.UpdateForm(editForm).then(function (response) {
-                    myBlockUI.stop();
-                    vm.formData = response.data;
-                    vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
-                    AlertService.showSuccess("FORM UPDATED","Form updated successfully");
-                    $state.go('app.builder',{id:vm.formData._id},{inherit:true});
-                },function (error) {
-                    myBlockUI.stop();
-                    var message = error.data.error.message;
-                    AlertService.showError("Failed to Save Form",message);
-                    console.log("error",error);
-                });
-
-            }else
-                {
-
-                var preparedForm = {
-                    title:vm.formData.title,
-                    subtitle:vm.formData.subtitle,
-                    purpose:vm.formData.purpose,
-                    layout:vm.formData.layout,
-                    has_sections:vm.formData.has_sections,
-                    type: vm.formData.selected_formType.code,
-                    questions: []
-                };
-
-                FormService.CreateForm(preparedForm).then(function (response) {
-                    myBlockUI.stop();
-                    vm.formData = response.data;
-                    vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
-                    AlertService.showSuccess("FORM CREATED","Form created successfully");
-                    $state.go('app.builder',{id:vm.formData._id},{inherit:true});
-                },function (error) {
-                    myBlockUI.stop();
-                    var message = error.data.error.message;
-                    AlertService.showError("Failed to Save Form",message);
-                    console.log("error",error);
-                });
-
-            }
-
-        }
-
-
-        function _addQuestion(sectionData,ev) {
-            $mdDialog.show({
-                locals: {data: {question:null,form: {_id: vm.formData._id,questions:vm.formData.has_sections?vm.selected_section.questions:vm.formData.questions},section:sectionData,number:vm.maxOrderNumber}},
-                templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'QuestionBuilderController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                console.log("call api to refresh");
-                callAPI();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-
-        }
-        function _editQuestion(question,ev) {
-            $mdDialog.show({
-                locals: {data: {question:question,form: {_id: vm.formData._id,questions:vm.formData.has_sections?vm.selected_section.questions:vm.formData.questions},number:vm.maxOrderNumber}},
-                templateUrl: RouteHelpers.basepath('forms/question.builder.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'QuestionBuilderController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callAPI();
-            }, function () {
-            });
-        }
-
-        function initialize() {
-
-            if(vm.isEdit){
-                callAPI();
-            }else{
-                vm.formData = {
-                    has_sections:0,
-                    layout:'TWO_COLUMNS'
-                };
-            }
-        }
-
-        function callAPI() {
-            var myBlockUIOnStart = blockUI.instances.get('formBuilderBlockUI');
-            myBlockUIOnStart.start();
-            FormService.GetForm(vm.formId).then(function (response) {
-                vm.formData = response.data;
-                //REFRESH SELECTED SECTION
-                if(vm.formData.sections.length > 0 && !_.isUndefined(vm.selected_section)){
-                    vm.selected_section = _.first(_.filter(vm.formData.sections,function (section) {
-                        return section._id === vm.selected_section._id;
-                    }));
-                }
-
-                if(vm.formData.has_sections){
-                    GetMaximumOrderNumberForSection();
-
-                }else{
-
-                    if(vm.formData.questions.length > 0){
-                        vm.maxOrderNumber = _.max(vm.formData.questions,function (qn) {
-                            return qn.number;
-                        }).number;
-                    }else{
-                        vm.maxOrderNumber = 0;
-                    }
-
-                    console.log("max number for question without section",vm.maxOrderNumber);
-                }
-
-                vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
-
-                myBlockUIOnStart.stop();
-
-            },function (error) {
-                myBlockUIOnStart.stop();
-                console.log("error",error);
-            });
-        }
-
-        function GetMaximumOrderNumberForSection() {
-            if(!_.isUndefined(vm.selected_section)){
-
-                if(vm.selected_section.questions.length > 0){
-                    vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
-                        return qn.number;
-                    }).number;
-                }else {
-                    vm.maxOrderNumber = 0;
-                }
-
-            }else{
-                vm.maxOrderNumber = 0;
-            }
-        }
-        function getFormTypeObj(code) {
-            return _.first(_.filter(vm.formTypes,function (type) {
-                return type.code === code;
-            }));
-        }
-
-        function _typeStyle(type){
-            var style = '';
-            switch (type.trim()){
-                case 'Fill In Blank':
-                case 'FILL_IN_BLANK':
-                    style =  'label bg-green-dark';
-                    break;
-                case 'Yes/No':
-                case 'YES_NO':
-                    style =  'label bg-info';
-                    break;
-                case 'GROUPED':
-                    style =  'label bg-warning-dark';
-                    break;
-                case 'SINGLE_CHOICE':
-                    style =  'label bg-primary';
-                    break;
-                case 'MULTIPLE_CHOICE':
-                    style =  'label bg-pink-dark';
-                    break;
-                default:
-                    style =  'label bg-inverse';
-            }
-            return style;
-        }
-
-        //------SECTION RELATED---------
-
-        function _addSection() {
-            vm.selected_section = {};
-            vm.showSectionForm = true;
-        }
-        function _selectSection(selectedSection) {
-            vm.showSectionForm = false;
-            vm.selected_section = selectedSection;
-            vm.selected_section.form = vm.formId; //This is important for remove section
-            GetMaximumOrderNumberForSection();
-            // vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
-            //     return qn.number;
-            // }).number;
-            console.log("max number for question with section on select",vm.maxOrderNumber);
-        }
-
-        function _saveSection(section) {
-            section.form = vm.formId;
-            if( _.isUndefined(section._id)){
-
-            FormService.CreateSection(section).then(function (response) {
-                vm.selected_section = response.data;
-                vm.selected_section.form = vm.formId; //set to which form it belongs
-                vm.showSectionForm = false;
-                AlertService.showSuccess("SECTION","Section Created successfully");
-                callAPI();//REFRESH FORM DATA
-            },function (error) {
-                console.log("error when saving section",error);
-            });
-
-            }else {
-                FormService.UpdateSection(section).then(function (response) {
-                    vm.selected_section = response.data;
-                    vm.selected_section.form = vm.formId; //set to which form it belongs
-                    vm.showSectionForm = false;
-                    callAPI();//REFRESH FORM DATA
-                    AlertService.showSuccess("SECTION","Section Updated successfully");
-                    console.log("saved section",response);
-                },function (error) {
-                    console.log("error when saving section",error);
-                });
-            }
-        }
-        function _editSection(section) {
-            vm.selected_section = section;
-            vm.selected_section.form = vm.formId;
-            vm.showSectionForm = true;
-        }
-        function _cancelSection() {
-            vm.showSectionForm = false;
-        }
-
-        function _removeSection(section) {
-            AlertService.showConfirmForDelete("You are about to DELETE SECTION, All Questions under this section will be removed",
-                "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
-                    if(isConfirm){
-                        vm.selected_section.form = vm.formId; //set to which form it belongs
-                        FormService.RemoveSection(section).then(function(response){
-                            vm.showSectionForm = false;
-                            callAPI();
-                            AlertService.showSuccess("SECTION","Section Deleted successfully");
-                            vm.selected_section = undefined;
-                        },function(error){
-                            console.log("Section deleting error",error);
-                            var message = error.data.error.message;
-                            AlertService.showError("Failed to DELETE Section",message);
-                        });
-                    }
-
-                });
-        }
-    }
-
-
-})(window.angular);
-/**
- * Created by Yoni on 2/9/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.forms").controller("QuestionBuilderController", QuestionBuilderController);
-
-    QuestionBuilderController.$inject = ['FormService','$mdDialog','data','AlertService','$scope'];
-
-    function QuestionBuilderController(FormService,$mdDialog,data,AlertService,$scope) {
-        var vm = this;
-        vm.questionTypes = FormService.QuestionTypes;
-        vm.readOnly = false;
-
-        vm.saveQuestion = _saveQuestion;
-        vm.cancel = _cancel;
-        vm.addAnother = _addAnother;
-        vm.showQuestionOn = _showQuestionOn;
-        vm.removeQuestion = _removeQuestion;
-
-        vm.questionTypeChanged = _questionTypeChanged;
-
-        //Sub Question related
-        vm.showSubQuestion = false;//used for grouped questions
-        vm.toggleAddSubQuestion = _toggleAddSubQuestion;
-        vm.addToSubQuestion = _addToSubQuestion;
-        vm.editSubQuestion = _editSubQuestion;
-        vm.removeSubQuestion = _removeSubQuestion;
-        vm.cancelSubQuestion = _cancelSubQuestion;
-        vm.subQuestionValidationSelected = _subQuestionValidationSelected;
-
-
-        //SC & MC related
-        vm.addRadio = _addRadio;
-        vm.removeOption = _removeOption;
-        vm.editOption = _editOption;
-
-        //SUB QUESTION ORDERING RELATED
-        $scope.sortableSubQuestions = {
-            placeholder: 'ui-state-highlight',
-            update: function(e, ui) {
-              console.log("update")
-            },
-            stop: function(e, ui) {
-                vm.sub_question_list.map(function(question,index){
-                    question.number = index;
-                    FormService.UpdateQuestion(question).then(
-                        function (response) {
-                            // console.log("saving ordered [" + question.question_text + "] ",response);
-                        },function (error) {
-                            console.log("error saving order question [" + question.question_text + "] ",error);
-                        }
-                    )
-                });
-            }
-        };
-
-        initialize();
-
-        function initialize() {
-            vm.sub_question_list = [];
-            vm.fibvalidation = [{name:'NONE',code:'text'},{name:'ALPHANUMERIC',code:'text'},{name:'NUMERIC',code:'number'},{name:'ALPHABETIC',code:'text'}];
-            vm.isEdit = data.question !== null;
-            vm.form = data.form;
-            vm.maxOrderNumber = data.number;
-            vm.isSubEdit = false;
-            vm.sub_question = {};
-            vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
-                return val.name === 'NONE'; //set sub question validation default to NONE
-            }));
-            vm.questionList = _.filter(data.form.questions,function (question) {
-                return question.options.length > 0 && (question.type === QUESTION_TYPE.YES_NO || question.type === QUESTION_TYPE.SINGLE_CHOICE);
-               //question list used for WHEN is selected
-            });
-
-            if(vm.isEdit){
-                vm.question = data.question;
-                if(!_.isUndefined(vm.question.sub_questions)){
-                    vm.sub_question_list = vm.question.sub_questions;
-                }
-                if(vm.question.prerequisites.length === 1){
-                    var prereq = vm.question.prerequisites[0];
-                    FormService.GetQuestion(prereq.question).then(function (response) {
-                        vm.selected_question = response.data;
-                        vm.selected_question.selected_value =  prereq.answer;
-                    })
-                }
-                vm.question.form = data.form._id;
-                vm.question.selected_type = getQuestionTypeObj(vm.question.type);
-                SetValidationObj(false);
-            }else {
-                vm.question = {
-                    show: 1,
-                    required:0,
-                    options:[]
-                };
-
-                vm.question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
-                    return val.name === 'NONE'; //set question validation default to NONE
-                }));
-
-                if(data.section.has_section){
-                    vm.question.section = data.section.sectionId;
-                }
-
-            }
-        }
-
-        function _saveQuestion() {
-            var preparedQn = {
-                question_text:vm.question.question_text,
-                remark:vm.question.remark,
-                required:vm.question.required,
-                show:vm.question.show,
-                measurement_unit: !_.isUndefined(vm.question.measurement_unit)? vm.question.measurement_unit:null,
-                form:vm.form._id
-            };
-            if(vm.question.selected_type.code === QUESTION_TYPE.FILL_IN_BLANK){
-                preparedQn.validation_factor = vm.question.selected_validation.name;
-            }
-            else if(vm.question.selected_type.code === QUESTION_TYPE.YES_NO){
-                preparedQn.options = vm.question.selected_type.options;
-            }
-            if(!_.isUndefined(vm.question.options) && vm.question.options.length > 0 ){
-                preparedQn.options = vm.question.options;
-            }
-            //SET PREREQUISITE IF SHOW IS FALSE
-            if(vm.question.show === "0" || !vm.question.show){
-                if(!_.isUndefined(vm.selected_question) &&
-                    !_.isUndefined(vm.selected_question.selected_value)){
-                    var prerequisite = {
-                        question:vm.selected_question._id,
-                        answer:vm.selected_question.selected_value
-                    };
-                    preparedQn.prerequisites = [];
-                    preparedQn.prerequisites.push(prerequisite);
-                }
-            }else{
-                preparedQn.prerequisites = [];
-            }
-
-            if(!vm.isEdit){
-                preparedQn.section = vm.question.section;
-                preparedQn.number = GetNextQuestionOrderNumber();
-                FormService.CreateQuestion(preparedQn,vm.question.selected_type.url).then(function (response) {
-                    console.log("Question created",response);
-                    vm.maxOrderNumber = preparedQn.number;
-                    vm.question = response.data;
-                    vm.showSubQuestion = true;
-                    if(vm.question.type === QUESTION_TYPE.GROUPED){
-                        saveSubQuestionList();
-                    }
-                    $mdDialog.hide();
-                    AlertService.showSuccess("Question Created","Question Created successfully");
-                },function (error) {
-                    console.log("Question create error",error);
-                    var message = error.data.error.message;
-                    AlertService.showError("Failed to Save Question",message);
-                });
-
-            }else
-                {
-                preparedQn._id = vm.question._id;
-
-                FormService.UpdateQuestion(preparedQn).then(function (response) {
-                    if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED){
-                        saveSubQuestionList();
-                    }
-                    $mdDialog.hide();
-                    AlertService.showSuccess("Question Updated","Question Updated successfully");
-                },function (error) {
-                    console.log("qn update error",error);
-                    var message = error.data.error.message;
-                    AlertService.showError("Failed to Update Question",message);
-
-                });
-            }
-        }
-        function _removeQuestion(question,$event) {
-            AlertService.showConfirmForDelete("You are about to DELETE this Question?",
-                "Are you sure?", "Yes, Delete it!", "warning", true,function (isConfirm) {
-                    question.form = vm.form._id;
-
-                if(isConfirm){
-                    FormService.DeleteQuestion(question).then(function(response){
-                        AlertService.showSuccess("Question","Question Deleted successfully");
-                        $mdDialog.hide();
-                    },function(error){
-                        console.log("qn deleting error",error);
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to DELETE Question",message);
-                    })
-                }
-
-                });
-
-        }
-
-        //SC AND MC OPTIONS RELATED
-        function _addRadio(newValue) {
-            // If value is undefined, cancel.
-            if (newValue === undefined || newValue === '') {
-                return;
-            }
-            // Push it to radioOptions
-            if(!_.isUndefined(vm.oldOption)){
-                var oldOptionIndex =  vm.question.options.indexOf(vm.oldOption);
-                if(oldOptionIndex !== -1 ){
-                    vm.question.options.splice(oldOptionIndex, 1);
-                }
-                vm.isOptionEdit = false;
-            }
-
-            var index =  vm.question.options.indexOf(newValue);
-            if(index === -1) {
-                vm.question.options.push(newValue);
-            }
-            console.log("question",vm.question.options);
-            // vm.isOptionEdit
-            // Clear input contents
-            vm.newRadioValue = '';
-        }
-        function _removeOption(option) {
-            var index = vm.question.options.indexOf(option);
-            if(index !== -1){
-                vm.question.options.splice(index,1);
-            }
-        }
-        function _editOption(option) {
-            vm.isOptionEdit = true;
-            vm.newRadioValue = option;
-            vm.oldOption = option;
-        }
-
-        //SUB QUESTIONS RELATED
-        function _toggleAddSubQuestion() {
-            vm.showSubQuestion = true;
-            if(vm.isSubEdit){
-                vm.sub_question = {};
-                vm.isSubEdit = false
-            }
-        }
-        function _addToSubQuestion() {
-
-            var subQuestion = {
-                question_text:vm.sub_question.question_text,
-                parent_question:vm.question._id,
-                required:vm.question.required,
-                show:true,
-                measurement_unit: !_.isUndefined(vm.sub_question.measurement_unit)? vm.sub_question.measurement_unit:null,
-                validation_factor: vm.sub_question.selected_validation.name,
-                sub_question_type: 'fib',
-                form:vm.form._id
-            };
-            //TODO check obj b4 adding
-            vm.sub_question_list.push(subQuestion);
-            vm.vallidationCopy = vm.sub_question.selected_validation;
-            vm.sub_question = {};
-            vm.sub_question.selected_validation = vm.vallidationCopy;
-            vm.showSubQuestion = false;
-        }
-        function _cancelSubQuestion() {
-            vm.sub_question = {};
-            vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function(val){
-                return val.name === 'NONE'; //set sub question validation default to NONE
-            }));
-            vm.showSubQuestion = false;
-        }
-        function saveSubQuestionList() {
-            _.forEach(vm.sub_question_list,function (subQn) {
-                if(!_.isUndefined(subQn._id)){
-                    FormService.UpdateQuestion(subQn).then(function (response) {
-                        // console.log(subQn.question_text + "Updated",response);
-                    },function (error) {
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to Save Sub Question",message);
-                    });
-                }else {
-                    subQn.number = setSubQuestionOrderNumber();
-                    subQn.parent_question = vm.question._id;
-                    vm.maxSubOrderNumber = subQn.number;
-                    FormService.CreateQuestion(subQn,subQn.sub_question_type).then(function (response) {
-                        // console.log(subQn.question_text + "sub question created",response);
-                    },function (error) {
-                        console.log("sub question error create",error);
-                    });
-                }
-            });
-        }
-        function _editSubQuestion(question,ev) {
-            vm.isSubEdit = true;
-            vm.showSubQuestion = true;
-            vm.sub_question = question;
-            SetValidationObj(true);
-            console.log("vm.sub_question.selected_validation",vm.sub_question);
-        }
-
-        function spliceQuestionFromList(question) {
-            var subQuestionIndex =  vm.sub_question_list.indexOf(question);
-            if(subQuestionIndex !== -1 ){
-                vm.sub_question_list.splice(subQuestionIndex, 1);
-            }
-        }
-
-        function _removeSubQuestion(question, ev) {
-            AlertService.showConfirmForDelete("You are about to REMOVE this Question?",
-                "Are you sure?", "Yes, REMOVE it!", "warning", true,function (isConfirm) {
-
-                    if(isConfirm){
-                        if(_.isUndefined(question._id)){
-                            // vm.sub_question
-                            if(_.isUndefined(vm.question.sub_questions)){
-                                spliceQuestionFromList(question);
-                            }else{
-                                var subIndex =  vm.question.sub_questions.indexOf(question);
-                                if(subIndex !== -1 ){
-                                    vm.question.sub_questions.splice(subIndex, 1);
-                                }
-                            }
-
-                        }else{
-                            question.form = vm.form._id;
-                            FormService.DeleteQuestion(question).then(function(response){
-                                spliceQuestionFromList(question);
-                                AlertService.showSuccess("SUB QUESTION","Sub Question Deleted successfully");
-                            },function(error){
-                                console.log("qn deleting error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("Failed to DELETE Question",message);
-                            })
-                        }
-                    }
-
-                });
-
-        }
-        function _subQuestionValidationSelected() {
-          console.log("vm.sub_question.selected_validation",vm.sub_question.selected_validation)
-        }
-
-
-
-        function _addAnother() {
-            console.log("question",vm.question);
-        }
-        function _showQuestionOn() {
-            console.log("Question show",vm.question.show);
-        }
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-        function _questionTypeChanged() {
-            // if(vm.question.selected_type.code === QUESTION_TYPE.GROUPED && !vm.isEdit){
-            //     vm.showSubQuestion = true;
-            // }
-        }
-
-
-
-        function getQuestionTypeObj(typeName) {
-            return _.first(_.filter(vm.questionTypes,function (type) {
-                return type.name === typeName || type.code === typeName;
-            }));
-        }
-        function SetValidationObj(isSubQuestion) {
-            if(isSubQuestion){
-                vm.sub_question.selected_validation = _.first(_.filter(vm.fibvalidation,function (val) {
-                    return val.name === vm.sub_question.validation_factor;
-                }));
-            }else{
-                if(vm.question.selected_type.code === QUESTION_TYPE.FILL_IN_BLANK){
-                    vm.question.selected_validation = _.first(_.filter(vm.fibvalidation,function (val) {
-                        return val.name === vm.question.validation_factor;
-                    }));
-                }
-            }
-
-        }
-
-        function setSubQuestionOrderNumber() {
-            var maxNo = _.max(vm.question.sub_questions,function(sub){
-                return sub.number;
-            });
-            vm.maxSubOrderNumber = _.isUndefined(vm.maxSubOrderNumber)?maxNo.number: vm.maxSubOrderNumber;
-            var number =  _.isEmpty(vm.maxSubOrderNumber)? 0 :  parseInt(vm.maxSubOrderNumber) + 1;
-            return _.isUndefined(number)? 0 : number;
-        }
-        function GetNextQuestionOrderNumber() {
-            return vm.maxOrderNumber + 1;
-        }
-
-    }
-
-
-})(window.angular);
 (function (angular) {
     "use strict";
 
