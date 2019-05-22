@@ -123,17 +123,17 @@
     'use strict';
 
     angular
-        .module('app.translate', []);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.utils', [
           'app.colors'
           ]);
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate', []);
+})();
 (function() {
     'use strict';
 
@@ -2572,70 +2572,6 @@
     }
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .config(translateConfig)
-        ;
-    translateConfig.$inject = ['$translateProvider'];
-    function translateConfig($translateProvider){
-
-      $translateProvider.useStaticFilesLoader({
-          prefix : 'app/i18n/',
-          suffix : '.json'
-      });
-
-      $translateProvider.preferredLanguage('en');
-      $translateProvider.useLocalStorage();
-      $translateProvider.usePostCompiling(true);
-      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
-
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .run(translateRun)
-        ;
-    translateRun.$inject = ['$rootScope', '$translate'];
-    
-    function translateRun($rootScope, $translate){
-
-      // Internationalization
-      // ----------------------
-
-      $rootScope.language = {
-        // Handles language dropdown
-        listIsOpen: false,
-        // list of available languages
-        available: {
-          'en':       'English',
-          'es_AR':    'Español'
-        },
-        // display always the current ui language
-        init: function () {
-          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
-          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
-          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
-        },
-        set: function (localeId) {
-          // Set the new idiom
-          $translate.use(localeId);
-          // save a reference for the current language
-          $rootScope.language.selected = $rootScope.language.available[localeId];
-          // finally toggle dropdown
-          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
-        }
-      };
-
-      $rootScope.language.init();
-
-    }
-})();
 /**=========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
@@ -3066,6 +3002,70 @@
     }
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .config(translateConfig)
+        ;
+    translateConfig.$inject = ['$translateProvider'];
+    function translateConfig($translateProvider){
+
+      $translateProvider.useStaticFilesLoader({
+          prefix : 'app/i18n/',
+          suffix : '.json'
+      });
+
+      $translateProvider.preferredLanguage('en');
+      $translateProvider.useLocalStorage();
+      $translateProvider.usePostCompiling(true);
+      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
+
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .run(translateRun)
+        ;
+    translateRun.$inject = ['$rootScope', '$translate'];
+    
+    function translateRun($rootScope, $translate){
+
+      // Internationalization
+      // ----------------------
+
+      $rootScope.language = {
+        // Handles language dropdown
+        listIsOpen: false,
+        // list of available languages
+        available: {
+          'en':       'English',
+          'es_AR':    'Español'
+        },
+        // display always the current ui language
+        init: function () {
+          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
+          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
+          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
+        },
+        set: function (localeId) {
+          // Set the new idiom
+          $translate.use(localeId);
+          // save a reference for the current language
+          $rootScope.language.selected = $rootScope.language.available[localeId];
+          // finally toggle dropdown
+          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
+        }
+      };
+
+      $rootScope.language.init();
+
+    }
+})();
 /**
  * Created by Yoni on 1/8/2018.
  */
@@ -3206,18 +3206,6 @@
     };
 
 })();
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function() {
-    'use strict';
-
-    angular.module('app.loan_management', [
-        'app.clients',
-        'app.processing'
-    ]);
-
-})();
 
 (function() {
     'use strict';
@@ -3235,30 +3223,16 @@
         }]);
 
 })();
-(function() {
-  "use strict";
-
-  angular.module("app.mfi", [
-  ]).run(runBlock);
-
-function runBlock() {
-}
-
-})();
-
 /**
- * Created by Yoni on 11/30/2017.
+ * Created by Yonas on 4/27/2018.
  */
 (function() {
     'use strict';
 
-    angular
-        .module('app.manage_users', []).config(configUM).run(runUM);
-
-    function runUM() {}
-    function configUM() {}
-
-
+    angular.module('app.loan_management', [
+        'app.clients',
+        'app.processing'
+    ]);
 
 })();
 /**
@@ -3278,6 +3252,32 @@ function runBlock() {
 
 })();
 /**
+ * Created by Yoni on 11/30/2017.
+ */
+(function() {
+    'use strict';
+
+    angular
+        .module('app.manage_users', []).config(configUM).run(runUM);
+
+    function runUM() {}
+    function configUM() {}
+
+
+
+})();
+(function() {
+  "use strict";
+
+  angular.module("app.mfi", [
+  ]).run(runBlock);
+
+function runBlock() {
+}
+
+})();
+
+/**
  * Created by Yonas on 8/16/2018.
  */
 (function() {
@@ -3285,6 +3285,14 @@ function runBlock() {
 
     angular
         .module('app.profile', []);
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.report', []);
 
 })();
 /**
@@ -3296,14 +3304,6 @@ function runBlock() {
 
     angular
         .module('app.welcomePage', []);
-
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.report', []);
 
 })();
 
@@ -4004,8 +4004,8 @@ function runBlock() {
 })(window.angular);
 var API = {
     Config: {
-        BaseUrl: 'http://api.buusaa-bidir.local/', //LOCAL APIs
-        // BaseUrl: 'http://api.dev.bidir.gebeya.co/', //REMOTE API
+        // BaseUrl: 'http://api.buusaa-bidir.local/', //LOCAL APIs
+        BaseUrl: 'http://api.dev.bidir.gebeya.co/', //REMOTE API
         SeasonalMonitoringBaseUrl: 'http://seasmon.wenr.wur.nl/cgi-bin/register.py?',
         SeasmonBaseUrl: 'http://seasmon.wenr.wur.nl/html/'
 
@@ -4969,174 +4969,6 @@ var INDICATOR = {
 
 
 })(window.angular);
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.loan_management')
-
-        .service('LoanManagementService', LoanManagementService);
-
-    LoanManagementService.$inject = ['$http', 'CommonService'];
-
-    function LoanManagementService($http, CommonService) {
-        return {
-            GetLoanApplications: _getLoanApplications,
-            GetClientLoanApplication:_getClientLoanApplication,
-            SaveClientLoanApplication:_saveClientLoanApplication,
-
-            GetScreenings: _getScreenings,
-            GetClientScreening:_getClientScreening,
-            GetClientApplicationByLoanCycle:_getClientApplicationByLoanCycle,
-
-            SaveClientScreening:_saveClientScreening,
-            //CLIENT MANAGEMENT RELATED SERVICES DECLARATION
-            GetClients: _getClients,
-            SaveClient: _saveClient,
-            UpdateClient: _updateClient,
-            GetClientDetail:_getClientDetail,
-            SearchClient:_searchClient,
-            GetClientByLoanCycle:_getClientByLoanCycle,
-            GetBranches: _getBranches,
-
-            GetACATCollections: _getACATCollections,
-            GetClientACAT:_getClientACAT,
-            GetClientLoanProposals:_getClientLoanProposals,
-            GetCrops:_getCrops,
-
-            StyleLabelByStatus: _styleLabelByStatus,
-            loanCycles: [{id:1,name:'1st Loan Cycle'},{id:2,name:'2nd Loan Cycle'},{id:3,name:'3rd Loan Cycle'},{id:4,name:'4th Loan Cycle'},{id:5,name:'5th Loan Cycle'},{id:6,name:'6th Loan Cycle'},{id:7,name:'7th Loan Cycle'},{id:8,name:'8th Loan Cycle'},{id:9,name:'9th Loan Cycle'},{id:10,name:'10th Loan Cycle'}],
-            //GROUP LOAN
-            GetGroupLoans:_getGroupLoans,
-            GetGroupLoan:_getGroupLoan,
-            GetGroupDataByLoanProcessStage:_getGroupDataByLoanProcessStage
-
-        };
-
-        function _getScreenings(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening,parameters));
-        }
-
-        function _saveClientScreening(screening,id) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,id),screening);
-        }
-
-
-        function _getClientScreening(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
-        }
-        function _getClientApplicationByLoanCycle(clientId,application,loanCycle) {
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Histories) + 'application='+application+'&client='+clientId+'&loanCycle='+loanCycle);
-        }
-        function _getLoanApplications(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.LOANS,API.Methods.LOANS.Loans,parameters));
-        }
-        function _getClientLoanApplication(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Clients,clientId));
-        }
-        function _saveClientLoanApplication(loan_application,id) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Loans,id),loan_application);
-        }
-
-
-
-        //CLIENT MANAGEMENT RELATED SERVICES
-        function _searchClient(searchText) {
-            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
-        }
-        function _getClientByLoanCycle(loanCycle) {
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.Client) + '/search?loan_cycle_number=' + loanCycle);
-        }
-
-        function _getClientDetail(id){
-            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
-        }
-        function _getBranches(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
-        }
-        function _getClients(parameters){
-            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,parameters) + '&for_group=false');
-        }
-        function _saveClient(client) {
-            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients + '/create'),client);
-        }
-        function _updateClient(client) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,client._id),client);
-        }
-
-
-        function _styleLabelByStatus(clientStatus) {
-            var style = '';
-            if(_.isUndefined(clientStatus))
-                return '';
-            switch (clientStatus.toLowerCase()){
-                case  'new':
-                    style =  'label bg-gray';
-                    break;
-                case  'submitted':
-                    style =  'label bg-primary-dark';
-                    break;
-                case  'approved':
-                    style =  'label bg-green-dark';
-                    break;
-                case 'screening_inprogress':
-                case 'declined_under_review':
-                    style =  'label label-warning';
-                    break;
-                case 'loan_application_accepted':
-                    style =  'label bg-info-dark';
-                    break;
-                case 'eligible':
-                    style =  'label label-success';
-                    break;
-                case 'ineligible':
-                case 'declined_final':
-                    style =  'label label-danger';
-                    break;
-                case 'loan_application_new':
-                    style =  'label bg-purple-dark';
-                    break;
-                default:
-                    style =  'label label-inverse';
-            }
-            return style;
-        }
-
-        function _getACATCollections(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.ACAT,API.Methods.ACAT.Clients,parameters));
-        }
-        function _getClientACAT(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Clients,clientId));
-        }
-        function _getClientLoanProposals(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProposals,clientId));
-        }
-
-        function _getCrops() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
-        }
-
-
-
-        function _getGroupLoans(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.GROUPS,API.Methods.Group.Group,parameters));
-        }
-
-        function _getGroupLoan(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.GROUPS,API.Methods.Group.Group,id));
-        }
-
-        function _getGroupDataByLoanProcessStage(type,groupId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.GROUPS,API.Methods.Group.Group,groupId) + '/' + type);
-        }
-
-
-
-    }
-
-
-})(window.angular);
 (function (angular) {
     "use strict";
     angular
@@ -5560,86 +5392,445 @@ var INDICATOR = {
 
 
 })(window.angular);
+/**
+ * Created by Yonas on 4/27/2018.
+ */
 (function(angular) {
-  'use strict';
-  angular.module('app.mfi')
+    'use strict';
+    angular.module('app.loan_management')
 
-  .service('MainService', MainService);
+        .service('LoanManagementService', LoanManagementService);
 
-  MainService.$inject = ['$http','CommonService','AuthService'];
+    LoanManagementService.$inject = ['$http', 'CommonService'];
 
-  function MainService($http, CommonService,AuthService) {
+    function LoanManagementService($http, CommonService) {
+        return {
+            GetLoanApplications: _getLoanApplications,
+            GetClientLoanApplication:_getClientLoanApplication,
+            SaveClientLoanApplication:_saveClientLoanApplication,
 
-      return {
-        GetMFI: _getMFI,
-        UpdateMFI: _updateMFI,
-        CreateMFI:_createMFI,
-        UpdateBranch: _updateBranch,
-        GetBranches: _getBranches,
-        CreateBranch:_createBranch
-      };
+            GetScreenings: _getScreenings,
+            GetClientScreening:_getClientScreening,
+            GetClientApplicationByLoanCycle:_getClientApplicationByLoanCycle,
 
-      function _getBranches(){
-          return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
-      }
-      function _createBranch(branch){
-        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch), branch);
-      }
-      function _updateBranch(updated_branch){
-          return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.Branches,updated_branch._id), updated_branch);
-      }
+            SaveClientScreening:_saveClientScreening,
+            //CLIENT MANAGEMENT RELATED SERVICES DECLARATION
+            GetClients: _getClients,
+            SaveClient: _saveClient,
+            UpdateClient: _updateClient,
+            GetClientDetail:_getClientDetail,
+            SearchClient:_searchClient,
+            GetClientByLoanCycle:_getClientByLoanCycle,
+            GetBranches: _getBranches,
 
-      function _getMFI(){
-        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll));
-      }
-      function _updateMFI(data,logo){
-        var updatedMFI = setAttribute(data,logo);
+            GetACATCollections: _getACATCollections,
+            GetClientACAT:_getClientACAT,
+            GetClientLoanProposals:_getClientLoanProposals,
+            GetCrops:_getCrops,
 
-        return $http({
-          url: CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.MFIUpdate,data._id),
-          method: 'PUT',
-          data: updatedMFI,
-          //assigning content-type as undefined,let the browser
-          //assign the correct boundary for us
-          headers: {
-                  'Content-Type': undefined},
-          //prevents serializing payload.  don't do it.
-          transformRequest: angular.identity
-      });
-      }
+            StyleLabelByStatus: _styleLabelByStatus,
+            loanCycles: [{id:1,name:'1st Loan Cycle'},{id:2,name:'2nd Loan Cycle'},{id:3,name:'3rd Loan Cycle'},{id:4,name:'4th Loan Cycle'},{id:5,name:'5th Loan Cycle'},{id:6,name:'6th Loan Cycle'},{id:7,name:'7th Loan Cycle'},{id:8,name:'8th Loan Cycle'},{id:9,name:'9th Loan Cycle'},{id:10,name:'10th Loan Cycle'}],
+            //GROUP LOAN
+            GetGroupLoans:_getGroupLoans,
+            GetGroupLoan:_getGroupLoan,
+            GetGroupDataByLoanProcessStage:_getGroupDataByLoanProcessStage
 
-      function _createMFI(data,logo){
-        var mfiData = setAttribute(data,logo);
-        return $http({
-          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.MFI),
-          method: 'POST',
-          data: mfiData,
-          //assigning content-type as undefined,let the browser handle it
-          headers: {
-            'Authorization': 'Bearer ' + AuthService.GetToken(),
-            'Content-Type': undefined},
-          //prevents serializing data.  don't do it.
-          transformRequest: angular.identity
-      });
+        };
 
-      }
+        function _getScreenings(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening,parameters));
+        }
 
-      function setAttribute(mfi,picFile){
-          var mfiData = new FormData();
-          mfiData.append("name", mfi.name);
-          mfiData.append("location", mfi.location);
-          mfiData.append("establishment_year", mfi.establishment_year);
-          mfiData.append("contact_person", _.isUndefined(mfi.contact_person)?'':mfi.contact_person);
-          mfiData.append("phone", _.isUndefined(mfi.phone)?'':mfi.phone);
-          mfiData.append("email", _.isUndefined(mfi.email)?'':mfi.email);
-          mfiData.append("website_link", _.isUndefined(mfi.website_link)?'':mfi.website_link);
-          if(!_.isUndefined(picFile)){
-              mfiData.append("logo", picFile);
-          }
+        function _saveClientScreening(screening,id) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,id),screening);
+        }
 
-          return mfiData;
-      }
-  }
+
+        function _getClientScreening(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
+        }
+        function _getClientApplicationByLoanCycle(clientId,application,loanCycle) {
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Histories) + 'application='+application+'&client='+clientId+'&loanCycle='+loanCycle);
+        }
+        function _getLoanApplications(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.LOANS,API.Methods.LOANS.Loans,parameters));
+        }
+        function _getClientLoanApplication(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Clients,clientId));
+        }
+        function _saveClientLoanApplication(loan_application,id) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Loans,id),loan_application);
+        }
+
+
+
+        //CLIENT MANAGEMENT RELATED SERVICES
+        function _searchClient(searchText) {
+            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
+        }
+        function _getClientByLoanCycle(loanCycle) {
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.Client) + '/search?loan_cycle_number=' + loanCycle);
+        }
+
+        function _getClientDetail(id){
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
+        }
+        function _getBranches(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+        }
+        function _getClients(parameters){
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,parameters) + '&for_group=false');
+        }
+        function _saveClient(client) {
+            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients + '/create'),client);
+        }
+        function _updateClient(client) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,client._id),client);
+        }
+
+
+        function _styleLabelByStatus(clientStatus) {
+            var style = '';
+            if(_.isUndefined(clientStatus))
+                return '';
+            switch (clientStatus.toLowerCase()){
+                case  'new':
+                    style =  'label bg-gray';
+                    break;
+                case  'submitted':
+                    style =  'label bg-primary-dark';
+                    break;
+                case  'approved':
+                    style =  'label bg-green-dark';
+                    break;
+                case 'screening_inprogress':
+                case 'declined_under_review':
+                    style =  'label label-warning';
+                    break;
+                case 'loan_application_accepted':
+                    style =  'label bg-info-dark';
+                    break;
+                case 'eligible':
+                    style =  'label label-success';
+                    break;
+                case 'ineligible':
+                case 'declined_final':
+                    style =  'label label-danger';
+                    break;
+                case 'loan_application_new':
+                    style =  'label bg-purple-dark';
+                    break;
+                default:
+                    style =  'label label-inverse';
+            }
+            return style;
+        }
+
+        function _getACATCollections(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.ACAT,API.Methods.ACAT.Clients,parameters));
+        }
+        function _getClientACAT(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Clients,clientId));
+        }
+        function _getClientLoanProposals(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProposals,clientId));
+        }
+
+        function _getCrops() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
+        }
+
+
+
+        function _getGroupLoans(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.GROUPS,API.Methods.Group.Group,parameters));
+        }
+
+        function _getGroupLoan(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.GROUPS,API.Methods.Group.Group,id));
+        }
+
+        function _getGroupDataByLoanProcessStage(type,groupId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.GROUPS,API.Methods.Group.Group,groupId) + '/' + type);
+        }
+
+
+
+    }
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 12/10/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('CreateRoleController', CreateRoleController);
+
+    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService','blockUI','$mdPanel'];
+    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService,blockUI,$mdPanel) {
+        var vm = this;
+        vm.cancel = _cancel;
+        vm.saveRole = _saveRole;
+        vm.changeModuleStyle = _modulesStyle;
+        vm.showFilterDialog = _showFilterDialog;
+        vm.showFilter = false;
+        vm.isEdit = items !== null;
+        vm.role = items !== null?items:null;
+
+
+
+        initialize();
+
+        function setPermissions() {
+            _.each(vm.role.permissions, function(oldPermission){
+                _.each(vm.permissions, function(permission) {
+                    if(permission.name === oldPermission.name && !permission.checked){
+                        permission.checked = permission.name === oldPermission.name;
+                    }
+                });
+            });
+        }
+
+        function preparePermissions() {
+            vm.role.permissions = _.filter(vm.permissions,function(permission){
+                return permission.checked? permission._id : null;
+            });
+        }
+
+        function initialize(){
+           if(vm.isEdit){
+               var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
+               myLoadingBlockUI.start("Loading Role and Permissions");
+           }
+            var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
+            if(permissionFromStore !== null){
+                vm.permissions = permissionFromStore;
+                if(vm.isEdit){
+                    setPermissions();
+                    myLoadingBlockUI.stop();
+                }
+
+            }else {
+                ManageRoleService.GetPermissions().then(function(response){
+                    vm.permissions = response.data.docs;
+                    ManageRoleService.StorePermissions(vm.permissions);
+                    console.log("permissions from api",vm.permissions);
+                    if(vm.isEdit){
+                        setPermissions();
+                        myLoadingBlockUI.stop();
+                    }
+                },function(error){
+                    if(vm.isEdit){
+                        myLoadingBlockUI.stop();
+                    }
+                    console.log("error permissions",error);
+                });
+
+            }
+
+        }
+
+        function _saveRole() {
+            var myBlockUI = blockUI.instances.get('RoleBlockUI');
+            myBlockUI.start();
+            preparePermissions();
+            if(vm.isEdit){
+                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
+                        myBlockUI.stop();
+                        $mdDialog.hide();
+                        AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
+                    },
+                    function (error) {
+                        myBlockUI.stop();
+                    var message = error.data.error.message;
+                        AlertService.showError("Failed to update Role",message);
+                        console.log("could not be saved", error);
+                    });
+            }else {
+
+                ManageRoleService.SaveRole( vm.role).then(function (data) {
+                        myBlockUI.stop();
+                        AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
+                        $mdDialog.hide();
+                    },
+                    function (error) {
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to Save Role",message);
+                        console.log("could not be saved", error);
+                    });
+            }
+        }
+
+        function _showFilterDialog(show) {
+
+        }
+
+
+
+        function _modulesStyle(module){
+            var style = '';
+            switch (module){
+                case 'SCREENING':
+                    style =  'label label-primary';
+                    break;
+                case 'SCREENING_MODULE':
+                    style =  'label label-primary';
+                    break;
+                case 'FORM_BUILDER':
+                    style =  'label label-danger';
+                    break;
+                case 'USER_MANAGEMENT':
+                    style =  'label label-green';
+                    break;
+                case 'CLIENT_MANAGEMENT':
+                    style =  'label label-warning';
+                    break;
+                case 'LOAN_MODULE':
+                    style =  'label label-purple';
+                    break;
+                default:
+                    style =  'label label-default';
+            }
+            return style;
+        }
+
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 11/30/2017.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.manage_roles')
+        .controller('ManageRoleController', ManageRoleController);
+
+    ManageRoleController.$inject = ['ManageRoleService', '$mdDialog', 'RouteHelpers'];
+
+    function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
+    {
+        var vm = this;
+        vm.addRole = _addRole;
+        vm.editRole = _editRole;
+
+        fetchRoles();
+
+       function fetchRoles() {
+           ManageRoleService.GetRoles().then(function(response){
+               vm.roles = response.data.docs;
+               // console.log("vm.roles on RM",vm.roles);
+           },function(error){
+               console.log("error role",error);
+           });
+       }
+
+        function _addRole(ev){
+
+            $mdDialog.show({
+                locals: {
+                    items: null
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            })
+                .then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
+        }
+
+        function _editRole(role,ev) {
+            $mdDialog.show({
+                locals: {
+                    items: role
+                },
+                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: 'CreateRoleController',
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                    fetchRoles();
+                }, function () {
+                });
+        }
+
+
+
+    }
+})(window.angular);
+
+
+/**
+ * Created by Yoni on 12/11/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.manage_roles')
+
+        .service('ManageRoleService', ManageRoleService);
+    ManageRoleService.$inject = ['$http', 'CommonService','AuthService','StorageService','APP_CONSTANTS'];
+
+    function ManageRoleService($http, CommonService,AuthService,StorageService,APP_CONSTANTS) {
+        return {
+            GetRoles: _getRoles,
+            GetPermissions: _getPermissions,
+            GetPermissionsbyGroup:_getPermissionsbyGroup,
+            SaveRole: _saveRole,
+            UpdateRole:_updateRole,
+            StorePermissions:_storePermissions,
+            GetPermissionsFromStore:_getPermissionsFromStorage
+        };
+
+        function _getRoles(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
+        }
+
+        function _getPermissions(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions));
+        }
+        function _getPermissionsbyGroup(){
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup));
+        }
+
+        function _saveRole(role) {
+            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role);
+        }
+
+        function _updateRole(role) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role);
+        }
+
+        function _storePermissions(permissions) {
+            return StorageService.Set(APP_CONSTANTS.StorageKey.PERMISSIONS, permissions);
+        }
+        function _getPermissionsFromStorage() {
+            return !_.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS)) ? StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS) : null;
+        }
+
+    }
 
 })(window.angular);
 
@@ -6071,277 +6262,86 @@ var INDICATOR = {
 
 })(window.angular);
 
-/**
- * Created by Yoni on 12/10/2017.
- */
-
 (function(angular) {
-    "use strict";
+  'use strict';
+  angular.module('app.mfi')
 
-    angular
-        .module('app.manage_roles')
-        .controller('CreateRoleController', CreateRoleController);
+  .service('MainService', MainService);
 
-    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService','blockUI','$mdPanel'];
-    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService,blockUI,$mdPanel) {
-        var vm = this;
-        vm.cancel = _cancel;
-        vm.saveRole = _saveRole;
-        vm.changeModuleStyle = _modulesStyle;
-        vm.showFilterDialog = _showFilterDialog;
-        vm.showFilter = false;
-        vm.isEdit = items !== null;
-        vm.role = items !== null?items:null;
+  MainService.$inject = ['$http','CommonService','AuthService'];
 
+  function MainService($http, CommonService,AuthService) {
 
+      return {
+        GetMFI: _getMFI,
+        UpdateMFI: _updateMFI,
+        CreateMFI:_createMFI,
+        UpdateBranch: _updateBranch,
+        GetBranches: _getBranches,
+        CreateBranch:_createBranch
+      };
 
-        initialize();
+      function _getBranches(){
+          return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+      }
+      function _createBranch(branch){
+        return $http.post(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.CreateBranch), branch);
+      }
+      function _updateBranch(updated_branch){
+          return $http.put(CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.Branches,updated_branch._id), updated_branch);
+      }
 
-        function setPermissions() {
-            _.each(vm.role.permissions, function(oldPermission){
-                _.each(vm.permissions, function(permission) {
-                    if(permission.name === oldPermission.name && !permission.checked){
-                        permission.checked = permission.name === oldPermission.name;
-                    }
-                });
-            });
-        }
+      function _getMFI(){
+        return $http.get(CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.GetAll));
+      }
+      function _updateMFI(data,logo){
+        var updatedMFI = setAttribute(data,logo);
 
-        function preparePermissions() {
-            vm.role.permissions = _.filter(vm.permissions,function(permission){
-                return permission.checked? permission._id : null;
-            });
-        }
+        return $http({
+          url: CommonService.buildUrlWithParam(API.Service.MFI,API.Methods.MFI.MFIUpdate,data._id),
+          method: 'PUT',
+          data: updatedMFI,
+          //assigning content-type as undefined,let the browser
+          //assign the correct boundary for us
+          headers: {
+                  'Content-Type': undefined},
+          //prevents serializing payload.  don't do it.
+          transformRequest: angular.identity
+      });
+      }
 
-        function initialize(){
-           if(vm.isEdit){
-               var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
-               myLoadingBlockUI.start("Loading Role and Permissions");
-           }
-            var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
-            if(permissionFromStore !== null){
-                vm.permissions = permissionFromStore;
-                if(vm.isEdit){
-                    setPermissions();
-                    myLoadingBlockUI.stop();
-                }
+      function _createMFI(data,logo){
+        var mfiData = setAttribute(data,logo);
+        return $http({
+          url: CommonService.buildUrl(API.Service.MFI,API.Methods.MFI.MFI),
+          method: 'POST',
+          data: mfiData,
+          //assigning content-type as undefined,let the browser handle it
+          headers: {
+            'Authorization': 'Bearer ' + AuthService.GetToken(),
+            'Content-Type': undefined},
+          //prevents serializing data.  don't do it.
+          transformRequest: angular.identity
+      });
 
-            }else {
-                ManageRoleService.GetPermissions().then(function(response){
-                    vm.permissions = response.data.docs;
-                    ManageRoleService.StorePermissions(vm.permissions);
-                    console.log("permissions from api",vm.permissions);
-                    if(vm.isEdit){
-                        setPermissions();
-                        myLoadingBlockUI.stop();
-                    }
-                },function(error){
-                    if(vm.isEdit){
-                        myLoadingBlockUI.stop();
-                    }
-                    console.log("error permissions",error);
-                });
+      }
 
-            }
+      function setAttribute(mfi,picFile){
+          var mfiData = new FormData();
+          mfiData.append("name", mfi.name);
+          mfiData.append("location", mfi.location);
+          mfiData.append("establishment_year", mfi.establishment_year);
+          mfiData.append("contact_person", _.isUndefined(mfi.contact_person)?'':mfi.contact_person);
+          mfiData.append("phone", _.isUndefined(mfi.phone)?'':mfi.phone);
+          mfiData.append("email", _.isUndefined(mfi.email)?'':mfi.email);
+          mfiData.append("website_link", _.isUndefined(mfi.website_link)?'':mfi.website_link);
+          if(!_.isUndefined(picFile)){
+              mfiData.append("logo", picFile);
+          }
 
-        }
-
-        function _saveRole() {
-            var myBlockUI = blockUI.instances.get('RoleBlockUI');
-            myBlockUI.start();
-            preparePermissions();
-            if(vm.isEdit){
-                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
-                        myBlockUI.stop();
-                        $mdDialog.hide();
-                        AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
-                    },
-                    function (error) {
-                        myBlockUI.stop();
-                    var message = error.data.error.message;
-                        AlertService.showError("Failed to update Role",message);
-                        console.log("could not be saved", error);
-                    });
-            }else {
-
-                ManageRoleService.SaveRole( vm.role).then(function (data) {
-                        myBlockUI.stop();
-                        AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
-                        $mdDialog.hide();
-                    },
-                    function (error) {
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to Save Role",message);
-                        console.log("could not be saved", error);
-                    });
-            }
-        }
-
-        function _showFilterDialog(show) {
-
-        }
-
-
-
-        function _modulesStyle(module){
-            var style = '';
-            switch (module){
-                case 'SCREENING':
-                    style =  'label label-primary';
-                    break;
-                case 'SCREENING_MODULE':
-                    style =  'label label-primary';
-                    break;
-                case 'FORM_BUILDER':
-                    style =  'label label-danger';
-                    break;
-                case 'USER_MANAGEMENT':
-                    style =  'label label-green';
-                    break;
-                case 'CLIENT_MANAGEMENT':
-                    style =  'label label-warning';
-                    break;
-                case 'LOAN_MODULE':
-                    style =  'label label-purple';
-                    break;
-                default:
-                    style =  'label label-default';
-            }
-            return style;
-        }
-
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 11/30/2017.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.manage_roles')
-        .controller('ManageRoleController', ManageRoleController);
-
-    ManageRoleController.$inject = ['ManageRoleService', '$mdDialog', 'RouteHelpers'];
-
-    function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
-    {
-        var vm = this;
-        vm.addRole = _addRole;
-        vm.editRole = _editRole;
-
-        fetchRoles();
-
-       function fetchRoles() {
-           ManageRoleService.GetRoles().then(function(response){
-               vm.roles = response.data.docs;
-               // console.log("vm.roles on RM",vm.roles);
-           },function(error){
-               console.log("error role",error);
-           });
-       }
-
-        function _addRole(ev){
-
-            $mdDialog.show({
-                locals: {
-                    items: null
-                },
-                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateRoleController',
-                controllerAs: 'vm'
-            })
-                .then(function (answer) {
-                    fetchRoles();
-                }, function () {
-                });
-        }
-
-        function _editRole(role,ev) {
-            $mdDialog.show({
-                locals: {
-                    items: role
-                },
-                templateUrl: RouteHelpers.basepath('manageroles/create.role.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: 'CreateRoleController',
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                    fetchRoles();
-                }, function () {
-                });
-        }
-
-
-
-    }
-})(window.angular);
-
-
-/**
- * Created by Yoni on 12/11/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.manage_roles')
-
-        .service('ManageRoleService', ManageRoleService);
-    ManageRoleService.$inject = ['$http', 'CommonService','AuthService','StorageService','APP_CONSTANTS'];
-
-    function ManageRoleService($http, CommonService,AuthService,StorageService,APP_CONSTANTS) {
-        return {
-            GetRoles: _getRoles,
-            GetPermissions: _getPermissions,
-            GetPermissionsbyGroup:_getPermissionsbyGroup,
-            SaveRole: _saveRole,
-            UpdateRole:_updateRole,
-            StorePermissions:_storePermissions,
-            GetPermissionsFromStore:_getPermissionsFromStorage
-        };
-
-        function _getRoles(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Users.Roles));
-        }
-
-        function _getPermissions(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.Users,API.Methods.Roles.Permissions));
-        }
-        function _getPermissionsbyGroup(){
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.PermissionByGroup));
-        }
-
-        function _saveRole(role) {
-            return $http.post(CommonService.buildUrl(API.Service.Users,API.Methods.Roles.Create), role);
-        }
-
-        function _updateRole(role) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Roles.GetAll,role._id), role);
-        }
-
-        function _storePermissions(permissions) {
-            return StorageService.Set(APP_CONSTANTS.StorageKey.PERMISSIONS, permissions);
-        }
-        function _getPermissionsFromStorage() {
-            return !_.isUndefined(StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS)) ? StorageService.Get(APP_CONSTANTS.StorageKey.PERMISSIONS) : null;
-        }
-
-    }
+          return mfiData;
+      }
+  }
 
 })(window.angular);
 
@@ -6416,139 +6416,6 @@ var INDICATOR = {
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id), account);
         }
 
-    }
-
-})(window.angular);
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.welcomePage')
-        .controller('TaskDetailController', TaskDetailController);
-
-    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items','SweetAlert'];
-
-    function TaskDetailController($mdDialog, WelcomeService ,items,SweetAlert) {
-        var vm = this
-        vm.cancel = _cancel;
-        vm.approveUser = _approveUser;
-        vm.declineUser = _declineUser;
-        vm.task = items.taskInfo;
-        console.log("task ",vm.task);
-        WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
-            // console.log("task related user",response);
-            vm.userInfo = response.data;
-
-        },function(error){
-            console.log("error",error);
-        });
-
-        function _approveUser() {
-            var task = {
-                taskId:vm.task._id ,
-                status: "approved",
-                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
-            };
-            updateStatus(task);
-        }
-
-        function _declineUser() {
-            var task = {
-                taskId:vm.task._id ,
-                status: "declined",
-                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
-            };
-            updateStatus(task);
-        }
-
-        function updateStatus(task){
-            WelcomeService.ChangeTaskStatus(task).then(
-                function(response) {
-                    SweetAlert.swal('Task Status Changed!',
-                        'Task '+ task.status + ' Successfully!',
-                        'success');
-                    console.log("task updated",response);
-                    $mdDialog.hide();
-                },
-                function(error) {
-                    SweetAlert.swal( 'Oops...',
-                        'Something went wrong!',
-                        'error');
-                    console.log("could not be updated", error);
-                }
-            );
-        }
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-    }
-
-}(window.angular));
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.welcomePage')
-        .controller('WelcomeController', WelcomeController);
-
-    WelcomeController.$inject = ['$mdDialog', 'WelcomeService','AuthService'];
-
-    function WelcomeController($mdDialog, WelcomeService ,AuthService) {
-        var vm = this;
-
-    }
-
-}(window.angular));
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.welcomePage')
-
-        .service('WelcomeService', WelcomeService);
-    WelcomeService.$inject = ['$http', 'CommonService','AuthService'];
-
-    function WelcomeService($http, CommonService,AuthService) {
-        return {
-            GetTasks: _getTasks,
-            GetUserAccount:_getUserAccount,
-            ChangeTaskStatus:_changeTaskStatus
-        };
-
-        function _getUserAccount(id){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
-        }
-        function _getTasks(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Tasks.GetAll),httpConfig);
-        }
-        function _changeTaskStatus(taskObj) {
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
-        }
     }
 
 })(window.angular);
@@ -6722,146 +6589,136 @@ var INDICATOR = {
 
 })(window.angular);
 /**
- * Created by Yoni on 3/5/2018.
+ * Created by Yoni on 12/3/2017.
  */
-
 (function(angular) {
     "use strict";
 
-    angular.module("app.acat").controller("CropsController", CropsController);
+    angular
+        .module('app.welcomePage')
+        .controller('TaskDetailController', TaskDetailController);
 
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
+    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items','SweetAlert'];
 
-    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearch;
+    function TaskDetailController($mdDialog, WelcomeService ,items,SweetAlert) {
+        var vm = this
+        vm.cancel = _cancel;
+        vm.approveUser = _approveUser;
+        vm.declineUser = _declineUser;
+        vm.task = items.taskInfo;
+        console.log("task ",vm.task);
+        WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
+            // console.log("task related user",response);
+            vm.userInfo = response.data;
 
-        initialize();
+        },function(error){
+            console.log("error",error);
+        });
 
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
+        function _approveUser() {
+            var task = {
+                taskId:vm.task._id ,
+                status: "approved",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
             };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
+            updateStatus(task);
+        }
+
+        function _declineUser() {
+            var task = {
+                taskId:vm.task._id ,
+                status: "declined",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
             };
-
-            callApi();
+            updateStatus(task);
         }
 
-
-        function _paginate (page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-
-       function callApi(){
-        vm.promise =   ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+        function updateStatus(task){
+            WelcomeService.ChangeTaskStatus(task).then(
+                function(response) {
+                    SweetAlert.swal('Task Status Changed!',
+                        'Task '+ task.status + ' Successfully!',
+                        'success');
+                    console.log("task updated",response);
+                    $mdDialog.hide();
+                },
+                function(error) {
+                    SweetAlert.swal( 'Oops...',
+                        'Something went wrong!',
+                        'error');
+                    console.log("could not be updated", error);
                 }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
+            );
         }
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.welcomePage')
+        .controller('WelcomeController', WelcomeController);
+
+    WelcomeController.$inject = ['$mdDialog', 'WelcomeService','AuthService'];
+
+    function WelcomeController($mdDialog, WelcomeService ,AuthService) {
+        var vm = this;
 
     }
 
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.welcomePage')
 
+        .service('WelcomeService', WelcomeService);
+    WelcomeService.$inject = ['$http', 'CommonService','AuthService'];
+
+    function WelcomeService($http, CommonService,AuthService) {
+        return {
+            GetTasks: _getTasks,
+            GetUserAccount:_getUserAccount,
+            ChangeTaskStatus:_changeTaskStatus
+        };
+
+        function _getUserAccount(id){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
+        }
+        function _getTasks(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Tasks.GetAll),httpConfig);
+        }
+        function _changeTaskStatus(taskObj) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
+        }
+    }
 
 })(window.angular);
 /**
@@ -7712,6 +7569,149 @@ var INDICATOR = {
         }
 
 
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+        }
+
+
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+       function callApi(){
+        vm.promise =   ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
 
     }
 
@@ -10578,6 +10578,155 @@ var INDICATOR = {
  * Created by Yonas on 7/3/2018.
  */
 (function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("LoanApplicationProcessorController", LoanApplicationProcessorController);
+
+    LoanApplicationProcessorController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers','$state'];
+
+    function LoanApplicationProcessorController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers,$state ) {
+        var vm = this;
+        vm.backToList = _backToList;
+        vm.questionValueChanged = questionValueChanged;
+        vm.loanApplicationDetail = _loanApplicationDetail;
+        vm.saveClientForm = _saveClientForm;
+
+        vm.options = MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
+        vm.filter = {show : false};
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
+
+        vm.query = {
+            search:'',
+            page:1,
+            per_page:10
+        };
+        vm.visibility = { showLoanApplicationDetail: false };
+
+        vm.paginate = function(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        };
+        vm.clearSearchText = function () {
+            vm.query.search = '';
+            vm.filter.show = false;
+        };
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("search for ",newValue);
+            }
+        });
+
+        initialize();
+
+        function _loanApplicationDetail(client_loan_application) {
+            var client = client_loan_application.client;
+
+            LoanManagementService.GetClientLoanApplication(client._id).then(function (response) {
+                vm.client = response.data;
+                vm.visibility.showLoanApplicationDetail = true;
+                console.log("vm.client",vm.client);
+            });
+        }
+
+
+        function _saveClientForm(client,status) {
+
+            var loan_application = {
+                status: status,
+                questions:[],
+                sections: client.sections
+            };
+            // "[{"status":"Correct Status is either inprogress, accepted, submitted, rejected or declined_under_review"}]"
+
+            console.log("save status ", client);
+
+            LoanManagementService.SaveClientLoanApplication(loan_application,client._id)
+                .then(function (response) {
+                    AlertService.showSuccess('Client Loan Application',"Successfully saved Client Loan Application information  with status: " + status);
+                    console.log("saved  ", response);
+                },function (error) {
+                    console.log("error on saving loan application", error);
+                    var message = error.data.error.message;
+                    AlertService.showError("Error when saving loan application",message);
+                });
+
+        }
+
+        function _backToList(type) {
+            switch(type){
+                case 'LOAN_APPLICATION':
+                    vm.visibility.showLoanApplicationDetail = false;
+                    callAPI();
+                    break;
+            }
+
+        }
+
+        function initialize() {
+            callAPI();
+        }
+        function callAPI() {
+            vm.loanApplicationPromise = LoanManagementService.GetLoanApplications(vm.query).then(function (response) {
+                console.log("loan applications",response);
+                vm.loan_applications = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+            });
+        }
+
+        function questionValueChanged(question) {
+
+            var prQues = getPrerequisiteQuestion(question._id);
+
+            _.each(prQues, function(prQue) {
+                if (prQue) {
+                    var prerequisite = prQue.prerequisites[0];
+                    //Set question's show based by comparing current value with expected preq. value
+                    prQue.show = (prerequisite.answer === question.values[0]);
+                }
+            });
+
+        }
+
+        function getPrerequisiteQuestion(questionID) {
+
+            //extract outer questions; if section type, get them from sections
+            var questions = vm.client.has_sections ?
+                _.reduce(vm.client.sections, function(m, q) {
+                    return m.concat(q.questions);
+                }, []) :
+                vm.client.questions;
+
+            //Get all subquestions
+            var subQuestions = _.reduce(questions, function(m, q) {
+                return m.concat(q.sub_questions);
+            }, []);
+
+            //merge questions with subquestions into a singl array
+            var mergedQuestions = _.uniq(_.union(questions, subQuestions), false, _.property('_id'));
+
+            //Search in mergedQuestions
+            var prQue = _.filter(mergedQuestions, function(obj) {
+                return _.some(obj.prerequisites, { question: questionID });
+            });
+
+            return prQue;
+        }
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 7/3/2018.
+ */
+(function(angular) {
     'use strict';
     var screenings = {
         bindings: { },
@@ -10720,155 +10869,6 @@ var INDICATOR = {
             });
 
         }
-        function getPrerequisiteQuestion(questionID) {
-
-            //extract outer questions; if section type, get them from sections
-            var questions = vm.client.has_sections ?
-                _.reduce(vm.client.sections, function(m, q) {
-                    return m.concat(q.questions);
-                }, []) :
-                vm.client.questions;
-
-            //Get all subquestions
-            var subQuestions = _.reduce(questions, function(m, q) {
-                return m.concat(q.sub_questions);
-            }, []);
-
-            //merge questions with subquestions into a singl array
-            var mergedQuestions = _.uniq(_.union(questions, subQuestions), false, _.property('_id'));
-
-            //Search in mergedQuestions
-            var prQue = _.filter(mergedQuestions, function(obj) {
-                return _.some(obj.prerequisites, { question: questionID });
-            });
-
-            return prQue;
-        }
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yonas on 7/3/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("LoanApplicationProcessorController", LoanApplicationProcessorController);
-
-    LoanApplicationProcessorController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers','$state'];
-
-    function LoanApplicationProcessorController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers,$state ) {
-        var vm = this;
-        vm.backToList = _backToList;
-        vm.questionValueChanged = questionValueChanged;
-        vm.loanApplicationDetail = _loanApplicationDetail;
-        vm.saveClientForm = _saveClientForm;
-
-        vm.options = MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
-        vm.filter = {show : false};
-        vm.pageSizes = [10, 25, 50, 100, 250, 500];
-
-        vm.query = {
-            search:'',
-            page:1,
-            per_page:10
-        };
-        vm.visibility = { showLoanApplicationDetail: false };
-
-        vm.paginate = function(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
-        };
-        vm.clearSearchText = function () {
-            vm.query.search = '';
-            vm.filter.show = false;
-        };
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("search for ",newValue);
-            }
-        });
-
-        initialize();
-
-        function _loanApplicationDetail(client_loan_application) {
-            var client = client_loan_application.client;
-
-            LoanManagementService.GetClientLoanApplication(client._id).then(function (response) {
-                vm.client = response.data;
-                vm.visibility.showLoanApplicationDetail = true;
-                console.log("vm.client",vm.client);
-            });
-        }
-
-
-        function _saveClientForm(client,status) {
-
-            var loan_application = {
-                status: status,
-                questions:[],
-                sections: client.sections
-            };
-            // "[{"status":"Correct Status is either inprogress, accepted, submitted, rejected or declined_under_review"}]"
-
-            console.log("save status ", client);
-
-            LoanManagementService.SaveClientLoanApplication(loan_application,client._id)
-                .then(function (response) {
-                    AlertService.showSuccess('Client Loan Application',"Successfully saved Client Loan Application information  with status: " + status);
-                    console.log("saved  ", response);
-                },function (error) {
-                    console.log("error on saving loan application", error);
-                    var message = error.data.error.message;
-                    AlertService.showError("Error when saving loan application",message);
-                });
-
-        }
-
-        function _backToList(type) {
-            switch(type){
-                case 'LOAN_APPLICATION':
-                    vm.visibility.showLoanApplicationDetail = false;
-                    callAPI();
-                    break;
-            }
-
-        }
-
-        function initialize() {
-            callAPI();
-        }
-        function callAPI() {
-            vm.loanApplicationPromise = LoanManagementService.GetLoanApplications(vm.query).then(function (response) {
-                console.log("loan applications",response);
-                vm.loan_applications = response.data.docs;
-                vm.query.total_pages = response.data.total_pages;
-                vm.query.total_docs_count = response.data.total_docs_count;
-            });
-        }
-
-        function questionValueChanged(question) {
-
-            var prQues = getPrerequisiteQuestion(question._id);
-
-            _.each(prQues, function(prQue) {
-                if (prQue) {
-                    var prerequisite = prQue.prerequisites[0];
-                    //Set question's show based by comparing current value with expected preq. value
-                    prQue.show = (prerequisite.answer === question.values[0]);
-                }
-            });
-
-        }
-
         function getPrerequisiteQuestion(questionID) {
 
             //extract outer questions; if section type, get them from sections
