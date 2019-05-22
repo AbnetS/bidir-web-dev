@@ -70,7 +70,8 @@
                 },
                 {
                     name: 'ngFileUpload',
-                    files: ['vendor/ng-file-upload-shim/ng-file-upload-shim.min.js']
+                    files: ['vendor/ng-file-upload/ng-file-upload.min.js',
+                        'vendor/ng-file-upload-shim/ng-file-upload-shim.min.js']
                 },
                 {
                     name: 'toaster', files: ['vendor/angularjs-toaster/toaster.min.js',
