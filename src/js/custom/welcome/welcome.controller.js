@@ -8,11 +8,11 @@
         .module('app.welcomePage')
         .controller('WelcomeController', WelcomeController);
 
-    WelcomeController.$inject = ['$mdDialog', 'WelcomeService','AuthService'];
+    WelcomeController.$inject = ['EnvironmentConfig','AuthService'];
 
-    function WelcomeController($mdDialog, WelcomeService ,AuthService) {
+    function WelcomeController( EnvironmentConfig ,AuthService) {
         var vm = this;
-
+        console.log("EnvironmentConfig",EnvironmentConfig);
     }
 
 }(window.angular));

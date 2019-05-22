@@ -1,0 +1,36 @@
+{
+  "global": {
+    "app_version": "1.0"
+  },
+  "env": {
+    "development": {
+      "public": {
+        "EnvironmentConfig": {
+          "BaseUrl": "http://api.dev.bidir.gebeya.co/"
+        }
+      },
+      "local": {
+        "EnvironmentConfig": {
+          "BaseUrl": "http://api.dev.bidir.gebeya.co/"
+        }
+      }
+    },
+    "staging": {
+      "public": {
+        "EnvironmentConfig": {
+          "BaseUrl": "http://api.dev.bidir.gebeya.co/"
+        }
+      },
+      "local": {
+        "EnvironmentConfig": {
+          "BaseUrl": "http://api.dev.bidir.gebeya.co/"
+        }
+      }
+    },
+    "production": {
+      "EnvironmentConfig": {
+        "BaseUrl": "http://api.bidir.gebeya.co/"
+      }
+    }
+  }
+}
