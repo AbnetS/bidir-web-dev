@@ -11,7 +11,7 @@ var buildSetup = require('./build.setup');
 
 // build for production (minify)
 gulp.task('build', gulpsync.sync([
-    'generateDevelopmentLocalConfig',
+    'generateDevelopmentPublicConfig',
     'clean',
     'prod',
     'vendor',
@@ -19,7 +19,7 @@ gulp.task('build', gulpsync.sync([
 ]));
 //Build Ethiopia Production
 gulp.task('build:production', gulpsync.sync([
-    'generateDevelopmentPublicConfig',
+    'generateDevelopmentLocalConfig',
     'build'
 ]));
 //Build Burundi
