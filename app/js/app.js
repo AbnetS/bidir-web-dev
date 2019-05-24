@@ -3959,6 +3959,13 @@ function runBlock() {
 
 
 })(window.angular);
+(function () { 
+ return angular.module("app.common")
+.constant("EnvironmentConfig", {"BaseUrl":"http://api.dev.bidir.gebeya.co/","SeasonalMonitoringBaseUrl":"http://seasmon.wenr.wur.nl/cgi-bin/register.py?","SeasmonBaseUrl":"http://seasmon.wenr.wur.nl/html/"})
+.constant("app_version", "1.0");
+
+})();
+
 /**
  * Created by Yoni on 12/14/2017.
  */
@@ -4004,13 +4011,13 @@ function runBlock() {
 
 })(window.angular);
 var API = {
-    Config: {
-        // BaseUrl: 'http://api.buusaa-bidir.local/', //LOCAL APIs
-        BaseUrl: 'http://api.dev.bidir.gebeya.co/', //REMOTE API
-        SeasonalMonitoringBaseUrl: 'http://seasmon.wenr.wur.nl/cgi-bin/register.py?',
-        SeasmonBaseUrl: 'http://seasmon.wenr.wur.nl/html/'
-
-    },
+    // Config: {
+    //     // BaseUrl: 'http://api.buusaa-bidir.local/', //LOCAL APIs
+    //     BaseUrl: 'http://api.dev.bidir.gebeya.co/', //REMOTE API
+    //     SeasonalMonitoringBaseUrl: 'http://seasmon.wenr.wur.nl/cgi-bin/register.py?',
+    //     SeasmonBaseUrl: 'http://seasmon.wenr.wur.nl/html/'
+    //
+    // },
     Service: {
         NONE:'',
         MFI: 'MFI',
@@ -7796,13 +7803,14 @@ var INDICATOR = {
     }
 })();
 (function(angular) {
-
     'use strict';
 
     angular.module('app.common')
         .factory('CommonService', CommonService);
+    CommonService.$inject = ['EnvironmentConfig'];
 
-    function CommonService() {
+    function CommonService(EnvironmentConfig) {
+        var BaseUrl = EnvironmentConfig.BaseUrl;
         var factory = {
             buildUrl: _buildUrl,
             buildPaginatedUrl:_buildPaginatedUrl,
@@ -7872,21 +7880,21 @@ var INDICATOR = {
 
 
         function _buildUrl(service,url) {
-          return API.Config.BaseUrl + service +'/' + url;
+          return BaseUrl + service +'/' + url;
         }
         function _buildPaginatedUrl(service,url) {
             var parameters = {start:1,limit:100};
-            return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
-                API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
+            return url===''?BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
+                BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
         }
         function _buildPerPageUrl(service,url,parameters) {
-            return url === '' ? API.Config.BaseUrl + service + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page : API.Config.BaseUrl + service + '/' + url + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page;
+            return url === '' ? BaseUrl + service + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page : BaseUrl + service + '/' + url + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page;
         }
         function _buildUrlWithParam(service,url, id) {
-            return url===''?API.Config.BaseUrl + service + '/' + id : API.Config.BaseUrl + service +'/'+ url + '/' + id;
+            return url===''?BaseUrl + service + '/' + id : BaseUrl + service +'/'+ url + '/' + id;
         }
         function _buildUrlForSearch(service,url, searchText) {
-            return API.Config.BaseUrl + service +'/'+ url + '/search?search=' + searchText;
+            return BaseUrl + service +'/'+ url + '/search?search=' + searchText;
         }
     }
 
@@ -10172,6 +10180,175 @@ var INDICATOR = {
   }
 })(window.angular);
 
+/**
+ * Created by Yonas on 7/2/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("ClientsController", ClientsController);
+
+    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
+
+    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
+        var vm = this;
+        vm.clientDetailEdit = _clientDetailEdit;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearchText;
+        vm.saveClient = _saveClient;
+        vm.backToClientList = _backToClientList;
+
+
+
+        initialize();
+
+        function initialize() {
+            initializeDatePicker();
+            vm.visibility = { showClientDetail: false };
+            vm.civilStatuses = CIVIL_STATUSES;
+            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
+            vm.filter = {show : false};
+            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
+
+            vm.query = { search:'',   page:1,  per_page:10 };
+            vm.months = MONTHS_CONST;
+            callAPI();
+            getBranches();
+        }
+
+        function callAPI() {
+            var myBlockUI = blockUI.instances.get('clientsBlockUI');
+            myBlockUI.start();
+
+            vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
+                vm.clients = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+                myBlockUI.stop();
+                console.log("clients",vm.clients);
+            });
+        }
+
+        function _clientDetailEdit(client,ev) {
+            console.log("client detail",client);
+            vm.visibility.showClientDetail = true;
+            //data set
+            vm.selectedClient = client;
+            var dt = new Date(client.date_of_birth);
+            vm.selectedClient.date_of_birth = dt;
+            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
+            vm.selectedClient.gender = client.gender.toLowerCase();
+            vm.selected_branch = client.branch;
+        }
+
+        function _backToClientList() {
+            vm.visibility = { showClientDetail: false };
+        }
+        function _saveClient() {
+
+            if(_.isUndefined(vm.selected_branch)){
+                AlertService.showWarning("Warning!","Please Select Branch....");
+            }else{
+                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
+                myBlockUI.start();
+                var client = vm.selectedClient;
+                client.branch = vm.selected_branch._id;
+                client.created_by =  undefined;
+
+
+                if( _.isUndefined(vm.selectedClient._id)){
+                    //ADD NEW CLIENT INFORMATION
+                    LoanManagementService.SaveClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
+                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
+
+                    },function (error) {
+                        console.log("save client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to save client",message);
+
+                    });
+                }else{
+                    //UPDATE CLIENT INFORMATION
+                    LoanManagementService.UpdateClient(client).then(function (response) {
+                        console.log("save client",response);
+                        myBlockUI.stop();
+                        vm.visibility = { showClientDetail: false };
+                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
+                    },function (error) {
+                        console.log("Updated client error",error);
+                        myBlockUI.stop();
+                        var message = error.data.error.message;
+                        AlertService.showError("Failed to update Client",message);
+
+                    });
+                }
+
+
+            }
+
+        }
+
+        function getBranches() {
+            SharedService.GetBranches().then(function(response){
+                vm.branches = response.data.docs;
+                console.log("vm.branches",vm.branches);
+            },function(error){
+                console.log("error",error);
+            });
+        }
+
+        /**
+         *
+         *  Paging parameters and methods
+         */
+        function _paginate(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        }
+        function _clearSearchText() {
+            vm.query.search = '';
+            vm.filter.show = false;
+        }
+        function initializeDatePicker() {
+            vm.clear = function() {
+                vm.dt = null;
+            };
+
+            vm.dateOptions = {
+                dateDisabled: false,
+                formatYear: "yy",
+                maxDate: new Date(2020, 5, 22),
+                startingDay: 1
+            };
+
+            vm.openPopup = function() {
+                vm.popup1.opened = true;
+            };
+
+            vm.dateFormat = "dd-MMMM-yyyy";
+            vm.altInputFormats = ["M!/d!/yyyy"];
+
+            vm.popup1 = {
+                opened: false
+            };
+        }
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("searching clients for ",newValue);
+            }
+        });
+
+    }
+
+})(window.angular);
 (function (angular) {
     "use strict";
 
@@ -10407,324 +10584,6 @@ var INDICATOR = {
 
 })(window.angular);
 /**
- * Created by Yonas on 7/2/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("ClientsController", ClientsController);
-
-    ClientsController.$inject = ['LoanManagementService','$scope','blockUI','SharedService','AlertService'];
-
-    function ClientsController(LoanManagementService,$scope,blockUI,SharedService,AlertService) {
-        var vm = this;
-        vm.clientDetailEdit = _clientDetailEdit;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearchText;
-        vm.saveClient = _saveClient;
-        vm.backToClientList = _backToClientList;
-
-
-
-        initialize();
-
-        function initialize() {
-            initializeDatePicker();
-            vm.visibility = { showClientDetail: false };
-            vm.civilStatuses = CIVIL_STATUSES;
-            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
-            vm.filter = {show : false};
-            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
-
-            vm.query = { search:'',   page:1,  per_page:10 };
-            vm.months = MONTHS_CONST;
-            callAPI();
-            getBranches();
-        }
-
-        function callAPI() {
-            var myBlockUI = blockUI.instances.get('clientsBlockUI');
-            myBlockUI.start();
-
-            vm.clientsPromise = LoanManagementService.GetClients(vm.query).then(function (response) {
-                vm.clients = response.data.docs;
-                vm.query.total_pages = response.data.total_pages;
-                vm.query.total_docs_count = response.data.total_docs_count;
-                myBlockUI.stop();
-                console.log("clients",vm.clients);
-            });
-        }
-
-        function _clientDetailEdit(client,ev) {
-            console.log("client detail",client);
-            vm.visibility.showClientDetail = true;
-            //data set
-            vm.selectedClient = client;
-            var dt = new Date(client.date_of_birth);
-            vm.selectedClient.date_of_birth = dt;
-            vm.selectedClient.civil_status = client.civil_status.toLowerCase();
-            vm.selectedClient.gender = client.gender.toLowerCase();
-            vm.selected_branch = client.branch;
-        }
-
-        function _backToClientList() {
-            vm.visibility = { showClientDetail: false };
-        }
-        function _saveClient() {
-
-            if(_.isUndefined(vm.selected_branch)){
-                AlertService.showWarning("Warning!","Please Select Branch....");
-            }else{
-                var myBlockUI = blockUI.instances.get('ClientDetailBlockUI');
-                myBlockUI.start();
-                var client = vm.selectedClient;
-                client.branch = vm.selected_branch._id;
-                client.created_by =  undefined;
-
-
-                if( _.isUndefined(vm.selectedClient._id)){
-                    //ADD NEW CLIENT INFORMATION
-                    LoanManagementService.SaveClient(client).then(function (response) {
-                        console.log("save client",response);
-                        myBlockUI.stop();
-                        vm.visibility = { showClientDetail: false };
-                        AlertService.showSuccess("Saved Successfully","Saved Client information successfully");
-
-                    },function (error) {
-                        console.log("save client error",error);
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to save client",message);
-
-                    });
-                }else{
-                    //UPDATE CLIENT INFORMATION
-                    LoanManagementService.UpdateClient(client).then(function (response) {
-                        console.log("save client",response);
-                        myBlockUI.stop();
-                        vm.visibility = { showClientDetail: false };
-                        AlertService.showSuccess("Updated Successfully","Updated Client information successfully");
-                    },function (error) {
-                        console.log("Updated client error",error);
-                        myBlockUI.stop();
-                        var message = error.data.error.message;
-                        AlertService.showError("Failed to update Client",message);
-
-                    });
-                }
-
-
-            }
-
-        }
-
-        function getBranches() {
-            SharedService.GetBranches().then(function(response){
-                vm.branches = response.data.docs;
-                console.log("vm.branches",vm.branches);
-            },function(error){
-                console.log("error",error);
-            });
-        }
-
-        /**
-         *
-         *  Paging parameters and methods
-         */
-        function _paginate(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
-        }
-        function _clearSearchText() {
-            vm.query.search = '';
-            vm.filter.show = false;
-        }
-        function initializeDatePicker() {
-            vm.clear = function() {
-                vm.dt = null;
-            };
-
-            vm.dateOptions = {
-                dateDisabled: false,
-                formatYear: "yy",
-                maxDate: new Date(2020, 5, 22),
-                startingDay: 1
-            };
-
-            vm.openPopup = function() {
-                vm.popup1.opened = true;
-            };
-
-            vm.dateFormat = "dd-MMMM-yyyy";
-            vm.altInputFormats = ["M!/d!/yyyy"];
-
-            vm.popup1 = {
-                opened: false
-            };
-        }
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("searching clients for ",newValue);
-            }
-        });
-
-    }
-
-})(window.angular);
-/**
- * Created by Yonas on 7/3/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("LoanApplicationProcessorController", LoanApplicationProcessorController);
-
-    LoanApplicationProcessorController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers','$state'];
-
-    function LoanApplicationProcessorController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers,$state ) {
-        var vm = this;
-        vm.backToList = _backToList;
-        vm.questionValueChanged = questionValueChanged;
-        vm.loanApplicationDetail = _loanApplicationDetail;
-        vm.saveClientForm = _saveClientForm;
-
-        vm.options = MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
-        vm.filter = {show : false};
-        vm.pageSizes = [10, 25, 50, 100, 250, 500];
-
-        vm.query = {
-            search:'',
-            page:1,
-            per_page:10
-        };
-        vm.visibility = { showLoanApplicationDetail: false };
-
-        vm.paginate = function(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
-        };
-        vm.clearSearchText = function () {
-            vm.query.search = '';
-            vm.filter.show = false;
-        };
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("search for ",newValue);
-            }
-        });
-
-        initialize();
-
-        function _loanApplicationDetail(client_loan_application) {
-            var client = client_loan_application.client;
-
-            LoanManagementService.GetClientLoanApplication(client._id).then(function (response) {
-                vm.client = response.data;
-                vm.visibility.showLoanApplicationDetail = true;
-                console.log("vm.client",vm.client);
-            });
-        }
-
-
-        function _saveClientForm(client,status) {
-
-            var loan_application = {
-                status: status,
-                questions:[],
-                sections: client.sections
-            };
-            // "[{"status":"Correct Status is either inprogress, accepted, submitted, rejected or declined_under_review"}]"
-
-            console.log("save status ", client);
-
-            LoanManagementService.SaveClientLoanApplication(loan_application,client._id)
-                .then(function (response) {
-                    AlertService.showSuccess('Client Loan Application',"Successfully saved Client Loan Application information  with status: " + status);
-                    console.log("saved  ", response);
-                },function (error) {
-                    console.log("error on saving loan application", error);
-                    var message = error.data.error.message;
-                    AlertService.showError("Error when saving loan application",message);
-                });
-
-        }
-
-        function _backToList(type) {
-            switch(type){
-                case 'LOAN_APPLICATION':
-                    vm.visibility.showLoanApplicationDetail = false;
-                    callAPI();
-                    break;
-            }
-
-        }
-
-        function initialize() {
-            callAPI();
-        }
-        function callAPI() {
-            vm.loanApplicationPromise = LoanManagementService.GetLoanApplications(vm.query).then(function (response) {
-                console.log("loan applications",response);
-                vm.loan_applications = response.data.docs;
-                vm.query.total_pages = response.data.total_pages;
-                vm.query.total_docs_count = response.data.total_docs_count;
-            });
-        }
-
-        function questionValueChanged(question) {
-
-            var prQues = getPrerequisiteQuestion(question._id);
-
-            _.each(prQues, function(prQue) {
-                if (prQue) {
-                    var prerequisite = prQue.prerequisites[0];
-                    //Set question's show based by comparing current value with expected preq. value
-                    prQue.show = (prerequisite.answer === question.values[0]);
-                }
-            });
-
-        }
-
-        function getPrerequisiteQuestion(questionID) {
-
-            //extract outer questions; if section type, get them from sections
-            var questions = vm.client.has_sections ?
-                _.reduce(vm.client.sections, function(m, q) {
-                    return m.concat(q.questions);
-                }, []) :
-                vm.client.questions;
-
-            //Get all subquestions
-            var subQuestions = _.reduce(questions, function(m, q) {
-                return m.concat(q.sub_questions);
-            }, []);
-
-            //merge questions with subquestions into a singl array
-            var mergedQuestions = _.uniq(_.union(questions, subQuestions), false, _.property('_id'));
-
-            //Search in mergedQuestions
-            var prQue = _.filter(mergedQuestions, function(obj) {
-                return _.some(obj.prerequisites, { question: questionID });
-            });
-
-            return prQue;
-        }
-
-    }
-
-
-
-})(window.angular);
-/**
  * Created by Yonas on 7/3/2018.
  */
 (function(angular) {
@@ -10870,6 +10729,155 @@ var INDICATOR = {
             });
 
         }
+        function getPrerequisiteQuestion(questionID) {
+
+            //extract outer questions; if section type, get them from sections
+            var questions = vm.client.has_sections ?
+                _.reduce(vm.client.sections, function(m, q) {
+                    return m.concat(q.questions);
+                }, []) :
+                vm.client.questions;
+
+            //Get all subquestions
+            var subQuestions = _.reduce(questions, function(m, q) {
+                return m.concat(q.sub_questions);
+            }, []);
+
+            //merge questions with subquestions into a singl array
+            var mergedQuestions = _.uniq(_.union(questions, subQuestions), false, _.property('_id'));
+
+            //Search in mergedQuestions
+            var prQue = _.filter(mergedQuestions, function(obj) {
+                return _.some(obj.prerequisites, { question: questionID });
+            });
+
+            return prQue;
+        }
+
+    }
+
+
+
+})(window.angular);
+/**
+ * Created by Yonas on 7/3/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("LoanApplicationProcessorController", LoanApplicationProcessorController);
+
+    LoanApplicationProcessorController.$inject = ['LoanManagementService','AlertService','$scope','$mdDialog','RouteHelpers','$state'];
+
+    function LoanApplicationProcessorController(LoanManagementService,AlertService,$scope,$mdDialog,RouteHelpers,$state ) {
+        var vm = this;
+        vm.backToList = _backToList;
+        vm.questionValueChanged = questionValueChanged;
+        vm.loanApplicationDetail = _loanApplicationDetail;
+        vm.saveClientForm = _saveClientForm;
+
+        vm.options = MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
+        vm.filter = {show : false};
+        vm.pageSizes = [10, 25, 50, 100, 250, 500];
+
+        vm.query = {
+            search:'',
+            page:1,
+            per_page:10
+        };
+        vm.visibility = { showLoanApplicationDetail: false };
+
+        vm.paginate = function(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        };
+        vm.clearSearchText = function () {
+            vm.query.search = '';
+            vm.filter.show = false;
+        };
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("search for ",newValue);
+            }
+        });
+
+        initialize();
+
+        function _loanApplicationDetail(client_loan_application) {
+            var client = client_loan_application.client;
+
+            LoanManagementService.GetClientLoanApplication(client._id).then(function (response) {
+                vm.client = response.data;
+                vm.visibility.showLoanApplicationDetail = true;
+                console.log("vm.client",vm.client);
+            });
+        }
+
+
+        function _saveClientForm(client,status) {
+
+            var loan_application = {
+                status: status,
+                questions:[],
+                sections: client.sections
+            };
+            // "[{"status":"Correct Status is either inprogress, accepted, submitted, rejected or declined_under_review"}]"
+
+            console.log("save status ", client);
+
+            LoanManagementService.SaveClientLoanApplication(loan_application,client._id)
+                .then(function (response) {
+                    AlertService.showSuccess('Client Loan Application',"Successfully saved Client Loan Application information  with status: " + status);
+                    console.log("saved  ", response);
+                },function (error) {
+                    console.log("error on saving loan application", error);
+                    var message = error.data.error.message;
+                    AlertService.showError("Error when saving loan application",message);
+                });
+
+        }
+
+        function _backToList(type) {
+            switch(type){
+                case 'LOAN_APPLICATION':
+                    vm.visibility.showLoanApplicationDetail = false;
+                    callAPI();
+                    break;
+            }
+
+        }
+
+        function initialize() {
+            callAPI();
+        }
+        function callAPI() {
+            vm.loanApplicationPromise = LoanManagementService.GetLoanApplications(vm.query).then(function (response) {
+                console.log("loan applications",response);
+                vm.loan_applications = response.data.docs;
+                vm.query.total_pages = response.data.total_pages;
+                vm.query.total_docs_count = response.data.total_docs_count;
+            });
+        }
+
+        function questionValueChanged(question) {
+
+            var prQues = getPrerequisiteQuestion(question._id);
+
+            _.each(prQues, function(prQue) {
+                if (prQue) {
+                    var prerequisite = prQue.prerequisites[0];
+                    //Set question's show based by comparing current value with expected preq. value
+                    prQue.show = (prerequisite.answer === question.values[0]);
+                }
+            });
+
+        }
+
         function getPrerequisiteQuestion(questionID) {
 
             //extract outer questions; if section type, get them from sections

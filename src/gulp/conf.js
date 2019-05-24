@@ -17,7 +17,8 @@ exports.paths = {
     markup: 'pug/',
     styles: 'less/',
     scripts: 'js/',
-    e2e: 'e2e'
+    e2e: 'e2e',
+    config: './js/custom/common/',
 };
 
 exports.build = {

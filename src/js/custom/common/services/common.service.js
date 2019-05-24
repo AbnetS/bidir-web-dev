@@ -1,11 +1,12 @@
 (function(angular) {
-
     'use strict';
 
     angular.module('app.common')
         .factory('CommonService', CommonService);
+    CommonService.$inject = ['EnvironmentConfig'];
 
-    function CommonService() {
+    function CommonService(EnvironmentConfig) {
+        var BaseUrl = EnvironmentConfig.BaseUrl;
         var factory = {
             buildUrl: _buildUrl,
             buildPaginatedUrl:_buildPaginatedUrl,
@@ -75,21 +76,21 @@
 
 
         function _buildUrl(service,url) {
-          return API.Config.BaseUrl + service +'/' + url;
+          return BaseUrl + service +'/' + url;
         }
         function _buildPaginatedUrl(service,url) {
             var parameters = {start:1,limit:100};
-            return url===''?API.Config.BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
-                API.Config.BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
+            return url===''?BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
+                BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
         }
         function _buildPerPageUrl(service,url,parameters) {
-            return url === '' ? API.Config.BaseUrl + service + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page : API.Config.BaseUrl + service + '/' + url + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page;
+            return url === '' ? BaseUrl + service + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page : BaseUrl + service + '/' + url + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page;
         }
         function _buildUrlWithParam(service,url, id) {
-            return url===''?API.Config.BaseUrl + service + '/' + id : API.Config.BaseUrl + service +'/'+ url + '/' + id;
+            return url===''?BaseUrl + service + '/' + id : BaseUrl + service +'/'+ url + '/' + id;
         }
         function _buildUrlForSearch(service,url, searchText) {
-            return API.Config.BaseUrl + service +'/'+ url + '/search?search=' + searchText;
+            return BaseUrl + service +'/'+ url + '/search?search=' + searchText;
         }
     }
 

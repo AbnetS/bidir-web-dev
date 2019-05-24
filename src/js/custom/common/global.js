@@ -1,11 +1,11 @@
 var API = {
-    Config: {
-        // BaseUrl: 'http://api.buusaa-bidir.local/', //LOCAL APIs
-        BaseUrl: 'http://api.dev.bidir.gebeya.co/', //REMOTE API
-        SeasonalMonitoringBaseUrl: 'http://seasmon.wenr.wur.nl/cgi-bin/register.py?',
-        SeasmonBaseUrl: 'http://seasmon.wenr.wur.nl/html/'
-
-    },
+    // Config: {
+    //     // BaseUrl: 'http://api.buusaa-bidir.local/', //LOCAL APIs
+    //     BaseUrl: 'http://api.dev.bidir.gebeya.co/', //REMOTE API
+    //     SeasonalMonitoringBaseUrl: 'http://seasmon.wenr.wur.nl/cgi-bin/register.py?',
+    //     SeasmonBaseUrl: 'http://seasmon.wenr.wur.nl/html/'
+    //
+    // },
     Service: {
         NONE:'',
         MFI: 'MFI',

@@ -17,7 +17,8 @@ cd src
 sudo $NPM install gulp
 sudo $NPM install node-build-web-app --save-dev
 sudo $NPM install --no-optional
-#bower install
+sudo bower install
+sudo npm install
 GULP=$(which gulp)
 $GULP build
 cd ..
