@@ -15,6 +15,7 @@
         vm.onTabSelected = _onTabSelected;
         vm.loanProcessDetail = _loanProcessDetail;
         vm.backToList = _backToList;
+        vm.printLoanProcess  = LoanManagementService.printLoanProcess;
         vm.tabsList = [
             { id:0,  heading:"Members",  code: 'members', route: 'app.group_loan_detail.members' },
             { id:1,  heading:"Screening", code: 'screening', route: 'app.group_loan_detail.screenings' ,

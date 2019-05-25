@@ -7,9 +7,9 @@
 
         .service('LoanManagementService', LoanManagementService);
 
-    LoanManagementService.$inject = ['$http', 'CommonService'];
+    LoanManagementService.$inject = ['$http', 'CommonService','$filter','PrintPreviewService'];
 
-    function LoanManagementService($http, CommonService) {
+    function LoanManagementService($http, CommonService,$filter,PrintPreviewService) {
         return {
             GetLoanApplications: _getLoanApplications,
             GetClientLoanApplication:_getClientLoanApplication,
@@ -39,7 +39,8 @@
             //GROUP LOAN
             GetGroupLoans:_getGroupLoans,
             GetGroupLoan:_getGroupLoan,
-            GetGroupDataByLoanProcessStage:_getGroupDataByLoanProcessStage
+            GetGroupDataByLoanProcessStage:_getGroupDataByLoanProcessStage,
+            printLoanProcess:_print
 
         };
 
@@ -158,6 +159,64 @@
 
         function _getGroupDataByLoanProcessStage(type,groupId) {
             return $http.get(CommonService.buildUrlWithParam(API.Service.GROUPS,API.Methods.Group.Group,groupId) + '/' + type);
+        }
+
+        function _print(vm,type) {
+            var preview = [];
+            if(type === 'SCREENING'){
+                preview = [{
+                    Name: "Screening",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "Screening Form",
+                        loanNumber:  $filter('ordinal')( vm.clientScreening.client.loan_cycle_number),
+                        clientName: vm.clientScreening.client.first_name + " " +
+                            vm.clientScreening.client.last_name + " " +
+                            vm.clientScreening.client.grandfather_name}, vm.clientScreening)
+                }];
+                PrintPreviewService.show(preview);
+            }else if(type === 'ACAT_CROP'){
+                preview = [{
+                    Name: "ACAT Summary",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.acat.summary.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "ACAT SUMMARY" ,
+                        loanNumber:  $filter('ordinal')( vm.clientACATs.client.loan_cycle_number),
+                        clientName: vm.clientACATs.client.first_name + " " +
+                            vm.clientACATs.client.last_name + " " +
+                            vm.clientACATs.client.grandfather_name}, vm.selectedClientACAT)
+                }];
+                PrintPreviewService.show(preview);
+            }else if(type === 'ACAT_TOTAL'){
+                preview = [{
+                    Name: "ACAT Total Summary",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.acat.total.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "ACAT And Loan Proposal Summary",
+                        loanNumber:  $filter('ordinal')( vm.clientACATs.client.loan_cycle_number),
+                        clientName: vm.clientACATs.client.first_name + " " +
+                            vm.clientACATs.client.last_name + " " +
+                            vm.clientACATs.client.grandfather_name}, vm.clientACATs,{loanProposals: vm.clientLoanProposals})
+                }];
+                PrintPreviewService.show(preview);
+            } else{
+                preview = [{
+                    Name: "Loan Application",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "Loan Application Form", loanNumber:  $filter('ordinal')( vm.client.loan_application.client.loan_cycle_number),
+                        clientName: vm.client.loan_application.client.first_name + " " +
+                            vm.client.loan_application.client.last_name + " " +
+                            vm.client.loan_application.client.grandfather_name}, vm.client.loan_application)
+                }];
+                PrintPreviewService.show(preview);
+            }
+
+
         }
 
 
