@@ -1,6 +1,12 @@
 
 <div class="row" ng-show="vm.loanApplication.sections.length > 0">
-
+    <div class="col-lg-12">
+        <div class="pull-right">
+            <a ng-click="vm.printLoanProcess(vm,'LOAN_APPLICATION')" class="btn btn-default hidden-print">
+                <i class="icon-printer"></i>
+            </a>
+        </div>
+    </div>
     <!--QUESTION HEADER-->
     <div class="col-lg-12">
         <br/>
