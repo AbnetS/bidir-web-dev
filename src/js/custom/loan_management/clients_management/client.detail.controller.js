@@ -185,7 +185,7 @@
         }
 
         function getLoanProposals() {
-            LoanManagementService.GetClientLoanProposals(vm.clientId)
+            LoanManagementService.GetClientLoanProposals(vm.clientACATs._id)
                 .then(function(response){
                     vm.clientLoanProposals = response.data;
                 },function(error){

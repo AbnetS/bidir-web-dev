@@ -69,7 +69,7 @@ var API = {
             CostListGroups: 'costLists/groups',
             CostList: 'costLists/add',
             CreateACAT:'forms/initialize',
-            LoanProposals:'loanProposals/clients',
+            LoanProposals:'loanProposals/acat',
             Printout:'printout'
         },
         SCREENING:{
