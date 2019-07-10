@@ -13,6 +13,7 @@
         var vm = this;
         vm.StyleLabelByStatus = LoanManagementService.StyleLabelByStatus;
         vm.loanCycles = LoanManagementService.loanCycles;
+        vm.onSelectedBranch = _onSelectedBranch;
 
         vm.paginate = _paginate;
         vm.groupDetail = _groupDetail;
@@ -37,6 +38,15 @@
             vm.query = { search:'',   page:1,  per_page:10 };
             callAPI();
             GetBranchFilter();
+        }
+        function _onSelectedBranch(){
+            vm.groupLoans = vm.groupLoansCopy;
+            vm.groupLoans = _.filter(vm.groupLoans,function(group){
+                if(!_.isUndefined(group.branch) && group.branch !== null){
+                    return group.branch._id === vm.currentUser.selected_access_branch._id;
+                }
+            });
+
         }
 
         function GetBranchFilter() {
@@ -86,15 +96,7 @@
         $scope.$watch(angular.bind(vm, function () {
             return vm.query.search;
         }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                //make sure at least two characters are entered
-                if(newValue.length > 2){
-                    // SearchApi(newValue);
-                }else{
-                    // vm.clients = vm.clientsCopy;
-                }
-
-            }
+            // group loan search
         });
 
     }

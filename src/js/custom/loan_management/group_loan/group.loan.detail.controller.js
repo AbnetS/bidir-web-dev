@@ -7,29 +7,54 @@
     angular.module("app.processing")
         .controller("GroupLoanDetailController", GroupLoanDetailController);
 
-    GroupLoanDetailController.$inject = ['LoanManagementService','$scope','$stateParams','$state'];
+    GroupLoanDetailController.$inject = ['LoanManagementService','$scope','$stateParams','$state','blockUI','DocumentService','APP_CONSTANTS'];
 
-    function GroupLoanDetailController(LoanManagementService,$scope,$stateParams,$state) {
+    function GroupLoanDetailController(LoanManagementService,$scope,$stateParams,$state,blockUI,DocumentService,APP_CONSTANTS) {
         var vm = this;
-        vm.styleLabelByStatus = LoanManagementService.StyleLabelByStatus;
+        vm.StyleLabelByStatus = LoanManagementService.StyleLabelByStatus;
         vm.onTabSelected = _onTabSelected;
         vm.loanProcessDetail = _loanProcessDetail;
         vm.backToList = _backToList;
         vm.printLoanProcess  = LoanManagementService.printLoanProcess;
-        vm.tabsList = [
-            { id:0,  heading:"Members",  code: 'members', route: 'app.group_loan_detail.members' },
-            { id:1,  heading:"Screening", code: 'screening', route: 'app.group_loan_detail.screenings' ,
-                    detailTemplateUrl:"app/views/loan_management/group_loan/tabs/screening.detail.partial.html" },
-            { id:2,  heading:"Loan Application", code: 'loan', route: 'app.group_loan_detail.loan' },
-            { id:3,  heading:"A-CAT", code: 'acat', route: 'app.group_loan_detail.acat'  }
-        ];
+
+        vm.downloadMemberListDocument = _downloadMemberListDocument;
+        vm.downloadACATDocument = _downloadACATDocument;
+
+        vm.ACATGroupOnClick = _aCATGroupOnClick;
+        vm.onLoanProposalClick = _onLoanProposalClick;
 
         initialize();
 
 
+        function _downloadMemberListDocument(group) {
+            var group_id = group._id;
+            var myBlockUI = blockUI.instances.get('groupMembersBlockUI');
+            myBlockUI.start('Downloading...');
+            DocumentService.GetGroupDocument(group_id).then(function (response) {
+                window.open(DocumentService.OpenDocument(response.data,vm.FILE_TYPE.EXCEL), '_self', '');
+                myBlockUI.stop();
+            },function () { myBlockUI.stop(); });
+        }
+        function _downloadACATDocument(selectedClientACAT) {
+            var client_ACAT_id = selectedClientACAT._id;
+            var myBlockUI = blockUI.instances.get('acatTabBlockUI');
+            myBlockUI.start('Downloading...');
+            DocumentService.GetDocument(client_ACAT_id).then(function (response) {
+                window.open(DocumentService.OpenDocument(response.data,vm.FILE_TYPE.EXCEL), '_self', '');
+                myBlockUI.stop();
+            },function () { myBlockUI.stop(); });
+        }
+
 
         function initialize() {
+            vm.tabsList = [
+                { id:0,  heading:"Members",  code: 'members', route: 'app.group_loan_detail.members' },
+                { id:1,  heading:"Loan Application", code: 'loan', route: 'app.group_loan_detail.loan' },
+                { id:2,  heading:"A-CAT", code: 'acat', route: 'app.group_loan_detail.acat'  }
+            ];
             ResetVisibility();
+            vm.FILE_TYPE = APP_CONSTANTS.FILE_TYPE;
+
             vm.groupLoan = {};
             vm.groupLoanId = $stateParams.id;
             _.each(vm.tabsList,function (selectedTab) {
@@ -52,7 +77,7 @@
             vm.groupPromise = LoanManagementService.GetGroupLoan(vm.groupLoanId).then(function (response) {
                 vm.groupLoan.group = response.data;
                 GetData(vm.selectedTabObj.code);
-            },function (error) {  })
+            },function (error) {  });
         }
 
         function GetData(tabCode) {
@@ -97,7 +122,6 @@
             ResetVisibility();
             GetData(tab.code); // get data for selected tab
             $state.go(tab.route); //REDIRECT TO CHILD VIEW
-
         }
 
         function _loanProcessDetail(stageData,tabCode,event) {
@@ -111,7 +135,8 @@
                     vm.visibility.showLoanDetail = true;
                     break;
                 case 'acat':
-                    vm.acat = stageData;
+                    vm.selectedClientACAT = undefined; // reset on every load
+                    vm.clientACATs = stageData;
                     vm.visibility.showACATDetail = true;
                     break;
                 default:
@@ -131,6 +156,30 @@
                     vm.visibility.showACATDetail = false;
                     break;
             }
+        }
+        function _aCATGroupOnClick(selectedClientACAT,index) {
+            vm.selectedClientACAT = selectedClientACAT;
+            ShowCropPanel();
+        }
+        function _onLoanProposalClick(loanProduct) {
+            ShowSummaryPanel();
+            vm.selectedLoanProduct = loanProduct;
+            vm.list = { settingActive: 10 };
+        }
+
+        function ShowCropPanel() {
+            vm.visibility.showCropPanel = true;
+            vm.visibility.showSummaryPanel = false;
+        }
+        function ShowSummaryPanel() {
+            vm.visibility.showCropPanel = false;
+            vm.visibility.showSummaryPanel = true;
+        }
+
+        function ResetACATData() {
+            vm.clientScreening = undefined; // reset on every load
+            vm.client.loan_application = undefined;// reset on every load
+            vm.clientACATs = undefined;// reset on every load
         }
 
     }
