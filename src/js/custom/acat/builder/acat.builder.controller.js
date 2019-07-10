@@ -97,16 +97,16 @@
         function SetListType() {
 
             vm.acat.fertilizer.list_type = vm.acat.fertilizer_costs.grouped.length > 0 ?
-                ACAT_COST_LIST_TYPE.GROUPED :vm.acat.fertilizer_costs.linear.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+                ACAT_COST_LIST_TYPE.GROUPED :vm.acat.fertilizer_costs.linear.length > 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
             vm.acat.chemicals.list_type = vm.acat.chemicals_costs.grouped.length > 0 ?
-                ACAT_COST_LIST_TYPE.GROUPED :  vm.acat.chemicals_costs.linear.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+                ACAT_COST_LIST_TYPE.GROUPED :  vm.acat.chemicals_costs.linear.length > 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
             vm.acat.labour_cost.list_type = vm.acat.labour_costs.grouped.length > 0 ?
-                ACAT_COST_LIST_TYPE.GROUPED : vm.acat.labour_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+                ACAT_COST_LIST_TYPE.GROUPED : vm.acat.labour_costs.grouped.length > 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
             vm.acat.other_cost.list_type = vm.acat.other_costs.grouped.length > 0 ?
-                ACAT_COST_LIST_TYPE.GROUPED :vm.acat.other_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+                ACAT_COST_LIST_TYPE.GROUPED :vm.acat.other_costs.grouped.length > 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
         }
 

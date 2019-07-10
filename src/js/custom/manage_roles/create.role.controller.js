@@ -19,11 +19,7 @@
         vm.showFilter = false;
         vm.isEdit = items !== null;
         vm.role = items !== null?items:null;
-
-
-
         initialize();
-
         function setPermissions() {
             _.each(vm.role.permissions, function(oldPermission){
                 _.each(vm.permissions, function(permission) {
@@ -33,27 +29,21 @@
                 });
             });
         }
-
         function preparePermissions() {
             vm.role.permissions = _.filter(vm.permissions,function(permission){
                 return permission.checked? permission._id : null;
             });
         }
-
         function initialize(){
-           if(vm.isEdit){
-               var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
-               myLoadingBlockUI.start("Loading Role and Permissions");
-           }
             var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
             if(permissionFromStore !== null){
                 vm.permissions = permissionFromStore;
                 if(vm.isEdit){
                     setPermissions();
-                    myLoadingBlockUI.stop();
                 }
-
             }else {
+                var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
+                myLoadingBlockUI.start("Loading Role and Permissions");
                 ManageRoleService.GetPermissions().then(function(response){
                     vm.permissions = response.data.docs;
                     ManageRoleService.StorePermissions(vm.permissions);
@@ -68,11 +58,8 @@
                     }
                     console.log("error permissions",error);
                 });
-
             }
-
         }
-
         function _saveRole() {
             var myBlockUI = blockUI.instances.get('RoleBlockUI');
             myBlockUI.start();
@@ -85,12 +72,11 @@
                     },
                     function (error) {
                         myBlockUI.stop();
-                    var message = error.data.error.message;
+                        var message = error.data.error.message;
                         AlertService.showError("Failed to update Role",message);
                         console.log("could not be saved", error);
                     });
             }else {
-
                 ManageRoleService.SaveRole( vm.role).then(function (data) {
                         myBlockUI.stop();
                         AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
@@ -104,13 +90,8 @@
                     });
             }
         }
-
         function _showFilterDialog(show) {
-
         }
-
-
-
         function _modulesStyle(module){
             var style = '';
             switch (module){
@@ -137,7 +118,6 @@
             }
             return style;
         }
-
         function _cancel() {
             $mdDialog.cancel();
         }

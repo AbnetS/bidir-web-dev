@@ -47,12 +47,6 @@
     'use strict';
 
     angular
-        .module('app.lazyload', []);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.core', [
             'ngRoute',
             'ngAnimate',
@@ -70,6 +64,12 @@
             'ngMessages',
             'angularMoment'
         ]);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.lazyload', []);
 })();
 (function() {
     'use strict';
@@ -183,6 +183,123 @@
     }
 
 })();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
+
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+      // Disables animation on items with class .ng-no-animation
+      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
+
+      // Improve performance disabling debugging features
+      // $compileProvider.debugInfoEnabled(false);
+
+    }
+
+})();
+/**=========================================================
+ * Module: constants.js
+ * Define constants to inject across the application
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .run(appRun);
+
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });*/
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
+    }
+
+})();
+
 
 (function() {
     'use strict';
@@ -429,123 +546,6 @@
     ;
 
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .config(coreConfig);
-
-    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
-    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider){
-
-      var core = angular.module('app.core');
-      // registering components after bootstrap
-      core.controller = $controllerProvider.register;
-      core.directive  = $compileProvider.directive;
-      core.filter     = $filterProvider.register;
-      core.factory    = $provide.factory;
-      core.service    = $provide.service;
-      core.constant   = $provide.constant;
-      core.value      = $provide.value;
-
-      // Disables animation on items with class .ng-no-animation
-      $animateProvider.classNameFilter(/^((?!(ng-no-animation)).)*$/);
-
-      // Improve performance disabling debugging features
-      // $compileProvider.debugInfoEnabled(false);
-
-    }
-
-})();
-/**=========================================================
- * Module: constants.js
- * Define constants to inject across the application
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .constant('APP_MEDIAQUERY', {
-          'desktopLG':             1200,
-          'desktop':                992,
-          'tablet':                 768,
-          'mobile':                 480
-        })
-      ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .run(appRun);
-
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
-
-      // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });*/
-
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
-
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Hooks Example
-      // ----------------------------------- 
-
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
-
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
-
-    }
-
-})();
-
-
 (function() {
     'use strict';
 
@@ -1501,11 +1501,11 @@
 
         var directive = {
             restrict: 'EAC',
-            template: 
-              '<div class="preloader-progress">' +
-                  '<div class="preloader-progress-bar" ' +
-                       'ng-style="{width: loadCounter + \'%\'}"></div>' +
-              '</div>'
+            template:
+                '<div class="preloader-progress">' +
+                '<div class="preloader-progress-bar" ' +
+                'ng-style="{width: loadCounter + \'%\'}"></div>' +
+                '</div>'
             ,
             link: link
         };
@@ -1515,68 +1515,68 @@
 
         function link(scope, el) {
 
-          scope.loadCounter = 0;
+            scope.loadCounter = 0;
 
-          var counter  = 0,
-              timeout;
+            var counter  = 0,
+                timeout;
 
-          // disables scrollbar
-          angular.element('body').css('overflow', 'hidden');
-          // ensure class is present for styling
-          el.addClass('preloader');
+            // disables scrollbar
+            angular.element('body').css('overflow', 'hidden');
+            // ensure class is present for styling
+            el.addClass('preloader');
 
-          appReady().then(endCounter);
+            appReady().then(endCounter);
 
-          timeout = $timeout(startCounter);
+            timeout = $timeout(startCounter);
 
-          ///////
+            ///////
 
-          function startCounter() {
+            function startCounter() {
 
-            var remaining = 100 - counter;
-            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
+                var remaining = 100 - counter;
+                counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
 
-            scope.loadCounter = parseInt(counter, 10);
+                scope.loadCounter = parseInt(counter, 10);
 
-            timeout = $timeout(startCounter, 20);
-          }
+                timeout = $timeout(startCounter, 20);
+            }
 
-          function endCounter() {
+            function endCounter() {
 
-            $timeout.cancel(timeout);
+                $timeout.cancel(timeout);
 
-            scope.loadCounter = 100;
+                scope.loadCounter = 100;
 
-            $timeout(function(){
-              // animate preloader hiding
-              $animate.addClass(el, 'preloader-hidden');
-              // retore scrollbar
-              angular.element('body').css('overflow', '');
-            }, 300);
-          }
-
-          function appReady() {
-            var deferred = $q.defer();
-            var viewsLoaded = 0;
-            // if this doesn't sync with the real app ready
-            // a custom event must be used instead
-            var off = scope.$on('$viewContentLoaded', function () {
-              viewsLoaded ++;
-              // we know there are at least two views to be loaded 
-              // before the app is ready (1-index.html 2-app*.html)
-              if ( viewsLoaded === 2) {
-                // with resolve this fires only once
                 $timeout(function(){
-                  deferred.resolve();
-                }, 3000);
+                    // animate preloader hiding
+                    $animate.addClass(el, 'preloader-hidden');
+                    // retore scrollbar
+                    angular.element('body').css('overflow', '');
+                }, 300);
+            }
 
-                off();
-              }
+            function appReady() {
+                var deferred = $q.defer();
+                var viewsLoaded = 0;
+                // if this doesn't sync with the real app ready
+                // a custom event must be used instead
+                var off = scope.$on('$viewContentLoaded', function () {
+                    viewsLoaded ++;
+                    // we know there are at least two views to be loaded
+                    // before the app is ready (1-index.html 2-app*.html)
+                    if ( viewsLoaded === 2) {
+                        // with resolve this fires only once
+                        $timeout(function(){
+                            deferred.resolve();
+                        }, 3000);
 
-            });
+                        off();
+                    }
 
-            return deferred.promise;
-          }
+                });
+
+                return deferred.promise;
+            }
 
         } //link
     }
@@ -5462,8 +5462,6 @@ var INDICATOR = {
             return $http.put(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Loans,id),loan_application);
         }
 
-
-
         //CLIENT MANAGEMENT RELATED SERVICES
         function _searchClient(searchText) {
             return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
@@ -5488,44 +5486,6 @@ var INDICATOR = {
             return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,client._id),client);
         }
 
-
-        function _styleLabelByStatus(clientStatus) {
-            var style = '';
-            if(_.isUndefined(clientStatus))
-                return '';
-            switch (clientStatus.toLowerCase()){
-                case  'new':
-                    style =  'label bg-gray';
-                    break;
-                case  'submitted':
-                    style =  'label bg-primary-dark';
-                    break;
-                case  'approved':
-                    style =  'label bg-green-dark';
-                    break;
-                case 'screening_inprogress':
-                case 'declined_under_review':
-                    style =  'label label-warning';
-                    break;
-                case 'loan_application_accepted':
-                    style =  'label bg-info-dark';
-                    break;
-                case 'eligible':
-                    style =  'label label-success';
-                    break;
-                case 'ineligible':
-                case 'declined_final':
-                    style =  'label label-danger';
-                    break;
-                case 'loan_application_new':
-                    style =  'label bg-purple-dark';
-                    break;
-                default:
-                    style =  'label label-inverse';
-            }
-            return style;
-        }
-
         function _getACATCollections(parameters) {
             return $http.get(CommonService.buildPerPageUrl(API.Service.ACAT,API.Methods.ACAT.Clients,parameters));
         }
@@ -5539,9 +5499,6 @@ var INDICATOR = {
         function _getCrops() {
             return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
         }
-
-
-
         function _getGroupLoans(parameters) {
             return $http.get(CommonService.buildPerPageUrl(API.Service.GROUPS,API.Methods.Group.Group,parameters));
         }
@@ -5612,6 +5569,42 @@ var INDICATOR = {
 
         }
 
+        function _styleLabelByStatus(clientStatus) {
+            var style = '';
+            if(_.isUndefined(clientStatus))
+                return '';
+            switch (clientStatus.toLowerCase()){
+                case  'new':
+                    style =  'label bg-gray';
+                    break;
+                case  'submitted':
+                    style =  'label bg-primary-dark';
+                    break;
+                case  'approved':
+                    style =  'label bg-green-dark';
+                    break;
+                case 'screening_inprogress':
+                case 'declined_under_review':
+                    style =  'label label-warning';
+                    break;
+                case 'loan_application_accepted':
+                    style =  'label bg-info-dark';
+                    break;
+                case 'eligible':
+                    style =  'label label-success';
+                    break;
+                case 'ineligible':
+                case 'declined_final':
+                    style =  'label label-danger';
+                    break;
+                case 'loan_application_new':
+                    style =  'label bg-purple-dark';
+                    break;
+                default:
+                    style =  'label label-inverse';
+            }
+            return style;
+        }
 
 
     }
@@ -5639,11 +5632,7 @@ var INDICATOR = {
         vm.showFilter = false;
         vm.isEdit = items !== null;
         vm.role = items !== null?items:null;
-
-
-
         initialize();
-
         function setPermissions() {
             _.each(vm.role.permissions, function(oldPermission){
                 _.each(vm.permissions, function(permission) {
@@ -5653,27 +5642,21 @@ var INDICATOR = {
                 });
             });
         }
-
         function preparePermissions() {
             vm.role.permissions = _.filter(vm.permissions,function(permission){
                 return permission.checked? permission._id : null;
             });
         }
-
         function initialize(){
-           if(vm.isEdit){
-               var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
-               myLoadingBlockUI.start("Loading Role and Permissions");
-           }
             var permissionFromStore = ManageRoleService.GetPermissionsFromStore();
             if(permissionFromStore !== null){
                 vm.permissions = permissionFromStore;
                 if(vm.isEdit){
                     setPermissions();
-                    myLoadingBlockUI.stop();
                 }
-
             }else {
+                var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
+                myLoadingBlockUI.start("Loading Role and Permissions");
                 ManageRoleService.GetPermissions().then(function(response){
                     vm.permissions = response.data.docs;
                     ManageRoleService.StorePermissions(vm.permissions);
@@ -5688,11 +5671,8 @@ var INDICATOR = {
                     }
                     console.log("error permissions",error);
                 });
-
             }
-
         }
-
         function _saveRole() {
             var myBlockUI = blockUI.instances.get('RoleBlockUI');
             myBlockUI.start();
@@ -5705,12 +5685,11 @@ var INDICATOR = {
                     },
                     function (error) {
                         myBlockUI.stop();
-                    var message = error.data.error.message;
+                        var message = error.data.error.message;
                         AlertService.showError("Failed to update Role",message);
                         console.log("could not be saved", error);
                     });
             }else {
-
                 ManageRoleService.SaveRole( vm.role).then(function (data) {
                         myBlockUI.stop();
                         AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
@@ -5724,13 +5703,8 @@ var INDICATOR = {
                     });
             }
         }
-
         function _showFilterDialog(show) {
-
         }
-
-
-
         function _modulesStyle(module){
             var style = '';
             switch (module){
@@ -5757,7 +5731,6 @@ var INDICATOR = {
             }
             return style;
         }
-
         function _cancel() {
             $mdDialog.cancel();
         }
@@ -6878,16 +6851,16 @@ var INDICATOR = {
         function SetListType() {
 
             vm.acat.fertilizer.list_type = vm.acat.fertilizer_costs.grouped.length > 0 ?
-                ACAT_COST_LIST_TYPE.GROUPED :vm.acat.fertilizer_costs.linear.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+                ACAT_COST_LIST_TYPE.GROUPED :vm.acat.fertilizer_costs.linear.length > 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
             vm.acat.chemicals.list_type = vm.acat.chemicals_costs.grouped.length > 0 ?
-                ACAT_COST_LIST_TYPE.GROUPED :  vm.acat.chemicals_costs.linear.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+                ACAT_COST_LIST_TYPE.GROUPED :  vm.acat.chemicals_costs.linear.length > 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
             vm.acat.labour_cost.list_type = vm.acat.labour_costs.grouped.length > 0 ?
-                ACAT_COST_LIST_TYPE.GROUPED : vm.acat.labour_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+                ACAT_COST_LIST_TYPE.GROUPED : vm.acat.labour_costs.grouped.length > 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
             vm.acat.other_cost.list_type = vm.acat.other_costs.grouped.length > 0 ?
-                ACAT_COST_LIST_TYPE.GROUPED :vm.acat.other_costs.grouped.length >= 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+                ACAT_COST_LIST_TYPE.GROUPED :vm.acat.other_costs.grouped.length > 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
         }
 
@@ -9186,25 +9159,8 @@ var INDICATOR = {
                 .then(function(response){
                     myBlockUI.stop();
                     vm.clientACATs = response.data;
-
-                    var cashFlows = vm.clientACATs.ACATS[0].estimated.net_cash_flow;
-
-                    _.each(cashFlows, function(value, key, list) {
-                        // list[key].number
-                    });
-
-
-
-
                 },function(error){
                     myBlockUI.stop();
-                });
-
-            LoanManagementService.GetClientLoanProposals(vm.clientId)
-                .then(function(response){
-                    vm.clientLoanProposals = response.data;
-                },function(error){
-                    console.log("error getting  clientLoanProposals ",error);
                 });
 
         }
@@ -9244,14 +9200,25 @@ var INDICATOR = {
             }
         }
 
+        function getLoanProposals() {
+            LoanManagementService.GetClientLoanProposals(vm.clientId)
+                .then(function(response){
+                    vm.clientLoanProposals = response.data;
+                },function(error){
+                    console.log("error getting  clientLoanProposals ",error);
+                });
+        }
+
         function _aCATGroupOnClick(selectedClientACAT,index) {
             vm.selectedClientACAT = selectedClientACAT;
             ShowCropPanel();
         }
         function _onLoanProposalClick(loanProduct) {
+            getLoanProposals();
             ShowSummaryPanel();
             vm.selectedLoanProduct = loanProduct;
             vm.list = { settingActive: 10 };
+
         }
         function _downloadDocument(selectedClientACAT) {
             var client_ACAT_id = selectedClientACAT._id;

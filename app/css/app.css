@@ -1582,16 +1582,16 @@ _:-ms-lang(x),
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: #039661;
-  background-image: -webkit-linear-gradient(90deg, #039661 10%, #027d51 90%);
+  background-color: #2196F3;
+  background-image: -webkit-linear-gradient(90deg, #2196F3 10%, #0d8aee 90%);
   /* Chrome 10+, Saf5.1+ */
-  background-image: -moz-linear-gradient(90deg, #039661 10%, #027d51 90%);
+  background-image: -moz-linear-gradient(90deg, #2196F3 10%, #0d8aee 90%);
   /* FF3.6+ */
-  background-image: -ms-linear-gradient(90deg, #039661 10%, #027d51 90%);
+  background-image: -ms-linear-gradient(90deg, #2196F3 10%, #0d8aee 90%);
   /* IE10 */
-  background-image: -o-linear-gradient(90deg, #039661 10%, #027d51 90%);
+  background-image: -o-linear-gradient(90deg, #2196F3 10%, #0d8aee 90%);
   /* Opera 11.10+ */
-  background-image: linear-gradient(90deg, #039661 10%, #027d51 90%);
+  background-image: linear-gradient(90deg, #2196F3 10%, #0d8aee 90%);
   /* W3C */
   z-index: 9999;
   -webkit-transition: opacity 0.65s;
@@ -1605,12 +1605,12 @@ _:-ms-lang(x),
   left: 0;
   bottom: 0;
   right: 0;
-  width: 160px;
+  width: 400px;
   height: 50px;
   margin: auto;
   overflow: auto;
   background-image: url(../img/preloader/preloader.empty.png);
-  background-size: 160px 50px;
+  background-size: 400px 50px;
 }
 /*@noflip*/
 .preloader-progress-bar {
@@ -1620,7 +1620,7 @@ _:-ms-lang(x),
   bottom: 0;
   min-width: 10px;
   background-image: url(../img/preloader/preloader.full.png);
-  background-size: 160px 50px;
+  background-size: 400px 50px;
 }
 .preloader-hidden {
   display: none;

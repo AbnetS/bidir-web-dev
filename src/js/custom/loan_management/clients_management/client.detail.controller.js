@@ -143,25 +143,8 @@
                 .then(function(response){
                     myBlockUI.stop();
                     vm.clientACATs = response.data;
-
-                    var cashFlows = vm.clientACATs.ACATS[0].estimated.net_cash_flow;
-
-                    _.each(cashFlows, function(value, key, list) {
-                        // list[key].number
-                    });
-
-
-
-
                 },function(error){
                     myBlockUI.stop();
-                });
-
-            LoanManagementService.GetClientLoanProposals(vm.clientId)
-                .then(function(response){
-                    vm.clientLoanProposals = response.data;
-                },function(error){
-                    console.log("error getting  clientLoanProposals ",error);
                 });
 
         }
@@ -201,14 +184,25 @@
             }
         }
 
+        function getLoanProposals() {
+            LoanManagementService.GetClientLoanProposals(vm.clientId)
+                .then(function(response){
+                    vm.clientLoanProposals = response.data;
+                },function(error){
+                    console.log("error getting  clientLoanProposals ",error);
+                });
+        }
+
         function _aCATGroupOnClick(selectedClientACAT,index) {
             vm.selectedClientACAT = selectedClientACAT;
             ShowCropPanel();
         }
         function _onLoanProposalClick(loanProduct) {
+            getLoanProposals();
             ShowSummaryPanel();
             vm.selectedLoanProduct = loanProduct;
             vm.list = { settingActive: 10 };
+
         }
         function _downloadDocument(selectedClientACAT) {
             var client_ACAT_id = selectedClientACAT._id;
