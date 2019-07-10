@@ -108,3 +108,9 @@ function done() {
     log('* All Done * You can start editing your code, BrowserSync will update your browser after any change..');
     log('************');
 }
+
+
+// log to console using
+function log(msg) {
+    $.util.log($.util.colors.blue(msg));
+}
