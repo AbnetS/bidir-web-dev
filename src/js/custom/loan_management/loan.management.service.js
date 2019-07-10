@@ -127,7 +127,7 @@
                     IsCommon: false,
                     IsSelected: false,
                     Data: angular.extend({ Title: "Screening Form",
-                        loanNumber:  $filter('ordinal')( vm.clientScreening.client.loan_cycle_number),
+                        loanNumber:  $filter('ordinal')( vm.loanCycle),
                         clientName: vm.clientScreening.client.first_name + " " +
                             vm.clientScreening.client.last_name + " " +
                             vm.clientScreening.client.grandfather_name}, vm.clientScreening)
@@ -140,7 +140,7 @@
                     IsCommon: false,
                     IsSelected: false,
                     Data: angular.extend({ Title: "ACAT SUMMARY" ,
-                        loanNumber:  $filter('ordinal')( vm.clientACATs.client.loan_cycle_number),
+                        loanNumber:  $filter('ordinal')( vm.loanCycle),
                         clientName: vm.clientACATs.client.first_name + " " +
                             vm.clientACATs.client.last_name + " " +
                             vm.clientACATs.client.grandfather_name}, vm.selectedClientACAT)
@@ -153,7 +153,7 @@
                     IsCommon: false,
                     IsSelected: false,
                     Data: angular.extend({ Title: "ACAT And Loan Proposal Summary",
-                        loanNumber:  $filter('ordinal')( vm.clientACATs.client.loan_cycle_number),
+                        loanNumber:  $filter('ordinal')( vm.loanCycle),
                         clientName: vm.clientACATs.client.first_name + " " +
                             vm.clientACATs.client.last_name + " " +
                             vm.clientACATs.client.grandfather_name}, vm.clientACATs,{loanProposals: vm.clientLoanProposals})
@@ -165,7 +165,7 @@
                     TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
                     IsCommon: false,
                     IsSelected: false,
-                    Data: angular.extend({ Title: "Loan Application Form", loanNumber:  $filter('ordinal')( vm.client.loan_application.client.loan_cycle_number),
+                    Data: angular.extend({ Title: "Loan Application Form", loanNumber:  $filter('ordinal')( vm.loanCycle),
                         clientName: vm.client.loan_application.client.first_name + " " +
                             vm.client.loan_application.client.last_name + " " +
                             vm.client.loan_application.client.grandfather_name}, vm.client.loan_application)

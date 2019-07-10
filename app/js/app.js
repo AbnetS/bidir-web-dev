@@ -3136,6 +3136,13 @@
             .primaryPalette('blue');
     }
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.authentication', []);
+
+})();
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -3152,13 +3159,6 @@
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.authentication', []);
-
-})();
 (function(angular) {
   "use strict";
 
@@ -3357,89 +3357,6 @@ function runBlock() {
     }
 
 })(window.angular);
-/**
- * Created by Yoni on 3/11/2018.
- */
-
-(function(angular) {
-    'use strict';
-    angular.module('app.forms')
-
-        .service('ACATService', ACATService);
-
-    ACATService.$inject = ['$http','CommonService'];
-
-    function ACATService($http, CommonService) {
-        return {
-            GetCrops:_getCrops,
-            SaveCrop:_createCrop,
-            UpdateCrop:_updateCrop,
-            GetAllACATList: _getAllACAT,
-            GetACATById: _getACATById,
-            CreateACAT:_createACAT,
-            UpdateACAT:_updateACAT,
-            AddCostList:_addCostList,
-            UpdateCostList:_updateCostList,
-            RemoveCostListLinear:_removeCostListLinear,
-            RemoveCostListGroup:_removeCostGroupList,
-            RemoveCostGroup:_removeCostGroup,
-            UpdateCostGroup:_updateCostGroup,
-            ResetCostList:_resetCostList
-        };
-
-
-        function _getCrops() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
-        }
-        function _createCrop(crop){
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateCrop), crop);
-        }
-        function _updateCrop(crop){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Crop,crop._id), crop);
-        }
-        function _getACATById(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,id));
-        }
-        function _getAllACAT() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
-        }
-        function _addCostList(cost) {
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
-        }
-
-        function _updateCostList(cost){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
-        }
-        function _createACAT(acat) {
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
-        }
-        function _updateACAT(acat) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,acat._id), acat);
-        }
-
-        function _removeCostListLinear(cost_list){
-            var item = {  item_id: cost_list.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + ACAT_COST_LIST_TYPE.LINEAR, item);
-        }
-        function _removeCostGroupList(group_cost_list){
-            var item = {  item_id: group_cost_list.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,group_cost_list._id) +'/items', item);
-        }
-        function _removeCostGroup(group){
-            var item = {  item_id: group.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group._id) +'/group', item);
-        }
-
-        function _updateCostGroup(group) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,'grouped') +'/' +group._id, group);
-        }
-        function _resetCostList(cost_list) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
-        }
-    }
-
-
-})(window.angular);
 (function(angular) {
     'use strict';
     angular.module('app.authentication')
@@ -3576,6 +3493,89 @@ function runBlock() {
 })(window.angular);
 
 
+/**
+ * Created by Yoni on 3/11/2018.
+ */
+
+(function(angular) {
+    'use strict';
+    angular.module('app.forms')
+
+        .service('ACATService', ACATService);
+
+    ACATService.$inject = ['$http','CommonService'];
+
+    function ACATService($http, CommonService) {
+        return {
+            GetCrops:_getCrops,
+            SaveCrop:_createCrop,
+            UpdateCrop:_updateCrop,
+            GetAllACATList: _getAllACAT,
+            GetACATById: _getACATById,
+            CreateACAT:_createACAT,
+            UpdateACAT:_updateACAT,
+            AddCostList:_addCostList,
+            UpdateCostList:_updateCostList,
+            RemoveCostListLinear:_removeCostListLinear,
+            RemoveCostListGroup:_removeCostGroupList,
+            RemoveCostGroup:_removeCostGroup,
+            UpdateCostGroup:_updateCostGroup,
+            ResetCostList:_resetCostList
+        };
+
+
+        function _getCrops() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
+        }
+        function _createCrop(crop){
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateCrop), crop);
+        }
+        function _updateCrop(crop){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Crop,crop._id), crop);
+        }
+        function _getACATById(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,id));
+        }
+        function _getAllACAT() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
+        }
+        function _addCostList(cost) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
+        }
+
+        function _updateCostList(cost){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
+        }
+        function _createACAT(acat) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
+        }
+        function _updateACAT(acat) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,acat._id), acat);
+        }
+
+        function _removeCostListLinear(cost_list){
+            var item = {  item_id: cost_list.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + ACAT_COST_LIST_TYPE.LINEAR, item);
+        }
+        function _removeCostGroupList(group_cost_list){
+            var item = {  item_id: group_cost_list.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,group_cost_list._id) +'/items', item);
+        }
+        function _removeCostGroup(group){
+            var item = {  item_id: group.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group._id) +'/group', item);
+        }
+
+        function _updateCostGroup(group) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,'grouped') +'/' +group._id, group);
+        }
+        function _resetCostList(cost_list) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
+        }
+    }
+
+
+})(window.angular);
 (function (angular) {
     "use strict";
 
@@ -3977,11 +3977,12 @@ function runBlock() {
             };
         }])
         .filter('ordinal', function(){
-            return function(number){
-                if(isNaN(number) || number < 1){
+            return function(numb){
+                const number = Number(numb);
+                if(isNaN(number) || number < 1 ){
                     return number;
                 } else {
-                    var lastDigit = number % 10;
+                    let lastDigit = number % 10;
                     if(lastDigit === 1){
                         return number + 'st'
                     } else if(lastDigit === 2){
@@ -5520,7 +5521,7 @@ var INDICATOR = {
                     IsCommon: false,
                     IsSelected: false,
                     Data: angular.extend({ Title: "Screening Form",
-                        loanNumber:  $filter('ordinal')( vm.clientScreening.client.loan_cycle_number),
+                        loanNumber:  $filter('ordinal')( vm.loanCycle),
                         clientName: vm.clientScreening.client.first_name + " " +
                             vm.clientScreening.client.last_name + " " +
                             vm.clientScreening.client.grandfather_name}, vm.clientScreening)
@@ -5533,7 +5534,7 @@ var INDICATOR = {
                     IsCommon: false,
                     IsSelected: false,
                     Data: angular.extend({ Title: "ACAT SUMMARY" ,
-                        loanNumber:  $filter('ordinal')( vm.clientACATs.client.loan_cycle_number),
+                        loanNumber:  $filter('ordinal')( vm.loanCycle),
                         clientName: vm.clientACATs.client.first_name + " " +
                             vm.clientACATs.client.last_name + " " +
                             vm.clientACATs.client.grandfather_name}, vm.selectedClientACAT)
@@ -5546,7 +5547,7 @@ var INDICATOR = {
                     IsCommon: false,
                     IsSelected: false,
                     Data: angular.extend({ Title: "ACAT And Loan Proposal Summary",
-                        loanNumber:  $filter('ordinal')( vm.clientACATs.client.loan_cycle_number),
+                        loanNumber:  $filter('ordinal')( vm.loanCycle),
                         clientName: vm.clientACATs.client.first_name + " " +
                             vm.clientACATs.client.last_name + " " +
                             vm.clientACATs.client.grandfather_name}, vm.clientACATs,{loanProposals: vm.clientLoanProposals})
@@ -5558,7 +5559,7 @@ var INDICATOR = {
                     TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
                     IsCommon: false,
                     IsSelected: false,
-                    Data: angular.extend({ Title: "Loan Application Form", loanNumber:  $filter('ordinal')( vm.client.loan_application.client.loan_cycle_number),
+                    Data: angular.extend({ Title: "Loan Application Form", loanNumber:  $filter('ordinal')( vm.loanCycle),
                         clientName: vm.client.loan_application.client.first_name + " " +
                             vm.client.loan_application.client.last_name + " " +
                             vm.client.loan_application.client.grandfather_name}, vm.client.loan_application)
