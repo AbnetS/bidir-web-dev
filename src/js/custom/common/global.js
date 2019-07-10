@@ -1,11 +1,4 @@
 var API = {
-    // Config: {
-    //     // BaseUrl: 'http://api.buusaa-bidir.local/', //LOCAL APIs
-    //     BaseUrl: 'http://api.dev.bidir.gebeya.co/', //REMOTE API
-    //     SeasonalMonitoringBaseUrl: 'http://seasmon.wenr.wur.nl/cgi-bin/register.py?',
-    //     SeasmonBaseUrl: 'http://seasmon.wenr.wur.nl/html/'
-    //
-    // },
     Service: {
         NONE:'',
         MFI: 'MFI',
@@ -17,7 +10,8 @@ var API = {
         ACAT:'acat',
         GEOSPATIAL: 'geospatial',
         REPORT:'reports',
-        GROUPS: 'groups'
+        GROUPS: 'groups',
+        FETCH: 'fetch'
     },
     Methods: {
         Auth: {
@@ -28,8 +22,9 @@ var API = {
             MFI:'create',
             GetAll:'all',
             Branches: 'branches',
-            CreateBranch: 'branches/create'
-
+            CreateBranch: 'branches/create',
+            FetchBranches: 'branches',
+            Zones: 'zones'
         },
         Users: {
             Account:'accounts',
@@ -74,7 +69,8 @@ var API = {
             CostListGroups: 'costLists/groups',
             CostList: 'costLists/add',
             CreateACAT:'forms/initialize',
-            LoanProposals:'loanProposals/clients'
+            LoanProposals:'loanProposals/clients',
+            Printout:'printout'
         },
         SCREENING:{
             Screening:'',
@@ -104,7 +100,8 @@ var API = {
             AllReport: 'all'
         },
         Group:{
-            Group: ''
+            Group: '',
+            Printout:'printout'
         }
     }
 };

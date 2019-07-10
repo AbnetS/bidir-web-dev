@@ -11,7 +11,7 @@
 
     function GroupLoanController(LoanManagementService,$scope,$state,AuthService) {
         var vm = this;
-        vm.StyleLabelByStatus = LoanManagementService.StyleLabelByStatus;
+        vm.labelBasedOnStatus = LoanManagementService.StyleLabelByStatus;
         vm.loanCycles = LoanManagementService.loanCycles;
         vm.onSelectedBranch = _onSelectedBranch;
 

@@ -6,9 +6,9 @@
 
     angular.module("app.clients").controller("ClientDetailController", ClientDetailController);
 
-    ClientDetailController.$inject = ['LoanManagementService','$stateParams','blockUI','PrintPreviewService','$filter'];
+    ClientDetailController.$inject = ['LoanManagementService','$stateParams','blockUI','DocumentService','APP_CONSTANTS'];
 
-    function ClientDetailController(LoanManagementService,$stateParams,blockUI,PrintPreviewService,$filter) {
+    function ClientDetailController(LoanManagementService,$stateParams,blockUI,DocumentService,APP_CONSTANTS) {
         var vm = this;
         vm.clientId =  $stateParams.id;
         vm.visibility = {showMoreClientDetail: false};
@@ -29,9 +29,10 @@
 
         vm.ACATGroupOnClick = _aCATGroupOnClick;
         vm.onLoanProposalClick = _onLoanProposalClick;
+        vm.downloadDocument = _downloadDocument;
 
         function _onSelectedLoanCycle(){
-             _onTabSelected();
+            _onTabSelected();
         }
 
         function getLoanCycles(){
@@ -51,6 +52,7 @@
         initialize();
 
         function initialize() {
+            vm.FILE_TYPE = APP_CONSTANTS.FILE_TYPE;
             vm.visibility = {
                 showCropPanel:false,
                 showSummaryPanel:false,
@@ -71,7 +73,7 @@
                     vm.client = response.data;
                     vm.loanCycle =  vm.client.loan_cycle_number;
                     getLoanCycles();
-                    _onTabSelected(vm.activeTab);
+                    _onTabSelected();
 
                 },function(error){
                     myBlockUI.stop();
@@ -141,6 +143,16 @@
                 .then(function(response){
                     myBlockUI.stop();
                     vm.clientACATs = response.data;
+
+                    var cashFlows = vm.clientACATs.ACATS[0].estimated.net_cash_flow;
+
+                    _.each(cashFlows, function(value, key, list) {
+                        // list[key].number
+                    });
+
+
+
+
                 },function(error){
                     myBlockUI.stop();
                 });
@@ -153,17 +165,14 @@
                 });
 
         }
-
-
         function setActiveTabObj() {
             vm.activeTab = {};
             vm.activeTab = _.find(vm.tabsList,function (tab) {
                 return tab.index === vm.activeTabIndex;
-                });
+            });
             vm.visibility.showWarningForLoanCycle = vm.loanCycle !==  vm.client.loan_cycle_number.toString();
         }
         function _onTabSelected() {
-            console.log('active tab',vm.activeTabIndex);
             setActiveTabObj();
             switch (vm.activeTab.code){
                 case 'screening':
@@ -199,8 +208,16 @@
         function _onLoanProposalClick(loanProduct) {
             ShowSummaryPanel();
             vm.selectedLoanProduct = loanProduct;
-            console.log("vm.selectedClientACAT",vm.selectedLoanProduct );
             vm.list = { settingActive: 10 };
+        }
+        function _downloadDocument(selectedClientACAT) {
+            var client_ACAT_id = selectedClientACAT._id;
+            var myBlockUI = blockUI.instances.get('acatTabBlockUI');
+            myBlockUI.start('Downloading...');
+            DocumentService.GetDocument(client_ACAT_id).then(function (response) {
+                window.open(DocumentService.OpenDocument(response.data,vm.FILE_TYPE.EXCEL), '_self', '');
+                myBlockUI.stop();
+            },function () { myBlockUI.stop(); });
         }
 
         function ShowCropPanel() {

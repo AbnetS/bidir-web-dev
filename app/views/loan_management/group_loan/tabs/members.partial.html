@@ -11,10 +11,10 @@
             <img class="img-circle thumb32" ng-src="{{member.picture}}" src="/app/img/user/02.jpg" alt="Client Picture">
 
             <p class="h4 text-bold mb0">
-               {{member.name}}</p>
+               {{member.first_name}} {{member.last_name}} {{member.grandfather_name}}</p>
             <i ng-class="member.gender === 'male' || member.gender === 'Male'?'fa fa-lg fa-border fa-male bg-info-dark':'fa fa-border fa-lg fa-female bg-pink-dark'"></i>
-            <p> <b>Address: </b> {{member.address}} | <b>Identity: </b> {{member.identity}}</p>
-            <p class="small">Signed on {{member.sign_up_on | date}}</p>
+            <p> <b>Woreda: </b> {{member.woreda}} | <b> Kebele: </b> {{member.kebele}}</p>
+            <p class="small">Created on {{member.date_created | date}}</p>
          </div>
 
          <div class="panel-body bt">
@@ -23,7 +23,7 @@
                   <strong>{{member.loan_cycle_number | ordinal}} Cycle</strong>
                </div>
                <div class="col-sm-8">
-                  <span ng-class="vm.styleLabelByStatus(member.status)">
+                  <span ng-class="vm.labelBasedOnStatus(member.status)">
                      {{member.status | ReplaceUnderscore}}</span>
                </div>
             </div>

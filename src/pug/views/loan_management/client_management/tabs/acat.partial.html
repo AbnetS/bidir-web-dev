@@ -7,9 +7,9 @@
             </div>
             <div class="list-group">
                 <a class="list-group-item"
-                            ng-repeat="acat in vm.clientACATs.ACATs"
-                            ng-click="vm.ACATGroupOnClick(acat,$index)"
-                            ng-class="{'active': (acat === vm.selectedClientACAT && vm.visibility.showCropPanel)}">
+                   ng-repeat="acat in vm.clientACATs.ACATs"
+                   ng-click="vm.ACATGroupOnClick(acat,$index)"
+                   ng-class="{'active': (acat === vm.selectedClientACAT && vm.visibility.showCropPanel)}">
                     <span class="circle circle-inverse mr"></span>
                     <span>{{acat.title}}</span>
                 </a>
@@ -26,6 +26,9 @@
     <div class="col-md-9">
         <div class="col-lg-12" ng-show="vm.selectedClientACAT && vm.visibility.showCropPanel && !vm.visibility.showSummaryPanel">
             <div class="pull-right">
+                <a ng-click="vm.downloadDocument(vm.selectedClientACAT)" class="btn btn-warning hidden-print">
+                    <i class="icon-cloud-download"></i> Download
+                </a>
                 <a ng-click="vm.printLoanProcess(vm,'ACAT_CROP')" class="btn btn-default hidden-print">
                     <i class="icon-printer"></i>
                 </a>
@@ -42,11 +45,11 @@
             </div>
 
             <div ng-if="vm.clientACATs.ACATs.length>0 && vm.selectedClientACAT && vm.visibility.showCropPanel && !vm.visibility.showSummaryPanel">
-               <!--COST , REVENUE & YIELD CONSUPTION-->
+                <!--COST , REVENUE & YIELD CONSUPTION-->
                 <div class="panel b">
-                   <div class="panel-heading bb">
-                       <h4 class="panel-title">{{vm.selectedClientACAT.title | uppercase}}</h4>
-                   </div>
+                    <div class="panel-heading bb">
+                        <h4 class="panel-title">{{vm.selectedClientACAT.title | uppercase}}</h4>
+                    </div>
                     <!--TOTAL-->
                     <div>
                         <div class="panel-body bt">
@@ -81,113 +84,113 @@
 
                     </div>
 
-                   <!--COST-->
-                   <div>
-                       <div class="panel-body bt">
-                           <h4 class="b0">Cost</h4>
-                       </div>
-                       <table class="table table-striped">
-                           <thead>
-                           <tr>
-                               <th></th>
-                               <th class="text-center">Estimated</th>
-                               <th class="text-right">Actual</th>
-                           </tr>
-                           </thead>
-                           <tbody>
-                           <tr>
-                               <td class="text-left">Inputs</td>
-                               <td class="text-center"><small >{{vm.selectedClientACAT.sections[0].sub_sections[0].estimated_sub_total | number}}</small></td>
-                               <td class="text-right"><div >{{vm.selectedClientACAT.sections[0].sub_sections[0].achieved_sub_total | number}}</div></td>
-                           </tr>
-                           <tr>
-                               <td class="text-left">Labour Costs</td>
-                               <td class="text-center"><small >{{vm.selectedClientACAT.sections[0].sub_sections[1].estimated_sub_total | number}}</small></td>
-                               <td class="text-right"><div >{{vm.selectedClientACAT.sections[0].sub_sections[1].achieved_sub_total | number}}</div></td>
-                           </tr>
-                           <tr>
-                               <td class="text-left">Other Costs</td>
-                               <td class="text-center"><small >{{vm.selectedClientACAT.sections[0].sub_sections[2].estimated_sub_total | number}}</small></td>
-                               <td class="text-right"><div >{{vm.selectedClientACAT.sections[0].sub_sections[2].achieved_sub_total | number}}</div></td>
-                           </tr>
-                           <tr>
-                               <td class="text-left text-bold text-dark">Total</td>
-                               <td class="text-center"><small >{{vm.selectedClientACAT.sections[0].estimated_sub_total | number}}</small></td>
-                               <td class="text-right"><div >{{vm.selectedClientACAT.sections[0].achieved_sub_total | number}}</div></td>
-                           </tr>
-                           </tbody>
-                       </table>
+                    <!--COST-->
+                    <div>
+                        <div class="panel-body bt">
+                            <h4 class="b0">Cost</h4>
+                        </div>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th class="text-center">Estimated</th>
+                                <th class="text-right">Actual</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="text-left">Inputs</td>
+                                <td class="text-center"><small >{{vm.selectedClientACAT.sections[0].sub_sections[0].estimated_sub_total | number}}</small></td>
+                                <td class="text-right"><div >{{vm.selectedClientACAT.sections[0].sub_sections[0].achieved_sub_total | number}}</div></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Labour Costs</td>
+                                <td class="text-center"><small >{{vm.selectedClientACAT.sections[0].sub_sections[1].estimated_sub_total | number}}</small></td>
+                                <td class="text-right"><div >{{vm.selectedClientACAT.sections[0].sub_sections[1].achieved_sub_total | number}}</div></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Other Costs</td>
+                                <td class="text-center"><small >{{vm.selectedClientACAT.sections[0].sub_sections[2].estimated_sub_total | number}}</small></td>
+                                <td class="text-right"><div >{{vm.selectedClientACAT.sections[0].sub_sections[2].achieved_sub_total | number}}</div></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left text-bold text-dark">Total</td>
+                                <td class="text-center"><small >{{vm.selectedClientACAT.sections[0].estimated_sub_total | number}}</small></td>
+                                <td class="text-right"><div >{{vm.selectedClientACAT.sections[0].achieved_sub_total | number}}</div></td>
+                            </tr>
+                            </tbody>
+                        </table>
 
-                   </div>
-                   <!--Revenue-->
-                   <div>
-                       <div class="panel-body bt">
-                           <h4 class="b0">Revenue</h4>
-                       </div>
-                       <table class="table table-striped">
-                           <thead>
-                           <tr>
-                               <th class="text-left"></th>
-                               <th class="text-center">Estimated</th>
-                               <th class="text-right">Actual</th>
-                           </tr>
-                           </thead>
-                           <tbody>
-                           <tr>
-                               <td class="text-left">Probable</td>
-                               <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[0].estimated_sub_total | number}}</small></td>
-                               <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[0].achieved_sub_total | number}}</div></td>
-                           </tr>
-                           <tr>
-                               <td class="text-left">Maximum</td>
-                               <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[1].estimated_sub_total | number}}</small></td>
-                               <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[1].achieved_sub_total | number}}</div></td>
-                           </tr>
-                           <tr>
-                               <td class="text-left">Minimum</td>
-                               <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[2].estimated_sub_total | number}}</small></td>
-                               <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[2].achieved_sub_total | number}}</div></td>
-                           </tr>
-                           </tbody>
-                       </table>
+                    </div>
+                    <!--Revenue-->
+                    <div>
+                        <div class="panel-body bt">
+                            <h4 class="b0">Revenue</h4>
+                        </div>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th class="text-left"></th>
+                                <th class="text-center">Estimated</th>
+                                <th class="text-right">Actual</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="text-left">Probable</td>
+                                <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[0].estimated_sub_total | number}}</small></td>
+                                <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[0].achieved_sub_total | number}}</div></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Maximum</td>
+                                <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[1].estimated_sub_total | number}}</small></td>
+                                <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[1].achieved_sub_total | number}}</div></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Minimum</td>
+                                <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[2].estimated_sub_total | number}}</small></td>
+                                <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[2].achieved_sub_total | number}}</div></td>
+                            </tr>
+                            </tbody>
+                        </table>
 
-                   </div>
-                   <!--Yield Consumption-->
-                   <div>
-                       <div class="panel-body bt">
-                           <h4 class="b0">Yield Consumption</h4>
-                       </div>
-                       <table class="table table-striped">
-                           <thead>
-                           <tr>
-                               <th class="text-left"></th>
-                               <th class="text-center">Estimated</th>
-                               <th class="text-right">Actual</th>
-                           </tr>
-                           </thead>
-                           <tbody>
-                           <tr>
-                               <td class="text-left">Own Consumption</td>
-                               <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.estimated.own_consumption | number}}</small></td>
-                               <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.achieved.own_consumption | number}}</div></td>
-                           </tr>
-                           <tr>
-                               <td class="text-left">  Seed Reserve</td>
-                               <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.estimated.seed_reserve | number}}</small></td>
-                               <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.achieved.seed_reserve | number}}</div></td>
-                           </tr>
-                           <tr>
-                               <td class="text-left">  For Market</td>
-                               <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.estimated.for_market | number}}</small></td>
-                               <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.achieved.for_market | number}}</div></td>
-                           </tr>
-                           </tbody>
-                       </table>
+                    </div>
+                    <!--Yield Consumption-->
+                    <div>
+                        <div class="panel-body bt">
+                            <h4 class="b0">Yield Consumption</h4>
+                        </div>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th class="text-left"></th>
+                                <th class="text-center">Estimated</th>
+                                <th class="text-right">Actual</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="text-left">Own Consumption</td>
+                                <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.estimated.own_consumption | number}}</small></td>
+                                <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.achieved.own_consumption | number}}</div></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">  Seed Reserve</td>
+                                <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.estimated.seed_reserve | number}}</small></td>
+                                <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.achieved.seed_reserve | number}}</div></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">  For Market</td>
+                                <td class="text-center"><small >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.estimated.for_market | number}}</small></td>
+                                <td class="text-right"><div >{{vm.selectedClientACAT.sections[1].sub_sections[0].yield_consumption.achieved.for_market | number}}</div></td>
+                            </tr>
+                            </tbody>
+                        </table>
 
-                   </div>
-               </div>
+                    </div>
+                </div>
                 <!--ESTIMATED & ACTUAL NET CASH FLOW-->
-               <div class="panel b text-center">
+                <div class="panel b text-center">
 
                     <div class="panel-body bt">
                         <div class="row">
