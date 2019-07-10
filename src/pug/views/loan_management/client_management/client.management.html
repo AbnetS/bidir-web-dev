@@ -68,9 +68,7 @@
                         <thead md-head class="bg-grey md-head">
                         <tr md-row>
                             <th md-column style="width:3%;"><span> No</span></th>
-                            <th md-column ></th>
                             <th md-column ><span>Full Name</span></th>
-                            <th md-column ><span>Gender</span></th>
                             <th md-column  ><span>DOB</span></th>
                             <th md-column  ><span>Civil Status</span></th>
                             <th md-column  ><span>Branch</span></th>
@@ -82,21 +80,11 @@
                         <tbody md-body>
                         <tr md-row ng-repeat="client in vm.clients">
 
-                            <td md-cell>{{vm.query.per_page * (vm.query.page - 1) +  $index + 1}}</td>
-                            <td>
-                                <div class="media">
-                                    <img class="img-responsive img-circle thumb32"
-                                         ng-src="{{client.picture  }}"
-                                         src="/app/img/user/02.jpg"
-                                         alt="Client Picture">
-                                </div>
-                            </td>
+                            <td md-cell>{{vm.query.per_page * (vm.query.page - 1) +  $index + 1}}</td> </td>
                             <td md-cell>
+                                <i ng-class="client.gender === 'male' || client.gender === 'Male'?'fa fa-lg fa-border fa-male':'fa fa-border fa-lg fa-female'"></i>
                                 {{ client.first_name }} {{ client.last_name }} {{client.grandfather_name}}
                                 <span ng-show="client.loan_cycle_number > 1" class="label label-green">{{client.loan_cycle_number | ordinal}} Cycle</span>
-                            </td>
-                            <td md-cell >
-                                <i ng-class="client.gender === 'male' || client.gender === 'Male'?'fa fa-lg fa-border fa-male':'fa fa-border fa-lg fa-female'"></i>
                             </td>
                             <td md-cell >{{client.date_of_birth | date }}</td>
                             <td md-cell>{{client.civil_status}}</td>
