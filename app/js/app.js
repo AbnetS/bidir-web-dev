@@ -9543,8 +9543,9 @@ var INDICATOR = {
         function initialize() {
             vm.tabsList = [
                 { id:0,  heading:"Members",  code: 'members', route: 'app.group_loan_detail.members' },
-                { id:1,  heading:"Loan Application", code: 'loan', route: 'app.group_loan_detail.loan' },
-                { id:2,  heading:"A-CAT", code: 'acat', route: 'app.group_loan_detail.acat'  }
+                { id:1,  heading:"Screening", code: 'screening', route: 'app.group_loan_detail.screenings' },
+                { id:2,  heading:"Loan Application", code: 'loan', route: 'app.group_loan_detail.loan' },
+                { id:3,  heading:"A-CAT", code: 'acat', route: 'app.group_loan_detail.acat'  }
             ];
             ResetVisibility();
             vm.FILE_TYPE = APP_CONSTANTS.FILE_TYPE;
@@ -9669,13 +9670,6 @@ var INDICATOR = {
             vm.visibility.showCropPanel = false;
             vm.visibility.showSummaryPanel = true;
         }
-
-        function ResetACATData() {
-            vm.clientScreening = undefined; // reset on every load
-            vm.client.loan_application = undefined;// reset on every load
-            vm.clientACATs = undefined;// reset on every load
-        }
-
     }
 
 
