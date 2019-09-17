@@ -11,6 +11,7 @@
             GetLineChartReport:_getLineChartReport,
             GetReportById:_getReportById,
             GetAllReports:_getAllReports,
+            GetReportParameter:_getReportParameter,
             GetReportPDF:_getReportPDF,
             barColors: [{backgroundColor: Colors.byName('success'), borderColor: Colors.byName('success')}, {backgroundColor: Colors.byName('info'),  borderColor: Colors.byName('info') }]
         };
@@ -31,6 +32,9 @@
                 method: 'GET',
                 responseType: 'arraybuffer'
             });
+        }
+        function _getReportParameter(getFrom){
+            return $http.get(CommonService.buildUrl(API.Service.REPORT,getFrom));
         }
     }
 

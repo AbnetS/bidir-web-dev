@@ -16,11 +16,26 @@
         vm.onSelectedReport = _onSelectedReport;
         vm.printReport = _printReport;
         vm.downloadDocument = _downloadDocument;
+        vm.generateReport = _generateReport;
 
         init();
 
-        function _onSelectedReport() {
+        function _generateReport() {  }
 
+        function _onSelectedReport() {
+            if (angular.isUndefined(vm.report.has_parameters) || vm.report.has_parameters === false) return;
+
+            _.each(vm.report.parameters,function (param) {
+               if(!param.is_constant && angular.isDefined(param.get_from)){
+                   ReportService.GetReportParameter(param.get_from).then(function (response) {
+                       param.values = response.data;
+                   });
+               }else{
+                   param.values = _.map(param.constants,function (value) {
+                        return {send: value,display: value};
+                   });
+               }
+            });
         }
 
         function _downloadDocument() {

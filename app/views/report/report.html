@@ -43,17 +43,20 @@
          <div class="section-divider">
             <span>Filter</span>
          </div>
-         <div ng-if="parameter.has_parameters" class="panel-body">
+         <div class="panel-body">
             <report-parameter parameters="vm.report.parameters"></report-parameter>
          </div>
-         <div ng-if="!parameter.has_parameters" class="panel-body">
-            <em>NO PARAMETER FOR {{vm.report.name}}</em>
-         </div>
 
-         <div class="pull-right">
-            <a ng-click="vm.generateReport()" class="btn btn-success">Generate</a>
+         <div class="panel-body">
+            <button ng-click="vm.generateReport()" class="btn btn-success pull-right">Generate</button>
          </div>
+         <!--            <div ng-if="!parameter.has_parameters" class="panel-body">-->
+         <!--                <em> NO PARAMETER FOR {{vm.report.name}}</em>-->
+         <!--            </div>-->
 
+         <!--            TODO: when no parameter show message
+                    populate value on filter select
+-->
 
 
 
