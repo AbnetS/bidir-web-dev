@@ -1,0 +1,19 @@
+<div ng-repeat="parameter in parameters">
+
+    <div class="form-group">
+        <p>{{parameter.name}}</p>
+        <div ng-if="parameter.type === 'SELECT'">
+            <ui-select ng-model="vm.report.parameterValue" theme="select2"
+                       title="Select Parameter" style="width: 100%;">
+                <ui-select-match allow-clear="true" placeholder="Select...">
+                    {{$select.selected.value}} </ui-select-match>
+                <ui-select-choices repeat="value in parameter.constants | filter: $select.search">
+                    <span ng-bind-html="value | highlight: $select.search"></span>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div ng-if="parameter.type === 'TEXT'">
+            <input class="form-control"  type="text" placeholder="Type ..." />
+        </div>
+    </div>
+</div>

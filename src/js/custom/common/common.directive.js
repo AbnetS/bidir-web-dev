@@ -262,6 +262,21 @@
                 templateUrl: 'app/views/common/directives/templates/cost_list.tmpl.html'
             };
         })
+        .directive('reportParameter', function($timeout, $compile, $filter) {
+            return {
+                restrict: 'E',
+                scope: {
+                    parameters: '=parameters'
+                },
+                link: function($scope, element, attrs) {
+                    $scope.$watch('parameters', function (walks) {
+                        console.log($scope.parameters);
+                    });
+
+                },
+                templateUrl: 'app/views/common/directives/templates/report.parameter.tmpl.html'
+            };
+        })
         .directive('formWizard', formWizard);
 
             formWizard.$inject = ['$parse'];
