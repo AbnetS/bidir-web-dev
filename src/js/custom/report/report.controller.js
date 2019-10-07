@@ -20,7 +20,26 @@
 
         init();
 
-        function _generateReport() {  }
+        function _generateReport() {
+            vm.report.isLoading = true;
+            var myBlockUI = blockUI.instances.get('reportDownload');
+            let filters = {};
+                vm.report.parameters.map(
+                (parameter)=> {
+                    if(_.isEmpty(parameter.selected) && _.isUndefined(parameter.selected)) return;
+                    filters[parameter.code]  = parameter.selected.send;
+                }
+            );
+
+            myBlockUI.start('Downloading...');
+            vm.report.reportPromise =  ReportService.FilterReport(vm.report._id,'docx',filters).then(function (response) {
+                vm.pdfFile = openPDF(response.data);
+                vm.report.isLoading = false;
+                window.open(vm.pdfFile, '_self', '');
+                myBlockUI.stop();
+            },function () { myBlockUI.stop(); });
+
+        }
 
         function _onSelectedReport() {
             if (angular.isUndefined(vm.report.has_parameters) || vm.report.has_parameters === false) return;
@@ -30,7 +49,9 @@
                    ReportService.GetReportParameter(param.get_from).then(function (response) {
                        param.values = response.data;
                    });
-               }else{
+               }
+
+               else{
                    param.values = _.map(param.constants,function (value) {
                         return {send: value,display: value};
                    });
