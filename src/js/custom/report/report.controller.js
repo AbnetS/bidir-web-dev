@@ -27,7 +27,7 @@
                 vm.report.parameters.map(
                 (parameter)=> {
                     if(_.isEmpty(parameter.selected) && _.isUndefined(parameter.selected)) return;
-                    filters[parameter.code]  = parameter.selected.send;
+                    filters[parameter.code]  = parameter.selected;
                 }
             );
 
@@ -50,11 +50,8 @@
                        param.values = response.data;
                    });
                }
-
                else{
-                   param.values = _.map(param.constants,function (value) {
-                        return {send: value,display: value};
-                   });
+                   param.values = param.constants;
                }
             });
         }
