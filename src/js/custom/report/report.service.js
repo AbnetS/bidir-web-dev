@@ -38,7 +38,12 @@
             return $http.get(CommonService.buildUrl(API.Service.REPORT,getFrom));
         }
         function _filterReport(id,format,params){
-            return $http.post(CommonService.buildUrlWithParam(API.Service.REPORT,API.Methods.Report.Report,id) + '/' + format,params);
+            return $http({
+                url: CommonService.buildUrlWithParam(API.Service.REPORT,API.Methods.Report.Report,id) + '/' + format,
+                method: 'POST',
+                responseType: 'arraybuffer',
+                data: params
+            });
         }
     }
 

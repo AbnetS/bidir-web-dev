@@ -45,6 +45,19 @@ var buildSetup = {
         index: '../',
         views: '../app/',
         cache: '../app/js/' + 'templates.js'
+    },
+    vendor: {
+        // vendor scripts required to start the app
+        base: {
+            source: require('.././vendor.base.json'),
+            js: 'base.js',
+            css: 'base.css'
+        },
+        // vendor scripts to make the app work. Usually via lazy loading
+        app: {
+            source: require('.././vendor.json'),
+            dest: '../vendor'
+        }
     }
 };
 
@@ -267,7 +280,7 @@ gulp.task('clean', function(done) {
         buildSetup.templates.index + 'index.html',
         buildSetup.templates.views + 'views',
         buildSetup.templates.views + 'pages',
-        vendor.app.dest
+        buildSetup.vendor.app.dest
     );
 
     log('Cleaning: ' + $.util.colors.blue(delconfig));

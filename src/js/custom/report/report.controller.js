@@ -4,9 +4,9 @@
         .module('app.report')
         .controller('ReportController', ReportController);
 
-    ReportController.$inject = ['ReportService', 'blockUI','PrintPreviewService','$sce'];
+    ReportController.$inject = ['ReportService', 'blockUI','PrintPreviewService','$sce','$scope'];
 
-    function ReportController( ReportService,blockUI,PrintPreviewService,$sce )
+    function ReportController( ReportService,blockUI,PrintPreviewService,$sce,$scope)
     {
         var vm = this;
         vm.FILE_TYPE ={
@@ -15,7 +15,7 @@
         };
         vm.onSelectedReport = _onSelectedReport;
         vm.printReport = _printReport;
-        vm.downloadDocument = _downloadDocument;
+        // vm.downloadDocument = _downloadDocument;
         vm.generateReport = _generateReport;
 
         init();
@@ -45,7 +45,8 @@
             if (angular.isUndefined(vm.report.has_parameters) || vm.report.has_parameters === false) return;
 
             _.each(vm.report.parameters,function (param) {
-               if(!param.is_constant && angular.isDefined(param.get_from)){
+
+               if(!param.is_constant && param.get_from ){
                    ReportService.GetReportParameter(param.get_from).then(function (response) {
                        param.values = response.data;
                    });
@@ -61,6 +62,7 @@
             var myBlockUI = blockUI.instances.get('reportDownload');
             myBlockUI.start('Downloading...');
             vm.report.reportPromise =  ReportService.GetReportPDF(vm.report._id,'docx').then(function (response) {
+
                 vm.pdfFile = openPDF(response.data);
                 vm.report.isLoading = false;
                 window.open(vm.pdfFile, '_self', '');
@@ -80,9 +82,32 @@
         }
 
         function init() {
+
+            dateSettings();
             ReportService.GetAllReports().then(function (response) {
                 vm.reportsList = response.data;
             });
+        }
+
+        function dateSettings() {
+
+            vm.startDateConfig = {
+                // open: false,
+                minDate: new Date(Date.now())
+            };
+            vm.endDateConfig = {
+                // open: false,
+                minDate: new Date(vm.dateStart)
+            };
+            //watching to see what date is set in the start date
+            //field and setting that date as the minimum for end date
+            $scope.$watch("vm.dateStart", function(newValue, oldValue) {
+                if (newValue === oldValue) {
+                    return;
+                }
+                vm.endDateConfig.minDate = newValue;
+            });
+
         }
 
         function openPDF(data) {

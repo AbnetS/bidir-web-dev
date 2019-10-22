@@ -14,5 +14,12 @@
       <div ng-if="parameter.type === 'TEXT'">
          <input class="form-control" ng-model="parameter.selected" type="text" placeholder="search ..." />
       </div>
+      <div ng-if="parameter.type === 'NUMBER'">
+         <input class="form-control" ng-model="parameter.selected" type="number" min="0" placeholder="search ..." />
+      </div>
+      <div ng-if="parameter.type === 'DATE'">
+         <input type="text" id="startDatePicker" class="form-control input-sm" ng-model="parameter.selected" uib-datepicker-popup="dd-MMMM-yyyy" datepicker-options="vm.startDateConfig" ng-focus="vm.startDateConfig.open=true" minDate="vm.startDateConfig.minDate"
+         is-open="vm.startDateConfig.open" show-button-bar="false" />
+      </div>
    </div>
 </div>
