@@ -4,9 +4,9 @@
         .module('app.report')
         .controller('ReportController', ReportController);
 
-    ReportController.$inject = ['ReportService', 'blockUI','PrintPreviewService','$sce','$scope'];
+    ReportController.$inject = ['ReportService', 'blockUI','PrintPreviewService','$sce','$scope','$filter'];
 
-    function ReportController( ReportService,blockUI,PrintPreviewService,$sce,$scope)
+    function ReportController( ReportService,blockUI,PrintPreviewService,$sce,$scope,$filter)
     {
         var vm = this;
         vm.FILE_TYPE ={
@@ -27,7 +27,15 @@
                 vm.report.parameters.map(
                 (parameter)=> {
                     if(_.isEmpty(parameter.selected) && _.isUndefined(parameter.selected)) return;
-                    filters[parameter.code]  = parameter.selected;
+
+                    if (parameter.type === 'DATE') {
+                        filters[parameter.code] =  { send: $filter('date')( parameter.selected, 'dd-MM-yyyy'),display: $filter('date')( parameter.selected, 'longDate')};
+                    }else if (parameter.type === 'TEXT') {
+                        filters[parameter.code] =  { send: parameter.selected,display: $filter('ordinal')( parameter.selected)};
+                    } else {
+                        filters[parameter.code]  = parameter.selected;
+                    }
+
                 }
             );
 
