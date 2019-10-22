@@ -10,6 +10,6 @@
     function runBlock() {}
     function config($mdIconProvider) {
         $mdIconProvider.iconSet("avatars", 'app/img/icons/avatar-icons.svg',128);
-    };
+    }
 
 })();

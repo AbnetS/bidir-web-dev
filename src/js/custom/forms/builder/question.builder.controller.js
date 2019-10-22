@@ -41,14 +41,12 @@
         $scope.sortableSubQuestions = {
             placeholder: 'ui-state-highlight',
             update: function(e, ui) {
-              console.log("update")
             },
             stop: function(e, ui) {
                 vm.sub_question_list.map(function(question,index){
                     question.number = index;
                     FormService.UpdateQuestion(question).then(
                         function (response) {
-                            // console.log("saving ordered [" + question.question_text + "] ",response);
                         },function (error) {
                             console.log("error saving order question [" + question.question_text + "] ",error);
                         }
@@ -112,7 +110,7 @@
             var preparedQn = {
                 question_text:vm.question.question_text,
                 remark:vm.question.remark,
-                required:vm.question.required,
+                required: vm.question.required,
                 show:vm.question.show,
                 measurement_unit: !_.isUndefined(vm.question.measurement_unit)? vm.question.measurement_unit:null,
                 form:vm.form._id
@@ -145,7 +143,6 @@
                 preparedQn.section = vm.question.section;
                 preparedQn.number = GetNextQuestionOrderNumber();
                 FormService.CreateQuestion(preparedQn,vm.question.selected_type.url).then(function (response) {
-                    console.log("Question created",response);
                     vm.maxOrderNumber = preparedQn.number;
                     vm.question = response.data;
                     vm.showSubQuestion = true;
@@ -217,8 +214,6 @@
             if(index === -1) {
                 vm.question.options.push(newValue);
             }
-            console.log("question",vm.question.options);
-            // vm.isOptionEdit
             // Clear input contents
             vm.newRadioValue = '';
         }
@@ -271,9 +266,7 @@
         function saveSubQuestionList() {
             _.forEach(vm.sub_question_list,function (subQn) {
                 if(!_.isUndefined(subQn._id)){
-                    FormService.UpdateQuestion(subQn).then(function (response) {
-                        // console.log(subQn.question_text + "Updated",response);
-                    },function (error) {
+                    FormService.UpdateQuestion(subQn).then(function (response) {},function (error) {
                         var message = error.data.error.message;
                         AlertService.showError("Failed to Save Sub Question",message);
                     });
@@ -282,7 +275,6 @@
                     subQn.parent_question = vm.question._id;
                     vm.maxSubOrderNumber = subQn.number;
                     FormService.CreateQuestion(subQn,subQn.sub_question_type).then(function (response) {
-                        // console.log(subQn.question_text + "sub question created",response);
                     },function (error) {
                         console.log("sub question error create",error);
                     });
@@ -294,7 +286,6 @@
             vm.showSubQuestion = true;
             vm.sub_question = question;
             SetValidationObj(true);
-            console.log("vm.sub_question.selected_validation",vm.sub_question);
         }
 
         function spliceQuestionFromList(question) {
@@ -336,18 +327,10 @@
                 });
 
         }
-        function _subQuestionValidationSelected() {
-          console.log("vm.sub_question.selected_validation",vm.sub_question.selected_validation)
-        }
 
-
-
-        function _addAnother() {
-            console.log("question",vm.question);
-        }
-        function _showQuestionOn() {
-            console.log("Question show",vm.question.show);
-        }
+        function _subQuestionValidationSelected() {}
+        function _addAnother() { }
+        function _showQuestionOn() { }
         function _cancel() {
             $mdDialog.cancel();
         }
@@ -356,9 +339,6 @@
             //     vm.showSubQuestion = true;
             // }
         }
-
-
-
         function getQuestionTypeObj(typeName) {
             return _.first(_.filter(vm.questionTypes,function (type) {
                 return type.name === typeName || type.code === typeName;

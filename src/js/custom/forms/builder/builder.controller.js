@@ -44,7 +44,6 @@
         $scope.sectionSortableOptions = {
             placeholder: 'ui-state-highlight',
             stop: function(e, ui) {
-                console.log("stop ordering questions");
                 vm.formData.questions.map(function(question,index){
                     question.number = index;
                     UpdateQuestionOrder(question);
@@ -55,11 +54,10 @@
         function UpdateQuestionOrder(question) {
             FormService.UpdateQuestion(question).then(
                 function (response) {
-                    // console.log("saving ordered [" + question.question_text + "] ",response);
                 },function (error) {
                     console.log("error saving order question [" + question.question_text + "] ",error);
                 }
-            )
+            );
         }
 
         initialize();
@@ -135,7 +133,6 @@
                 controller: 'QuestionBuilderController',
                 controllerAs: 'vm'
             }).then(function (answer) {
-                console.log("call api to refresh");
                 callAPI();
             }, function (response) {
                 console.log("refresh on response");
@@ -185,7 +182,6 @@
 
                 if(vm.formData.has_sections){
                     GetMaximumOrderNumberForSection();
-
                 }else{
 
                     if(vm.formData.questions.length > 0){
@@ -195,8 +191,6 @@
                     }else{
                         vm.maxOrderNumber = 0;
                     }
-
-                    console.log("max number for question without section",vm.maxOrderNumber);
                 }
 
                 vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
@@ -267,10 +261,6 @@
             vm.selected_section = selectedSection;
             vm.selected_section.form = vm.formId; //This is important for remove section
             GetMaximumOrderNumberForSection();
-            // vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
-            //     return qn.number;
-            // }).number;
-            console.log("max number for question with section on select",vm.maxOrderNumber);
         }
 
         function _saveSection(section) {
@@ -294,7 +284,6 @@
                     vm.showSectionForm = false;
                     callAPI();//REFRESH FORM DATA
                     AlertService.showSuccess("SECTION","Section Updated successfully");
-                    console.log("saved section",response);
                 },function (error) {
                     console.log("error when saving section",error);
                 });

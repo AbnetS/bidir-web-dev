@@ -3183,7 +3183,7 @@
     function runBlock() {}
     function config($mdIconProvider) {
         $mdIconProvider.iconSet("avatars", 'app/img/icons/avatar-icons.svg',128);
-    };
+    }
 
 })();
 
@@ -3267,6 +3267,14 @@ function runBlock() {
         .module('app.profile', []);
 
 })();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.report', []);
+
+})();
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -3276,14 +3284,6 @@ function runBlock() {
 
     angular
         .module('app.welcomePage', []);
-
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.report', []);
 
 })();
 
@@ -6456,139 +6456,6 @@ var INDICATOR = {
     }
 
 })(window.angular);
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.welcomePage')
-        .controller('TaskDetailController', TaskDetailController);
-
-    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items','SweetAlert'];
-
-    function TaskDetailController($mdDialog, WelcomeService ,items,SweetAlert) {
-        var vm = this
-        vm.cancel = _cancel;
-        vm.approveUser = _approveUser;
-        vm.declineUser = _declineUser;
-        vm.task = items.taskInfo;
-        console.log("task ",vm.task);
-        WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
-            // console.log("task related user",response);
-            vm.userInfo = response.data;
-
-        },function(error){
-            console.log("error",error);
-        });
-
-        function _approveUser() {
-            var task = {
-                taskId:vm.task._id ,
-                status: "approved",
-                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
-            };
-            updateStatus(task);
-        }
-
-        function _declineUser() {
-            var task = {
-                taskId:vm.task._id ,
-                status: "declined",
-                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
-            };
-            updateStatus(task);
-        }
-
-        function updateStatus(task){
-            WelcomeService.ChangeTaskStatus(task).then(
-                function(response) {
-                    SweetAlert.swal('Task Status Changed!',
-                        'Task '+ task.status + ' Successfully!',
-                        'success');
-                    console.log("task updated",response);
-                    $mdDialog.hide();
-                },
-                function(error) {
-                    SweetAlert.swal( 'Oops...',
-                        'Something went wrong!',
-                        'error');
-                    console.log("could not be updated", error);
-                }
-            );
-        }
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-    }
-
-}(window.angular));
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.welcomePage')
-        .controller('WelcomeController', WelcomeController);
-
-    WelcomeController.$inject = ['EnvironmentConfig','AuthService'];
-
-    function WelcomeController( EnvironmentConfig ,AuthService) {
-        var vm = this;
-        console.log("EnvironmentConfig",EnvironmentConfig);
-    }
-
-}(window.angular));
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.welcomePage')
-
-        .service('WelcomeService', WelcomeService);
-    WelcomeService.$inject = ['$http', 'CommonService','AuthService'];
-
-    function WelcomeService($http, CommonService,AuthService) {
-        return {
-            GetTasks: _getTasks,
-            GetUserAccount:_getUserAccount,
-            ChangeTaskStatus:_changeTaskStatus
-        };
-
-        function _getUserAccount(id){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
-        }
-        function _getTasks(){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Tasks.GetAll),httpConfig);
-        }
-        function _changeTaskStatus(taskObj) {
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
-        }
-    }
-
-})(window.angular);
 (function(angular) {
     "use strict";
 
@@ -6833,6 +6700,139 @@ var INDICATOR = {
                 responseType: 'arraybuffer',
                 data: params
             });
+        }
+    }
+
+})(window.angular);
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.welcomePage')
+        .controller('TaskDetailController', TaskDetailController);
+
+    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items','SweetAlert'];
+
+    function TaskDetailController($mdDialog, WelcomeService ,items,SweetAlert) {
+        var vm = this
+        vm.cancel = _cancel;
+        vm.approveUser = _approveUser;
+        vm.declineUser = _declineUser;
+        vm.task = items.taskInfo;
+        console.log("task ",vm.task);
+        WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
+            // console.log("task related user",response);
+            vm.userInfo = response.data;
+
+        },function(error){
+            console.log("error",error);
+        });
+
+        function _approveUser() {
+            var task = {
+                taskId:vm.task._id ,
+                status: "approved",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
+        }
+
+        function _declineUser() {
+            var task = {
+                taskId:vm.task._id ,
+                status: "declined",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
+        }
+
+        function updateStatus(task){
+            WelcomeService.ChangeTaskStatus(task).then(
+                function(response) {
+                    SweetAlert.swal('Task Status Changed!',
+                        'Task '+ task.status + ' Successfully!',
+                        'success');
+                    console.log("task updated",response);
+                    $mdDialog.hide();
+                },
+                function(error) {
+                    SweetAlert.swal( 'Oops...',
+                        'Something went wrong!',
+                        'error');
+                    console.log("could not be updated", error);
+                }
+            );
+        }
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.welcomePage')
+        .controller('WelcomeController', WelcomeController);
+
+    WelcomeController.$inject = ['EnvironmentConfig','AuthService'];
+
+    function WelcomeController( EnvironmentConfig ,AuthService) {
+        var vm = this;
+        console.log("EnvironmentConfig",EnvironmentConfig);
+    }
+
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.welcomePage')
+
+        .service('WelcomeService', WelcomeService);
+    WelcomeService.$inject = ['$http', 'CommonService','AuthService'];
+
+    function WelcomeService($http, CommonService,AuthService) {
+        return {
+            GetTasks: _getTasks,
+            GetUserAccount:_getUserAccount,
+            ChangeTaskStatus:_changeTaskStatus
+        };
+
+        function _getUserAccount(id){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
+        }
+        function _getTasks(){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Tasks.GetAll),httpConfig);
+        }
+        function _changeTaskStatus(taskObj) {
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
         }
     }
 
@@ -8414,7 +8414,6 @@ var INDICATOR = {
         $scope.sectionSortableOptions = {
             placeholder: 'ui-state-highlight',
             stop: function(e, ui) {
-                console.log("stop ordering questions");
                 vm.formData.questions.map(function(question,index){
                     question.number = index;
                     UpdateQuestionOrder(question);
@@ -8425,11 +8424,10 @@ var INDICATOR = {
         function UpdateQuestionOrder(question) {
             FormService.UpdateQuestion(question).then(
                 function (response) {
-                    // console.log("saving ordered [" + question.question_text + "] ",response);
                 },function (error) {
                     console.log("error saving order question [" + question.question_text + "] ",error);
                 }
-            )
+            );
         }
 
         initialize();
@@ -8505,7 +8503,6 @@ var INDICATOR = {
                 controller: 'QuestionBuilderController',
                 controllerAs: 'vm'
             }).then(function (answer) {
-                console.log("call api to refresh");
                 callAPI();
             }, function (response) {
                 console.log("refresh on response");
@@ -8555,7 +8552,6 @@ var INDICATOR = {
 
                 if(vm.formData.has_sections){
                     GetMaximumOrderNumberForSection();
-
                 }else{
 
                     if(vm.formData.questions.length > 0){
@@ -8565,8 +8561,6 @@ var INDICATOR = {
                     }else{
                         vm.maxOrderNumber = 0;
                     }
-
-                    console.log("max number for question without section",vm.maxOrderNumber);
                 }
 
                 vm.formData.selected_formType = getFormTypeObj(vm.formData.type);
@@ -8637,10 +8631,6 @@ var INDICATOR = {
             vm.selected_section = selectedSection;
             vm.selected_section.form = vm.formId; //This is important for remove section
             GetMaximumOrderNumberForSection();
-            // vm.maxOrderNumber =  _.max(vm.selected_section.questions,function (qn) {
-            //     return qn.number;
-            // }).number;
-            console.log("max number for question with section on select",vm.maxOrderNumber);
         }
 
         function _saveSection(section) {
@@ -8664,7 +8654,6 @@ var INDICATOR = {
                     vm.showSectionForm = false;
                     callAPI();//REFRESH FORM DATA
                     AlertService.showSuccess("SECTION","Section Updated successfully");
-                    console.log("saved section",response);
                 },function (error) {
                     console.log("error when saving section",error);
                 });
@@ -8745,14 +8734,12 @@ var INDICATOR = {
         $scope.sortableSubQuestions = {
             placeholder: 'ui-state-highlight',
             update: function(e, ui) {
-              console.log("update")
             },
             stop: function(e, ui) {
                 vm.sub_question_list.map(function(question,index){
                     question.number = index;
                     FormService.UpdateQuestion(question).then(
                         function (response) {
-                            // console.log("saving ordered [" + question.question_text + "] ",response);
                         },function (error) {
                             console.log("error saving order question [" + question.question_text + "] ",error);
                         }
@@ -8816,7 +8803,7 @@ var INDICATOR = {
             var preparedQn = {
                 question_text:vm.question.question_text,
                 remark:vm.question.remark,
-                required:vm.question.required,
+                required: vm.question.required,
                 show:vm.question.show,
                 measurement_unit: !_.isUndefined(vm.question.measurement_unit)? vm.question.measurement_unit:null,
                 form:vm.form._id
@@ -8849,7 +8836,6 @@ var INDICATOR = {
                 preparedQn.section = vm.question.section;
                 preparedQn.number = GetNextQuestionOrderNumber();
                 FormService.CreateQuestion(preparedQn,vm.question.selected_type.url).then(function (response) {
-                    console.log("Question created",response);
                     vm.maxOrderNumber = preparedQn.number;
                     vm.question = response.data;
                     vm.showSubQuestion = true;
@@ -8921,8 +8907,6 @@ var INDICATOR = {
             if(index === -1) {
                 vm.question.options.push(newValue);
             }
-            console.log("question",vm.question.options);
-            // vm.isOptionEdit
             // Clear input contents
             vm.newRadioValue = '';
         }
@@ -8975,9 +8959,7 @@ var INDICATOR = {
         function saveSubQuestionList() {
             _.forEach(vm.sub_question_list,function (subQn) {
                 if(!_.isUndefined(subQn._id)){
-                    FormService.UpdateQuestion(subQn).then(function (response) {
-                        // console.log(subQn.question_text + "Updated",response);
-                    },function (error) {
+                    FormService.UpdateQuestion(subQn).then(function (response) {},function (error) {
                         var message = error.data.error.message;
                         AlertService.showError("Failed to Save Sub Question",message);
                     });
@@ -8986,7 +8968,6 @@ var INDICATOR = {
                     subQn.parent_question = vm.question._id;
                     vm.maxSubOrderNumber = subQn.number;
                     FormService.CreateQuestion(subQn,subQn.sub_question_type).then(function (response) {
-                        // console.log(subQn.question_text + "sub question created",response);
                     },function (error) {
                         console.log("sub question error create",error);
                     });
@@ -8998,7 +8979,6 @@ var INDICATOR = {
             vm.showSubQuestion = true;
             vm.sub_question = question;
             SetValidationObj(true);
-            console.log("vm.sub_question.selected_validation",vm.sub_question);
         }
 
         function spliceQuestionFromList(question) {
@@ -9040,18 +9020,10 @@ var INDICATOR = {
                 });
 
         }
-        function _subQuestionValidationSelected() {
-          console.log("vm.sub_question.selected_validation",vm.sub_question.selected_validation)
-        }
 
-
-
-        function _addAnother() {
-            console.log("question",vm.question);
-        }
-        function _showQuestionOn() {
-            console.log("Question show",vm.question.show);
-        }
+        function _subQuestionValidationSelected() {}
+        function _addAnother() { }
+        function _showQuestionOn() { }
         function _cancel() {
             $mdDialog.cancel();
         }
@@ -9060,9 +9032,6 @@ var INDICATOR = {
             //     vm.showSubQuestion = true;
             // }
         }
-
-
-
         function getQuestionTypeObj(typeName) {
             return _.first(_.filter(vm.questionTypes,function (type) {
                 return type.name === typeName || type.code === typeName;
