@@ -3126,6 +3126,13 @@
             .primaryPalette('blue');
     }
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.authentication', []);
+
+})();
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -3142,11 +3149,12 @@
 
 })();
 
+
 (function() {
     'use strict';
 
     angular
-        .module('app.authentication', []);
+        .module('app.banking', []);
 
 })();
 (function(angular) {
@@ -3162,14 +3170,6 @@
 
 })(window.angular);
 
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.banking', []);
-
-})();
 /**
  * Created by Yoni on 1/29/2018.
  */
@@ -3267,14 +3267,6 @@ function runBlock() {
         .module('app.profile', []);
 
 })();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.report', []);
-
-})();
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -3284,6 +3276,14 @@ function runBlock() {
 
     angular
         .module('app.welcomePage', []);
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.report', []);
 
 })();
 
@@ -3345,89 +3345,6 @@ function runBlock() {
         }
 
     }
-
-})(window.angular);
-/**
- * Created by Yoni on 3/11/2018.
- */
-
-(function(angular) {
-    'use strict';
-    angular.module('app.forms')
-
-        .service('ACATService', ACATService);
-
-    ACATService.$inject = ['$http','CommonService'];
-
-    function ACATService($http, CommonService) {
-        return {
-            GetCrops:_getCrops,
-            SaveCrop:_createCrop,
-            UpdateCrop:_updateCrop,
-            GetAllACATList: _getAllACAT,
-            GetACATById: _getACATById,
-            CreateACAT:_createACAT,
-            UpdateACAT:_updateACAT,
-            AddCostList:_addCostList,
-            UpdateCostList:_updateCostList,
-            RemoveCostListLinear:_removeCostListLinear,
-            RemoveCostListGroup:_removeCostGroupList,
-            RemoveCostGroup:_removeCostGroup,
-            UpdateCostGroup:_updateCostGroup,
-            ResetCostList:_resetCostList
-        };
-
-
-        function _getCrops() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
-        }
-        function _createCrop(crop){
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateCrop), crop);
-        }
-        function _updateCrop(crop){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Crop,crop._id), crop);
-        }
-        function _getACATById(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,id));
-        }
-        function _getAllACAT() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
-        }
-        function _addCostList(cost) {
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
-        }
-
-        function _updateCostList(cost){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
-        }
-        function _createACAT(acat) {
-            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
-        }
-        function _updateACAT(acat) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,acat._id), acat);
-        }
-
-        function _removeCostListLinear(cost_list){
-            var item = {  item_id: cost_list.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + ACAT_COST_LIST_TYPE.LINEAR, item);
-        }
-        function _removeCostGroupList(group_cost_list){
-            var item = {  item_id: group_cost_list.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,group_cost_list._id) +'/items', item);
-        }
-        function _removeCostGroup(group){
-            var item = {  item_id: group.item_id  };
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group._id) +'/group', item);
-        }
-
-        function _updateCostGroup(group) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,'grouped') +'/' +group._id, group);
-        }
-        function _resetCostList(cost_list) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
-        }
-    }
-
 
 })(window.angular);
 (function(angular) {
@@ -3566,803 +3483,89 @@ function runBlock() {
 })(window.angular);
 
 
-(function (angular) {
-    "use strict";
-
-    angular
-        .module('app.common')
-        .constant("_", window._)
-        .constant("APP_CONSTANTS", {
-            USER_ROLES: {
-                ALL: "*",
-                ADMIN: "admin"
-            },
-            StorageKey: {
-                TOKEN: "token",
-                SESSION: "SESSION",
-                PERMISSIONS: "PERMISSIONS",
-                ACCESS_BRANCHES: "ACCESS_BRANCHES"
-            },
-            AUTH_EVENTS: {
-                loginSuccess: "auth-login-success",
-                loginFailed: "auth-login-failed",
-                logoutSuccess: "auth-logout-success",
-                logoutUser: "auth-logout-user",
-                sessionTimeout: "auth-session-timeout",
-                notAuthenticated: "auth-not-authenticated",
-                notAuthorized: "auth-not-authorized"
-            },
-            REDIRECT_TO_URL: "redirectToUrlAfterLogin",
-            FILE_TYPE: {
-                PDF: {type: 'application/pdf'},
-                DOC: {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'},
-                EXCEL: {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}
-            }
-        });
-})(window.angular);
-
 /**
- * Created by Yoni on 12/30/2017.
+ * Created by Yoni on 3/11/2018.
  */
-//Directive
 
 (function(angular) {
-
     'use strict';
+    angular.module('app.forms')
 
-    angular.module('app.common')
-        .directive('userpermission', ["PermissionService", function(PermissionService) {
-            return {
-                restrict: 'A',
-                link: function(scope, element, attrs) {
-                    scope.$watch(attrs.userpermission, function(value) {
-                        var permission = value;
-                        var hasPermission = false;
-                        if (_.isString(permission)) {
-                            hasPermission = PermissionService.hasThisPermission(permission);
-                        } else if (_.isArray(permission)) {
-                            hasPermission = PermissionService.hasThesePermissions(permission); //multiple permissions
-                        }
+        .service('ACATService', ACATService);
 
-                        toggleVisibility(hasPermission);
-                    });
+    ACATService.$inject = ['$http','CommonService'];
 
-                    function toggleVisibility(hasPermission) {
-                        if (hasPermission) {
-                            element.show();
-                        } else {
-                            element.hide();
-                        }
-                    }
-                }
-            };
-        }])
-        // Text Editor template directive
-        .directive('editor', function() {
-            return {
-                restrict: 'E',
-                template: "<div ng-show='vm.editorEnabledForElement === (radioOption);'>" +
-                    "<input class='editableTextInput' type='text' ng-model='vm.text' ng-required='true' " +
-                    "show-focus='vm.editorEnabledForElement === (radioOption);' " +
-                    "keypress-enter='vm.saveOption(radioOption, vm.text)' " +
-                    "ng-blur='vm.saveOption(radioOption, vm.text)'" +
-                    " show-focus select-on-click >" +
-                    "</div>"
-            };
-        })
-        .directive('keypressEnter', function() {
-            return function(scope, element, attrs) {
-                element.bind("keydown keypress", function(event) {
-                    if (event.which === 13) {
-                        scope.$apply(function() {
-                            scope.$eval(attrs.keypressEnter);
-                        });
-                        console.log("Pressed enter.");
-                        event.preventDefault();
-                    }
-                });
-            };
-        })
-        // Put focus on element when event is triggered.
-        // https://coderwall.com/p/a41lwa/angularjs-auto-focus-into-input-field-when-ng-show-event-is-triggered
-
-        .directive('eventFocus', ["focus", function(focus) {
-            return function(scope, elem, attr) {
-                elem.on(attr.eventFocus, function() {
-                    focus(attr.eventFocusId);
-                });
-
-                // // Removes bound events in the element itself
-                // // when the scope is destroyed
-                // scope.$on('$destroy', function() {
-                //     element.off(attr.eventFocus);
-                // });
-            };
-        }])
-        // Select text on focus.
-        // http://stackoverflow.com/questions/14995884/select-text-on-input-focus
-        .directive('selectOnClick', ['$window', function($window) {
-            return {
-                restrict: 'A',
-                link: function(scope, element, attrs) {
-                    element.on('focus', function() {
-                        if (!$window.getSelection().toString()) {
-                            // Required for mobile Safari
-                            this.setSelectionRange(0, this.value.length)
-                        }
-                    });
-                }
-            };
-        }])
-
-        .directive('questionRow', ["$timeout", "$compile", "$filter", function($timeout, $compile, $filter) {
-            return {
-                restrict: 'E',
-                replace: true,
-                scope: {
-                    questionRowData: '=questionRowData',
-                    layoutData: '=layoutData',
-                    parentRowNo: '=parentRowNo',
-                    rowNo: '=rowNo',
-                    isSubquestion: '=isSubquestion',
-                    isReadonly: '=isReadonly',
-                    valueChanged: '='
-                },
-                link: function($scope, element, attrs) {
-                    $scope.$watch('questionRowData.values', function(newValue) {
-                        if (!_.isEmpty(newValue) && $scope.questionRowData.type !== QUESTION_TYPE.FILL_IN_BLANK && !_.isUndefined($scope.valueChanged)) {
-                            $scope.valueChanged($scope.questionRowData);
-                        }
-                    }, true);
-                },
-                templateUrl: 'app/views/common/directives/templates/question_row.tmpl.html'
-            };
-        }])
-        .directive('questionRowWithAnswer', ["$timeout", "$compile", "$filter", function($timeout, $compile, $filter) {
-            return {
-                restrict: 'E',
-                replace: true,
-                scope: {
-                    questionRowData: '=questionRowData',
-                    layoutData: '=layoutData',
-                    parentRowNo: '=parentRowNo',
-                    rowNo: '=rowNo',
-                    isSubquestion: '=isSubquestion'
-                },
-                link: function($scope, element, attrs) {},
-                templateUrl: 'app/views/common/directives/templates/question_row_with_answer.tmpl.html'
-            };
-        }])
-        .directive('question', ["$timeout", "$compile", "$filter", function($timeout, $compile, $filter) {
-            return {
-                restrict: 'E',
-                replace: true,
-                scope: {
-                    questionData: '=questionData',
-                    isReadonly: '=isReadonly'
-                },
-                link: function($scope, element, attrs) {
-
-                    $scope.$watch('questionData', function(questionData) {
-                        if (questionData) {
-                            var questionType = questionData.type.toLowerCase();
+    function ACATService($http, CommonService) {
+        return {
+            GetCrops:_getCrops,
+            SaveCrop:_createCrop,
+            UpdateCrop:_updateCrop,
+            GetAllACATList: _getAllACAT,
+            GetACATById: _getACATById,
+            CreateACAT:_createACAT,
+            UpdateACAT:_updateACAT,
+            AddCostList:_addCostList,
+            UpdateCostList:_updateCostList,
+            RemoveCostListLinear:_removeCostListLinear,
+            RemoveCostListGroup:_removeCostGroupList,
+            RemoveCostGroup:_removeCostGroup,
+            UpdateCostGroup:_updateCostGroup,
+            ResetCostList:_resetCostList
+        };
 
 
-                            switch (questionType) {
-                                case "fill_in_blank":
-                                {
-                                    break;
-                                }
-                                case "yes_no":
-                                {
-                                    questionType = "single_choice";
-                                    break;
-                                }
-                            }
+        function _getCrops() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
+        }
+        function _createCrop(crop){
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateCrop), crop);
+        }
+        function _updateCrop(crop){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Crop,crop._id), crop);
+        }
+        function _getACATById(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,id));
+        }
+        function _getAllACAT() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.ACAT));
+        }
+        function _addCostList(cost) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CostList),cost);
+        }
 
-                            //Parse values
-                            if (questionData.validation_factor === 'NUMERIC' || questionData.validation_factor === 'ALPHANUMERIC') {
-                                questionData.values = _.map(questionData.values, function(val) {
-                                    return parseFloat(val);
-                                });
-                            }
+        function _updateCostList(cost){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost._id), cost);
+        }
+        function _createACAT(acat) {
+            return $http.post(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.CreateACAT),acat);
+        }
+        function _updateACAT(acat) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.ACAT,acat._id), acat);
+        }
 
-                            $scope.dynamicTemplateUrl = 'app/views/common/directives/templates/' + questionType + '.tmpl.html';
-                        }
-                    });
+        function _removeCostListLinear(cost_list){
+            var item = {  item_id: cost_list.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/' + ACAT_COST_LIST_TYPE.LINEAR, item);
+        }
+        function _removeCostGroupList(group_cost_list){
+            var item = {  item_id: group_cost_list.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListGroups,group_cost_list._id) +'/items', item);
+        }
+        function _removeCostGroup(group){
+            var item = {  item_id: group.item_id  };
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,group._id) +'/group', item);
+        }
 
-                    //Helping function
-                    //Multi-select
-                    $scope.toggle = function(item, list) {
-                        var idx = list.indexOf(item);
-                        if (idx > -1) {
-                            list.splice(idx, 1);
-                        } else {
-                            list.push(item);
-                        }
-                    };
-
-                    $scope.exists = function(item, list) {
-                        return list.indexOf(item) > -1;
-                    };
-                },
-
-                template: '<ng-include src="dynamicTemplateUrl"></ng-include>'
-            };
-        }])
-        .directive('costList', ["$timeout", "$compile", "$filter", function($timeout, $compile, $filter) {
-            return {
-                restrict: 'E',
-                replace: true,
-                scope: {
-                    costListData: '=costListData'
-                },
-                link: function($scope, element, attrs) {
-
-                    $scope.$watch(watchExpected, function(oldvalue) {
-                        $scope.costListData.estimated.total_price = $scope.costListData.estimated.value * $scope.costListData.estimated.unit_price;
-                    }, true);
-
-                    $scope.$watch(watchActual, function(oldvalue) {
-                        $scope.costListData.achieved.total_price = $scope.costListData.achieved.value * $scope.costListData.achieved.unit_price;
-                    }, true);
-
-                    function watchExpected() {
-                        return watchProperties($scope.costListData.estimated, ['cash_flow', 'total_price']);
-                    }
-
-                    function watchActual() {
-                        return watchProperties($scope.costListData.achieved, ['cash_flow', 'total_price']);
-                    }
-
-                    function watchProperties(obj, keys) {
-                        return Object.keys(obj).filter(function(key) {
-                            return keys.indexOf(key) === -1;
-                        }).reduce(function(result, key) {
-                            result[key] = obj[key];
-                            return result;
-                        }, {});
-                    }
-
-                    $scope.monthes = [{
-                        "name": "January",
-                        "short": "jan"
-                    }, {
-                        "name": "February",
-                        "short": "feb"
-                    }, {
-                        "name": "March",
-                        "short": "mar"
-                    }, {
-                        "name": "April",
-                        "short": "apr"
-                    }, {
-                        "name": "May",
-                        "short": "may"
-                    }, {
-                        "name": "June",
-                        "short": "june"
-                    }, {
-                        "name": "July",
-                        "short": "july"
-                    }, {
-                        "name": "August",
-                        "short": "aug"
-                    }, {
-                        "name": "September",
-                        "short": "sep"
-                    }, {
-                        "name": "October",
-                        "short": "oct"
-                    }, {
-                        "name": "November",
-                        "short": "nov"
-                    }, {
-                        "name": "December",
-                        "short": "dec",
-                    }];
-                },
-                templateUrl: 'app/views/common/directives/templates/cost_list.tmpl.html'
-            };
-        }])
-        .directive('reportParameter', ["$timeout", "$compile", "$filter", function($timeout, $compile, $filter) {
-            return {
-                restrict: 'E',
-                scope: {
-                    parameters: '=parameters'
-                },
-                link: function($scope, element, attrs) {
-                    $scope.$watch('parameters', function (walks) {
-                        console.log($scope.parameters);
-                    });
-
-                },
-                templateUrl: 'app/views/common/directives/templates/report.parameter.tmpl.html'
-            };
-        }])
-        .directive('formWizard', formWizard);
-
-            formWizard.$inject = ['$parse'];
-            function formWizard ($parse) {
-                var directive = {
-                    link: link,
-                    controller:  function ($scope) {
-                        $scope.wizardValidate = function(formName) {
-                            if(angular.isDefined($scope[formName] )) {
-                                // Set submitted to perform validation
-                                $scope[formName].$setSubmitted(true);
-                                // return valid status of the subform
-                                return $scope[formName].$valid;
-                            }
-                        }
-                    },
-                    restrict: 'A',
-                    scope: true
-                };
-                return directive;
-
-                function link(scope, element, attrs) {
-                    var validate = $parse(attrs.validateSteps)(scope),
-                        wiz = new Wizard(attrs.steps, !!validate, element);
-                    scope.wizard = wiz.init();
-                }
-
-                function Wizard (quantity, validate, element) {
-
-                    var self = this;
-                    self.quantity = parseInt(quantity,10);
-                    self.validate = validate;
-                    self.element = element;
-
-                    self.init = function() {
-                        self.createsteps(self.quantity);
-                        self.go(1); // always start at fist step
-                        return self;
-                    };
-
-                    self.go = function(step) {
-
-                        if ( angular.isDefined(self.steps[step]) ) {
-                            if(self.validate && step !== 1) { // no need to validate when move to first state
-                                var scope = self.element.scope();
-                                if(typeof scope.wizardValidate === 'function') {
-                                    var form = $(self.element).children().children('div').eq(step - 2).children('[ng-form]');
-                                    if ( ! scope.wizardValidate(form.attr('ng-form')))
-                                        return false;
-                                }
-                            }
-
-                            self.cleanall();
-                            self.steps[step] = true;
-                        }
-                    };
-
-                    self.active = function(step) {
-                        return !!self.steps[step];
-                    };
-
-                    self.cleanall = function() {
-                        for(var i in self.steps){
-                            self.steps[i] = false;
-                        }
-                    };
-
-                    self.createsteps = function(q) {
-                        self.steps = [];
-                        for(var i = 1; i <= q; i++) self.steps[i] = false;
-                    };
-
-                }
-
-            }
+        function _updateCostGroup(group) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,'grouped') +'/' +group._id, group);
+        }
+        function _resetCostList(cost_list) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.CostListUpdate,cost_list._id) +'/reset', {});
+        }
+    }
 
 
 })(window.angular);
-(function () { 
- return angular.module("app.common")
-.constant("EnvironmentConfig", {"BaseUrl":"http://api.dev.bidir.gebeya.co/","SeasonalMonitoringBaseUrl":"http://seasmon.wenr.wur.nl/cgi-bin/register.py?","SeasmonBaseUrl":"http://seasmon.wenr.wur.nl/html/"})
-.constant("app_version", "1.0");
-
-})();
-
-/**
- * Created by Yoni on 12/14/2017.
- */
-(function (angular) {
-    'use strict';
-    angular.module('app.common')
-        .filter('ReplaceUnderscore', function () {
-            return function (input) {
-                return typeof input === "string" ? input.replace(/_/g, ' ') : input;
-            };
-        })
-        .filter('trusted', ['$sce', function ($sce) {
-            return function(url) {
-                return $sce.trustAsResourceUrl(url);
-            };
-        }])
-        .filter('ordinal', function(){
-            return function(numb){
-                const number = Number(numb);
-                if(isNaN(number) || number < 1 ){
-                    return number;
-                } else {
-                    let lastDigit = number % 10;
-                    if(lastDigit === 1){
-                        return number + 'st'
-                    } else if(lastDigit === 2){
-                        return number + 'nd'
-                    } else if (lastDigit === 3){
-                        return number + 'rd'
-                    } else if (lastDigit > 3){
-                        return number + 'th'
-                    }
-                }
-            }
-        })
-        .filter('titleCase', function () {
-        return function (input) {
-            input = input || '';
-            return input.replace(/\w\S*/g, function (txt) {
-                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-            });
-        };
-    });
-
-})(window.angular);
-var API = {
-    Service: {
-        NONE:'',
-        MFI: 'MFI',
-        Auth: 'auth',
-        Users: 'users',
-        SCREENING:'screenings',
-        LOANS:'loans',
-        FORM:'forms',
-        ACAT:'acat',
-        GEOSPATIAL: 'geospatial',
-        REPORT:'reports',
-        GROUPS: 'groups',
-        FETCH: 'fetch'
-    },
-    Methods: {
-        Auth: {
-            Login: 'login'
-        },
-        MFI: {
-            MFIUpdate:'',
-            MFI:'create',
-            GetAll:'all',
-            Branches: 'branches',
-            CreateBranch: 'branches/create',
-            FetchBranches: 'branches',
-            Zones: 'zones'
-        },
-        Users: {
-            Account:'accounts',
-            UserUpdate:'',
-            User:'create',
-            GetAll: '',
-            Roles: 'roles',
-            Role: 'roles/create'
-        },
-        Roles:{
-            GetAll: 'roles',
-            Create: 'roles/create',
-            Permissions: 'permissions',
-            PermissionByGroup: 'permissions/groups'
-        },
-        Tasks: {
-            Task:'tasks',
-            GetAll: 'tasks/paginate?page=1&per_page=100'
-        },
-        Clients:{
-            All:'clients/paginate?source=web',
-            Client:'clients',
-            SearchClient:''
-        },
-        Form:{
-            All: '',
-            Create: 'create',
-            Question:'questions',
-            Create_Question:'questions/create',
-            Section:'sections',
-            Create_Section:'sections/create'
-        },
-        ACAT:{
-            Empty: '',
-            ACAT:'forms',
-            Crop:'crops',
-            Clients:'clients',
-            CreateCrop:'crops/create',
-            LoanProducts:'loanProducts',
-            CreateLoanProducts:'loanProducts/create',
-            CostListUpdate: 'costLists',
-            CostListGroups: 'costLists/groups',
-            CostList: 'costLists/add',
-            CreateACAT:'forms/initialize',
-            LoanProposals:'loanProposals/acat',
-            Printout:'printout'
-        },
-        SCREENING:{
-            Screening:'',
-            Clients:'clients',
-            Histories: 'histories/search?'
-        },
-        LOANS:{
-            Loans:'',
-            Clients:'clients'
-        },
-        CBS:{
-            Clients: 'clients/search?cbs_status=NO ATTEMPT&&cbs_status=DENIED&loan_cycle_number=1&status=loan_granted',
-            CBS:    'clients/cbs',
-            CBSBulk:'clients/cbs/bulk',
-            Connect: 'cbs/connect'
-        },
-        GeoSpatial:{
-            SaveConfig: 'configs/create',
-            Config: 'configs',
-            UserConfig: 'configs/search?user=',
-            Woredas: 'weredas',
-            Request: 'requests/create',
-            Search: 'requests/search?'
-        },
-        Report:{
-            Report: '',
-            AllReport: 'all'
-        },
-        Group:{
-            Group: '',
-            Printout:'printout'
-        }
-    }
-};
-
-var MONTHS_CONST = [
-    {
-        "name": "January",
-        "short": "Jan",
-        "number": 1,
-        "days": 31
-    },
-    {
-        "name": "February",
-        "short": "Feb",
-        "number": 2,
-        "days": 28
-    },
-    {
-        "name": "March",
-        "short": "Mar",
-        "number": 3,
-        "days": 31
-    },
-    {
-        "name": "April",
-        "short": "Apr",
-        "number": 4,
-        "days": 30
-    },
-    {
-        "name": "May",
-        "short": "May",
-        "number": 5,
-        "days": 31
-    },
-    {
-        "name": "June",
-        "short": "Jun",
-        "number": 6,
-        "days": 30
-    },
-    {
-        "name": "July",
-        "short": "Jul",
-        "number": 7,
-        "days": 31
-    },
-    {
-        "name": "August",
-        "short": "Aug",
-        "number": 8,
-        "days": 31
-    },
-    {
-        "name": "September",
-        "short": "Sep",
-        "number": 9,
-        "days": 30
-    },
-    {
-        "name": "October",
-        "short": "Oct",
-        "number": 10,
-        "days": 31
-    },
-    {
-        "name": "November",
-        "short": "Nov",
-        "number": 11,
-        "days": 30
-    },
-    {
-        "name": "December",
-        "short": "Dec",
-        "number": 12,
-        "days": 31
-    }
-];
-
-var QUESTION_TYPE = {
-    FILL_IN_BLANK: "FILL_IN_BLANK",
-    YES_NO: "YES_NO",
-    MULTIPLE_CHOICE: "MULTIPLE_CHOICE",
-    SINGLE_CHOICE: "SINGLE_CHOICE",
-    GROUPED: "GROUPED"
-};
-var ACAT_GROUP_CONSTANT = {
-    SEED: "SEED",
-    FERTILIZER: "FERTILIZER",
-    CHEMICALS: "CHEMICALS",
-    LABOUR_COST:"LABOUR_COST",
-    OTHER_COST:"OTHER_COST"
-};
-var ACAT_COST_LIST_TYPE = {
-    LINEAR: "linear",
-    GROUPED: "grouped"
-};
-
-var SCREENING_STATUS = {
-    IN_PROGRESS:{code:'screening_inprogress',name:'In Progress'},
-    SUBMITTED:{code:'submitted',name:'Submitted'},
-    APPROVED:{code:'approved',name:'Approved'},
-    DECLINED_FINAL:{code:'declined_final',name:'Declined Final'},
-    DECLINED_UNDER_REVIEW:{code:'declined_under_review',name:'Declined Under Review'}
-};
-
-var MD_TABLE_GLOBAL_SETTINGS = {
-    PAGE_SIZES : [10, 25, 50, 100, 250, 500],
-    OPTIONS:  {
-        rowSelection: false,
-        multiSelect: false,
-        autoSelect: true,
-        decapitate: false,
-        largeEditDialog: false,
-        boundaryLinks: false,
-        limitSelect: true,
-        pageSelect: false
-    }
-};
-var CIVIL_STATUSES  = ["single","married","widowed","other"];
-
-var INDICATOR = {
-    VI: 'VI',
-    RAINFALL: 'PRECIP'
-};
-/**=========================================================
- * Collapse panels * [panel-collapse]
- =========================================================*/
-(function() {
-    'use strict';
-
-    angular.module('app.common')
-        .directive('panelCollapse', panelCollapse);
-
-    function panelCollapse () {
-        var directive = {
-            controller: Controller,
-            restrict: 'A',
-            scope: false
-        };
-        return directive;
-    }
-
-    Controller.$inject = ['$scope', '$element', '$timeout', '$localStorage'];
-    function Controller ($scope, $element, $timeout, $localStorage) {
-      var storageKeyName = 'panelState';
-
-      // Prepare the panel to be collapsible
-      var $elem   = $($element),
-          parent  = $elem.closest('.panel'), // find the first parent panel
-          panelId = parent.attr('id');
-
-      // Load the saved state if exists
-      var currentState = loadPanelState( panelId );
-      if ( typeof currentState !== 'undefined') {
-        $timeout(function(){
-            $scope[panelId] = currentState; },
-          10);
-      }
-
-      // bind events to switch icons
-      $element.bind('click', function(e) {
-        e.preventDefault();
-        savePanelState( panelId, !$scope[panelId] );
-
-      });
-  
-      // Controller helpers
-      function savePanelState(id, state) {
-        if(!id) return false;
-        var data = angular.fromJson($localStorage[storageKeyName]);
-        if(!data) { data = {}; }
-        data[id] = state;
-        $localStorage[storageKeyName] = angular.toJson(data);
-      }
-      function loadPanelState(id) {
-        if(!id) return false;
-        var data = angular.fromJson($localStorage[storageKeyName]);
-        if(data) {
-          return data[id];
-        }
-      }
-    }
-
-})();
-
-/**=========================================================
- * Module panel-tools.js
- * Directive tools to control panels.
- * Allows collapse, refresh and dismiss (remove)
- * Saves panel state in browser storage
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular.module('app.common')
-        .directive('paneltool', paneltool);
-
-    paneltool.$inject = ['$compile', '$timeout'];
-    function paneltool ($compile, $timeout) {
-        var directive = {
-            link: link,
-            restrict: 'E',
-            scope: false
-        };
-        return directive;
-
-        function link(scope, element, attrs) {
-
-          var templates = {
-            /* jshint multistr: true */
-            collapse:'<a href="#" panel-collapse="" uib-tooltip="Collapse Panel" ng-click="{{panelId}} = !{{panelId}}"> \
-                        <em ng-show="{{panelId}}" class="fa fa-plus ng-no-animation"></em> \
-                        <em ng-show="!{{panelId}}" class="fa fa-minus ng-no-animation"></em> \
-                      </a>',
-            dismiss: '<a href="#" panel-dismiss="" uib-tooltip="Close Panel">\
-                       <em class="fa fa-times"></em>\
-                     </a>',
-            refresh: '<a href="#" panel-refresh="" data-spinner="{{spinner}}" uib-tooltip="Refresh Panel">\
-                       <em class="fa fa-refresh"></em>\
-                     </a>'
-          };
-
-          var tools = scope.panelTools || attrs;
-
-          $timeout(function() {
-            element.html(getTemplate(element, tools )).show();
-            $compile(element.contents())(scope);
-
-            element.addClass('pull-right');
-          });
-
-          function getTemplate( elem, attrs ){
-            var temp = '';
-            attrs = attrs || {};
-            if(attrs.toolCollapse)
-              temp += templates.collapse.replace(/{{panelId}}/g, (elem.parent().parent().attr('id')) );
-            if(attrs.toolDismiss)
-              temp += templates.dismiss;
-            if(attrs.toolRefresh)
-              temp += templates.refresh.replace(/{{spinner}}/g, attrs.toolRefresh);
-            return temp;
-          }
-        }// link
-    }
-
-})();
-
 (function(angular) {
     "use strict";
 
@@ -4804,6 +4007,925 @@ var INDICATOR = {
     }
 
 })(window.angular);
+(function (angular) {
+    "use strict";
+
+    angular
+        .module('app.common')
+        .constant("_", window._)
+        .constant("APP_CONSTANTS", {
+            USER_ROLES: {
+                ALL: "*",
+                ADMIN: "admin"
+            },
+            StorageKey: {
+                TOKEN: "token",
+                SESSION: "SESSION",
+                PERMISSIONS: "PERMISSIONS",
+                ACCESS_BRANCHES: "ACCESS_BRANCHES"
+            },
+            AUTH_EVENTS: {
+                loginSuccess: "auth-login-success",
+                loginFailed: "auth-login-failed",
+                logoutSuccess: "auth-logout-success",
+                logoutUser: "auth-logout-user",
+                sessionTimeout: "auth-session-timeout",
+                notAuthenticated: "auth-not-authenticated",
+                notAuthorized: "auth-not-authorized"
+            },
+            REDIRECT_TO_URL: "redirectToUrlAfterLogin",
+            FILE_TYPE: {
+                PDF: {type: 'application/pdf'},
+                DOC: {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'},
+                EXCEL: {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}
+            }
+        })
+        .constant('API_DEFINITION',{
+        Service: {
+            NONE:'',
+            MFI: 'MFI',
+            Auth: 'auth',
+            Users: 'users',
+            SCREENING:'screenings',
+            LOANS:'loans',
+            FORM:'forms',
+            ACAT:'acat',
+            GEOSPATIAL: 'geospatial',
+            REPORT:'reports',
+            GROUPS: 'groups',
+            FETCH: 'fetch'
+        },
+        Methods: {
+            Auth: {
+                Login: 'login'
+            },
+            MFI: {
+                MFIUpdate:'',
+                MFI:'create',
+                GetAll:'all',
+                Branches: 'branches',
+                CreateBranch: 'branches/create',
+                FetchBranches: 'branches',
+                Zones: 'zones'
+            },
+            Users: {
+                Account:'accounts',
+                UserUpdate:'',
+                User:'create',
+                GetAll: '',
+                Roles: 'roles',
+                Role: 'roles/create'
+            },
+            Roles:{
+                GetAll: 'roles',
+                Create: 'roles/create',
+                Permissions: 'permissions',
+                PermissionByGroup: 'permissions/groups'
+            },
+            Tasks: {
+                Task:'tasks',
+                GetAll: 'tasks/paginate?page=1&per_page=100'
+            },
+            Clients:{
+                All:'clients/paginate?source=web',
+                Client:'clients',
+                SearchClient:''
+            },
+            Form:{
+                All: '',
+                Create: 'create',
+                Question:'questions',
+                Create_Question:'questions/create',
+                Section:'sections',
+                Create_Section:'sections/create'
+            },
+            ACAT:{
+                Empty: '',
+                ACAT:'forms',
+                Crop:'crops',
+                Clients:'clients',
+                CreateCrop:'crops/create',
+                LoanProducts:'loanProducts',
+                CreateLoanProducts:'loanProducts/create',
+                CostListUpdate: 'costLists',
+                CostListGroups: 'costLists/groups',
+                CostList: 'costLists/add',
+                CreateACAT:'forms/initialize',
+                LoanProposals:'loanProposals/acat',
+                Printout:'printout'
+            },
+            SCREENING:{
+                Screening:'',
+                Clients:'clients',
+                Histories: 'histories/search?'
+            },
+            LOANS:{
+                Loans:'',
+                Clients:'clients'
+            },
+            CBS:{
+                Clients: 'clients/search?cbs_status=NO ATTEMPT&&cbs_status=DENIED&loan_cycle_number=1&status=loan_granted',
+                CBS:    'clients/cbs',
+                CBSBulk:'clients/cbs/bulk',
+                Connect: 'cbs/connect'
+            },
+            GeoSpatial:{
+                SaveConfig: 'configs/create',
+                Config: 'configs',
+                UserConfig: 'configs/search?user=',
+                Woredas: 'weredas',
+                Request: 'requests/create',
+                Search: 'requests/search?'
+            },
+            Report:{
+                Report: '',
+                AllReport: 'all'
+            },
+            Group:{
+                Group: '',
+                Printout:'printout'
+            }
+        }
+    });
+})(window.angular);
+
+/**
+ * Created by Yoni on 12/30/2017.
+ */
+//Directive
+
+(function(angular) {
+
+    'use strict';
+
+    angular.module('app.common')
+        .directive('userpermission', ["PermissionService", function(PermissionService) {
+            return {
+                restrict: 'A',
+                link: function(scope, element, attrs) {
+                    scope.$watch(attrs.userpermission, function(value) {
+                        var permission = value;
+                        var hasPermission = false;
+                        if (_.isString(permission)) {
+                            hasPermission = PermissionService.hasThisPermission(permission);
+                        } else if (_.isArray(permission)) {
+                            hasPermission = PermissionService.hasThesePermissions(permission); //multiple permissions
+                        }
+
+                        toggleVisibility(hasPermission);
+                    });
+
+                    function toggleVisibility(hasPermission) {
+                        if (hasPermission) {
+                            element.show();
+                        } else {
+                            element.hide();
+                        }
+                    }
+                }
+            };
+        }])
+        // Text Editor template directive
+        .directive('editor', function() {
+            return {
+                restrict: 'E',
+                template: "<div ng-show='vm.editorEnabledForElement === (radioOption);'>" +
+                    "<input class='editableTextInput' type='text' ng-model='vm.text' ng-required='true' " +
+                    "show-focus='vm.editorEnabledForElement === (radioOption);' " +
+                    "keypress-enter='vm.saveOption(radioOption, vm.text)' " +
+                    "ng-blur='vm.saveOption(radioOption, vm.text)'" +
+                    " show-focus select-on-click >" +
+                    "</div>"
+            };
+        })
+        .directive('keypressEnter', function() {
+            return function(scope, element, attrs) {
+                element.bind("keydown keypress", function(event) {
+                    if (event.which === 13) {
+                        scope.$apply(function() {
+                            scope.$eval(attrs.keypressEnter);
+                        });
+                        console.log("Pressed enter.");
+                        event.preventDefault();
+                    }
+                });
+            };
+        })
+        // Put focus on element when event is triggered.
+        // https://coderwall.com/p/a41lwa/angularjs-auto-focus-into-input-field-when-ng-show-event-is-triggered
+
+        .directive('eventFocus', ["focus", function(focus) {
+            return function(scope, elem, attr) {
+                elem.on(attr.eventFocus, function() {
+                    focus(attr.eventFocusId);
+                });
+
+                // // Removes bound events in the element itself
+                // // when the scope is destroyed
+                // scope.$on('$destroy', function() {
+                //     element.off(attr.eventFocus);
+                // });
+            };
+        }])
+        // Select text on focus.
+        // http://stackoverflow.com/questions/14995884/select-text-on-input-focus
+        .directive('selectOnClick', ['$window', function($window) {
+            return {
+                restrict: 'A',
+                link: function(scope, element, attrs) {
+                    element.on('focus', function() {
+                        if (!$window.getSelection().toString()) {
+                            // Required for mobile Safari
+                            this.setSelectionRange(0, this.value.length)
+                        }
+                    });
+                }
+            };
+        }])
+
+        .directive('questionRow', ["$timeout", "$compile", "$filter", function($timeout, $compile, $filter) {
+            return {
+                restrict: 'E',
+                replace: true,
+                scope: {
+                    questionRowData: '=questionRowData',
+                    layoutData: '=layoutData',
+                    parentRowNo: '=parentRowNo',
+                    rowNo: '=rowNo',
+                    isSubquestion: '=isSubquestion',
+                    isReadonly: '=isReadonly',
+                    valueChanged: '='
+                },
+                link: function($scope, element, attrs) {
+                    $scope.$watch('questionRowData.values', function(newValue) {
+                        if (!_.isEmpty(newValue) && $scope.questionRowData.type !== QUESTION_TYPE.FILL_IN_BLANK && !_.isUndefined($scope.valueChanged)) {
+                            $scope.valueChanged($scope.questionRowData);
+                        }
+                    }, true);
+                },
+                templateUrl: 'app/views/common/directives/templates/question_row.tmpl.html'
+            };
+        }])
+        .directive('questionRowWithAnswer', ["$timeout", "$compile", "$filter", function($timeout, $compile, $filter) {
+            return {
+                restrict: 'E',
+                replace: true,
+                scope: {
+                    questionRowData: '=questionRowData',
+                    layoutData: '=layoutData',
+                    parentRowNo: '=parentRowNo',
+                    rowNo: '=rowNo',
+                    isSubquestion: '=isSubquestion'
+                },
+                link: function($scope, element, attrs) {},
+                templateUrl: 'app/views/common/directives/templates/question_row_with_answer.tmpl.html'
+            };
+        }])
+        .directive('question', ["$timeout", "$compile", "$filter", function($timeout, $compile, $filter) {
+            return {
+                restrict: 'E',
+                replace: true,
+                scope: {
+                    questionData: '=questionData',
+                    isReadonly: '=isReadonly'
+                },
+                link: function($scope, element, attrs) {
+
+                    $scope.$watch('questionData', function(questionData) {
+                        if (questionData) {
+                            var questionType = questionData.type.toLowerCase();
+
+
+                            switch (questionType) {
+                                case "fill_in_blank":
+                                {
+                                    break;
+                                }
+                                case "yes_no":
+                                {
+                                    questionType = "single_choice";
+                                    break;
+                                }
+                            }
+
+                            //Parse values
+                            if (questionData.validation_factor === 'NUMERIC' || questionData.validation_factor === 'ALPHANUMERIC') {
+                                questionData.values = _.map(questionData.values, function(val) {
+                                    return parseFloat(val);
+                                });
+                            }
+
+                            $scope.dynamicTemplateUrl = 'app/views/common/directives/templates/' + questionType + '.tmpl.html';
+                        }
+                    });
+
+                    //Helping function
+                    //Multi-select
+                    $scope.toggle = function(item, list) {
+                        var idx = list.indexOf(item);
+                        if (idx > -1) {
+                            list.splice(idx, 1);
+                        } else {
+                            list.push(item);
+                        }
+                    };
+
+                    $scope.exists = function(item, list) {
+                        return list.indexOf(item) > -1;
+                    };
+                },
+
+                template: '<ng-include src="dynamicTemplateUrl"></ng-include>'
+            };
+        }])
+        .directive('costList', ["$timeout", "$compile", "$filter", function($timeout, $compile, $filter) {
+            return {
+                restrict: 'E',
+                replace: true,
+                scope: {
+                    costListData: '=costListData'
+                },
+                link: function($scope, element, attrs) {
+
+                    $scope.$watch(watchExpected, function(oldvalue) {
+                        $scope.costListData.estimated.total_price = $scope.costListData.estimated.value * $scope.costListData.estimated.unit_price;
+                    }, true);
+
+                    $scope.$watch(watchActual, function(oldvalue) {
+                        $scope.costListData.achieved.total_price = $scope.costListData.achieved.value * $scope.costListData.achieved.unit_price;
+                    }, true);
+
+                    function watchExpected() {
+                        return watchProperties($scope.costListData.estimated, ['cash_flow', 'total_price']);
+                    }
+
+                    function watchActual() {
+                        return watchProperties($scope.costListData.achieved, ['cash_flow', 'total_price']);
+                    }
+
+                    function watchProperties(obj, keys) {
+                        return Object.keys(obj).filter(function(key) {
+                            return keys.indexOf(key) === -1;
+                        }).reduce(function(result, key) {
+                            result[key] = obj[key];
+                            return result;
+                        }, {});
+                    }
+
+                    $scope.monthes = [{
+                        "name": "January",
+                        "short": "jan"
+                    }, {
+                        "name": "February",
+                        "short": "feb"
+                    }, {
+                        "name": "March",
+                        "short": "mar"
+                    }, {
+                        "name": "April",
+                        "short": "apr"
+                    }, {
+                        "name": "May",
+                        "short": "may"
+                    }, {
+                        "name": "June",
+                        "short": "june"
+                    }, {
+                        "name": "July",
+                        "short": "july"
+                    }, {
+                        "name": "August",
+                        "short": "aug"
+                    }, {
+                        "name": "September",
+                        "short": "sep"
+                    }, {
+                        "name": "October",
+                        "short": "oct"
+                    }, {
+                        "name": "November",
+                        "short": "nov"
+                    }, {
+                        "name": "December",
+                        "short": "dec",
+                    }];
+                },
+                templateUrl: 'app/views/common/directives/templates/cost_list.tmpl.html'
+            };
+        }])
+        .directive('reportParameter',["$timeout", "$compile", "$filter", "$http", function($timeout, $compile, $filter,$http) {
+            var baseUrl = 'http://api.dev.bidir.gebeya.co/';
+            return {
+                restrict: 'E',
+                scope: {
+                    parameters: '=parameters'
+                },
+                link: function($scope, element, attrs) {
+
+                    $scope.searchParameters = function(parameter,searchTerm){
+                        if(parameter.type === 'SEARCH' && searchTerm !== ""){
+                            console.log("searching....",searchTerm);
+
+                            if(searchTerm.length >= 3){
+                                let url = baseUrl+'reports/'+parameter.get_from + '?search=' + searchTerm;
+                                $http.get(url).then(function (response) {
+                                    parameter.values = response.data;
+                                });
+                            }
+
+                        }
+                    };
+
+                },
+                templateUrl: 'app/views/common/directives/templates/report.parameter.tmpl.html'
+            };
+        }])
+        .directive('formWizard', formWizard)
+
+         formWizard.$inject = ['$parse'];
+
+         function formWizard ($parse) {
+                var directive = {
+                    link: link,
+                    controller:  function ($scope) {
+                        $scope.wizardValidate = function(formName) {
+                            if(angular.isDefined($scope[formName] )) {
+                                // Set submitted to perform validation
+                                $scope[formName].$setSubmitted(true);
+                                // return valid status of the subform
+                                return $scope[formName].$valid;
+                            }
+                        }
+                    },
+                    restrict: 'A',
+                    scope: true
+                };
+                return directive;
+
+                function link(scope, element, attrs) {
+                    var validate = $parse(attrs.validateSteps)(scope),
+                        wiz = new Wizard(attrs.steps, !!validate, element);
+                    scope.wizard = wiz.init();
+                }
+
+                function Wizard (quantity, validate, element) {
+
+                    var self = this;
+                    self.quantity = parseInt(quantity,10);
+                    self.validate = validate;
+                    self.element = element;
+
+                    self.init = function() {
+                        self.createsteps(self.quantity);
+                        self.go(1); // always start at fist step
+                        return self;
+                    };
+
+                    self.go = function(step) {
+
+                        if ( angular.isDefined(self.steps[step]) ) {
+                            if(self.validate && step !== 1) { // no need to validate when move to first state
+                                var scope = self.element.scope();
+                                if(typeof scope.wizardValidate === 'function') {
+                                    var form = $(self.element).children().children('div').eq(step - 2).children('[ng-form]');
+                                    if ( ! scope.wizardValidate(form.attr('ng-form')))
+                                        return false;
+                                }
+                            }
+
+                            self.cleanall();
+                            self.steps[step] = true;
+                        }
+                    };
+
+                    self.active = function(step) {
+                        return !!self.steps[step];
+                    };
+
+                    self.cleanall = function() {
+                        for(var i in self.steps){
+                            self.steps[i] = false;
+                        }
+                    };
+
+                    self.createsteps = function(q) {
+                        self.steps = [];
+                        for(var i = 1; i <= q; i++) self.steps[i] = false;
+                    };
+
+                }
+
+            }
+
+
+
+})(window.angular);
+
+(function () { 
+ return angular.module("app.common")
+.constant("EnvironmentConfig", {"BaseUrl":"http://api.dev.bidir.gebeya.co/","SeasonalMonitoringBaseUrl":"http://seasmon.wenr.wur.nl/cgi-bin/register.py?","SeasmonBaseUrl":"http://seasmon.wenr.wur.nl/html/"})
+.constant("app_version", "1.0");
+
+})();
+
+/**
+ * Created by Yoni on 12/14/2017.
+ */
+(function (angular) {
+    'use strict';
+    angular.module('app.common')
+        .filter('ReplaceUnderscore', function () {
+            return function (input) {
+                return typeof input === "string" ? input.replace(/_/g, ' ') : input;
+            };
+        })
+        .filter('trusted', ['$sce', function ($sce) {
+            return function(url) {
+                return $sce.trustAsResourceUrl(url);
+            };
+        }])
+        .filter('ordinal', function(){
+            return function(numb){
+                const number = Number(numb);
+                if(isNaN(number) || number < 1 ){
+                    return number;
+                } else {
+                    let lastDigit = number % 10;
+                    if(lastDigit === 1){
+                        return number + 'st'
+                    } else if(lastDigit === 2){
+                        return number + 'nd'
+                    } else if (lastDigit === 3){
+                        return number + 'rd'
+                    } else if (lastDigit > 3){
+                        return number + 'th'
+                    }
+                }
+            }
+        })
+        .filter('titleCase', function () {
+        return function (input) {
+            input = input || '';
+            return input.replace(/\w\S*/g, function (txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+        };
+    });
+
+})(window.angular);
+var API = {
+    Service: {
+        NONE:'',
+        MFI: 'MFI',
+        Auth: 'auth',
+        Users: 'users',
+        SCREENING:'screenings',
+        LOANS:'loans',
+        FORM:'forms',
+        ACAT:'acat',
+        GEOSPATIAL: 'geospatial',
+        REPORT:'reports',
+        GROUPS: 'groups',
+        FETCH: 'fetch'
+    },
+    Methods: {
+        Auth: {
+            Login: 'login'
+        },
+        MFI: {
+            MFIUpdate:'',
+            MFI:'create',
+            GetAll:'all',
+            Branches: 'branches',
+            CreateBranch: 'branches/create',
+            FetchBranches: 'branches',
+            Zones: 'zones'
+        },
+        Users: {
+            Account:'accounts',
+            UserUpdate:'',
+            User:'create',
+            GetAll: '',
+            Roles: 'roles',
+            Role: 'roles/create'
+        },
+        Roles:{
+            GetAll: 'roles',
+            Create: 'roles/create',
+            Permissions: 'permissions',
+            PermissionByGroup: 'permissions/groups'
+        },
+        Tasks: {
+            Task:'tasks',
+            GetAll: 'tasks/paginate?page=1&per_page=100'
+        },
+        Clients:{
+            All:'clients/paginate?source=web',
+            Client:'clients',
+            SearchClient:''
+        },
+        Form:{
+            All: '',
+            Create: 'create',
+            Question:'questions',
+            Create_Question:'questions/create',
+            Section:'sections',
+            Create_Section:'sections/create'
+        },
+        ACAT:{
+            Empty: '',
+            ACAT:'forms',
+            Crop:'crops',
+            Clients:'clients',
+            CreateCrop:'crops/create',
+            LoanProducts:'loanProducts',
+            CreateLoanProducts:'loanProducts/create',
+            CostListUpdate: 'costLists',
+            CostListGroups: 'costLists/groups',
+            CostList: 'costLists/add',
+            CreateACAT:'forms/initialize',
+            LoanProposals:'loanProposals/acat',
+            Printout:'printout'
+        },
+        SCREENING:{
+            Screening:'',
+            Clients:'clients',
+            Histories: 'histories/search?'
+        },
+        LOANS:{
+            Loans:'',
+            Clients:'clients'
+        },
+        CBS:{
+            Clients: 'clients/search?cbs_status=NO ATTEMPT&&cbs_status=DENIED&loan_cycle_number=1&status=loan_granted',
+            CBS:    'clients/cbs',
+            CBSBulk:'clients/cbs/bulk',
+            Connect: 'cbs/connect'
+        },
+        GeoSpatial:{
+            SaveConfig: 'configs/create',
+            Config: 'configs',
+            UserConfig: 'configs/search?user=',
+            Woredas: 'weredas',
+            Request: 'requests/create',
+            Search: 'requests/search?'
+        },
+        Report:{
+            Report: '',
+            AllReport: 'all'
+        },
+        Group:{
+            Group: '',
+            Printout:'printout'
+        }
+    }
+};
+
+var MONTHS_CONST = [
+    {
+        "name": "January",
+        "short": "Jan",
+        "number": 1,
+        "days": 31
+    },
+    {
+        "name": "February",
+        "short": "Feb",
+        "number": 2,
+        "days": 28
+    },
+    {
+        "name": "March",
+        "short": "Mar",
+        "number": 3,
+        "days": 31
+    },
+    {
+        "name": "April",
+        "short": "Apr",
+        "number": 4,
+        "days": 30
+    },
+    {
+        "name": "May",
+        "short": "May",
+        "number": 5,
+        "days": 31
+    },
+    {
+        "name": "June",
+        "short": "Jun",
+        "number": 6,
+        "days": 30
+    },
+    {
+        "name": "July",
+        "short": "Jul",
+        "number": 7,
+        "days": 31
+    },
+    {
+        "name": "August",
+        "short": "Aug",
+        "number": 8,
+        "days": 31
+    },
+    {
+        "name": "September",
+        "short": "Sep",
+        "number": 9,
+        "days": 30
+    },
+    {
+        "name": "October",
+        "short": "Oct",
+        "number": 10,
+        "days": 31
+    },
+    {
+        "name": "November",
+        "short": "Nov",
+        "number": 11,
+        "days": 30
+    },
+    {
+        "name": "December",
+        "short": "Dec",
+        "number": 12,
+        "days": 31
+    }
+];
+
+var QUESTION_TYPE = {
+    FILL_IN_BLANK: "FILL_IN_BLANK",
+    YES_NO: "YES_NO",
+    MULTIPLE_CHOICE: "MULTIPLE_CHOICE",
+    SINGLE_CHOICE: "SINGLE_CHOICE",
+    GROUPED: "GROUPED"
+};
+var ACAT_GROUP_CONSTANT = {
+    SEED: "SEED",
+    FERTILIZER: "FERTILIZER",
+    CHEMICALS: "CHEMICALS",
+    LABOUR_COST:"LABOUR_COST",
+    OTHER_COST:"OTHER_COST"
+};
+var ACAT_COST_LIST_TYPE = {
+    LINEAR: "linear",
+    GROUPED: "grouped"
+};
+
+var SCREENING_STATUS = {
+    IN_PROGRESS:{code:'screening_inprogress',name:'In Progress'},
+    SUBMITTED:{code:'submitted',name:'Submitted'},
+    APPROVED:{code:'approved',name:'Approved'},
+    DECLINED_FINAL:{code:'declined_final',name:'Declined Final'},
+    DECLINED_UNDER_REVIEW:{code:'declined_under_review',name:'Declined Under Review'}
+};
+
+var MD_TABLE_GLOBAL_SETTINGS = {
+    PAGE_SIZES : [10, 25, 50, 100, 250, 500],
+    OPTIONS:  {
+        rowSelection: false,
+        multiSelect: false,
+        autoSelect: true,
+        decapitate: false,
+        largeEditDialog: false,
+        boundaryLinks: false,
+        limitSelect: true,
+        pageSelect: false
+    }
+};
+var CIVIL_STATUSES  = ["single","married","widowed","other"];
+
+var INDICATOR = {
+    VI: 'VI',
+    RAINFALL: 'PRECIP'
+};
+/**=========================================================
+ * Collapse panels * [panel-collapse]
+ =========================================================*/
+(function() {
+    'use strict';
+
+    angular.module('app.common')
+        .directive('panelCollapse', panelCollapse);
+
+    function panelCollapse () {
+        var directive = {
+            controller: Controller,
+            restrict: 'A',
+            scope: false
+        };
+        return directive;
+    }
+
+    Controller.$inject = ['$scope', '$element', '$timeout', '$localStorage'];
+    function Controller ($scope, $element, $timeout, $localStorage) {
+      var storageKeyName = 'panelState';
+
+      // Prepare the panel to be collapsible
+      var $elem   = $($element),
+          parent  = $elem.closest('.panel'), // find the first parent panel
+          panelId = parent.attr('id');
+
+      // Load the saved state if exists
+      var currentState = loadPanelState( panelId );
+      if ( typeof currentState !== 'undefined') {
+        $timeout(function(){
+            $scope[panelId] = currentState; },
+          10);
+      }
+
+      // bind events to switch icons
+      $element.bind('click', function(e) {
+        e.preventDefault();
+        savePanelState( panelId, !$scope[panelId] );
+
+      });
+  
+      // Controller helpers
+      function savePanelState(id, state) {
+        if(!id) return false;
+        var data = angular.fromJson($localStorage[storageKeyName]);
+        if(!data) { data = {}; }
+        data[id] = state;
+        $localStorage[storageKeyName] = angular.toJson(data);
+      }
+      function loadPanelState(id) {
+        if(!id) return false;
+        var data = angular.fromJson($localStorage[storageKeyName]);
+        if(data) {
+          return data[id];
+        }
+      }
+    }
+
+})();
+
+/**=========================================================
+ * Module panel-tools.js
+ * Directive tools to control panels.
+ * Allows collapse, refresh and dismiss (remove)
+ * Saves panel state in browser storage
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular.module('app.common')
+        .directive('paneltool', paneltool);
+
+    paneltool.$inject = ['$compile', '$timeout'];
+    function paneltool ($compile, $timeout) {
+        var directive = {
+            link: link,
+            restrict: 'E',
+            scope: false
+        };
+        return directive;
+
+        function link(scope, element, attrs) {
+
+          var templates = {
+            /* jshint multistr: true */
+            collapse:'<a href="#" panel-collapse="" uib-tooltip="Collapse Panel" ng-click="{{panelId}} = !{{panelId}}"> \
+                        <em ng-show="{{panelId}}" class="fa fa-plus ng-no-animation"></em> \
+                        <em ng-show="!{{panelId}}" class="fa fa-minus ng-no-animation"></em> \
+                      </a>',
+            dismiss: '<a href="#" panel-dismiss="" uib-tooltip="Close Panel">\
+                       <em class="fa fa-times"></em>\
+                     </a>',
+            refresh: '<a href="#" panel-refresh="" data-spinner="{{spinner}}" uib-tooltip="Refresh Panel">\
+                       <em class="fa fa-refresh"></em>\
+                     </a>'
+          };
+
+          var tools = scope.panelTools || attrs;
+
+          $timeout(function() {
+            element.html(getTemplate(element, tools )).show();
+            $compile(element.contents())(scope);
+
+            element.addClass('pull-right');
+          });
+
+          function getTemplate( elem, attrs ){
+            var temp = '';
+            attrs = attrs || {};
+            if(attrs.toolCollapse)
+              temp += templates.collapse.replace(/{{panelId}}/g, (elem.parent().parent().attr('id')) );
+            if(attrs.toolDismiss)
+              temp += templates.dismiss;
+            if(attrs.toolRefresh)
+              temp += templates.refresh.replace(/{{spinner}}/g, attrs.toolRefresh);
+            return temp;
+          }
+        }// link
+    }
+
+})();
+
 /**
  * Created by Yoni on 2/9/2018.
  */
@@ -6456,254 +6578,6 @@ var INDICATOR = {
     }
 
 })(window.angular);
-(function(angular) {
-    "use strict";
-
-
-    angular
-        .module('app.report')
-        .controller('DashboardController', DashboardController);
-
-    DashboardController.$inject = ['ReportService', 'SharedService','Colors','$rootScope'];
-
-    function DashboardController( ReportService,SharedService,Colors,$rootScope )
-    {
-        var vm = this;
-        $rootScope.app.layout.isCollapsed = true;
-        callApi();
-
-
-
-        init();
-
-
-        function callApi(){
-            ReportService.GetLineChartReport().then(function (report) {
-                var chartData = report.data;
-                var no_of_clients = _.pluck(chartData,'no_of_clients');
-                var total_loan_amount = _.map(chartData, function(data){ return data.total_loan_amount; });  // _.pluck(chartData,'total_loan_amount');
-
-                vm.barLabels = _.pluck(chartData,'crop');
-                vm.barSeries_byClient = ['Number of Clients'];
-                vm.barSeries_byAmount = ['Total Loan Amount'];
-                vm.barData_byClient = [ no_of_clients ];
-                vm.barData_byAmount = [ total_loan_amount ];
-                vm.barColors_byClient = [{backgroundColor: Colors.byName('green')}];
-                vm.barColors_byAmount = [{backgroundColor: Colors.byName('primary')}];
-
-            });
-        }
-
-        function init() {
-            vm.count = {
-                branch: 0,
-                client: 0,
-                user: 0};
-
-            getAllCounts();
-
-            // Pie Chart
-            // ------------------
-            vm.pieLabels = ["Screening", "Loan", "ACAT"];
-            vm.pieData = [300, 500, 100];
-            vm.pieColors = [Colors.byName('green'), Colors.byName('purple'), Colors.byName('yellow')];
-
-        }
-
-        function getAllCounts() {
-            SharedService.GetBranches().then(function (value) {
-                vm.count.branch = value.data.docs.length;
-            });
-            SharedService.GetUsers().then(function (value) {
-                vm.count.user = value.data.docs.length;
-            });
-            SharedService.GetClients().then(function (value) {
-                vm.count.client = value.data.docs.length;
-            });
-        }
-
-    }
-
-})(window.angular);
-(function(angular) {
-    "use strict";
-    angular
-        .module('app.report')
-        .controller('ReportController', ReportController);
-
-    ReportController.$inject = ['ReportService', 'blockUI','PrintPreviewService','$sce','$scope','$filter'];
-
-    function ReportController( ReportService,blockUI,PrintPreviewService,$sce,$scope,$filter)
-    {
-        var vm = this;
-        vm.FILE_TYPE ={
-            PDF: {type: 'application/pdf'},
-            DOC: { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }
-        };
-        vm.onSelectedReport = _onSelectedReport;
-        vm.printReport = _printReport;
-        // vm.downloadDocument = _downloadDocument;
-        vm.generateReport = _generateReport;
-
-        init();
-
-        function _generateReport() {
-            vm.report.isLoading = true;
-            var myBlockUI = blockUI.instances.get('reportDownload');
-            let filters = {};
-                vm.report.parameters.map(
-                (parameter)=> {
-                    if(_.isEmpty(parameter.selected) && _.isUndefined(parameter.selected)) return;
-
-                    if (parameter.type === 'DATE') {
-                        filters[parameter.code] =  { send: $filter('date')( parameter.selected, 'dd-MM-yyyy'),display: $filter('date')( parameter.selected, 'longDate')};
-                    }else if (parameter.type === 'TEXT') {
-                        filters[parameter.code] =  { send: parameter.selected,display: $filter('ordinal')( parameter.selected)};
-                    } else {
-                        filters[parameter.code]  = parameter.selected;
-                    }
-
-                }
-            );
-
-            myBlockUI.start('Downloading...');
-            vm.report.reportPromise =  ReportService.FilterReport(vm.report._id,'docx',filters).then(function (response) {
-                vm.pdfFile = openPDF(response.data);
-                vm.report.isLoading = false;
-                window.open(vm.pdfFile, '_self', '');
-                myBlockUI.stop();
-            },function () { myBlockUI.stop(); });
-
-        }
-
-        function _onSelectedReport() {
-            if (angular.isUndefined(vm.report.has_parameters) || vm.report.has_parameters === false) return;
-
-            _.each(vm.report.parameters,function (param) {
-
-               if(!param.is_constant && param.get_from ){
-                   ReportService.GetReportParameter(param.get_from).then(function (response) {
-                       param.values = response.data;
-                   });
-               }
-               else{
-                   param.values = param.constants;
-               }
-            });
-        }
-
-        function _downloadDocument() {
-            vm.report.isLoading = true;
-            var myBlockUI = blockUI.instances.get('reportDownload');
-            myBlockUI.start('Downloading...');
-            vm.report.reportPromise =  ReportService.GetReportPDF(vm.report._id,'docx').then(function (response) {
-
-                vm.pdfFile = openPDF(response.data);
-                vm.report.isLoading = false;
-                window.open(vm.pdfFile, '_self', '');
-                myBlockUI.stop();
-            },function () { myBlockUI.stop(); });
-        }
-
-        function _printReport(report) {
-            var preview = [{
-                Name: report.title,
-                TemplateUrl: report.templateUrl,//.replace("template.html","printable.html"),
-                IsCommon: false,
-                IsSelected: false,
-                Data: angular.extend({ Title: report.title}, {report: vm.report,reportData: vm.reportData} )
-            }];
-            PrintPreviewService.show(preview);
-        }
-
-        function init() {
-
-            dateSettings();
-            ReportService.GetAllReports().then(function (response) {
-                vm.reportsList = response.data;
-            });
-        }
-
-        function dateSettings() {
-
-            vm.startDateConfig = {
-                // open: false,
-                minDate: new Date(Date.now())
-            };
-            vm.endDateConfig = {
-                // open: false,
-                minDate: new Date(vm.dateStart)
-            };
-            //watching to see what date is set in the start date
-            //field and setting that date as the minimum for end date
-            $scope.$watch("vm.dateStart", function(newValue, oldValue) {
-                if (newValue === oldValue) {
-                    return;
-                }
-                vm.endDateConfig.minDate = newValue;
-            });
-
-        }
-
-        function openPDF(data) {
-            var file = new Blob([data], vm.FILE_TYPE.DOC);
-            var fileURL = URL.createObjectURL(file);
-            return $sce.trustAsResourceUrl(fileURL);
-        }
-
-    }
-
-})(window.angular);
-(function(angular) {
-    'use strict';
-    angular.module('app.report')
-
-        .service('ReportService', ReportService);
-
-    ReportService.$inject = ['$http','CommonService','Colors'];
-
-    function ReportService($http, CommonService, Colors) {
-        return {
-            GetLineChartReport:_getLineChartReport,
-            GetReportById:_getReportById,
-            GetAllReports:_getAllReports,
-            GetReportParameter:_getReportParameter,
-            FilterReport:_filterReport,
-            GetReportPDF:_getReportPDF,
-            barColors: [{backgroundColor: Colors.byName('success'), borderColor: Colors.byName('success')}, {backgroundColor: Colors.byName('info'),  borderColor: Colors.byName('info') }]
-        };
-
-        function _getReportById(id){
-            return $http.get(CommonService.buildUrlWithParam(API.Service.REPORT,API.Methods.Report.Report,id));
-        }
-        function _getLineChartReport(config){
-            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.Report) + '5c1917476070e615a1f2a18f');
-        }
-
-        function _getAllReports(){
-            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.AllReport));
-        }
-        function _getReportPDF(id,format){
-            return $http({
-                url: CommonService.buildUrlWithParam(API.Service.REPORT,API.Methods.Report.Report,id) + '/' + format,
-                method: 'GET',
-                responseType: 'arraybuffer'
-            });
-        }
-        function _getReportParameter(getFrom){
-            return $http.get(CommonService.buildUrl(API.Service.REPORT,getFrom));
-        }
-        function _filterReport(id,format,params){
-            return $http({
-                url: CommonService.buildUrlWithParam(API.Service.REPORT,API.Methods.Report.Report,id) + '/' + format,
-                method: 'POST',
-                responseType: 'arraybuffer',
-                data: params
-            });
-        }
-    }
-
-})(window.angular);
 /**
  * Created by Yoni on 12/3/2017.
  */
@@ -6833,6 +6707,249 @@ var INDICATOR = {
                 }
             };
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Tasks.Task,taskObj.taskId) + '/status',taskObj,httpConfig);
+        }
+    }
+
+})(window.angular);
+(function(angular) {
+    "use strict";
+
+
+    angular
+        .module('app.report')
+        .controller('DashboardController', DashboardController);
+
+    DashboardController.$inject = ['ReportService', 'SharedService','Colors','$rootScope'];
+
+    function DashboardController( ReportService,SharedService,Colors,$rootScope )
+    {
+        var vm = this;
+        $rootScope.app.layout.isCollapsed = true;
+        callApi();
+
+
+
+        init();
+
+
+        function callApi(){
+            ReportService.GetLineChartReport().then(function (report) {
+                var chartData = report.data;
+                var no_of_clients = _.pluck(chartData,'no_of_clients');
+                var total_loan_amount = _.map(chartData, function(data){ return data.total_loan_amount; });  // _.pluck(chartData,'total_loan_amount');
+
+                vm.barLabels = _.pluck(chartData,'crop');
+                vm.barSeries_byClient = ['Number of Clients'];
+                vm.barSeries_byAmount = ['Total Loan Amount'];
+                vm.barData_byClient = [ no_of_clients ];
+                vm.barData_byAmount = [ total_loan_amount ];
+                vm.barColors_byClient = [{backgroundColor: Colors.byName('green')}];
+                vm.barColors_byAmount = [{backgroundColor: Colors.byName('primary')}];
+
+            });
+        }
+
+        function init() {
+            vm.count = {
+                branch: 0,
+                client: 0,
+                user: 0};
+
+            getAllCounts();
+
+            // Pie Chart
+            // ------------------
+            vm.pieLabels = ["Screening", "Loan", "ACAT"];
+            vm.pieData = [300, 500, 100];
+            vm.pieColors = [Colors.byName('green'), Colors.byName('purple'), Colors.byName('yellow')];
+
+        }
+
+        function getAllCounts() {
+            SharedService.GetBranches().then(function (value) {
+                vm.count.branch = value.data.docs.length;
+            });
+            SharedService.GetUsers().then(function (value) {
+                vm.count.user = value.data.docs.length;
+            });
+            SharedService.GetClients().then(function (value) {
+                vm.count.client = value.data.docs.length;
+            });
+        }
+
+    }
+
+})(window.angular);
+(function(angular) {
+    "use strict";
+    angular
+        .module('app.report')
+        .controller('ReportController', ReportController);
+
+    ReportController.$inject = ['ReportService', 'blockUI','PrintPreviewService','$sce','$scope','$filter','_'];
+
+    function ReportController( ReportService,blockUI,PrintPreviewService,$sce,$scope,$filter,_)
+    {
+        var vm = this;
+        vm.FILE_TYPE ={
+            PDF: {type: 'application/pdf'},
+            DOC: { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }
+        };
+        vm.onSelectedReport = _onSelectedReport;
+        vm.printReport = _printReport;
+        vm.generateReport = _generateReport;
+
+        init();
+
+
+        function _generateReport() {
+            vm.report.isLoading = true;
+            var myBlockUI = blockUI.instances.get('reportDownload');
+            let filters = {};
+                vm.report.parameters.map(
+                (parameter)=> {
+                    if(_.isEmpty(parameter.selected) && _.isUndefined(parameter.selected)) return;
+
+                    if (parameter.type === 'DATE') {
+                        filters[parameter.code] =  { send: $filter('date')( parameter.selected, 'dd-MM-yyyy'),display: $filter('date')( parameter.selected, 'longDate')};
+                    }else if (parameter.type === 'TEXT') {
+                        filters[parameter.code] =  { send: parameter.selected,display: $filter('ordinal')( parameter.selected)};
+                    }else {
+                        filters[parameter.code]  = parameter.selected;
+                    }
+                }
+            );
+
+            myBlockUI.start('Downloading...');
+            vm.report.reportPromise =  ReportService.FilterReport(vm.report._id,'docx',filters).then(function (response) {
+                vm.pdfFile = openPDF(response.data);
+                vm.report.isLoading = false;
+                window.open(vm.pdfFile, '_self', '');
+                myBlockUI.stop();
+            },function () { myBlockUI.stop(); });
+
+        }
+
+        function _onSelectedReport() {
+            if (angular.isUndefined(vm.report.has_parameters) || vm.report.has_parameters === false) return;
+
+            _.each(vm.report.parameters,function (param) {
+
+               if(!param.is_constant && param.get_from){
+                   ReportService.GetReportParameter(param.get_from).then(function (response) {
+                       param.values = response.data;
+                   });
+               }
+
+            });
+        }
+
+        function _printReport(report) {
+            let preview = [{
+                Name: report.title,
+                TemplateUrl: report.templateUrl,//.replace("template.html","printable.html"),
+                IsCommon: false,
+                IsSelected: false,
+                Data: angular.extend({ Title: report.title}, {report: vm.report,reportData: vm.reportData} )
+            }];
+            PrintPreviewService.show(preview);
+        }
+
+        function init() {
+
+            dateSettings();
+            ReportService.GetAllReports().then(function (response) {
+                vm.reportsList = response.data;
+            });
+        }
+
+        function dateSettings() {
+
+            vm.startDateConfig = {
+                // open: false,
+                minDate: new Date(Date.now())
+            };
+            vm.endDateConfig = {
+                // open: false,
+                minDate: new Date(vm.dateStart)
+            };
+            //watching to see what date is set in the start date
+            //field and setting that date as the minimum for end date
+            $scope.$watch("vm.dateStart", function(newValue, oldValue) {
+                if (newValue === oldValue) {
+                    return;
+                }
+                vm.endDateConfig.minDate = newValue;
+            });
+
+        }
+
+
+        function openPDF(data) {
+            let file = new Blob([data], vm.FILE_TYPE.DOC);
+            let fileURL = URL.createObjectURL(file);
+            return $sce.trustAsResourceUrl(fileURL);
+        }
+
+    }
+
+})(window.angular);
+(function(angular) {
+    'use strict';
+    angular.module('app.report')
+
+        .service('ReportService', ReportService);
+
+    ReportService.$inject = ['$http','CommonService','Colors','API_DEFINITION'];
+
+    function ReportService($http, CommonService, Colors,API_DEFINITION) {
+        var API = API_DEFINITION;
+        return {
+            barColors: barColors(),
+            GetLineChartReport:_getLineChartReport,
+            GetReportById:_getReportById,
+            GetAllReports:_getAllReports,
+            GetReportParameter:_getReportParameter,
+            FilterReport:_filterReport,
+            GetReportPDF:_getReportPDF,
+            SearchReportParameter: _searchReportParameter
+        };
+
+        function barColors() {
+            return [{backgroundColor: Colors.byName('success'), borderColor: Colors.byName('success')}, {backgroundColor: Colors.byName('info'),  borderColor: Colors.byName('info') }];
+        }
+
+        function _getReportById(id){
+            return $http.get(CommonService.buildUrlWithParam(API.Service.REPORT,API.Methods.Report.Report,id));
+        }
+        function _getLineChartReport(){
+            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.Report) + '5c1917476070e615a1f2a18f');
+        }
+
+        function _getAllReports(){
+            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.AllReport));
+        }
+        function _getReportPDF(id,format){
+            return $http({
+                url: CommonService.buildUrlWithParam(API.Service.REPORT,API.Methods.Report.Report,id) + '/' + format,
+                method: 'GET',
+                responseType: 'arraybuffer'
+            });
+        }
+        function _getReportParameter(getFrom){
+            return $http.get(CommonService.buildUrl(API.Service.REPORT,getFrom));
+        }
+
+        function _searchReportParameter(getFrom,parameter){
+            return $http.post(CommonService.buildUrlWithParam(API.Service.REPORT,getFrom,parameter));
+        }
+        function _filterReport(id,format,params){
+            return $http({
+                url: CommonService.buildUrlWithParam(API.Service.REPORT,API.Methods.Report.Report,id) + '/' + format,
+                method: 'POST',
+                responseType: 'arraybuffer',
+                data: params
+            });
         }
     }
 
@@ -7835,540 +7952,6 @@ var INDICATOR = {
 
 })(window.angular);
 /**
- * Created by Yoni on 12/3/2017.
- */
-(function () {
-    'use strict';
-    angular.module('app.common').factory('AlertService', AlertService);
-
-    AlertService.$inject = ['SweetAlert']
-    function AlertService(SweetAlert) {
-        // init();
-        return {
-            showError: error,
-            showInfo: info,
-            showWarning: warning,
-            showSuccess: success,
-            errorHandler: errorHandler,
-            showConfirm: showConfirm,
-            showConfirmForDelete: _showConfirmForDelete
-        };
-        function error(title,message) {
-            SweetAlert.swal(title,message, "error");
-        }
-        function info(title,message) {
-            SweetAlert.swal(title,message, "info");
-        }
-        function warning(title,message) {
-            SweetAlert.swal({title: title, text: message, type: "warning", confirmButtonText: "Ok"});
-        }
-        function showConfirm(message, title, confirmText, confirmationType, closeOnConfirm) {
-            closeOnConfirm = typeof closeOnConfirm === "undefined" || typeof closeOnConfirm !== "boolean" ? true : closeOnConfirm;
-            confirmationType = typeof confirmationType === "undefined" || typeof confirmationType !== "string" ? "warning" : confirmationType;
-            return SweetAlert.swal({
-                title: title,
-                text: message,
-                type: confirmationType,
-                showCancelButton: true,
-                confirmButtonColor: "#009688",
-                confirmButtonText: confirmText,
-                closeOnConfirm: closeOnConfirm,
-                showLoaderOnConfirm: true
-            });
-        }
-        function _showConfirmForDelete(message, title, confirmText, confirmationType, closeOnConfirm,responseHandler) {
-            closeOnConfirm = typeof closeOnConfirm === "undefined" || typeof closeOnConfirm !== "boolean" ? true : closeOnConfirm;
-            confirmationType = typeof confirmationType === "undefined" || typeof confirmationType !== "string" ? "warning" : confirmationType;
-            return SweetAlert.swal({
-                title: title,
-                text: message,
-                type: confirmationType,
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: confirmText,
-                closeOnConfirm: closeOnConfirm,
-                showLoaderOnConfirm: true
-            },responseHandler);
-        }
-        function success(title,message) {
-            SweetAlert.swal(title,message, "success");
-        }
-        function errorHandler(response) {
-            var msg = 'Server was unable to process the request';
-            var exMsg = '';
-            if (response.data && response.data.Message)
-                msg = response.data.Message;
-            if (response.ExceptionMessage)
-                msg = response.ExceptionMessage;
-            if (response.data && response.data.ExceptionMessage)
-                exMsg = response.data.ExceptionMessage;
-            error(msg + ' ' + exMsg, "Error");
-        }
-
-        function init() {
-            SweetAlert.setDefaults({confirmButtonColor: '#0096884'});
-        }
-    }
-})();
-(function(angular) {
-    'use strict';
-
-    angular.module('app.common')
-        .factory('CommonService', CommonService);
-    CommonService.$inject = ['EnvironmentConfig'];
-
-    function CommonService(EnvironmentConfig) {
-        var BaseUrl = EnvironmentConfig.BaseUrl;
-        var factory = {
-            buildUrl: _buildUrl,
-            buildPaginatedUrl:_buildPaginatedUrl,
-            buildPerPageUrl:_buildPerPageUrl,
-            buildUrlWithParam: _buildUrlWithParam,
-            buildUrlForSearch: _buildUrlForSearch,
-            Validation: {
-              ComputeValidation: function (validationObject) {
-                  var isValid = true;
-                  var properties = _.allKeys(validationObject);
-                  _.each(properties, function (property) {
-                      isValid = isValid && validationObject[property];
-                  });
-                  return isValid;
-              },
-              ResetValidationObject: function (validationObject) {
-                  var properties = _.allKeys(validationObject);
-                  _.each(properties, function (property) {
-                      validationObject[property] = true;
-                  });
-              },
-              ValidateForm: function (validationObject, referenceObject) {
-                  var isValid = true;
-                  var properties = _.allKeys(validationObject);
-                  var validateSingleObject= function (objValue) {
-                      if(_.isString(objValue)){
-                          return !_.isUndefined(objValue) && !_.isNull(objValue) && objValue.length > 0;
-                      }
-
-                      if(_.isNumber(objValue)){
-                          return !_.isUndefined(objValue) && !_.isNull(objValue) && !_.isNaN(objValue);
-                      }
-
-                      if(_.isDate(objValue)){
-                          return !_.isUndefined(objValue) && !_.isNull(objValue);
-                      }
-
-                      if(_.isObject(objValue)){
-
-                          return !_.isUndefined(objValue) && !_.isNull(objValue)&& !_.isEmpty(objValue);
-                      }
-
-                      return !_.isUndefined(objValue) && !_.isNull(objValue);
-                  };
-
-                  _.each(properties, function (property) {
-                      var index = property.indexOf('Valid');
-                      if(index != -1) {
-                          var objProperty = property.substring(2, index);
-                      }
-                      if (_.has(referenceObject, objProperty)) {
-                          var objValue = referenceObject[objProperty];
-                          validationObject[property] = validateSingleObject(objValue);
-                      }else{
-                          // console.log('Validation failed for: ',objProperty);
-                          validationObject[property] = false;
-                          isValid = false;
-                      }
-                      isValid = isValid && validationObject[property];
-                  });
-                  return isValid;
-              }
-          }
-        };
-
-        return factory;
-
-
-        function _buildUrl(service,url) {
-          return BaseUrl + service +'/' + url;
-        }
-        function _buildPaginatedUrl(service,url) {
-            var parameters = {start:1,limit:100};
-            return url===''?BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
-                BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
-        }
-        function _buildPerPageUrl(service,url,parameters) {
-            return url === '' ? BaseUrl + service + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page : BaseUrl + service + '/' + url + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page;
-        }
-        function _buildUrlWithParam(service,url, id) {
-            return url===''?BaseUrl + service + '/' + id : BaseUrl + service +'/'+ url + '/' + id;
-        }
-        function _buildUrlForSearch(service,url, searchText) {
-            return BaseUrl + service +'/'+ url + '/search?search=' + searchText;
-        }
-    }
-
-})(window.angular);
-
-(function(angular) {
-    'use strict';
-
-    angular.module('app.common')
-        .factory('DocumentService', DocumentService);
-    DocumentService.$inject = ['$sce','$http','CommonService'];
-
-    function DocumentService($sce,$http,CommonService) {
-        var factory = {
-            OpenDocument: _openDocument,
-            GetDocument: _getDocument,
-            GetGroupDocument: _getGroupDocument
-        };
-
-        return factory;
-
-        function _openDocument(data, fileType) {
-            var file = new Blob([data], fileType);
-            return $sce.trustAsResourceUrl(URL.createObjectURL(file));
-        }
-
-        function _getDocument(id) {
-            return $http({
-                url: CommonService.buildUrlWithParam(API.Service.ACAT, API.Methods.ACAT.Printout, id),
-                method: 'GET',
-                responseType: 'arraybuffer'
-            });
-        }
-
-        function _getGroupDocument(id) {
-            return $http({
-                url: CommonService.buildUrlWithParam(API.Service.GROUPS, API.Methods.Group.Printout, id),
-                method: 'GET',
-                responseType: 'arraybuffer'
-            });
-        }
-    }
-
-})(window.angular);
-
-/**
- * Created by Yoni on 3/9/2018.
- */
-(function(angular) {
-
-    'use strict';
-
-    focusService.$inject = ["$timeout", "$window"];
-    angular.module('app.common')
-        .factory('focus', focusService);
-
-    function focusService($timeout, $window) {
-        return function(id) {
-            // timeout makes sure that is invoked after any other event has been triggered.
-            // e.g. click events that need to run before the focus or
-            // inputs elements that are in a disabled state but are enabled when those events
-            // are triggered.
-            $timeout(function() {
-                var element = $window.document.getElementById(id);
-                if(element)
-                    element.focus();
-            });
-        };
-    }
-
-})(window.angular);
-(function () {
-    'use strict';
-    angular.module('app.common').factory('NotifyService', NotifyService);
-
-    NotifyService.$inject = ['toaster'];
-
-    function NotifyService(toaster) {
-        var toasterType = {
-            error: 'error',
-            info: 'info',
-            warning: 'warning',
-            success: 'success'
-        };
-        return {
-            showError: error,
-            showInfo: info,
-            showWarning: warning,
-            showSuccess: success
-        };
-
-        function error(title, message) {
-            toaster.pop(toasterType.error, title, message);
-        }
-
-        function info(title, message) {
-            toaster.pop(toasterType.info, title, message);
-        }
-
-        function warning(title, message) {
-            toaster.pop(toasterType.warning, title, message);
-        }
-
-        function success(title, message) {
-            toaster.pop(toasterType.success, title, message);
-        }
-    }
-})();
-/**
- * Created by Yoni on 12/30/2017.
- */
-
-
-(function(angular) {
-
-    'use strict';
-
-    angular.module('app.common')
-        .factory('PermissionService', PermissionService);
-
-    PermissionService.$inject = ['AuthService'];
-
-    function PermissionService(AuthService) {
-        var factory = {
-            hasThisPermission:_hasThisPermission,
-            hasThesePermissions:_hasThesePermissions,
-            permissions:_permissions,
-            permittedModules:_permittedModules,
-            hasThisModule:_hasThisModule,
-            validateSubModules:_validateSubModules
-        };
-
-        return factory;
-
-
-        function _permissions() {
-            var user =  AuthService.GetCurrentUser();
-            var response = {
-                isSuper: false,
-                permissions:[]
-            };
-
-            if(!_.isUndefined(user) && user !== null){
-                if(!_.isUndefined(user.account)){
-                    response.isSuper = false;
-                    response.permissions =  user.account.role.permissions;
-                    return response;
-                }
-                else if (!_.isUndefined(user.admin)) {
-                    response  = {
-                        isSuper: true,//superadmin
-                        permissions:[]
-                    };
-                    return response;
-                } else {
-                    return response;
-                }
-            }else{
-                return null;
-            }
-
-        }
-
-        function _permittedModules(){
-
-            var permissions = _permissions().permissions;
-            var moduleObj = _.uniq(permissions,function(permi){
-                return permi.module;
-            });
-
-            return _.pluck(moduleObj, 'module');
-        }
-
-        function _validateSubModules(){
-            var permissions = _permissions().permissions;
-            var moduleObj = _.uniq(permissions,function(permi){
-                permi.entityPermission =_.isUndefined(permi.entity)? '': permi.module + '_' + permi.entity;
-                return permi.entityPermission;
-            });
-            return _.pluck(moduleObj, 'entityPermission');
-        }
-
-        function _hasThisPermission(permission) {
-            var allPermissions = _permissions();
-            var hasPermission = false;
-            
-            if(allPermissions.isSuper){
-                hasPermission = true;
-            }else{
-                var permissions = _.map(allPermissions.permissions, function(perm) {
-                    return perm.module + '_' + perm.entity + '_'+ perm.operation;
-                });
-            hasPermission = _.contains(permissions, permission);
-            }
-            return hasPermission;
-        }
-
-        function _hasThisModule(module) {
-            var allModules = _permittedModules();
-            var hasModule = module === 'all'? true:_.contains(allModules, module);
-            return hasModule;
-        }
-
-        function _hasThesePermissions(permissions) {
-            var hasPermission = false;
-            _.each(permissions, function(permission) {
-                //return true if user has access to one of the permissions
-                hasPermission = hasPermission || _hasThisPermission(permission);
-            });
-            return hasPermission;
-        }
-
-
-
-    }
-
-})(window.angular);
-(function() {
-    angular.module("app.common")
-        .factory("PrintPreviewService", printPreviewService);
-
-    printPreviewService.$inject = ["$mdDialog", "$mdMedia", "PrintService", "$rootScope"];
-
-    function printPreviewService($mdDialog, $mdMedia, printService, $rootScope) {
-        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')); // && $scope.customFullscreen;
-        return {
-            show: function(model) {
-                $mdDialog.show({
-                    controller: ["$scope", "$mdDialog", "$rootScope", function($scope, $mdDialog, $rootScope) {
-
-                        $scope.removeItem = removeItem;
-
-                        $scope.printables = model;
-                        $scope.preparedBy = 'super admin';
-                        $scope.Name = 'Buusaa Gonofaa Microfinance Share Company';
-                        $scope.ShowLogoOnPrintOut = true;
-                        $scope.CurrentDate = '30-Mar-2018';
-                        $scope.Address = {
-                            Location:'Addis Ababa, Ethiopia',
-                            Phonenumber:'(255) 555-555555'
-                        };
-
-                        $scope.cancel = function() {
-                            $mdDialog.cancel();
-                        };
-                        $scope.print = function(printableDiv) {
-                            printService.print(printableDiv);
-                            $mdDialog.hide(printableDiv);
-                        };
-
-                        function removeItem(list, item) {
-                            item.HideRow = true;
-                        }
-                    }],
-                    skipHide: true,
-                    templateUrl: 'app/views/common/templates/print.preview.tmpl.html',
-                    parent: angular.element(document.body),
-                    fullscreen: useFullScreen
-                });
-            },
-            close: function(msg) {
-
-            },
-            getPreviewContent: function(model) {
-
-            }
-        };
-    }
-})();
-(function() {
-    angular.module("app.common").factory("PrintService", printService);
-
-    printService.$inject = ["$rootScope"];
-
-    function printService($rootScope) {
-
-        function closePrint() {
-            document.body.removeChild(this.__container__);
-        }
-
-        function setPrint() {
-            this.contentWindow.__container__ = this;
-            this.contentWindow.onbeforeunload = closePrint;
-            this.contentWindow.onafterprint = closePrint;
-            this.contentWindow.focus(); // Required for IE
-            this.contentWindow.print();
-        }
-
-        return {
-            print: function(printableDiv) {
-
-                var printContents = document.getElementById(printableDiv).innerHTML;
-                var oHiddFrame = document.createElement("iframe");
-
-                oHiddFrame.style.visibility = "hidden";
-                oHiddFrame.style.position = "fixed";
-                oHiddFrame.style.right = "0";
-                oHiddFrame.style.bottom = "0";
-                document.body.appendChild(oHiddFrame);
-                oHiddFrame.onload = setPrint;
-
-                var frameDoc = oHiddFrame.document;
-                if (oHiddFrame.contentWindow)
-                    frameDoc = oHiddFrame.contentWindow.document; // IE
-
-                $.ajax({
-                    url: "app/views/common/templates/print.container.tmpl.html",
-                    success: function(result) {
-                        if (!_.isNull(result) || !_.isUndefined(result)) {
-                            var content = result.replace('@PrintContent', printContents);
-                            // Write into iframe
-                            frameDoc.open();
-                            frameDoc.writeln(content);
-                            frameDoc.close();
-                        }
-                    }
-                });
-
-
-            }
-        };
-    }
-})();
-(function(angular) {
-    'use strict';
-
-    angular.module('app.common')
-        .service('StorageService', StorageService);
-
-    StorageService.$inject = ['$localStorage'];
-
-    function StorageService($localStorage) {
-        var servce = {
-            Get: get,
-            Set: set,
-            Remove: remove,
-            Reset: reset
-        };
-
-        return servce;
-
-        function get(key) {
-            var val = $localStorage[key];
-
-            if (!angular.isUndefined(val)) {
-                return JSON.parse(val);
-            } else return null;
-
-        }
-
-        function set(key, value) {
-            $localStorage[key] = JSON.stringify(value);
-        }
-
-        function remove(key) {
-            delete $localStorage[key];
-        }
-
-        function reset() {
-            $localStorage.$reset();
-        }
-    }
-
-})(window.angular);
-
-/**
  * Created by Yoni on 1/29/2018.
  */
 (function(angular) {
@@ -9069,6 +8652,540 @@ var INDICATOR = {
 
 })(window.angular);
 /**
+ * Created by Yoni on 12/3/2017.
+ */
+(function () {
+    'use strict';
+    angular.module('app.common').factory('AlertService', AlertService);
+
+    AlertService.$inject = ['SweetAlert']
+    function AlertService(SweetAlert) {
+        // init();
+        return {
+            showError: error,
+            showInfo: info,
+            showWarning: warning,
+            showSuccess: success,
+            errorHandler: errorHandler,
+            showConfirm: showConfirm,
+            showConfirmForDelete: _showConfirmForDelete
+        };
+        function error(title,message) {
+            SweetAlert.swal(title,message, "error");
+        }
+        function info(title,message) {
+            SweetAlert.swal(title,message, "info");
+        }
+        function warning(title,message) {
+            SweetAlert.swal({title: title, text: message, type: "warning", confirmButtonText: "Ok"});
+        }
+        function showConfirm(message, title, confirmText, confirmationType, closeOnConfirm) {
+            closeOnConfirm = typeof closeOnConfirm === "undefined" || typeof closeOnConfirm !== "boolean" ? true : closeOnConfirm;
+            confirmationType = typeof confirmationType === "undefined" || typeof confirmationType !== "string" ? "warning" : confirmationType;
+            return SweetAlert.swal({
+                title: title,
+                text: message,
+                type: confirmationType,
+                showCancelButton: true,
+                confirmButtonColor: "#009688",
+                confirmButtonText: confirmText,
+                closeOnConfirm: closeOnConfirm,
+                showLoaderOnConfirm: true
+            });
+        }
+        function _showConfirmForDelete(message, title, confirmText, confirmationType, closeOnConfirm,responseHandler) {
+            closeOnConfirm = typeof closeOnConfirm === "undefined" || typeof closeOnConfirm !== "boolean" ? true : closeOnConfirm;
+            confirmationType = typeof confirmationType === "undefined" || typeof confirmationType !== "string" ? "warning" : confirmationType;
+            return SweetAlert.swal({
+                title: title,
+                text: message,
+                type: confirmationType,
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: confirmText,
+                closeOnConfirm: closeOnConfirm,
+                showLoaderOnConfirm: true
+            },responseHandler);
+        }
+        function success(title,message) {
+            SweetAlert.swal(title,message, "success");
+        }
+        function errorHandler(response) {
+            var msg = 'Server was unable to process the request';
+            var exMsg = '';
+            if (response.data && response.data.Message)
+                msg = response.data.Message;
+            if (response.ExceptionMessage)
+                msg = response.ExceptionMessage;
+            if (response.data && response.data.ExceptionMessage)
+                exMsg = response.data.ExceptionMessage;
+            error(msg + ' ' + exMsg, "Error");
+        }
+
+        function init() {
+            SweetAlert.setDefaults({confirmButtonColor: '#0096884'});
+        }
+    }
+})();
+(function(angular) {
+    'use strict';
+
+    angular.module('app.common')
+        .factory('CommonService', CommonService);
+    CommonService.$inject = ['EnvironmentConfig'];
+
+    function CommonService(EnvironmentConfig) {
+        var BaseUrl = EnvironmentConfig.BaseUrl;
+        var factory = {
+            buildUrl: _buildUrl,
+            buildPaginatedUrl:_buildPaginatedUrl,
+            buildPerPageUrl:_buildPerPageUrl,
+            buildUrlWithParam: _buildUrlWithParam,
+            buildUrlForSearch: _buildUrlForSearch,
+            Validation: {
+              ComputeValidation: function (validationObject) {
+                  var isValid = true;
+                  var properties = _.allKeys(validationObject);
+                  _.each(properties, function (property) {
+                      isValid = isValid && validationObject[property];
+                  });
+                  return isValid;
+              },
+              ResetValidationObject: function (validationObject) {
+                  var properties = _.allKeys(validationObject);
+                  _.each(properties, function (property) {
+                      validationObject[property] = true;
+                  });
+              },
+              ValidateForm: function (validationObject, referenceObject) {
+                  var isValid = true;
+                  var properties = _.allKeys(validationObject);
+                  var validateSingleObject= function (objValue) {
+                      if(_.isString(objValue)){
+                          return !_.isUndefined(objValue) && !_.isNull(objValue) && objValue.length > 0;
+                      }
+
+                      if(_.isNumber(objValue)){
+                          return !_.isUndefined(objValue) && !_.isNull(objValue) && !_.isNaN(objValue);
+                      }
+
+                      if(_.isDate(objValue)){
+                          return !_.isUndefined(objValue) && !_.isNull(objValue);
+                      }
+
+                      if(_.isObject(objValue)){
+
+                          return !_.isUndefined(objValue) && !_.isNull(objValue)&& !_.isEmpty(objValue);
+                      }
+
+                      return !_.isUndefined(objValue) && !_.isNull(objValue);
+                  };
+
+                  _.each(properties, function (property) {
+                      var index = property.indexOf('Valid');
+                      if(index != -1) {
+                          var objProperty = property.substring(2, index);
+                      }
+                      if (_.has(referenceObject, objProperty)) {
+                          var objValue = referenceObject[objProperty];
+                          validationObject[property] = validateSingleObject(objValue);
+                      }else{
+                          // console.log('Validation failed for: ',objProperty);
+                          validationObject[property] = false;
+                          isValid = false;
+                      }
+                      isValid = isValid && validationObject[property];
+                  });
+                  return isValid;
+              }
+          }
+        };
+
+        return factory;
+
+
+        function _buildUrl(service,url) {
+          return BaseUrl + service +'/' + url;
+        }
+        function _buildPaginatedUrl(service,url) {
+            var parameters = {start:1,limit:100};
+            return url===''?BaseUrl + service + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit:
+                BaseUrl + service +'/' + url + '/paginate?page='+parameters.start+'&per_page=' + parameters.limit;
+        }
+        function _buildPerPageUrl(service,url,parameters) {
+            return url === '' ? BaseUrl + service + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page : BaseUrl + service + '/' + url + '/paginate?page=' + parameters.page + '&per_page=' + parameters.per_page;
+        }
+        function _buildUrlWithParam(service,url, id) {
+            return url===''?BaseUrl + service + '/' + id : BaseUrl + service +'/'+ url + '/' + id;
+        }
+        function _buildUrlForSearch(service,url, searchText) {
+            return BaseUrl + service +'/'+ url + '/search?search=' + searchText;
+        }
+    }
+
+})(window.angular);
+
+(function(angular) {
+    'use strict';
+
+    angular.module('app.common')
+        .factory('DocumentService', DocumentService);
+    DocumentService.$inject = ['$sce','$http','CommonService'];
+
+    function DocumentService($sce,$http,CommonService) {
+        var factory = {
+            OpenDocument: _openDocument,
+            GetDocument: _getDocument,
+            GetGroupDocument: _getGroupDocument
+        };
+
+        return factory;
+
+        function _openDocument(data, fileType) {
+            var file = new Blob([data], fileType);
+            return $sce.trustAsResourceUrl(URL.createObjectURL(file));
+        }
+
+        function _getDocument(id) {
+            return $http({
+                url: CommonService.buildUrlWithParam(API.Service.ACAT, API.Methods.ACAT.Printout, id),
+                method: 'GET',
+                responseType: 'arraybuffer'
+            });
+        }
+
+        function _getGroupDocument(id) {
+            return $http({
+                url: CommonService.buildUrlWithParam(API.Service.GROUPS, API.Methods.Group.Printout, id),
+                method: 'GET',
+                responseType: 'arraybuffer'
+            });
+        }
+    }
+
+})(window.angular);
+
+/**
+ * Created by Yoni on 3/9/2018.
+ */
+(function(angular) {
+
+    'use strict';
+
+    focusService.$inject = ["$timeout", "$window"];
+    angular.module('app.common')
+        .factory('focus', focusService);
+
+    function focusService($timeout, $window) {
+        return function(id) {
+            // timeout makes sure that is invoked after any other event has been triggered.
+            // e.g. click events that need to run before the focus or
+            // inputs elements that are in a disabled state but are enabled when those events
+            // are triggered.
+            $timeout(function() {
+                var element = $window.document.getElementById(id);
+                if(element)
+                    element.focus();
+            });
+        };
+    }
+
+})(window.angular);
+(function () {
+    'use strict';
+    angular.module('app.common').factory('NotifyService', NotifyService);
+
+    NotifyService.$inject = ['toaster'];
+
+    function NotifyService(toaster) {
+        var toasterType = {
+            error: 'error',
+            info: 'info',
+            warning: 'warning',
+            success: 'success'
+        };
+        return {
+            showError: error,
+            showInfo: info,
+            showWarning: warning,
+            showSuccess: success
+        };
+
+        function error(title, message) {
+            toaster.pop(toasterType.error, title, message);
+        }
+
+        function info(title, message) {
+            toaster.pop(toasterType.info, title, message);
+        }
+
+        function warning(title, message) {
+            toaster.pop(toasterType.warning, title, message);
+        }
+
+        function success(title, message) {
+            toaster.pop(toasterType.success, title, message);
+        }
+    }
+})();
+/**
+ * Created by Yoni on 12/30/2017.
+ */
+
+
+(function(angular) {
+
+    'use strict';
+
+    angular.module('app.common')
+        .factory('PermissionService', PermissionService);
+
+    PermissionService.$inject = ['AuthService'];
+
+    function PermissionService(AuthService) {
+        var factory = {
+            hasThisPermission:_hasThisPermission,
+            hasThesePermissions:_hasThesePermissions,
+            permissions:_permissions,
+            permittedModules:_permittedModules,
+            hasThisModule:_hasThisModule,
+            validateSubModules:_validateSubModules
+        };
+
+        return factory;
+
+
+        function _permissions() {
+            var user =  AuthService.GetCurrentUser();
+            var response = {
+                isSuper: false,
+                permissions:[]
+            };
+
+            if(!_.isUndefined(user) && user !== null){
+                if(!_.isUndefined(user.account)){
+                    response.isSuper = false;
+                    response.permissions =  user.account.role.permissions;
+                    return response;
+                }
+                else if (!_.isUndefined(user.admin)) {
+                    response  = {
+                        isSuper: true,//superadmin
+                        permissions:[]
+                    };
+                    return response;
+                } else {
+                    return response;
+                }
+            }else{
+                return null;
+            }
+
+        }
+
+        function _permittedModules(){
+
+            var permissions = _permissions().permissions;
+            var moduleObj = _.uniq(permissions,function(permi){
+                return permi.module;
+            });
+
+            return _.pluck(moduleObj, 'module');
+        }
+
+        function _validateSubModules(){
+            var permissions = _permissions().permissions;
+            var moduleObj = _.uniq(permissions,function(permi){
+                permi.entityPermission =_.isUndefined(permi.entity)? '': permi.module + '_' + permi.entity;
+                return permi.entityPermission;
+            });
+            return _.pluck(moduleObj, 'entityPermission');
+        }
+
+        function _hasThisPermission(permission) {
+            var allPermissions = _permissions();
+            var hasPermission = false;
+            
+            if(allPermissions.isSuper){
+                hasPermission = true;
+            }else{
+                var permissions = _.map(allPermissions.permissions, function(perm) {
+                    return perm.module + '_' + perm.entity + '_'+ perm.operation;
+                });
+            hasPermission = _.contains(permissions, permission);
+            }
+            return hasPermission;
+        }
+
+        function _hasThisModule(module) {
+            var allModules = _permittedModules();
+            var hasModule = module === 'all'? true:_.contains(allModules, module);
+            return hasModule;
+        }
+
+        function _hasThesePermissions(permissions) {
+            var hasPermission = false;
+            _.each(permissions, function(permission) {
+                //return true if user has access to one of the permissions
+                hasPermission = hasPermission || _hasThisPermission(permission);
+            });
+            return hasPermission;
+        }
+
+
+
+    }
+
+})(window.angular);
+(function() {
+    angular.module("app.common")
+        .factory("PrintPreviewService", printPreviewService);
+
+    printPreviewService.$inject = ["$mdDialog", "$mdMedia", "PrintService", "$rootScope"];
+
+    function printPreviewService($mdDialog, $mdMedia, printService, $rootScope) {
+        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')); // && $scope.customFullscreen;
+        return {
+            show: function(model) {
+                $mdDialog.show({
+                    controller: ["$scope", "$mdDialog", "$rootScope", function($scope, $mdDialog, $rootScope) {
+
+                        $scope.removeItem = removeItem;
+
+                        $scope.printables = model;
+                        $scope.preparedBy = 'super admin';
+                        $scope.Name = 'Buusaa Gonofaa Microfinance Share Company';
+                        $scope.ShowLogoOnPrintOut = true;
+                        $scope.CurrentDate = '30-Mar-2018';
+                        $scope.Address = {
+                            Location:'Addis Ababa, Ethiopia',
+                            Phonenumber:'(255) 555-555555'
+                        };
+
+                        $scope.cancel = function() {
+                            $mdDialog.cancel();
+                        };
+                        $scope.print = function(printableDiv) {
+                            printService.print(printableDiv);
+                            $mdDialog.hide(printableDiv);
+                        };
+
+                        function removeItem(list, item) {
+                            item.HideRow = true;
+                        }
+                    }],
+                    skipHide: true,
+                    templateUrl: 'app/views/common/templates/print.preview.tmpl.html',
+                    parent: angular.element(document.body),
+                    fullscreen: useFullScreen
+                });
+            },
+            close: function(msg) {
+
+            },
+            getPreviewContent: function(model) {
+
+            }
+        };
+    }
+})();
+(function() {
+    angular.module("app.common").factory("PrintService", printService);
+
+    printService.$inject = ["$rootScope"];
+
+    function printService($rootScope) {
+
+        function closePrint() {
+            document.body.removeChild(this.__container__);
+        }
+
+        function setPrint() {
+            this.contentWindow.__container__ = this;
+            this.contentWindow.onbeforeunload = closePrint;
+            this.contentWindow.onafterprint = closePrint;
+            this.contentWindow.focus(); // Required for IE
+            this.contentWindow.print();
+        }
+
+        return {
+            print: function(printableDiv) {
+
+                var printContents = document.getElementById(printableDiv).innerHTML;
+                var oHiddFrame = document.createElement("iframe");
+
+                oHiddFrame.style.visibility = "hidden";
+                oHiddFrame.style.position = "fixed";
+                oHiddFrame.style.right = "0";
+                oHiddFrame.style.bottom = "0";
+                document.body.appendChild(oHiddFrame);
+                oHiddFrame.onload = setPrint;
+
+                var frameDoc = oHiddFrame.document;
+                if (oHiddFrame.contentWindow)
+                    frameDoc = oHiddFrame.contentWindow.document; // IE
+
+                $.ajax({
+                    url: "app/views/common/templates/print.container.tmpl.html",
+                    success: function(result) {
+                        if (!_.isNull(result) || !_.isUndefined(result)) {
+                            var content = result.replace('@PrintContent', printContents);
+                            // Write into iframe
+                            frameDoc.open();
+                            frameDoc.writeln(content);
+                            frameDoc.close();
+                        }
+                    }
+                });
+
+
+            }
+        };
+    }
+})();
+(function(angular) {
+    'use strict';
+
+    angular.module('app.common')
+        .service('StorageService', StorageService);
+
+    StorageService.$inject = ['$localStorage'];
+
+    function StorageService($localStorage) {
+        var servce = {
+            Get: get,
+            Set: set,
+            Remove: remove,
+            Reset: reset
+        };
+
+        return servce;
+
+        function get(key) {
+            var val = $localStorage[key];
+
+            if (!angular.isUndefined(val)) {
+                return JSON.parse(val);
+            } else return null;
+
+        }
+
+        function set(key, value) {
+            $localStorage[key] = JSON.stringify(value);
+        }
+
+        function remove(key) {
+            delete $localStorage[key];
+        }
+
+        function reset() {
+            $localStorage.$reset();
+        }
+    }
+
+})(window.angular);
+
+/**
  * Created by Yoni on 1/9/2018.
  */
 (function(angular) {
@@ -9265,8 +9382,33 @@ var INDICATOR = {
 
         function _aCATGroupOnClick(selectedClientACAT,index) {
             vm.selectedClientACAT = selectedClientACAT;
+            // vm.selectedClientACAT.estimated.net_cash_flow
+
+            sortMonths();
+
             ShowCropPanel();
         }
+
+        function sortMonths() {
+
+            // let net_cash_flow = [];
+            // let firstExpenseMonth = MONTHS_CONST.find( mon => mon.name === vm.selectedClientACAT.first_expense_month);
+            // let loop = true;
+            // let index = firstExpenseMonth.number;
+            // net_cash_flow.push(MONTHS_CONST[index]);
+            // if(index === 11) index = 0; else index++;
+            // while (loop) {
+            //     if(index === firstExpenseMonth) loop = false;
+            //     else {
+            //         net_cash_flow.push(MONTHS_CONST[index]);
+            //         if(index === 11) index = 0; else index++;
+            //     }
+            // }
+            // return net_cash_flow;
+        }
+
+
+
         function _onLoanProposalClick(loanProduct) {
             getLoanProposals();
             ShowSummaryPanel();
@@ -9777,95 +9919,6 @@ var INDICATOR = {
 
 
 })(window.angular);
-(function(angular) {
-  "use strict";
-
-    angular.module("app.mfi").controller("BranchController", BranchController);
-
-    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
-
-  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
-    var vm = this;
-
-    vm.addBranch = addBranch;
-    vm.editBranch = _editBranch;
-    vm.changeStatus = _changeStatus;
-
-     getBranches();
-
-    function getBranches() {
-      MainService.GetBranches().then(
-        function(response) {
-          vm.branches = response.data.docs;
-        },
-        function(error) {
-          console.log("error", error);
-        }
-      );
-
-    }
-
-    function addBranch(ev) {
-        $mdDialog.show({
-            locals: {items: null},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-
-    }
-
-    function _editBranch(selectedBranch,ev) {
-        $mdDialog.show({
-            locals: {items: selectedBranch},
-            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: false,
-            hasBackdrop: false,
-            escapeToClose: true,
-            controller: 'CreateBranchController',
-            controllerAs: 'vm'
-        }).then(function (answer) {
-            getBranches();
-        }, function () {
-        });
-    }
-
-    function _changeStatus(ChangeStatus) {
-      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
-      MainService.UpdateBranch(ChangeStatus).then(
-        function(response) {
-
-          AlertService.showSuccess(
-              "Updated branch status",
-              "Updated Status successfully."
-          );
-          // console.log("updated successfully", response);
-
-        },
-        function(error) {
-          // console.log("could not be updated", error);
-          AlertService.showError(
-            "Status not changed. Please try again.",
-            "ERROR"
-          );
-        }
-      );
-
-    }
-
-  }
-})(window.angular);
-
 /**
  * Created by Yoni on 3/5/2018.
  */
@@ -10194,6 +10247,95 @@ var INDICATOR = {
 
 
 })(window.angular);
+(function(angular) {
+  "use strict";
+
+    angular.module("app.mfi").controller("BranchController", BranchController);
+
+    BranchController.$inject = ['RouteHelpers','$mdDialog','MainService','AlertService','blockUI'];
+
+  function BranchController(RouteHelpers, $mdDialog, MainService,AlertService,blockUI) {
+    var vm = this;
+
+    vm.addBranch = addBranch;
+    vm.editBranch = _editBranch;
+    vm.changeStatus = _changeStatus;
+
+     getBranches();
+
+    function getBranches() {
+      MainService.GetBranches().then(
+        function(response) {
+          vm.branches = response.data.docs;
+        },
+        function(error) {
+          console.log("error", error);
+        }
+      );
+
+    }
+
+    function addBranch(ev) {
+        $mdDialog.show({
+            locals: {items: null},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+
+    }
+
+    function _editBranch(selectedBranch,ev) {
+        $mdDialog.show({
+            locals: {items: selectedBranch},
+            templateUrl: RouteHelpers.basepath('mfisetup/branches/create.branch.dialog.html'),
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            hasBackdrop: false,
+            escapeToClose: true,
+            controller: 'CreateBranchController',
+            controllerAs: 'vm'
+        }).then(function (answer) {
+            getBranches();
+        }, function () {
+        });
+    }
+
+    function _changeStatus(ChangeStatus) {
+      ChangeStatus.status = ChangeStatus.status === "active" ? "inactive" : "active";
+      MainService.UpdateBranch(ChangeStatus).then(
+        function(response) {
+
+          AlertService.showSuccess(
+              "Updated branch status",
+              "Updated Status successfully."
+          );
+          // console.log("updated successfully", response);
+
+        },
+        function(error) {
+          // console.log("could not be updated", error);
+          AlertService.showError(
+            "Status not changed. Please try again.",
+            "ERROR"
+          );
+        }
+      );
+
+    }
+
+  }
+})(window.angular);
+
 (function(angular) {
   "use strict";
 

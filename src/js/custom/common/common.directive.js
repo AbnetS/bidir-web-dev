@@ -262,25 +262,38 @@
                 templateUrl: 'app/views/common/directives/templates/cost_list.tmpl.html'
             };
         })
-        .directive('reportParameter', function($timeout, $compile, $filter) {
+        .directive('reportParameter',function($timeout, $compile, $filter,$http) {
+            var baseUrl = 'http://api.dev.bidir.gebeya.co/';
             return {
                 restrict: 'E',
                 scope: {
                     parameters: '=parameters'
                 },
                 link: function($scope, element, attrs) {
-                    $scope.$watch('parameters', function (walks) {
-                        console.log($scope.parameters);
-                    });
+
+                    $scope.searchParameters = function(parameter,searchTerm){
+                        if(parameter.type === 'SEARCH' && searchTerm !== ""){
+                            console.log("searching....",searchTerm);
+
+                            if(searchTerm.length >= 3){
+                                let url = baseUrl+'reports/'+parameter.get_from + '?search=' + searchTerm;
+                                $http.get(url).then(function (response) {
+                                    parameter.values = response.data;
+                                });
+                            }
+
+                        }
+                    };
 
                 },
                 templateUrl: 'app/views/common/directives/templates/report.parameter.tmpl.html'
             };
         })
-        .directive('formWizard', formWizard);
+        .directive('formWizard', formWizard)
 
-            formWizard.$inject = ['$parse'];
-            function formWizard ($parse) {
+         formWizard.$inject = ['$parse'];
+
+         function formWizard ($parse) {
                 var directive = {
                     link: link,
                     controller:  function ($scope) {
@@ -352,6 +365,7 @@
                 }
 
             }
+
 
 
 })(window.angular);

@@ -4,9 +4,9 @@
         .module('app.report')
         .controller('ReportController', ReportController);
 
-    ReportController.$inject = ['ReportService', 'blockUI','PrintPreviewService','$sce','$scope','$filter'];
+    ReportController.$inject = ['ReportService', 'blockUI','PrintPreviewService','$sce','$scope','$filter','_'];
 
-    function ReportController( ReportService,blockUI,PrintPreviewService,$sce,$scope,$filter)
+    function ReportController( ReportService,blockUI,PrintPreviewService,$sce,$scope,$filter,_)
     {
         var vm = this;
         vm.FILE_TYPE ={
@@ -15,10 +15,10 @@
         };
         vm.onSelectedReport = _onSelectedReport;
         vm.printReport = _printReport;
-        // vm.downloadDocument = _downloadDocument;
         vm.generateReport = _generateReport;
 
         init();
+
 
         function _generateReport() {
             vm.report.isLoading = true;
@@ -32,10 +32,9 @@
                         filters[parameter.code] =  { send: $filter('date')( parameter.selected, 'dd-MM-yyyy'),display: $filter('date')( parameter.selected, 'longDate')};
                     }else if (parameter.type === 'TEXT') {
                         filters[parameter.code] =  { send: parameter.selected,display: $filter('ordinal')( parameter.selected)};
-                    } else {
+                    }else {
                         filters[parameter.code]  = parameter.selected;
                     }
-
                 }
             );
 
@@ -54,32 +53,17 @@
 
             _.each(vm.report.parameters,function (param) {
 
-               if(!param.is_constant && param.get_from ){
+               if(!param.is_constant && param.get_from){
                    ReportService.GetReportParameter(param.get_from).then(function (response) {
                        param.values = response.data;
                    });
                }
-               else{
-                   param.values = param.constants;
-               }
+
             });
         }
 
-        function _downloadDocument() {
-            vm.report.isLoading = true;
-            var myBlockUI = blockUI.instances.get('reportDownload');
-            myBlockUI.start('Downloading...');
-            vm.report.reportPromise =  ReportService.GetReportPDF(vm.report._id,'docx').then(function (response) {
-
-                vm.pdfFile = openPDF(response.data);
-                vm.report.isLoading = false;
-                window.open(vm.pdfFile, '_self', '');
-                myBlockUI.stop();
-            },function () { myBlockUI.stop(); });
-        }
-
         function _printReport(report) {
-            var preview = [{
+            let preview = [{
                 Name: report.title,
                 TemplateUrl: report.templateUrl,//.replace("template.html","printable.html"),
                 IsCommon: false,
@@ -118,9 +102,10 @@
 
         }
 
+
         function openPDF(data) {
-            var file = new Blob([data], vm.FILE_TYPE.DOC);
-            var fileURL = URL.createObjectURL(file);
+            let file = new Blob([data], vm.FILE_TYPE.DOC);
+            let fileURL = URL.createObjectURL(file);
             return $sce.trustAsResourceUrl(fileURL);
         }
 

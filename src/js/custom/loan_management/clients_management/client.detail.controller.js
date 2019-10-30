@@ -195,8 +195,33 @@
 
         function _aCATGroupOnClick(selectedClientACAT,index) {
             vm.selectedClientACAT = selectedClientACAT;
+            // vm.selectedClientACAT.estimated.net_cash_flow
+
+            sortMonths();
+
             ShowCropPanel();
         }
+
+        function sortMonths() {
+
+            // let net_cash_flow = [];
+            // let firstExpenseMonth = MONTHS_CONST.find( mon => mon.name === vm.selectedClientACAT.first_expense_month);
+            // let loop = true;
+            // let index = firstExpenseMonth.number;
+            // net_cash_flow.push(MONTHS_CONST[index]);
+            // if(index === 11) index = 0; else index++;
+            // while (loop) {
+            //     if(index === firstExpenseMonth) loop = false;
+            //     else {
+            //         net_cash_flow.push(MONTHS_CONST[index]);
+            //         if(index === 11) index = 0; else index++;
+            //     }
+            // }
+            // return net_cash_flow;
+        }
+
+
+
         function _onLoanProposalClick(loanProduct) {
             getLoanProposals();
             ShowSummaryPanel();

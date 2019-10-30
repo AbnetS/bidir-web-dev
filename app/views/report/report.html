@@ -39,9 +39,15 @@
                   </ui-select-choices>
                </ui-select>
             </div>
+
+
          </div>
+         <div class="panel-body">
+            <em>{{vm.report.description}}</em>
+         </div>
+
          <div class="section-divider">
-            <span>Filter</span>
+            <span>Filters</span>
          </div>
          <div class="panel-body">
             <report-parameter parameters="vm.report.parameters"></report-parameter>
