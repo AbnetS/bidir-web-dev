@@ -32,15 +32,12 @@
                 myBlockUI.stop();
                 vm.showDownloadDocBtn = true; //show download doc file button
                 vm.pdfFile = openPDF(response.data,vm.FILE_TYPE.PDF);
-                vm.report.isLoading = false;
                 window.open(vm.pdfFile);
-            },function () { myBlockUI.stop(); vm.report.isLoading = false; });
+            },function () { myBlockUI.stop();});
 
         }
 
         function prepareParameters() {
-            vm.report.isLoading = true;
-
             vm.report.parameters.map(
                 (parameter)=> {
                     if(_.isEmpty(parameter.selected) && _.isUndefined(parameter.selected)) return;
@@ -120,12 +117,13 @@
         }
 
         function _downloadDocFile() {
-
+            vm.report.isLoading = true;
             ReportService.FilterReport(vm.report._id,'docx',vm.filters).then(function (response) {
-                 let docFile = openPDF(response.data,vm.FILE_TYPE.DOC);
+                vm.report.isLoading = false;
+                let docFile = openPDF(response.data,vm.FILE_TYPE.DOC);
                 window.open(docFile, '_parent', '');
 
-            },function () {});
+            },function () {vm.report.isLoading = false;});
         }
 
     }

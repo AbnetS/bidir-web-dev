@@ -20,12 +20,6 @@
 
 
 <div class="row">
-    <!-- Shows loading progress-->
-    <div ng-show="vm.report.isLoading">
-        <md-progress-linear md-mode="indeterminate" ></md-progress-linear>
-        <div class="alert small alert-info">{{vm.report.title }} Document Downloading.....</div>
-    </div>
-
     <!-- Report sidebar-->
     <div class="col-lg-3">
         <div class="panel panel-default">
@@ -85,10 +79,15 @@
 
             <div class="row" ng-show="vm.report._id" block-ui="reportDownload">
                 <div ng-if="vm.showDownloadDocBtn" class="col-md-12">
-                    <a ng-click="vm.downloadDocFile()" class="btn btn-lg btn-success pull-right">Download Doc!</a>
+                    <a ng-hide="vm.report.isLoading" ng-click="vm.downloadDocFile()" class="btn btn-lg btn-success pull-right">Download Doc!</a>
+                    <!-- Shows loading progress-->
+                    <div ng-show="vm.report.isLoading">
+                        <md-progress-linear md-mode="indeterminate" ></md-progress-linear>
+                        <div class="alert small alert-info">{{vm.report.title }} Downloading.....</div>
+                    </div>
                 </div>
                 <div class="col-md-12">
-                    <embed ng-src="{{vm.pdfFile}}" type="application/pdf" style="width:100%;height:1200px;" />
+                    <embed ng-src="{{vm.pdfFile}}" type="application/pdf" style="width:100%;height:65vw;" />
                 </div>
             </div>
 
