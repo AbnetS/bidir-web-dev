@@ -56142,7 +56142,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
 /*!
  * angular-ui-scroll
  * https://github.com/angular-ui/ui-scroll
- * Version: 1.7.3 -- 2019-05-27T16:57:07.461Z
+ * Version: 1.7.6 -- 2019-08-17T00:42:28.970Z
  * License: MIT
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -56672,9 +56672,14 @@ function ScrollBuffer(elementRoutines, bufferSize, startIndex) {
       });
       buffer.maxIndex = buffer.eof ? buffer.next - 1 : Math.max(buffer.next - 1, buffer.maxIndex);
     },
-    prepend: function prepend(items) {
+    prepend: function prepend(items, immutableTop) {
       items.reverse().forEach(function (item) {
-        --buffer.first;
+        if (immutableTop) {
+          ++buffer.next;
+        } else {
+          --buffer.first;
+        }
+
         buffer.insert('prepend', item);
       });
       buffer.minIndex = buffer.bof ? buffer.minIndex = buffer.first : Math.min(buffer.first, buffer.minIndex);
@@ -56798,6 +56803,29 @@ function ScrollBuffer(elementRoutines, bufferSize, startIndex) {
         }
       });
       return Math.max(0, bottom - top);
+    },
+    getItems: function getItems() {
+      return buffer.filter(function (item) {
+        return item.op === 'none';
+      });
+    },
+    getFirstItem: function getFirstItem() {
+      var list = buffer.getItems();
+
+      if (!list.length) {
+        return null;
+      }
+
+      return list[0].item;
+    },
+    getLastItem: function getLastItem() {
+      var list = buffer.getItems();
+
+      if (!list.length) {
+        return null;
+      }
+
+      return list[list.length - 1].item;
     }
   });
   buffer.reset(startIndex);
@@ -57211,6 +57239,21 @@ function () {
 
       for (var _i = publicProps.length - 1; _i >= 0; _i--) {
         _loop(_i);
+      } // read-only immediately calculated public properties
+
+
+      var publicPropsImmediate = ['bufferFirst', 'bufferLast', 'bufferLength'];
+
+      var _loop2 = function _loop2(_i2) {
+        Object.defineProperty(_this.publicContext, publicPropsImmediate[_i2], {
+          get: function get() {
+            return _this[publicPropsImmediate[_i2]];
+          }
+        });
+      };
+
+      for (var _i2 = publicPropsImmediate.length - 1; _i2 >= 0; _i2--) {
+        _loop2(_i2);
       } // non-read-only public property
 
 
@@ -57254,18 +57297,19 @@ function () {
   }, {
     key: "prepend",
     value: function prepend(newItems) {
-      this.buffer.prepend(newItems);
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      this.buffer.prepend(newItems, options.immutableTop);
       this.doAdjust();
       this.viewport.clipTop();
       this.viewport.clipBottom();
     }
   }, {
     key: "applyUpdates",
-    value: function applyUpdates(arg1, arg2) {
+    value: function applyUpdates(arg1, arg2, arg3) {
       if (typeof arg1 === 'function') {
-        this.applyUpdatesFunc(arg1);
+        this.applyUpdatesFunc(arg1, arg2);
       } else {
-        this.applyUpdatesIndex(arg1, arg2);
+        this.applyUpdatesIndex(arg1, arg2, arg3);
       }
 
       this.doAdjust();
@@ -57275,15 +57319,18 @@ function () {
     value: function applyUpdatesFunc(cb) {
       var _this2 = this;
 
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       this.buffer.slice(0).forEach(function (wrapper) {
         // we need to do it on the buffer clone, because buffer content
         // may change as we iterate through
-        _this2.applyUpdate(wrapper, cb(wrapper.item, wrapper.scope, wrapper.element));
+        _this2.applyUpdate(wrapper, cb(wrapper.item, wrapper.scope, wrapper.element), options);
       });
     }
   }, {
     key: "applyUpdatesIndex",
     value: function applyUpdatesIndex(index, newItems) {
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
       if (index % 1 !== 0) {
         throw new Error('applyUpdates - ' + index + ' is not a valid index (should be an integer)');
       }
@@ -57292,13 +57339,13 @@ function () {
 
 
       if (_index >= 0 && _index < this.buffer.length) {
-        this.applyUpdate(this.buffer[_index], newItems);
+        this.applyUpdate(this.buffer[_index], newItems, options);
       } // out-of-buffer case: deletion may affect Paddings
       else if (index >= this.buffer.getAbsMinIndex() && index <= this.buffer.getAbsMaxIndex()) {
           if (angular.isArray(newItems) && !newItems.length) {
-            this.viewport.removeCacheItem(index, index === this.buffer.minIndex);
+            this.viewport.removeCacheItem(index, !options.immutableTop && index === this.buffer.minIndex);
 
-            if (index === this.buffer.getAbsMinIndex()) {
+            if (!options.immutableTop && index === this.buffer.getAbsMinIndex()) {
               this.buffer.incrementMinIndex();
             } else {
               this.buffer.decrementMaxIndex();
@@ -57311,6 +57358,8 @@ function () {
     value: function applyUpdate(wrapper, newItems) {
       var _this3 = this;
 
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
       if (!angular.isArray(newItems)) {
         return;
       }
@@ -57322,7 +57371,7 @@ function () {
       })) {
         wrapper.op = 'remove';
 
-        if (position === 0 && !newItems.length) {
+        if (!options.immutableTop && position === 0 && !newItems.length) {
           wrapper._op = 'isTop'; // to catch "first" edge case on remove
         }
       }
@@ -57332,7 +57381,7 @@ function () {
           position--;
         } else {
           // 3 parameter (isTop) is to catch "first" edge case on insert
-          _this3.buffer.insert(position + 1, newItem, position === -1);
+          _this3.buffer.insert(position + 1, newItem, !options.immutableTop && position === -1);
         }
       });
     }
@@ -57378,6 +57427,21 @@ function () {
         }
       }
     }
+  }, {
+    key: "bufferLength",
+    get: function get() {
+      return this.buffer.getItems().length;
+    }
+  }, {
+    key: "bufferFirst",
+    get: function get() {
+      return this.buffer.getFirstItem();
+    }
+  }, {
+    key: "bufferLast",
+    get: function get() {
+      return this.buffer.getLastItem();
+    }
   }]);
 
   return Adapter;
@@ -57391,7 +57455,8 @@ function () {
 
 
 angular.module('ui.scroll', []).constant('JQLiteExtras', jqLiteExtras_JQLiteExtras).run(['JQLiteExtras', function (JQLiteExtras) {
-  !window.jQuery ? new JQLiteExtras().registerFor(angular.element) : null;
+  var elt = angular.element;
+  !(window.jQuery && elt.fn && elt.fn.jquery) ? new JQLiteExtras().registerFor(elt) : null;
   ElementRoutines.addCSSRules();
 }]).directive('uiScrollViewport', function () {
   return {
@@ -57623,6 +57688,7 @@ angular.module('ui.scroll', []).constant('JQLiteExtras', jqLiteExtras_JQLiteExtr
     }
 
     function reload() {
+      unbindEvents();
       viewport.resetTopPadding();
       viewport.resetBottomPadding();
 

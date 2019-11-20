@@ -4,10 +4,9 @@
 
         .service('ReportService', ReportService);
 
-    ReportService.$inject = ['$http','CommonService','Colors','API_DEFINITION'];
+    ReportService.$inject = ['$http','CommonService','Colors'];
 
-    function ReportService($http, CommonService, Colors,API_DEFINITION) {
-        var API = API_DEFINITION;
+    function ReportService($http, CommonService, Colors) {
         return {
             barColors: barColors(),
             GetLineChartReport:_getLineChartReport,
