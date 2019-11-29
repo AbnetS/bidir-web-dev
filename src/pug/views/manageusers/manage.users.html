@@ -71,6 +71,10 @@
                                     <i class="fa fa-eye"></i>
                                     {{usr.status=== 'active'? "Deactivate":"Activate"}}
                             </button>
+                            <button  class="btn btn-danger btn-xs"
+                                    ng-if="vm.isSuperAdmin" ng-click="vm.onresetUserPassword(usr,$event)">
+                                <i class="fa fa-key"></i>
+                            </button>
                         </td>
                     </tr>
                     </tbody>

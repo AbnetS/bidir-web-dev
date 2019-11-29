@@ -15,7 +15,8 @@
             GetBranches: _getBranches,
             CreateUser: _saveUser,
             UpdateUser: _updateUser,
-            UpdateUserStatus: _updateUserStatus
+            UpdateUserStatus: _updateUserStatus,
+            ResetUserPassword:_resetUserPassword
         };
 
         function _getUsers(params){
@@ -35,6 +36,9 @@
         }
         function _updateUserStatus(user) {
             return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id), user);
+        }
+        function _resetUserPassword(user) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id) + '/reset',{});
         }
         
     }

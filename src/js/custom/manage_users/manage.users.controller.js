@@ -20,12 +20,15 @@
         vm.changeStatus = _changeStatus;
         vm.statusStyle = _statusStyle;
         vm.onSelectedBranch = _onSelectedBranch;
+        vm.onresetUserPassword = _onresetUserPassword;
 
         activate();
 
 
         ////////////////
         function activate() {
+
+            vm.isSuperAdmin = false;
 
             fetchUserData();
 
@@ -44,16 +47,16 @@
                 // console.log("users list",response);
                 vm.users = response.data.docs;
                 vm.usersCopy = angular.copy(vm.users);
-            },function(error){
-                console.log("error",error);
+            },function(){
             });
         }
 
         function GetBranchFilter() {
             if(AuthService.IsSuperuser()){
+                vm.isSuperAdmin = true;
                 ManageUserService.GetBranches().then(function(response){
                     vm.currentUser.user_access_branches = response.data.docs;
-                },function(error){
+                },function(){
                     vm.currentUser.user_access_branches = [];
                 });
             }
@@ -79,12 +82,10 @@
             }
         
             ManageUserService.UpdateUserStatus(userAccount).then(function(response){
-                console.log('updated user',response);
                 var message =   userAccount.status==='active'?'activated':userAccount.status;
                 AlertService.showSuccess('Updated User Status!', 'User is ' + message  + '.');
                 // toaster.pop(vm.toaster.type, vm.toaster.title, vm.toaster.text);
             },function(error){
-                console.log('error',error);
                 var message = error.data.error.message;
                 AlertService.showError( 'Oops... Something went wrong', message);
                 // toaster.pop(vm.toaster.type, vm.toaster.title, vm.toaster.text);
@@ -106,7 +107,7 @@
                 controller: 'CreateUserController',
                 controllerAs: 'vm'
             })
-                .then(function (answer) {
+                .then(function () {
                     fetchUserData();
                 }, function () {
                 });
@@ -123,7 +124,7 @@
                 escapeToClose: true,
                 controller: 'CreateUserController',
                 controllerAs: 'vm'
-            }).then(function (answer) {
+            }).then(function () {
                 fetchUserData();
                 }, function () {
                 });
@@ -159,6 +160,23 @@
             }
             return style;
         }
+
+        function _onresetUserPassword(user) {
+            AlertService.showConfirmation("You are about to reset the user password",
+                "Are you sure?", "Yes, Reset!", "warning", true,function (isConfirm) {
+
+                    if(isConfirm){
+                        ManageUserService.ResetUserPassword(user).then(function (response) {
+                            AlertService.showSuccess('Password Reset Successful!',  "Reset Successful");
+                        });
+                    }
+
+                });
+
+        }
+
+
+
     }
 })(window.angular,window.document);
 
