@@ -49,10 +49,6 @@
                               <a userpermission="['MFI_SETUP_BRANCH_UPDATE']" ng-if="branch.status==='active'" ng-click="vm.editBranch(branch)">
                                  <i class="fa fa-edit"></i>Edit
                               </a>
-
-                              <a userpermission="['MFI_SETUP_BRANCH_ACTIVATE','MFI_SETUP_BRANCH_DEACTIVATE']" ng-click="vm.changeStatus(branch)">
-                                 <i class="fa fa-trash-o"></i>{{branch.status=== 'active'? "Deactivate":"Activate"}}
-                              </a>
                            </td>
                         </tr>
                      </tbody>
