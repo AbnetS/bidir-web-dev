@@ -67,9 +67,9 @@
 
                   </div>
                   <div class="col-lg-6">
-                     <div class="form-group" ng-class="{false:'has-error'}[vm.MFISetupForm.Isestablishment_yearValid]">
+                     <div class="form-group">
 
-                        <label>Establishment Date *</label>
+                        <label>Establishment Date</label>
                         <p class="input-group">
                            <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="vm.MFI.establishment_year" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
                            <span class="input-group-btn">
@@ -78,7 +78,6 @@
                               </button>
                            </span>
                         </p>
-                        <small ng-show="!vm.MFISetupForm.Isestablishment_yearValid" class="help-block">Establishment Year is required.</small>
                      </div>
 
                   </div>

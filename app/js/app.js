@@ -9251,6 +9251,293 @@ var INDICATOR = {
 
 })(window.angular);
 /**
+ * Created by Yonas on 20/2/2019.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("GroupLoanController", GroupLoanController);
+
+    GroupLoanController.$inject = ['LoanManagementService','$scope','$state','AuthService'];
+
+    function GroupLoanController(LoanManagementService,$scope,$state,AuthService) {
+        var vm = this;
+        vm.labelBasedOnStatus = LoanManagementService.StyleLabelByStatus;
+        vm.loanCycles = LoanManagementService.loanCycles;
+        vm.onSelectedBranch = _onSelectedBranch;
+
+        vm.paginate = _paginate;
+        vm.groupDetail = _groupDetail;
+
+        vm.onSelectedLoanCycle = _onSelectedLoanCycle;
+        vm.clearSearch = _clearSearch;
+
+        initialize();
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            // callApi();
+        }
+
+        function initialize() {
+            vm.visibility = { showClientDetail: false };
+            vm.currentUser = {selected_access_branch:undefined};
+            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
+            vm.filter = {show : false};
+            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
+            vm.query = { search:'',   page:1,  per_page:10 };
+            callAPI();
+            GetBranchFilter();
+        }
+        function _onSelectedBranch(){
+            vm.groupLoans = vm.groupLoansCopy;
+            vm.groupLoans = _.filter(vm.groupLoans,function(group){
+                if(!_.isUndefined(group.branch) && group.branch !== null){
+                    return group.branch._id === vm.currentUser.selected_access_branch._id;
+                }
+            });
+
+        }
+
+        function GetBranchFilter() {
+            if(AuthService.IsSuperuser()){
+                LoanManagementService.GetBranches().then(function(response){
+                    vm.currentUser.user_access_branches = response.data.docs;
+                },function(error){
+                    vm.currentUser.user_access_branches = [];
+                    console.log("error on GetBranchFilter",error);
+                });
+            }
+            else {
+                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
+            }
+        }
+
+        function _onSelectedLoanCycle(){
+
+        }
+
+        function callAPI() {
+            vm.groupLoansPromise = LoanManagementService.GetGroupLoans(vm.query).then(function (response) {
+                vm.groupLoans = response.data.docs;
+                vm.groupLoansCopy = angular.copy(vm.groupLoans);
+                vm.query.total_docs_count =  response.data.total_docs_count;
+            },function (error) {  })
+        }
+
+        function _paginate(page, pageSize) {
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callAPI();
+        }
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log("searching clients for ",newValue);
+            }
+        });
+
+        function _groupDetail(group) {
+            $state.go('app.group_loan_detail.members',{id: group._id});
+        }
+
+        $scope.$watch(angular.bind(vm, function () {
+            return vm.query.search;
+        }), function (newValue, oldValue) {
+            // group loan search
+        });
+
+    }
+
+})(window.angular);
+/**
+ * Created by Yonas on 20/2/2019.
+ */
+(function(angular) {
+    "use strict";
+
+    angular.module("app.processing")
+        .controller("GroupLoanDetailController", GroupLoanDetailController);
+
+    GroupLoanDetailController.$inject = ['LoanManagementService','$scope','$stateParams','$state','blockUI','DocumentService','APP_CONSTANTS'];
+
+    function GroupLoanDetailController(LoanManagementService,$scope,$stateParams,$state,blockUI,DocumentService,APP_CONSTANTS) {
+        var vm = this;
+        vm.StyleLabelByStatus = LoanManagementService.StyleLabelByStatus;
+        vm.onTabSelected = _onTabSelected;
+        vm.loanProcessDetail = _loanProcessDetail;
+        vm.backToList = _backToList;
+        vm.printLoanProcess  = LoanManagementService.printLoanProcess;
+
+        vm.downloadMemberListDocument = _downloadMemberListDocument;
+        vm.downloadACATDocument = _downloadACATDocument;
+
+        vm.ACATGroupOnClick = _aCATGroupOnClick;
+        vm.onLoanProposalClick = _onLoanProposalClick;
+
+        initialize();
+
+
+        function _downloadMemberListDocument(group) {
+            var group_id = group._id;
+            var myBlockUI = blockUI.instances.get('groupMembersBlockUI');
+            myBlockUI.start('Downloading...');
+            DocumentService.GetGroupDocument(group_id).then(function (response) {
+                window.open(DocumentService.OpenDocument(response.data,vm.FILE_TYPE.EXCEL), '_self', '');
+                myBlockUI.stop();
+            },function () { myBlockUI.stop(); });
+        }
+        function _downloadACATDocument(selectedClientACAT) {
+            var client_ACAT_id = selectedClientACAT._id;
+            var myBlockUI = blockUI.instances.get('acatTabBlockUI');
+            myBlockUI.start('Downloading...');
+            DocumentService.GetDocument(client_ACAT_id).then(function (response) {
+                window.open(DocumentService.OpenDocument(response.data,vm.FILE_TYPE.EXCEL), '_self', '');
+                myBlockUI.stop();
+            },function () { myBlockUI.stop(); });
+        }
+
+
+        function initialize() {
+            vm.tabsList = [
+                { id:0,  heading:"Members",  code: 'members', route: 'app.group_loan_detail.members' },
+                { id:1,  heading:"Screening", code: 'screening', route: 'app.group_loan_detail.screenings' },
+                { id:2,  heading:"Loan Application", code: 'loan', route: 'app.group_loan_detail.loan' },
+                { id:3,  heading:"A-CAT", code: 'acat', route: 'app.group_loan_detail.acat'  }
+            ];
+            ResetVisibility();
+            vm.FILE_TYPE = APP_CONSTANTS.FILE_TYPE;
+
+            vm.groupLoan = {};
+            vm.groupLoanId = $stateParams.id;
+            _.each(vm.tabsList,function (selectedTab) {
+                if($state.current.name === selectedTab.route){
+                    vm.selectedTab = selectedTab.id;
+                    vm.selectedTabObj = selectedTab;
+                }
+            });
+
+            callAPI();
+        }
+        function ResetVisibility() {
+            vm.visibility = {
+                showScreeningDetail: false,
+                showLoanDetail: false,
+                showACATDetail: false
+            };
+        }
+        function callAPI() {
+            vm.groupPromise = LoanManagementService.GetGroupLoan(vm.groupLoanId).then(function (response) {
+                vm.groupLoan.group = response.data;
+                GetData(vm.selectedTabObj.code);
+            },function (error) {  });
+        }
+
+        function GetData(tabCode) {
+            switch (tabCode) {
+                case 'screening':
+                    vm.groupScreeningPromise = LoanManagementService.GetGroupDataByLoanProcessStage('screenings',vm.groupLoanId).then(function (response) {
+                        vm.groupLoan.screenings = response.data.screenings;
+                        vm.groupScreening =  {
+                            status: response.data.status,
+                            last_modified: response.data.last_modified
+                        };
+
+                    },function (error) {});
+                    break;
+                case 'loan':
+                    vm.groupLoanPromise = LoanManagementService.GetGroupDataByLoanProcessStage('loans',vm.groupLoanId).then(function (response) {
+                        vm.groupLoan.loans = response.data.loans;
+                        vm.groupLoanInfo =  {
+                            status: response.data.status,
+                            last_modified: response.data.last_modified
+                        };
+                    },function (error) {});
+                    break;
+                case 'acat':
+                    vm.groupAcatPromise = LoanManagementService.GetGroupDataByLoanProcessStage('acats',vm.groupLoanId).then(function (response) {
+                        vm.groupLoan.acats = response.data.acats;
+                        vm.groupACAT =  {
+                            status: response.data.status,
+                            last_modified: response.data.last_modified
+                        };
+                    },function (error) {});
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        function _onTabSelected(tab,index) {
+            vm.selectedTab = index; //SET ACTIVE TAB
+            vm.selectedTabObj = tab;
+            ResetVisibility();
+            GetData(tab.code); // get data for selected tab
+            $state.go(tab.route); //REDIRECT TO CHILD VIEW
+        }
+
+        function _loanProcessDetail(stageData,tabCode,event) {
+            switch (tabCode) {
+                case 'screening':
+                    vm.clientScreening = stageData;
+                    vm.visibility.showScreeningDetail = true;
+                    break;
+                case 'loan':
+                    vm.loanApplication = stageData;
+                    vm.visibility.showLoanDetail = true;
+                    break;
+                case 'acat':
+                    vm.selectedClientACAT = undefined; // reset on every load
+                    vm.clientACATs = stageData;
+                    vm.visibility.showACATDetail = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        function _backToList(tabCode) {
+            switch(tabCode){
+                case 'screening':
+                    vm.visibility.showScreeningDetail = false;
+                    break;
+                case 'loan':
+                    vm.visibility.showLoanDetail = false;
+                    break;
+                case 'acat':
+                    vm.visibility.showACATDetail = false;
+                    break;
+            }
+        }
+        function _aCATGroupOnClick(selectedClientACAT,index) {
+            vm.selectedClientACAT = selectedClientACAT;
+            ShowCropPanel();
+        }
+        function _onLoanProposalClick(loanProduct) {
+            ShowSummaryPanel();
+            vm.selectedLoanProduct = loanProduct;
+            vm.list = { settingActive: 10 };
+        }
+
+        function ShowCropPanel() {
+            vm.visibility.showCropPanel = true;
+            vm.visibility.showSummaryPanel = false;
+        }
+        function ShowSummaryPanel() {
+            vm.visibility.showCropPanel = false;
+            vm.visibility.showSummaryPanel = true;
+        }
+    }
+
+
+
+})(window.angular);
+/**
  * Created by Yoni on 1/9/2018.
  */
 (function(angular) {
@@ -9649,293 +9936,6 @@ var INDICATOR = {
 
 })(window.angular);
 /**
- * Created by Yonas on 20/2/2019.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("GroupLoanController", GroupLoanController);
-
-    GroupLoanController.$inject = ['LoanManagementService','$scope','$state','AuthService'];
-
-    function GroupLoanController(LoanManagementService,$scope,$state,AuthService) {
-        var vm = this;
-        vm.labelBasedOnStatus = LoanManagementService.StyleLabelByStatus;
-        vm.loanCycles = LoanManagementService.loanCycles;
-        vm.onSelectedBranch = _onSelectedBranch;
-
-        vm.paginate = _paginate;
-        vm.groupDetail = _groupDetail;
-
-        vm.onSelectedLoanCycle = _onSelectedLoanCycle;
-        vm.clearSearch = _clearSearch;
-
-        initialize();
-
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            // callApi();
-        }
-
-        function initialize() {
-            vm.visibility = { showClientDetail: false };
-            vm.currentUser = {selected_access_branch:undefined};
-            vm.options =   MD_TABLE_GLOBAL_SETTINGS.OPTIONS;
-            vm.filter = {show : false};
-            vm.pageSizes = MD_TABLE_GLOBAL_SETTINGS.PAGE_SIZES;
-            vm.query = { search:'',   page:1,  per_page:10 };
-            callAPI();
-            GetBranchFilter();
-        }
-        function _onSelectedBranch(){
-            vm.groupLoans = vm.groupLoansCopy;
-            vm.groupLoans = _.filter(vm.groupLoans,function(group){
-                if(!_.isUndefined(group.branch) && group.branch !== null){
-                    return group.branch._id === vm.currentUser.selected_access_branch._id;
-                }
-            });
-
-        }
-
-        function GetBranchFilter() {
-            if(AuthService.IsSuperuser()){
-                LoanManagementService.GetBranches().then(function(response){
-                    vm.currentUser.user_access_branches = response.data.docs;
-                },function(error){
-                    vm.currentUser.user_access_branches = [];
-                    console.log("error on GetBranchFilter",error);
-                });
-            }
-            else {
-                vm.currentUser.user_access_branches = AuthService.GetAccessBranches();
-            }
-        }
-
-        function _onSelectedLoanCycle(){
-
-        }
-
-        function callAPI() {
-            vm.groupLoansPromise = LoanManagementService.GetGroupLoans(vm.query).then(function (response) {
-                vm.groupLoans = response.data.docs;
-                vm.groupLoansCopy = angular.copy(vm.groupLoans);
-                vm.query.total_docs_count =  response.data.total_docs_count;
-            },function (error) {  })
-        }
-
-        function _paginate(page, pageSize) {
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callAPI();
-        }
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("searching clients for ",newValue);
-            }
-        });
-
-        function _groupDetail(group) {
-            $state.go('app.group_loan_detail.members',{id: group._id});
-        }
-
-        $scope.$watch(angular.bind(vm, function () {
-            return vm.query.search;
-        }), function (newValue, oldValue) {
-            // group loan search
-        });
-
-    }
-
-})(window.angular);
-/**
- * Created by Yonas on 20/2/2019.
- */
-(function(angular) {
-    "use strict";
-
-    angular.module("app.processing")
-        .controller("GroupLoanDetailController", GroupLoanDetailController);
-
-    GroupLoanDetailController.$inject = ['LoanManagementService','$scope','$stateParams','$state','blockUI','DocumentService','APP_CONSTANTS'];
-
-    function GroupLoanDetailController(LoanManagementService,$scope,$stateParams,$state,blockUI,DocumentService,APP_CONSTANTS) {
-        var vm = this;
-        vm.StyleLabelByStatus = LoanManagementService.StyleLabelByStatus;
-        vm.onTabSelected = _onTabSelected;
-        vm.loanProcessDetail = _loanProcessDetail;
-        vm.backToList = _backToList;
-        vm.printLoanProcess  = LoanManagementService.printLoanProcess;
-
-        vm.downloadMemberListDocument = _downloadMemberListDocument;
-        vm.downloadACATDocument = _downloadACATDocument;
-
-        vm.ACATGroupOnClick = _aCATGroupOnClick;
-        vm.onLoanProposalClick = _onLoanProposalClick;
-
-        initialize();
-
-
-        function _downloadMemberListDocument(group) {
-            var group_id = group._id;
-            var myBlockUI = blockUI.instances.get('groupMembersBlockUI');
-            myBlockUI.start('Downloading...');
-            DocumentService.GetGroupDocument(group_id).then(function (response) {
-                window.open(DocumentService.OpenDocument(response.data,vm.FILE_TYPE.EXCEL), '_self', '');
-                myBlockUI.stop();
-            },function () { myBlockUI.stop(); });
-        }
-        function _downloadACATDocument(selectedClientACAT) {
-            var client_ACAT_id = selectedClientACAT._id;
-            var myBlockUI = blockUI.instances.get('acatTabBlockUI');
-            myBlockUI.start('Downloading...');
-            DocumentService.GetDocument(client_ACAT_id).then(function (response) {
-                window.open(DocumentService.OpenDocument(response.data,vm.FILE_TYPE.EXCEL), '_self', '');
-                myBlockUI.stop();
-            },function () { myBlockUI.stop(); });
-        }
-
-
-        function initialize() {
-            vm.tabsList = [
-                { id:0,  heading:"Members",  code: 'members', route: 'app.group_loan_detail.members' },
-                { id:1,  heading:"Screening", code: 'screening', route: 'app.group_loan_detail.screenings' },
-                { id:2,  heading:"Loan Application", code: 'loan', route: 'app.group_loan_detail.loan' },
-                { id:3,  heading:"A-CAT", code: 'acat', route: 'app.group_loan_detail.acat'  }
-            ];
-            ResetVisibility();
-            vm.FILE_TYPE = APP_CONSTANTS.FILE_TYPE;
-
-            vm.groupLoan = {};
-            vm.groupLoanId = $stateParams.id;
-            _.each(vm.tabsList,function (selectedTab) {
-                if($state.current.name === selectedTab.route){
-                    vm.selectedTab = selectedTab.id;
-                    vm.selectedTabObj = selectedTab;
-                }
-            });
-
-            callAPI();
-        }
-        function ResetVisibility() {
-            vm.visibility = {
-                showScreeningDetail: false,
-                showLoanDetail: false,
-                showACATDetail: false
-            };
-        }
-        function callAPI() {
-            vm.groupPromise = LoanManagementService.GetGroupLoan(vm.groupLoanId).then(function (response) {
-                vm.groupLoan.group = response.data;
-                GetData(vm.selectedTabObj.code);
-            },function (error) {  });
-        }
-
-        function GetData(tabCode) {
-            switch (tabCode) {
-                case 'screening':
-                    vm.groupScreeningPromise = LoanManagementService.GetGroupDataByLoanProcessStage('screenings',vm.groupLoanId).then(function (response) {
-                        vm.groupLoan.screenings = response.data.screenings;
-                        vm.groupScreening =  {
-                            status: response.data.status,
-                            last_modified: response.data.last_modified
-                        };
-
-                    },function (error) {});
-                    break;
-                case 'loan':
-                    vm.groupLoanPromise = LoanManagementService.GetGroupDataByLoanProcessStage('loans',vm.groupLoanId).then(function (response) {
-                        vm.groupLoan.loans = response.data.loans;
-                        vm.groupLoanInfo =  {
-                            status: response.data.status,
-                            last_modified: response.data.last_modified
-                        };
-                    },function (error) {});
-                    break;
-                case 'acat':
-                    vm.groupAcatPromise = LoanManagementService.GetGroupDataByLoanProcessStage('acats',vm.groupLoanId).then(function (response) {
-                        vm.groupLoan.acats = response.data.acats;
-                        vm.groupACAT =  {
-                            status: response.data.status,
-                            last_modified: response.data.last_modified
-                        };
-                    },function (error) {});
-                    break;
-                default:
-                    break;
-            }
-        }
-
-
-        function _onTabSelected(tab,index) {
-            vm.selectedTab = index; //SET ACTIVE TAB
-            vm.selectedTabObj = tab;
-            ResetVisibility();
-            GetData(tab.code); // get data for selected tab
-            $state.go(tab.route); //REDIRECT TO CHILD VIEW
-        }
-
-        function _loanProcessDetail(stageData,tabCode,event) {
-            switch (tabCode) {
-                case 'screening':
-                    vm.clientScreening = stageData;
-                    vm.visibility.showScreeningDetail = true;
-                    break;
-                case 'loan':
-                    vm.loanApplication = stageData;
-                    vm.visibility.showLoanDetail = true;
-                    break;
-                case 'acat':
-                    vm.selectedClientACAT = undefined; // reset on every load
-                    vm.clientACATs = stageData;
-                    vm.visibility.showACATDetail = true;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        function _backToList(tabCode) {
-            switch(tabCode){
-                case 'screening':
-                    vm.visibility.showScreeningDetail = false;
-                    break;
-                case 'loan':
-                    vm.visibility.showLoanDetail = false;
-                    break;
-                case 'acat':
-                    vm.visibility.showACATDetail = false;
-                    break;
-            }
-        }
-        function _aCATGroupOnClick(selectedClientACAT,index) {
-            vm.selectedClientACAT = selectedClientACAT;
-            ShowCropPanel();
-        }
-        function _onLoanProposalClick(loanProduct) {
-            ShowSummaryPanel();
-            vm.selectedLoanProduct = loanProduct;
-            vm.list = { settingActive: 10 };
-        }
-
-        function ShowCropPanel() {
-            vm.visibility.showCropPanel = true;
-            vm.visibility.showSummaryPanel = false;
-        }
-        function ShowSummaryPanel() {
-            vm.visibility.showCropPanel = false;
-            vm.visibility.showSummaryPanel = true;
-        }
-    }
-
-
-
-})(window.angular);
-/**
  * Created by Yonas on 4/27/2018.
  */
 (function(angular) {
@@ -10070,6 +10070,107 @@ var INDICATOR = {
 
     }
 
+  }
+})(window.angular);
+
+(function(angular) {
+  "use strict";
+
+  angular.module("app.mfi").controller("MFIController", MFIController);
+
+  MFIController.$inject = ['AlertService', '$scope','MainService','CommonService','blockUI'];
+
+  function MFIController(AlertService,$scope,MainService,CommonService,blockUI)
+
+  {
+    var vm = this;
+    vm.saveChanges = saveChanges;
+
+    vm.MFISetupForm = {
+      IsnameValid: true,
+      IslocationValid: true
+  };
+
+    init();
+
+    function saveChanges() {
+
+      vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFISetupForm, vm.MFI);
+
+      if (vm.IsValidData) {
+          var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
+          myBlockUI.start();
+        if (_.isUndefined(vm.MFI._id)) {
+          MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
+              myBlockUI.stop();
+              AlertService.showSuccess("Created MFI successfully","MFI Information created successfully");
+              console.log("Create MFI", response);
+            }, function(error) {
+              myBlockUI.stop();
+              console.log("Create MFI Error", error);
+              var message = error.data.error.message;
+            AlertService.showError("Failed to create MFI!", message);
+
+            });
+        } else {
+          
+          MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
+              myBlockUI.stop();
+              AlertService.showSuccess("MFI Info updated successfully","MFI Information updated successfully");
+              console.log("Update MFI", response);
+            }, function(error) {
+              myBlockUI.stop();
+              console.log("UpdateMFI Error", error);
+              var message = error.data.error.message;
+              AlertService.showError("MFI Information update failed",message);
+            });
+        }
+      } else {
+          AlertService.showWarning("Warning","Please fill the required fields and try again.");
+      }
+    }
+
+    function init() {
+        var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
+        myBlockUI.start();
+      MainService.GetMFI().then(
+        function(response) {
+            myBlockUI.stop();
+          if (response.data.length > 0) {
+            vm.MFI = response.data[0];
+            var dt = new Date(vm.MFI.establishment_year);
+            vm.MFI.establishment_year = dt;
+          }
+          console.log("Get MFI", response);
+        },
+        function(error) {
+            myBlockUI.stop();
+          console.log("Get MFI Error", error);
+        }
+      );
+
+      $scope.clear = function() {
+        $scope.dt = null;
+      };
+
+      $scope.dateOptions = {
+        dateDisabled: false,
+        formatYear: "yy",
+        maxDate: new Date(2020, 5, 22),
+        startingDay: 1
+      };
+
+      $scope.open1 = function() {
+        $scope.popup1.opened = true;
+      };
+
+      $scope.format = "dd-MMMM-yyyy";
+      $scope.altInputFormats = ["M!/d!/yyyy"];
+
+      $scope.popup1 = {
+        opened: false
+      };
+    }
   }
 })(window.angular);
 
@@ -10401,108 +10502,6 @@ var INDICATOR = {
 
 
 })(window.angular);
-(function(angular) {
-  "use strict";
-
-  angular.module("app.mfi").controller("MFIController", MFIController);
-
-  MFIController.$inject = ['AlertService', '$scope','MainService','CommonService','blockUI'];
-
-  function MFIController(AlertService,$scope,MainService,CommonService,blockUI)
-
-  {
-    var vm = this;
-    vm.saveChanges = saveChanges;
-
-    vm.MFISetupForm = {
-      IsnameValid: true,
-      IslocationValid: true,
-      Isestablishment_yearValid: true
-  };
-
-    init();
-
-    function saveChanges() {
-
-      vm.IsValidData = CommonService.Validation.ValidateForm(vm.MFISetupForm, vm.MFI);
-
-      if (vm.IsValidData) {
-          var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
-          myBlockUI.start();
-        if (_.isUndefined(vm.MFI._id)) {
-          MainService.CreateMFI(vm.MFI, vm.picFile).then(function(response) {
-              myBlockUI.stop();
-              AlertService.showSuccess("Created MFI successfully","MFI Information created successfully");
-              console.log("Create MFI", response);
-            }, function(error) {
-              myBlockUI.stop();
-              console.log("Create MFI Error", error);
-              var message = error.data.error.message;
-            AlertService.showError("Failed to create MFI!", message);
-
-            });
-        } else {
-          
-          MainService.UpdateMFI(vm.MFI, vm.picFile).then(function(response) {
-              myBlockUI.stop();
-              AlertService.showSuccess("MFI Info updated successfully","MFI Information updated successfully");
-              console.log("Update MFI", response);
-            }, function(error) {
-              myBlockUI.stop();
-              console.log("UpdateMFI Error", error);
-              var message = error.data.error.message;
-              AlertService.showError("MFI Information update failed",message);
-            });
-        }
-      } else {
-          AlertService.showWarning("Warning","Please fill the required fields and try again.");
-      }
-    }
-
-    function init() {
-        var myBlockUI = blockUI.instances.get('MFIFormBlockUI');
-        myBlockUI.start();
-      MainService.GetMFI().then(
-        function(response) {
-            myBlockUI.stop();
-          if (response.data.length > 0) {
-            vm.MFI = response.data[0];
-            var dt = new Date(vm.MFI.establishment_year);
-            vm.MFI.establishment_year = dt;
-          }
-          console.log("Get MFI", response);
-        },
-        function(error) {
-            myBlockUI.stop();
-          console.log("Get MFI Error", error);
-        }
-      );
-
-      $scope.clear = function() {
-        $scope.dt = null;
-      };
-
-      $scope.dateOptions = {
-        dateDisabled: false,
-        formatYear: "yy",
-        maxDate: new Date(2020, 5, 22),
-        startingDay: 1
-      };
-
-      $scope.open1 = function() {
-        $scope.popup1.opened = true;
-      };
-
-      $scope.format = "dd-MMMM-yyyy";
-      $scope.altInputFormats = ["M!/d!/yyyy"];
-
-      $scope.popup1 = {
-        opened: false
-      };
-    }
-  }
-})(window.angular);
-
 (function (angular) {
     "use strict";
 
