@@ -97,6 +97,7 @@ var API = {
         },
         Report:{
             Report: '',
+            Dashboard: 'dashboard',
             AllReport: 'all'
         },
         Group:{

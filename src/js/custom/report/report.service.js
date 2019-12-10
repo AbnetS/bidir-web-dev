@@ -9,7 +9,7 @@
     function ReportService($http, CommonService, Colors) {
         return {
             barColors: barColors(),
-            GetLineChartReport:_getLineChartReport,
+            GetDashboardReport:_getDashboardReport,
             GetReportById:_getReportById,
             GetAllReports:_getAllReports,
             GetReportParameter:_getReportParameter,
@@ -25,10 +25,9 @@
         function _getReportById(id){
             return $http.get(CommonService.buildUrlWithParam(API.Service.REPORT,API.Methods.Report.Report,id));
         }
-        function _getLineChartReport(){
-            return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.Report) + '5c1917476070e615a1f2a18f');
+        function _getDashboardReport(type){
+            return $http.get(CommonService.buildUrlWithParam(API.Service.REPORT,API.Methods.Report.Dashboard,type));
         }
-
         function _getAllReports(){
             return $http.get(CommonService.buildUrl(API.Service.REPORT,API.Methods.Report.AllReport));
         }
@@ -54,6 +53,8 @@
                 data: params
             });
         }
+
+
     }
 
 })(window.angular);
