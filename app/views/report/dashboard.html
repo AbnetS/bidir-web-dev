@@ -62,20 +62,21 @@
          </div>
       </div>
    </div>
-   <div class="col-lg-2 col-md-6">
-      <!-- START widget-->
-      <div class="panel widget bg-green">
-         <div class="row row-table">
-            <div class="col-xs-4 text-center bg-green-dark pv-lg">
-               <em class="fa fa-money fa-3x"></em>
-            </div>
-            <div class="col-xs-8 pv-lg">
-               <div class="h2 mt0">{{vm.counts.totalLoanAmount || 1000}}</div>
-               <div class="text-uppercase">Total Loan Amount</div>
-            </div>
-         </div>
-      </div>
-   </div>
+
+   <!--    <div class="col-lg-2 col-md-6">-->
+   <!--        &lt;!&ndash; START widget&ndash;&gt;-->
+   <!--        <div class="panel widget bg-green">-->
+   <!--            <div class="row row-table">-->
+   <!--                <div class="col-xs-4 text-center bg-green-dark pv-lg">-->
+   <!--                    <em class="fa fa-money fa-3x"></em>-->
+   <!--                </div>-->
+   <!--                <div class="col-xs-8 pv-lg">-->
+   <!--                    <div class="h2 mt0">{{vm.counts.totalLoanAmount || 1000}}</div>-->
+   <!--                    <div class="text-uppercase">Total Loan Amount</div>-->
+   <!--                </div>-->
+   <!--            </div>-->
+   <!--        </div>-->
+   <!--    </div>-->
 
    <div class="col-lg-2 col-md-6">
       <!-- START date widget-->
@@ -112,7 +113,7 @@
       <div ng-if="report.type === 'PIE'" class="col-lg-6 col-sm-12">
          <h4 class="text-center">{{report.name}}</h4>
          <div class="col-lg-8 col-lg-offset-2">
-            <canvas class="chart chart-pie" id="pie" chart-data="report.data" chart-labels="report.labels" chart-colors="vm.pieColors" legend="true"></canvas>
+            <canvas class="chart chart-pie" id="pie" chart-data="report.data" chart-labels="report.labels" chart-colors="vm.pieColors" chart-options="options" legend="true"></canvas>
          </div>
       </div>
       <div ng-if="report.type === 'BAR'" class="col-lg-6 col-sm-12">

@@ -6,9 +6,9 @@
         .module('app.report')
         .controller('DashboardController', DashboardController);
 
-    DashboardController.$inject = ['ReportService', 'SharedService','Colors','$rootScope'];
+    DashboardController.$inject = ['ReportService', 'SharedService','Colors','$rootScope','$scope'];
 
-    function DashboardController( ReportService,SharedService,Colors,$rootScope )
+    function DashboardController( ReportService,SharedService,Colors,$rootScope,$scope )
     {
         var vm = this;
         $rootScope.app.layout.isCollapsed = true;
@@ -20,6 +20,23 @@
             chartLoading: true,
             countLoading: true,
         };
+
+        $scope.options = {
+            legend: {
+                display: true,
+                position: 'bottom'
+            },
+            showTooltips: true,
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    left: 10
+                }
+            }
+        };
+
+
         callApi();
 
 

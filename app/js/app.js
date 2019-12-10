@@ -59,13 +59,13 @@
     'use strict';
 
     angular
-        .module('app.loadingbar', []);
+        .module('app.colors', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.colors', []);
+        .module('app.loadingbar', []);
 })();
 (function() {
     'use strict';
@@ -490,50 +490,6 @@
     'use strict';
 
     angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
-
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.colors')
         .constant('APP_COLORS', {
           'primary':                '#3F51B5',
@@ -580,6 +536,50 @@
 
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
+
+})();
 /**=========================================================
  * Module: modals.js
  * Provides a simple way to implement bootstrap modals from templates
@@ -3257,6 +3257,14 @@ function runBlock() {
 
 })();
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.report', []);
+
+})();
 /**
  * Created by Yonas on 8/16/2018.
  */
@@ -3276,14 +3284,6 @@ function runBlock() {
 
     angular
         .module('app.welcomePage', []);
-
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.report', []);
 
 })();
 
@@ -6527,225 +6527,6 @@ var INDICATOR = {
 
 })(window.angular);
 
-/**
- * Created by Yonas on 8/16/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.profile')
-        .controller('ProfileController', ProfileController);
-
-    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService','$state'];
-
-    function ProfileController( ProfileService,   blockUI,AlertService ,$state) {
-        var vm = this;
-        vm.updateProfile = _updateUserProfile;
-        vm.changePassword = _changePassword;
-        vm.resetCredentials = _resetCredentials;
-        vm.credentials = undefined;
-
-        vm.user = ProfileService.GetUserAccount();
-
-
-        function _resetCredentials() {
-            $state.reload();
-        }
-
-        function _updateUserProfile(user) {
-            var profile = {
-                _id:user._id,
-                title:user.title,
-                email: user.email,
-                first_name : user.first_name,
-                last_name:user.last_name,
-                grandfather_name:user.grandfather_name,
-                phone:user.phone
-                // picture:""
-            };
-            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
-            myBlockUI.stop();
-            ProfileService.UpdateProfile(profile).then(function (response) {
-                myBlockUI.start();
-                AlertService.showSuccess("Profil de l'utilisateur","Informations de compte d'utilisateur mises à jour avec succès" );
-            },function (error) {
-                myBlockUI.stop();
-                var message = error.data.error.message;
-                AlertService.showError("Les informations du compte utilisateur n'ont pas pu être mises à jour",message);
-            });
-        }
-
-
-        function _changePassword(user) {
-            let profile = {
-                _id:user._id,
-                old_password:user.old_password,
-                new_password: user.new_password
-            };
-            if(profile.old_password === profile.new_password){
-                AlertService.showSuccess("Changer le mot de passe","Le nouveau mot de passe doit être différent de votre mot de passe précédent." );
-            }else{
-                var myBlockUI = blockUI.instances.get('credentialFormBlockUI');
-                myBlockUI.start();
-                ProfileService.ChangePassword(profile).then(function () {
-                    myBlockUI.stop();
-                    AlertService.showSuccess("Changer le mot de passe","Mot de passe modifié avec succès, connectez-vous avec le nouveau mot de passe!" );
-                //    AUTO LOGOUT
-                },function (error) {
-                    myBlockUI.stop();
-                    var message = error.data.error.message;
-                    AlertService.showError("Impossible de changer le mot de passe, veuillez contacter l'administrateur",message);
-                });
-            }
-        }
-    }
-})(window.angular);
-/**
- * Created by Yonas on 8/17/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.profile')
-
-        .service('ProfileService', ProfileService);
-
-    ProfileService.$inject = ['$http','CommonService','AuthService'];
-
-    function ProfileService($http, CommonService,AuthService) {
-        return {
-            GetUserAccount: _getUserAccount,
-            UpdateProfile: _updateProfile,
-            ChangePassword: _changePassword
-        };
-        function _getUserAccount(){
-            var user = AuthService.GetCurrentUser();
-            return _.isUndefined(user.account)? user.admin:user.account;
-        }
-        function _updateProfile(account){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id) + '/profile', account);
-        }
-        function _changePassword(userInfo){
-            var user = AuthService.GetCurrentUser();
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id) + '/passwords',
-                {old_password: userInfo.old_password, new_password:userInfo.new_password});
-        }
-    }
-
-})(window.angular);
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.welcomePage')
-        .controller('TaskDetailController', TaskDetailController);
-
-    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items','SweetAlert'];
-
-    function TaskDetailController($mdDialog, WelcomeService ,items,SweetAlert) {
-        var vm = this
-        vm.cancel = _cancel;
-        vm.approveUser = _approveUser;
-        vm.declineUser = _declineUser;
-        vm.task = items.taskInfo;
-        console.log("task ",vm.task);
-        WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
-            // console.log("task related user",response);
-            vm.userInfo = response.data;
-
-        },function(error){
-            console.log("error",error);
-        });
-
-        function _approveUser() {
-            var task = {
-                taskId:vm.task._id ,
-                status: "approved",
-                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
-            };
-            updateStatus(task);
-        }
-
-        function _declineUser() {
-            var task = {
-                taskId:vm.task._id ,
-                status: "declined",
-                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
-            };
-            updateStatus(task);
-        }
-
-        function updateStatus(task){
-            WelcomeService.ChangeTaskStatus(task).then(
-                function(response) {
-                    SweetAlert.swal('Task Status Changed!',
-                        'Task '+ task.status + ' Successfully!',
-                        'success');
-                    console.log("task updated",response);
-                    $mdDialog.hide();
-                },
-                function(error) {
-                    SweetAlert.swal( 'Oops...',
-                        'Something went wrong!',
-                        'error');
-                    console.log("could not be updated", error);
-                }
-            );
-        }
-        function _cancel() {
-            $mdDialog.cancel();
-        }
-    }
-
-}(window.angular));
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.welcomePage')
-        .controller('WelcomeController', WelcomeController);
-
-    WelcomeController.$inject = ['EnvironmentConfig','AuthService'];
-
-    function WelcomeController( EnvironmentConfig ,AuthService) {
-        var vm = this;
-        console.log("EnvironmentConfig",EnvironmentConfig);
-    }
-
-}(window.angular));
-/**
- * Created by Yoni on 12/3/2017.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.welcomePage')
-
-        .service('WelcomeService', WelcomeService);
-    WelcomeService.$inject = ['$http', 'CommonService','AuthService'];
-
-    function WelcomeService($http, CommonService,AuthService) {
-        return {
-            GetUserAccount:_getUserAccount
-        };
-
-        function _getUserAccount(id){
-            var httpConfig = {
-                headers: {
-                    'Authorization': 'Bearer ' + AuthService.GetToken(),
-                    'Accept': 'application/json'
-                }
-            };
-            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
-        }
-    }
-
-})(window.angular);
 (function(angular) {
     "use strict";
 
@@ -6754,9 +6535,9 @@ var INDICATOR = {
         .module('app.report')
         .controller('DashboardController', DashboardController);
 
-    DashboardController.$inject = ['ReportService', 'SharedService','Colors','$rootScope'];
+    DashboardController.$inject = ['ReportService', 'SharedService','Colors','$rootScope','$scope'];
 
-    function DashboardController( ReportService,SharedService,Colors,$rootScope )
+    function DashboardController( ReportService,SharedService,Colors,$rootScope,$scope )
     {
         var vm = this;
         $rootScope.app.layout.isCollapsed = true;
@@ -6768,6 +6549,23 @@ var INDICATOR = {
             chartLoading: true,
             countLoading: true,
         };
+
+        $scope.options = {
+            legend: {
+                display: true,
+                position: 'bottom'
+            },
+            showTooltips: true,
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    left: 10
+                }
+            }
+        };
+
+
         callApi();
 
 
@@ -7007,6 +6805,225 @@ var INDICATOR = {
         }
 
 
+    }
+
+})(window.angular);
+/**
+ * Created by Yonas on 8/16/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.profile')
+        .controller('ProfileController', ProfileController);
+
+    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService','$state'];
+
+    function ProfileController( ProfileService,   blockUI,AlertService ,$state) {
+        var vm = this;
+        vm.updateProfile = _updateUserProfile;
+        vm.changePassword = _changePassword;
+        vm.resetCredentials = _resetCredentials;
+        vm.credentials = undefined;
+
+        vm.user = ProfileService.GetUserAccount();
+
+
+        function _resetCredentials() {
+            $state.reload();
+        }
+
+        function _updateUserProfile(user) {
+            var profile = {
+                _id:user._id,
+                title:user.title,
+                email: user.email,
+                first_name : user.first_name,
+                last_name:user.last_name,
+                grandfather_name:user.grandfather_name,
+                phone:user.phone
+                // picture:""
+            };
+            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
+            myBlockUI.stop();
+            ProfileService.UpdateProfile(profile).then(function (response) {
+                myBlockUI.start();
+                AlertService.showSuccess("Profil de l'utilisateur","Informations de compte d'utilisateur mises à jour avec succès" );
+            },function (error) {
+                myBlockUI.stop();
+                var message = error.data.error.message;
+                AlertService.showError("Les informations du compte utilisateur n'ont pas pu être mises à jour",message);
+            });
+        }
+
+
+        function _changePassword(user) {
+            let profile = {
+                _id:user._id,
+                old_password:user.old_password,
+                new_password: user.new_password
+            };
+            if(profile.old_password === profile.new_password){
+                AlertService.showSuccess("Changer le mot de passe","Le nouveau mot de passe doit être différent de votre mot de passe précédent." );
+            }else{
+                var myBlockUI = blockUI.instances.get('credentialFormBlockUI');
+                myBlockUI.start();
+                ProfileService.ChangePassword(profile).then(function () {
+                    myBlockUI.stop();
+                    AlertService.showSuccess("Changer le mot de passe","Mot de passe modifié avec succès, connectez-vous avec le nouveau mot de passe!" );
+                //    AUTO LOGOUT
+                },function (error) {
+                    myBlockUI.stop();
+                    var message = error.data.error.message;
+                    AlertService.showError("Impossible de changer le mot de passe, veuillez contacter l'administrateur",message);
+                });
+            }
+        }
+    }
+})(window.angular);
+/**
+ * Created by Yonas on 8/17/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.profile')
+
+        .service('ProfileService', ProfileService);
+
+    ProfileService.$inject = ['$http','CommonService','AuthService'];
+
+    function ProfileService($http, CommonService,AuthService) {
+        return {
+            GetUserAccount: _getUserAccount,
+            UpdateProfile: _updateProfile,
+            ChangePassword: _changePassword
+        };
+        function _getUserAccount(){
+            var user = AuthService.GetCurrentUser();
+            return _.isUndefined(user.account)? user.admin:user.account;
+        }
+        function _updateProfile(account){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id) + '/profile', account);
+        }
+        function _changePassword(userInfo){
+            var user = AuthService.GetCurrentUser();
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id) + '/passwords',
+                {old_password: userInfo.old_password, new_password:userInfo.new_password});
+        }
+    }
+
+})(window.angular);
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.welcomePage')
+        .controller('TaskDetailController', TaskDetailController);
+
+    TaskDetailController.$inject = ['$mdDialog', 'WelcomeService','items','SweetAlert'];
+
+    function TaskDetailController($mdDialog, WelcomeService ,items,SweetAlert) {
+        var vm = this
+        vm.cancel = _cancel;
+        vm.approveUser = _approveUser;
+        vm.declineUser = _declineUser;
+        vm.task = items.taskInfo;
+        console.log("task ",vm.task);
+        WelcomeService.GetUserAccount(vm.task.entity_ref).then(function(response){
+            // console.log("task related user",response);
+            vm.userInfo = response.data;
+
+        },function(error){
+            console.log("error",error);
+        });
+
+        function _approveUser() {
+            var task = {
+                taskId:vm.task._id ,
+                status: "approved",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
+        }
+
+        function _declineUser() {
+            var task = {
+                taskId:vm.task._id ,
+                status: "declined",
+                comment: angular.isUndefined(vm.task.comment)?"no comment":vm.task.comment
+            };
+            updateStatus(task);
+        }
+
+        function updateStatus(task){
+            WelcomeService.ChangeTaskStatus(task).then(
+                function(response) {
+                    SweetAlert.swal('Task Status Changed!',
+                        'Task '+ task.status + ' Successfully!',
+                        'success');
+                    console.log("task updated",response);
+                    $mdDialog.hide();
+                },
+                function(error) {
+                    SweetAlert.swal( 'Oops...',
+                        'Something went wrong!',
+                        'error');
+                    console.log("could not be updated", error);
+                }
+            );
+        }
+        function _cancel() {
+            $mdDialog.cancel();
+        }
+    }
+
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.welcomePage')
+        .controller('WelcomeController', WelcomeController);
+
+    WelcomeController.$inject = ['EnvironmentConfig','AuthService'];
+
+    function WelcomeController( EnvironmentConfig ,AuthService) {
+        var vm = this;
+        console.log("EnvironmentConfig",EnvironmentConfig);
+    }
+
+}(window.angular));
+/**
+ * Created by Yoni on 12/3/2017.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.welcomePage')
+
+        .service('WelcomeService', WelcomeService);
+    WelcomeService.$inject = ['$http', 'CommonService','AuthService'];
+
+    function WelcomeService($http, CommonService,AuthService) {
+        return {
+            GetUserAccount:_getUserAccount
+        };
+
+        function _getUserAccount(id){
+            var httpConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + AuthService.GetToken(),
+                    'Accept': 'application/json'
+                }
+            };
+            return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
+        }
     }
 
 })(window.angular);
