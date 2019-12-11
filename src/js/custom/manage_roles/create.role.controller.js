@@ -9,8 +9,8 @@
         .module('app.manage_roles')
         .controller('CreateRoleController', CreateRoleController);
 
-    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService','blockUI','$mdPanel'];
-    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService,blockUI,$mdPanel) {
+    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService','blockUI'];
+    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService,blockUI) {
         var vm = this;
         vm.cancel = _cancel;
         vm.saveRole = _saveRole;
@@ -19,7 +19,9 @@
         vm.showFilter = false;
         vm.isEdit = items !== null;
         vm.role = items !== null?items:null;
+
         initialize();
+
         function setPermissions() {
             _.each(vm.role.permissions, function(oldPermission){
                 _.each(vm.permissions, function(permission) {
@@ -45,18 +47,14 @@
                 var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
                 myLoadingBlockUI.start("Loading Role and Permissions");
                 ManageRoleService.GetPermissions().then(function(response){
+                    myLoadingBlockUI.stop();
                     vm.permissions = response.data.docs;
                     ManageRoleService.StorePermissions(vm.permissions);
-                    console.log("permissions from api",vm.permissions);
                     if(vm.isEdit){
                         setPermissions();
-                        myLoadingBlockUI.stop();
                     }
-                },function(error){
-                    if(vm.isEdit){
-                        myLoadingBlockUI.stop();
-                    }
-                    console.log("error permissions",error);
+                },function(){
+                    myLoadingBlockUI.stop();
                 });
             }
         }
@@ -65,7 +63,7 @@
             myBlockUI.start();
             preparePermissions();
             if(vm.isEdit){
-                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
+                ManageRoleService.UpdateRole(vm.role ).then(function () {
                         myBlockUI.stop();
                         $mdDialog.hide();
                         AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
@@ -74,10 +72,9 @@
                         myBlockUI.stop();
                         var message = error.data.error.message;
                         AlertService.showError("Failed to update Role",message);
-                        console.log("could not be saved", error);
                     });
             }else {
-                ManageRoleService.SaveRole( vm.role).then(function (data) {
+                ManageRoleService.SaveRole( vm.role).then(function () {
                         myBlockUI.stop();
                         AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
                         $mdDialog.hide();
@@ -86,12 +83,10 @@
                         myBlockUI.stop();
                         var message = error.data.error.message;
                         AlertService.showError("Failed to Save Role",message);
-                        console.log("could not be saved", error);
                     });
             }
         }
-        function _showFilterDialog(show) {
-        }
+        function _showFilterDialog() {}
         function _modulesStyle(module){
             var style = '';
             switch (module){

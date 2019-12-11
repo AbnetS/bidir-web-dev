@@ -13,21 +13,17 @@
 
     function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
     {
-        var vm = this;
+        let vm = this;
         vm.addRole = _addRole;
         vm.editRole = _editRole;
 
         fetchRoles();
 
-       function fetchRoles() {
+        function fetchRoles() {
            ManageRoleService.GetRoles().then(function(response){
                vm.roles = response.data.docs;
-               // console.log("vm.roles on RM",vm.roles);
-           },function(error){
-               console.log("error role",error);
            });
        }
-
         function _addRole(ev){
 
             $mdDialog.show({
@@ -42,13 +38,11 @@
                 escapeToClose: true,
                 controller: 'CreateRoleController',
                 controllerAs: 'vm'
-            })
-                .then(function (answer) {
+            }).then(function () {
                     fetchRoles();
                 }, function () {
                 });
         }
-
         function _editRole(role,ev) {
             $mdDialog.show({
                 locals: {
@@ -62,14 +56,11 @@
                 escapeToClose: true,
                 controller: 'CreateRoleController',
                 controllerAs: 'vm'
-            }).then(function (answer) {
+            }).then(function () {
                     fetchRoles();
                 }, function () {
                 });
         }
-
-
-
     }
 })(window.angular);
 

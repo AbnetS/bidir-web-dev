@@ -31,6 +31,12 @@
     'use strict';
 
     angular
+        .module('app.colors', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.core', [
             'ngRoute',
             'ngAnimate',
@@ -54,12 +60,6 @@
 
     angular
         .module('app.lazyload', []);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
 })();
 (function() {
     'use strict';
@@ -122,6 +122,56 @@
         .module('app.utils', [
           'app.colors'
           ]);
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
 })();
 
 (function() {
@@ -486,56 +536,6 @@
     ;
 
 })();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
-
 (function() {
     'use strict';
 
@@ -3257,14 +3257,6 @@ function runBlock() {
 
 })();
 
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.report', []);
-
-})();
 /**
  * Created by Yonas on 8/16/2018.
  */
@@ -3273,6 +3265,14 @@ function runBlock() {
 
     angular
         .module('app.profile', []);
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.report', []);
 
 })();
 /**
@@ -5751,8 +5751,8 @@ var INDICATOR = {
         .module('app.manage_roles')
         .controller('CreateRoleController', CreateRoleController);
 
-    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService','blockUI','$mdPanel'];
-    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService,blockUI,$mdPanel) {
+    CreateRoleController.$inject = ['$mdDialog','ManageRoleService','items','AlertService','blockUI'];
+    function CreateRoleController($mdDialog, ManageRoleService,items,AlertService,blockUI) {
         var vm = this;
         vm.cancel = _cancel;
         vm.saveRole = _saveRole;
@@ -5761,7 +5761,9 @@ var INDICATOR = {
         vm.showFilter = false;
         vm.isEdit = items !== null;
         vm.role = items !== null?items:null;
+
         initialize();
+
         function setPermissions() {
             _.each(vm.role.permissions, function(oldPermission){
                 _.each(vm.permissions, function(permission) {
@@ -5787,18 +5789,14 @@ var INDICATOR = {
                 var myLoadingBlockUI = blockUI.instances.get('RoleLoadingBlockUI');
                 myLoadingBlockUI.start("Loading Role and Permissions");
                 ManageRoleService.GetPermissions().then(function(response){
+                    myLoadingBlockUI.stop();
                     vm.permissions = response.data.docs;
                     ManageRoleService.StorePermissions(vm.permissions);
-                    console.log("permissions from api",vm.permissions);
                     if(vm.isEdit){
                         setPermissions();
-                        myLoadingBlockUI.stop();
                     }
-                },function(error){
-                    if(vm.isEdit){
-                        myLoadingBlockUI.stop();
-                    }
-                    console.log("error permissions",error);
+                },function(){
+                    myLoadingBlockUI.stop();
                 });
             }
         }
@@ -5807,7 +5805,7 @@ var INDICATOR = {
             myBlockUI.start();
             preparePermissions();
             if(vm.isEdit){
-                ManageRoleService.UpdateRole(vm.role ).then(function (data) {
+                ManageRoleService.UpdateRole(vm.role ).then(function () {
                         myBlockUI.stop();
                         $mdDialog.hide();
                         AlertService.showSuccess("updated successfully","Role and Permissions updated successfully");
@@ -5816,10 +5814,9 @@ var INDICATOR = {
                         myBlockUI.stop();
                         var message = error.data.error.message;
                         AlertService.showError("Failed to update Role",message);
-                        console.log("could not be saved", error);
                     });
             }else {
-                ManageRoleService.SaveRole( vm.role).then(function (data) {
+                ManageRoleService.SaveRole( vm.role).then(function () {
                         myBlockUI.stop();
                         AlertService.showSuccess("Saved successfully","Role and Permissions saved successfully");
                         $mdDialog.hide();
@@ -5828,12 +5825,10 @@ var INDICATOR = {
                         myBlockUI.stop();
                         var message = error.data.error.message;
                         AlertService.showError("Failed to Save Role",message);
-                        console.log("could not be saved", error);
                     });
             }
         }
-        function _showFilterDialog(show) {
-        }
+        function _showFilterDialog() {}
         function _modulesStyle(module){
             var style = '';
             switch (module){
@@ -5882,21 +5877,17 @@ var INDICATOR = {
 
     function ManageRoleController( ManageRoleService, $mdDialog, RouteHelpers)
     {
-        var vm = this;
+        let vm = this;
         vm.addRole = _addRole;
         vm.editRole = _editRole;
 
         fetchRoles();
 
-       function fetchRoles() {
+        function fetchRoles() {
            ManageRoleService.GetRoles().then(function(response){
                vm.roles = response.data.docs;
-               // console.log("vm.roles on RM",vm.roles);
-           },function(error){
-               console.log("error role",error);
            });
        }
-
         function _addRole(ev){
 
             $mdDialog.show({
@@ -5911,13 +5902,11 @@ var INDICATOR = {
                 escapeToClose: true,
                 controller: 'CreateRoleController',
                 controllerAs: 'vm'
-            })
-                .then(function (answer) {
+            }).then(function () {
                     fetchRoles();
                 }, function () {
                 });
         }
-
         function _editRole(role,ev) {
             $mdDialog.show({
                 locals: {
@@ -5931,14 +5920,11 @@ var INDICATOR = {
                 escapeToClose: true,
                 controller: 'CreateRoleController',
                 controllerAs: 'vm'
-            }).then(function (answer) {
+            }).then(function () {
                     fetchRoles();
                 }, function () {
                 });
         }
-
-
-
     }
 })(window.angular);
 
@@ -6527,6 +6513,112 @@ var INDICATOR = {
 
 })(window.angular);
 
+/**
+ * Created by Yonas on 8/16/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.profile')
+        .controller('ProfileController', ProfileController);
+
+    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService','$state'];
+
+    function ProfileController( ProfileService,   blockUI,AlertService ,$state) {
+        var vm = this;
+        vm.updateProfile = _updateUserProfile;
+        vm.changePassword = _changePassword;
+        vm.resetCredentials = _resetCredentials;
+        vm.credentials = undefined;
+
+        vm.user = ProfileService.GetUserAccount();
+
+
+        function _resetCredentials() {
+            $state.reload();
+        }
+
+        function _updateUserProfile(user) {
+            var profile = {
+                _id:user._id,
+                title:user.title,
+                email: user.email,
+                first_name : user.first_name,
+                last_name:user.last_name,
+                grandfather_name:user.grandfather_name,
+                phone:user.phone
+                // picture:""
+            };
+            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
+            myBlockUI.stop();
+            ProfileService.UpdateProfile(profile).then(function (response) {
+                myBlockUI.start();
+                AlertService.showSuccess("Profil de l'utilisateur","Informations de compte d'utilisateur mises à jour avec succès" );
+            },function (error) {
+                myBlockUI.stop();
+                var message = error.data.error.message;
+                AlertService.showError("Les informations du compte utilisateur n'ont pas pu être mises à jour",message);
+            });
+        }
+
+
+        function _changePassword(user) {
+            let profile = {
+                _id:user._id,
+                old_password:user.old_password,
+                new_password: user.new_password
+            };
+            if(profile.old_password === profile.new_password){
+                AlertService.showSuccess("Changer le mot de passe","Le nouveau mot de passe doit être différent de votre mot de passe précédent." );
+            }else{
+                var myBlockUI = blockUI.instances.get('credentialFormBlockUI');
+                myBlockUI.start();
+                ProfileService.ChangePassword(profile).then(function () {
+                    myBlockUI.stop();
+                    AlertService.showSuccess("Changer le mot de passe","Mot de passe modifié avec succès, connectez-vous avec le nouveau mot de passe!" );
+                //    AUTO LOGOUT
+                },function (error) {
+                    myBlockUI.stop();
+                    var message = error.data.error.message;
+                    AlertService.showError("Impossible de changer le mot de passe, veuillez contacter l'administrateur",message);
+                });
+            }
+        }
+    }
+})(window.angular);
+/**
+ * Created by Yonas on 8/17/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.profile')
+
+        .service('ProfileService', ProfileService);
+
+    ProfileService.$inject = ['$http','CommonService','AuthService'];
+
+    function ProfileService($http, CommonService,AuthService) {
+        return {
+            GetUserAccount: _getUserAccount,
+            UpdateProfile: _updateProfile,
+            ChangePassword: _changePassword
+        };
+        function _getUserAccount(){
+            var user = AuthService.GetCurrentUser();
+            return _.isUndefined(user.account)? user.admin:user.account;
+        }
+        function _updateProfile(account){
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id) + '/profile', account);
+        }
+        function _changePassword(userInfo){
+            var user = AuthService.GetCurrentUser();
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id) + '/passwords',
+                {old_password: userInfo.old_password, new_password:userInfo.new_password});
+        }
+    }
+
+})(window.angular);
 (function(angular) {
     "use strict";
 
@@ -6809,112 +6901,6 @@ var INDICATOR = {
 
 })(window.angular);
 /**
- * Created by Yonas on 8/16/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.profile')
-        .controller('ProfileController', ProfileController);
-
-    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService','$state'];
-
-    function ProfileController( ProfileService,   blockUI,AlertService ,$state) {
-        var vm = this;
-        vm.updateProfile = _updateUserProfile;
-        vm.changePassword = _changePassword;
-        vm.resetCredentials = _resetCredentials;
-        vm.credentials = undefined;
-
-        vm.user = ProfileService.GetUserAccount();
-
-
-        function _resetCredentials() {
-            $state.reload();
-        }
-
-        function _updateUserProfile(user) {
-            var profile = {
-                _id:user._id,
-                title:user.title,
-                email: user.email,
-                first_name : user.first_name,
-                last_name:user.last_name,
-                grandfather_name:user.grandfather_name,
-                phone:user.phone
-                // picture:""
-            };
-            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
-            myBlockUI.stop();
-            ProfileService.UpdateProfile(profile).then(function (response) {
-                myBlockUI.start();
-                AlertService.showSuccess("Profil de l'utilisateur","Informations de compte d'utilisateur mises à jour avec succès" );
-            },function (error) {
-                myBlockUI.stop();
-                var message = error.data.error.message;
-                AlertService.showError("Les informations du compte utilisateur n'ont pas pu être mises à jour",message);
-            });
-        }
-
-
-        function _changePassword(user) {
-            let profile = {
-                _id:user._id,
-                old_password:user.old_password,
-                new_password: user.new_password
-            };
-            if(profile.old_password === profile.new_password){
-                AlertService.showSuccess("Changer le mot de passe","Le nouveau mot de passe doit être différent de votre mot de passe précédent." );
-            }else{
-                var myBlockUI = blockUI.instances.get('credentialFormBlockUI');
-                myBlockUI.start();
-                ProfileService.ChangePassword(profile).then(function () {
-                    myBlockUI.stop();
-                    AlertService.showSuccess("Changer le mot de passe","Mot de passe modifié avec succès, connectez-vous avec le nouveau mot de passe!" );
-                //    AUTO LOGOUT
-                },function (error) {
-                    myBlockUI.stop();
-                    var message = error.data.error.message;
-                    AlertService.showError("Impossible de changer le mot de passe, veuillez contacter l'administrateur",message);
-                });
-            }
-        }
-    }
-})(window.angular);
-/**
- * Created by Yonas on 8/17/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.profile')
-
-        .service('ProfileService', ProfileService);
-
-    ProfileService.$inject = ['$http','CommonService','AuthService'];
-
-    function ProfileService($http, CommonService,AuthService) {
-        return {
-            GetUserAccount: _getUserAccount,
-            UpdateProfile: _updateProfile,
-            ChangePassword: _changePassword
-        };
-        function _getUserAccount(){
-            var user = AuthService.GetCurrentUser();
-            return _.isUndefined(user.account)? user.admin:user.account;
-        }
-        function _updateProfile(account){
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id) + '/profile', account);
-        }
-        function _changePassword(userInfo){
-            var user = AuthService.GetCurrentUser();
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id) + '/passwords',
-                {old_password: userInfo.old_password, new_password:userInfo.new_password});
-        }
-    }
-
-})(window.angular);
-/**
  * Created by Yoni on 12/3/2017.
  */
 (function(angular) {
@@ -7025,6 +7011,149 @@ var INDICATOR = {
             return $http.get(CommonService.buildUrl(API.Service.Users,API.Methods.Users.Account) + '/' + id,httpConfig);
         }
     }
+
+})(window.angular);
+/**
+ * Created by Yoni on 3/5/2018.
+ */
+
+(function(angular) {
+    "use strict";
+
+    angular.module("app.acat").controller("CropsController", CropsController);
+
+    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
+
+    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
+        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
+        var vm = this;
+        vm.addCrop = _addCrop;
+        vm.editCrop = _addCrop;
+        vm.paginate = _paginate;
+        vm.clearSearchText = _clearSearch;
+
+        initialize();
+
+        function initialize() {
+            vm.pageSizes = [10, 25, 50, 100, 250, 500];
+            vm.filter = {show : false};
+            vm.options = {
+                rowSelection: true,
+                multiSelect: true,
+                autoSelect: true,
+                decapitate: true,
+                largeEditDialog: false,
+                boundaryLinks: true,
+                limitSelect: true,
+                pageSelect: false
+            };
+            vm.query = {
+                search:'',
+                page:1,
+                per_page:10
+            };
+
+            callApi();
+        }
+
+
+        function _paginate (page, pageSize) {
+            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
+            vm.query.page = page;
+            vm.query.per_page = pageSize;
+            callApi();
+
+        }
+
+        function _clearSearch(){
+            vm.query.search = "";
+            vm.filter.show = false;
+            callApi();
+        }
+
+       function callApi(){
+        vm.promise =   ACATService.GetCrops().then(function (response) {
+               vm.crops = response.data.docs;
+           });
+       }
+
+
+        function _addCrop(crop,ev) {
+            $mdDialog.show({
+                locals: {data:{crop:crop}},
+                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false,
+                hasBackdrop: false,
+                escapeToClose: true,
+                controller: cropDialogController,
+                controllerAs: 'vm'
+            }).then(function (answer) {
+                callApi();
+            }, function (response) {
+                console.log("refresh on response");
+            });
+        }
+
+        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
+            var vm = this;
+            vm.cancel = _cancel;
+            vm.saveCrop = _saveCrop;
+            vm.isEdit = data.crop !== null;
+
+            vm.cropForm = {
+                IsnameValid: true,
+                IscategoryValid: true
+            };
+
+            if(vm.isEdit){
+                vm.crop = data.crop;
+            }
+
+            function _saveCrop() {
+                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
+                if (vm.IsValidData) {
+                    var myBlockUI = blockUI.instances.get('CropBlockUI');
+                    myBlockUI.start();
+                    if(vm.isEdit){
+                        ACATService.UpdateCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO UPDATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }else{
+                        ACATService.SaveCrop(vm.crop)
+                            .then(function (response) {
+                                $mdDialog.hide();
+                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
+                                myBlockUI.stop();
+                            },function (error) {
+                                console.log("error on crop create",error);
+                                var message = error.data.error.message;
+                                AlertService.showError("FAILED TO CREATE CROP", message);
+                                myBlockUI.stop();
+                            });
+                    }
+
+                }else {
+                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
+                }
+            }
+            function _cancel() {
+                $mdDialog.cancel();
+            }
+        }
+
+    }
+
+
 
 })(window.angular);
 /**
@@ -7875,149 +8004,6 @@ var INDICATOR = {
         }
 
 
-
-    }
-
-
-
-})(window.angular);
-/**
- * Created by Yoni on 3/5/2018.
- */
-
-(function(angular) {
-    "use strict";
-
-    angular.module("app.acat").controller("CropsController", CropsController);
-
-    CropsController.$inject = ['ACATService','$mdDialog','RouteHelpers','$scope'];
-
-    function CropsController(ACATService,$mdDialog,RouteHelpers,$scope) {
-        cropDialogController.$inject = ["$mdDialog", "data", "CommonService", "AlertService", "blockUI"];
-        var vm = this;
-        vm.addCrop = _addCrop;
-        vm.editCrop = _addCrop;
-        vm.paginate = _paginate;
-        vm.clearSearchText = _clearSearch;
-
-        initialize();
-
-        function initialize() {
-            vm.pageSizes = [10, 25, 50, 100, 250, 500];
-            vm.filter = {show : false};
-            vm.options = {
-                rowSelection: true,
-                multiSelect: true,
-                autoSelect: true,
-                decapitate: true,
-                largeEditDialog: false,
-                boundaryLinks: true,
-                limitSelect: true,
-                pageSelect: false
-            };
-            vm.query = {
-                search:'',
-                page:1,
-                per_page:10
-            };
-
-            callApi();
-        }
-
-
-        function _paginate (page, pageSize) {
-            console.log('current Page: ' + vm.query.page + ' page size: ' + vm.query.per_page);
-            vm.query.page = page;
-            vm.query.per_page = pageSize;
-            callApi();
-
-        }
-
-        function _clearSearch(){
-            vm.query.search = "";
-            vm.filter.show = false;
-            callApi();
-        }
-
-       function callApi(){
-        vm.promise =   ACATService.GetCrops().then(function (response) {
-               vm.crops = response.data.docs;
-           });
-       }
-
-
-        function _addCrop(crop,ev) {
-            $mdDialog.show({
-                locals: {data:{crop:crop}},
-                templateUrl: RouteHelpers.basepath('acat/crop/crop.dialog.html'),
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: false,
-                hasBackdrop: false,
-                escapeToClose: true,
-                controller: cropDialogController,
-                controllerAs: 'vm'
-            }).then(function (answer) {
-                callApi();
-            }, function (response) {
-                console.log("refresh on response");
-            });
-        }
-
-        function cropDialogController($mdDialog,data,CommonService,AlertService,blockUI) {
-            var vm = this;
-            vm.cancel = _cancel;
-            vm.saveCrop = _saveCrop;
-            vm.isEdit = data.crop !== null;
-
-            vm.cropForm = {
-                IsnameValid: true,
-                IscategoryValid: true
-            };
-
-            if(vm.isEdit){
-                vm.crop = data.crop;
-            }
-
-            function _saveCrop() {
-                vm.IsValidData = CommonService.Validation.ValidateForm(vm.cropForm, vm.crop);
-                if (vm.IsValidData) {
-                    var myBlockUI = blockUI.instances.get('CropBlockUI');
-                    myBlockUI.start();
-                    if(vm.isEdit){
-                        ACATService.UpdateCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP UPDATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO UPDATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }else{
-                        ACATService.SaveCrop(vm.crop)
-                            .then(function (response) {
-                                $mdDialog.hide();
-                                AlertService.showSuccess("CROP","CROP CREATED SUCCESSFULLY!");
-                                myBlockUI.stop();
-                            },function (error) {
-                                console.log("error on crop create",error);
-                                var message = error.data.error.message;
-                                AlertService.showError("FAILED TO CREATE CROP", message);
-                                myBlockUI.stop();
-                            });
-                    }
-
-                }else {
-                    AlertService.showWarning("Warning","Please fill the required fields and try again.");
-                }
-            }
-            function _cancel() {
-                $mdDialog.cancel();
-            }
-        }
 
     }
 
