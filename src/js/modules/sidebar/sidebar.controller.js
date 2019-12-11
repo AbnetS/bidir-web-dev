@@ -15,8 +15,6 @@
 
         activate();
 
-        ////////////////
-
         function activate() {
           var collapseList = [];
 
@@ -26,11 +24,8 @@
               closeAllBut(-1);
             }
           });
-
-
           // Load menu from json file
           // -----------------------------------
-
           SidebarLoader.getMenu(sidebarReady);
 
           function sidebarReady(items) {
@@ -41,7 +36,7 @@
           function SetMenuItemsVisibility(menuItems){
               var isSuper = false;
               if(!_.isUndefined($rootScope.currentUser) && $rootScope.currentUser !== null ){
-                  isSuper = $rootScope.currentUser.username === 'super@bidir.com';
+                  isSuper = $rootScope.currentUser.role === "admin";
               }
               _.each(menuItems, function(menuItem) {
                   if(isSuper){
@@ -62,7 +57,7 @@
                   _.each(menuItem.submenu,function(sub){
                       var isSuper = false;
                       if(!_.isUndefined($rootScope.currentUser)){
-                          isSuper = $rootScope.currentUser.username === 'super@bidir.com';
+                          isSuper = $rootScope.currentUser.role === "admin";
                           if(isSuper){
                               sub.showsubmenu = true;
                           }else{

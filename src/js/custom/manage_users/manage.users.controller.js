@@ -29,6 +29,10 @@
         function activate() {
 
             vm.isSuperAdmin = false;
+            vm.visibility = {
+                loading: true,
+                noData: false,
+            };
 
             fetchUserData();
 
@@ -43,11 +47,19 @@
         }
 
         function fetchUserData() {
-            ManageUserService.GetUsers().then(function(response){
+            vm.usersPromise = ManageUserService.GetUsers().then(function(response){
+                vm.visibility = {
+                    loading: false,
+                    noData: false,
+                };
                 // console.log("users list",response);
                 vm.users = response.data.docs;
                 vm.usersCopy = angular.copy(vm.users);
             },function(){
+                vm.visibility = {
+                    loading: false,
+                    noData: true
+                };
             });
         }
 

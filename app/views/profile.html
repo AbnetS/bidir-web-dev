@@ -2,7 +2,7 @@
    <div class="row">
       <div class="col-md-3">
          <div class="panel b">
-            <div class="panel-heading bg-gray-lighter text-bold">Paramètres utilisateur</div>
+            <div class="panel-heading bg-gray-lighter text-bold">User Settings</div>
             <div class="list-group" ng-init="settingActive = 1">
                <a class="list-group-item" href="" ng-click="settingActive=1" ng-class="{'active': (settingActive == 1)}">Profile</a>
                <a class="list-group-item" href="" ng-click="settingActive=2" ng-class="{'active': (settingActive == 2)}">Account</a>
@@ -12,7 +12,7 @@
       <div class="col-md-9">
          <div ng-show="settingActive == 1">
             <div class="panel b">
-               <div class="panel-heading bg-gray-lighter text-bold">Profil</div>
+               <div class="panel-heading bg-gray-lighter text-bold">Profile</div>
                <div class="panel-body">
                   <form name="ProfileForm" block-ui="UserProfileBlockUI">
                      <div class="col-md-6">
@@ -20,7 +20,6 @@
                            <img ng-show="vm.picFile" ngf-thumbnail="vm.picFile" class="thumbnail img-preview" title="Preview Logo">
                            <img ng-hide="vm.picFile" ng-src="{{vm.user.picture}}" src="app/img/user/02.jpg" class="thumbnail img-preview" title="Preview Logo">
                         </div>
-
                      </div>
                      <div class="col-md-6">
                         <label>Logo *</label>
@@ -64,7 +63,7 @@
                         <input name="inputTitle" ng-model="vm.user.phone" placeholder="Phone" type="text" class="form-control input-sm">
                      </div>
                      <br/>
-                     <button type="button" class="btn btn-success pull-right" ng-click="vm.updateProfile(vm.user)">{{'BUTTON.UPDATE' | translate}}</button>
+                     <button type="button" class="btn btn-success pull-right" ng-click="vm.updateProfile(vm.user)">Update</button>
                   </form>
                </div>
             </div>

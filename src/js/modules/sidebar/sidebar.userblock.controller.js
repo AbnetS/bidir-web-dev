@@ -8,10 +8,8 @@
     UserBlockController.$inject = ['$scope','AuthService'];
     function UserBlockController($scope,AuthService) {
         var vm = this;
-        activate();
-
         vm.user = AuthService.GetCurrentUser();
-
+        activate();
         ////////////////
         function activate() {
 

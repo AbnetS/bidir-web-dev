@@ -18,6 +18,10 @@
         </div>
         <br/>
         <div class="row">
+            <div class="col-lg-12" ng-show="vm.visibility.loading === true">
+                <md-progress-linear md-mode="indeterminate" ></md-progress-linear>
+                <div class="alert small alert-info">fetching data.....</div>
+            </div>
             <div class="col-lg-12">
                 <table class="row-border hover" datatable="ng">
                     <thead>

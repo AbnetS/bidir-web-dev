@@ -46,7 +46,7 @@
     "icon": "fa fa-spinner",
     "submenu": [
       {"text": "Individual Clients Management",   "sref": "app.clients" ,     "permission": "CLIENT_MANAGEMENT_CLIENT"},
-      {"text": "Group Loan",     "sref": "app.group_loan" ,  "permission": "CLIENT_MANAGEMENT_CLIENT"}
+      {"text": "Group Management",     "sref": "app.group_loan" ,  "permission": "CLIENT_MANAGEMENT_CLIENT"}
     ]
   },
   {

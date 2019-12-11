@@ -12,7 +12,6 @@
 
     function WelcomeController( EnvironmentConfig ,AuthService) {
         var vm = this;
-        console.log("EnvironmentConfig",EnvironmentConfig);
     }
 
 }(window.angular));

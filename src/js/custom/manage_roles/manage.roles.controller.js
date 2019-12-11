@@ -16,12 +16,25 @@
         let vm = this;
         vm.addRole = _addRole;
         vm.editRole = _editRole;
+        vm.visibility = {
+            loading: true,
+            noData: false,
+        };
 
         fetchRoles();
 
         function fetchRoles() {
            ManageRoleService.GetRoles().then(function(response){
                vm.roles = response.data.docs;
+               vm.visibility = {
+                   loading: false,
+                   noData: false,
+               };
+           },function () {
+               vm.visibility = {
+                   loading: false,
+                   noData: true,
+               };
            });
        }
         function _addRole(ev){
