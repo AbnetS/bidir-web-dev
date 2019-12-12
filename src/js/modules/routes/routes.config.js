@@ -49,6 +49,7 @@
                 url: '/profile',
                 title: 'Profile',
                 templateUrl: helper.basepath('profile.html'),
+                resolve:helper.resolveFor('ngFileUpload'),
                 controller: 'ProfileController',
                 controllerAs: 'vm',
                 data: {

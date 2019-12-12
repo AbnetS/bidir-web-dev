@@ -37,13 +37,13 @@
             };
             var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
             myBlockUI.stop();
-            ProfileService.UpdateProfile(profile).then(function (response) {
+            ProfileService.UpdateProfile(profile,vm.picFile).then(function (response) {
                 myBlockUI.start();
-                AlertService.showSuccess("Profil de l'utilisateur","Informations de compte d'utilisateur mises à jour avec succès" );
+                AlertService.showSuccess("Profile Information","User account information successfully updated");
             },function (error) {
                 myBlockUI.stop();
                 var message = error.data.error.message;
-                AlertService.showError("Les informations du compte utilisateur n'ont pas pu être mises à jour",message);
+                AlertService.showError("User account information could not be updated",message);
             });
         }
 
