@@ -31,6 +31,12 @@
     'use strict';
 
     angular
+        .module('app.colors', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.core', [
             'ngRoute',
             'ngAnimate',
@@ -48,12 +54,6 @@
             'ngMessages',
             'angularMoment'
         ]);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
 })();
 (function() {
     'use strict';
@@ -122,6 +122,56 @@
         .module('app.utils', [
           'app.colors'
           ]);
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#3F51B5',
+          'success':                '#4CAF50',
+          'info':                   '#2196F3',
+          'warning':                '#FF9800',
+          'danger':                 '#F44336',
+          'inverse':                '#607D8B',
+          'green':                  '#009688',
+          'pink':                   '#E91E63',
+          'purple':                 '#673AB7',
+          'dark':                   '#263238',
+          'yellow':                 '#FFEB3B',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
 })();
 
 (function() {
@@ -240,56 +290,6 @@
 
 })();
 
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#3F51B5',
-          'success':                '#4CAF50',
-          'info':                   '#2196F3',
-          'warning':                '#FF9800',
-          'danger':                 '#F44336',
-          'inverse':                '#607D8B',
-          'green':                  '#009688',
-          'pink':                   '#E91E63',
-          'purple':                 '#673AB7',
-          'dark':                   '#263238',
-          'yellow':                 '#FFEB3B',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
 
 (function() {
     'use strict';
@@ -3180,6 +3180,18 @@
     }
 
 })();
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function() {
+    'use strict';
+
+    angular.module('app.loan_management', [
+        'app.clients',
+        'app.processing'
+    ]);
+
+})();
 
 (function() {
     'use strict';
@@ -3195,18 +3207,6 @@
             //     'http://ergast.com/**'
             // ]);
         }]);
-
-})();
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function() {
-    'use strict';
-
-    angular.module('app.loan_management', [
-        'app.clients',
-        'app.processing'
-    ]);
 
 })();
 /**
@@ -3251,6 +3251,16 @@ function runBlock() {
 
 })();
 
+/**
+ * Created by Yonas on 8/16/2018.
+ */
+(function() {
+    'use strict';
+
+    angular
+        .module('app.profile', []);
+
+})();
 
 (function() {
     'use strict';
@@ -3268,16 +3278,6 @@ function runBlock() {
 
     angular
         .module('app.welcomePage', []);
-
-})();
-/**
- * Created by Yonas on 8/16/2018.
- */
-(function() {
-    'use strict';
-
-    angular
-        .module('app.profile', []);
 
 })();
 
@@ -5091,6 +5091,226 @@ var INDICATOR = {
 
 
 })(window.angular);
+/**
+ * Created by Yonas on 4/27/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.loan_management')
+
+        .service('LoanManagementService', LoanManagementService);
+
+    LoanManagementService.$inject = ['$http', 'CommonService','$filter','PrintPreviewService'];
+
+    function LoanManagementService($http, CommonService,$filter,PrintPreviewService) {
+        return {
+            GetLoanApplications: _getLoanApplications,
+            GetClientLoanApplication:_getClientLoanApplication,
+            SaveClientLoanApplication:_saveClientLoanApplication,
+
+            GetScreenings: _getScreenings,
+            GetClientScreening:_getClientScreening,
+            GetClientApplicationByLoanCycle:_getClientApplicationByLoanCycle,
+
+            SaveClientScreening:_saveClientScreening,
+            //CLIENT MANAGEMENT RELATED SERVICES DECLARATION
+            GetClients: _getClients,
+            SaveClient: _saveClient,
+            UpdateClient: _updateClient,
+            GetClientDetail:_getClientDetail,
+            SearchClient:_searchClient,
+            GetClientByLoanCycle:_getClientByLoanCycle,
+            GetBranches: _getBranches,
+
+            GetACATCollections: _getACATCollections,
+            GetClientACAT:_getClientACAT,
+            GetClientLoanProposals:_getClientLoanProposals,
+            GetCrops:_getCrops,
+
+            StyleLabelByStatus: _styleLabelByStatus,
+            loanCycles: [{id:1,name:'1st Loan Cycle'},{id:2,name:'2nd Loan Cycle'},{id:3,name:'3rd Loan Cycle'},{id:4,name:'4th Loan Cycle'},{id:5,name:'5th Loan Cycle'},{id:6,name:'6th Loan Cycle'},{id:7,name:'7th Loan Cycle'},{id:8,name:'8th Loan Cycle'},{id:9,name:'9th Loan Cycle'},{id:10,name:'10th Loan Cycle'}],
+            //GROUP LOAN
+            GetGroupLoans:_getGroupLoans,
+            GetGroupLoan:_getGroupLoan,
+            GetGroupDataByLoanProcessStage:_getGroupDataByLoanProcessStage,
+            printLoanProcess:_print
+
+        };
+
+        function _getScreenings(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening,parameters));
+        }
+
+        function _saveClientScreening(screening,id) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,id),screening);
+        }
+
+
+        function _getClientScreening(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
+        }
+        function _getClientApplicationByLoanCycle(clientId,application,loanCycle) {
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Histories) + 'application='+application+'&client='+clientId+'&loanCycle='+loanCycle);
+        }
+        function _getLoanApplications(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.LOANS,API.Methods.LOANS.Loans,parameters));
+        }
+        function _getClientLoanApplication(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Clients,clientId));
+        }
+        function _saveClientLoanApplication(loan_application,id) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Loans,id),loan_application);
+        }
+
+        //CLIENT MANAGEMENT RELATED SERVICES
+        function _searchClient(searchText) {
+            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
+        }
+        function _getClientByLoanCycle(loanCycle) {
+            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.Client) + '/search?loan_cycle_number=' + loanCycle);
+        }
+
+        function _getClientDetail(id){
+            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
+        }
+        function _getBranches(){
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
+        }
+        function _getClients(parameters){
+            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,parameters) + '&for_group=false');
+        }
+        function _saveClient(client) {
+            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients + '/create'),client);
+        }
+        function _updateClient(client) {
+            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,client._id),client);
+        }
+
+        function _getACATCollections(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.ACAT,API.Methods.ACAT.Clients,parameters));
+        }
+        function _getClientACAT(clientId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Clients,clientId));
+        }
+        function _getClientLoanProposals(acatId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProposals,acatId));
+        }
+
+        function _getCrops() {
+            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
+        }
+        function _getGroupLoans(parameters) {
+            return $http.get(CommonService.buildPerPageUrl(API.Service.GROUPS,API.Methods.Group.Group,parameters));
+        }
+
+        function _getGroupLoan(id) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.GROUPS,API.Methods.Group.Group,id));
+        }
+
+        function _getGroupDataByLoanProcessStage(type,groupId) {
+            return $http.get(CommonService.buildUrlWithParam(API.Service.GROUPS,API.Methods.Group.Group,groupId) + '/' + type);
+        }
+
+        function _print(vm,type) {
+            var preview = [];
+            if(type === 'SCREENING'){
+                preview = [{
+                    Name: "Screening",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "Screening Form",
+                        loanNumber:  $filter('ordinal')( vm.loanCycle),
+                        clientName: vm.clientScreening.client.first_name + " " +
+                            vm.clientScreening.client.last_name + " " +
+                            vm.clientScreening.client.grandfather_name}, vm.clientScreening)
+                }];
+                PrintPreviewService.show(preview);
+            }else if(type === 'ACAT_CROP'){
+                preview = [{
+                    Name: "ACAT Summary",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.acat.summary.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "ACAT SUMMARY" ,
+                        loanNumber:  $filter('ordinal')( vm.loanCycle),
+                        clientName: vm.clientACATs.client.first_name + " " +
+                            vm.clientACATs.client.last_name + " " +
+                            vm.clientACATs.client.grandfather_name}, vm.selectedClientACAT)
+                }];
+                PrintPreviewService.show(preview);
+            }else if(type === 'ACAT_TOTAL'){
+                preview = [{
+                    Name: "ACAT Total Summary",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.acat.total.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "ACAT And Loan Proposal Summary",
+                        loanNumber:  $filter('ordinal')( vm.loanCycle),
+                        clientName: vm.clientACATs.client.first_name + " " +
+                            vm.clientACATs.client.last_name + " " +
+                            vm.clientACATs.client.grandfather_name}, vm.clientACATs,{loanProposals: vm.clientLoanProposals})
+                }];
+                PrintPreviewService.show(preview);
+            } else{
+                preview = [{
+                    Name: "Loan Application",
+                    TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
+                    IsCommon: false,
+                    IsSelected: false,
+                    Data: angular.extend({ Title: "Loan Application Form", loanNumber:  $filter('ordinal')( vm.loanCycle),
+                        clientName: vm.client.loan_application.client.first_name + " " +
+                            vm.client.loan_application.client.last_name + " " +
+                            vm.client.loan_application.client.grandfather_name}, vm.client.loan_application)
+                }];
+                PrintPreviewService.show(preview);
+            }
+
+
+        }
+
+        function _styleLabelByStatus(clientStatus) {
+            var style = '';
+            if(_.isUndefined(clientStatus))
+                return '';
+            switch (clientStatus.toLowerCase()){
+                case  'new':
+                    style =  'label bg-gray';
+                    break;
+                case  'submitted':
+                    style =  'label bg-primary-dark';
+                    break;
+                case  'approved':
+                    style =  'label bg-green-dark';
+                    break;
+                case 'screening_inprogress':
+                case 'declined_under_review':
+                    style =  'label label-warning';
+                    break;
+                case 'loan_application_accepted':
+                    style =  'label bg-info-dark';
+                    break;
+                case 'eligible':
+                    style =  'label label-success';
+                    break;
+                case 'ineligible':
+                case 'declined_final':
+                    style =  'label label-danger';
+                    break;
+                case 'loan_application_new':
+                    style =  'label bg-purple-dark';
+                    break;
+                default:
+                    style =  'label label-inverse';
+            }
+            return style;
+        }
+
+
+    }
+
+
+})(window.angular);
 (function (angular) {
     "use strict";
     angular
@@ -5509,226 +5729,6 @@ var INDICATOR = {
         function _getPlotAreaData(branch) {
             return $http.get(CommonService.buildUrl(API.Service.ACAT,API.Methods.ACAT.Empty) + 'search?branch='+branch+'&fields=crop,client,gps_location');
         }
-
-    }
-
-
-})(window.angular);
-/**
- * Created by Yonas on 4/27/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.loan_management')
-
-        .service('LoanManagementService', LoanManagementService);
-
-    LoanManagementService.$inject = ['$http', 'CommonService','$filter','PrintPreviewService'];
-
-    function LoanManagementService($http, CommonService,$filter,PrintPreviewService) {
-        return {
-            GetLoanApplications: _getLoanApplications,
-            GetClientLoanApplication:_getClientLoanApplication,
-            SaveClientLoanApplication:_saveClientLoanApplication,
-
-            GetScreenings: _getScreenings,
-            GetClientScreening:_getClientScreening,
-            GetClientApplicationByLoanCycle:_getClientApplicationByLoanCycle,
-
-            SaveClientScreening:_saveClientScreening,
-            //CLIENT MANAGEMENT RELATED SERVICES DECLARATION
-            GetClients: _getClients,
-            SaveClient: _saveClient,
-            UpdateClient: _updateClient,
-            GetClientDetail:_getClientDetail,
-            SearchClient:_searchClient,
-            GetClientByLoanCycle:_getClientByLoanCycle,
-            GetBranches: _getBranches,
-
-            GetACATCollections: _getACATCollections,
-            GetClientACAT:_getClientACAT,
-            GetClientLoanProposals:_getClientLoanProposals,
-            GetCrops:_getCrops,
-
-            StyleLabelByStatus: _styleLabelByStatus,
-            loanCycles: [{id:1,name:'1st Loan Cycle'},{id:2,name:'2nd Loan Cycle'},{id:3,name:'3rd Loan Cycle'},{id:4,name:'4th Loan Cycle'},{id:5,name:'5th Loan Cycle'},{id:6,name:'6th Loan Cycle'},{id:7,name:'7th Loan Cycle'},{id:8,name:'8th Loan Cycle'},{id:9,name:'9th Loan Cycle'},{id:10,name:'10th Loan Cycle'}],
-            //GROUP LOAN
-            GetGroupLoans:_getGroupLoans,
-            GetGroupLoan:_getGroupLoan,
-            GetGroupDataByLoanProcessStage:_getGroupDataByLoanProcessStage,
-            printLoanProcess:_print
-
-        };
-
-        function _getScreenings(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Screening,parameters));
-        }
-
-        function _saveClientScreening(screening,id) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Screening,id),screening);
-        }
-
-
-        function _getClientScreening(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,clientId) + '/screenings');
-        }
-        function _getClientApplicationByLoanCycle(clientId,application,loanCycle) {
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Histories) + 'application='+application+'&client='+clientId+'&loanCycle='+loanCycle);
-        }
-        function _getLoanApplications(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.LOANS,API.Methods.LOANS.Loans,parameters));
-        }
-        function _getClientLoanApplication(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Clients,clientId));
-        }
-        function _saveClientLoanApplication(loan_application,id) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.LOANS,API.Methods.LOANS.Loans,id),loan_application);
-        }
-
-        //CLIENT MANAGEMENT RELATED SERVICES
-        function _searchClient(searchText) {
-            return $http.get(CommonService.buildUrlForSearch(API.Service.SCREENING,API.Methods.Clients.Client,searchText));
-        }
-        function _getClientByLoanCycle(loanCycle) {
-            return $http.get(CommonService.buildUrl(API.Service.SCREENING,API.Methods.Clients.Client) + '/search?loan_cycle_number=' + loanCycle);
-        }
-
-        function _getClientDetail(id){
-            return $http.get(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.Clients.Client,id));
-        }
-        function _getBranches(){
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.MFI,API.Methods.MFI.Branches));
-        }
-        function _getClients(parameters){
-            return $http.get(CommonService.buildPerPageUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients,parameters) + '&for_group=false');
-        }
-        function _saveClient(client) {
-            return $http.post(CommonService.buildUrl(API.Service.SCREENING,API.Methods.SCREENING.Clients + '/create'),client);
-        }
-        function _updateClient(client) {
-            return $http.put(CommonService.buildUrlWithParam(API.Service.SCREENING,API.Methods.SCREENING.Clients,client._id),client);
-        }
-
-        function _getACATCollections(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.ACAT,API.Methods.ACAT.Clients,parameters));
-        }
-        function _getClientACAT(clientId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.Clients,clientId));
-        }
-        function _getClientLoanProposals(acatId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.ACAT,API.Methods.ACAT.LoanProposals,acatId));
-        }
-
-        function _getCrops() {
-            return $http.get(CommonService.buildPaginatedUrl(API.Service.ACAT,API.Methods.ACAT.Crop));
-        }
-        function _getGroupLoans(parameters) {
-            return $http.get(CommonService.buildPerPageUrl(API.Service.GROUPS,API.Methods.Group.Group,parameters));
-        }
-
-        function _getGroupLoan(id) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.GROUPS,API.Methods.Group.Group,id));
-        }
-
-        function _getGroupDataByLoanProcessStage(type,groupId) {
-            return $http.get(CommonService.buildUrlWithParam(API.Service.GROUPS,API.Methods.Group.Group,groupId) + '/' + type);
-        }
-
-        function _print(vm,type) {
-            var preview = [];
-            if(type === 'SCREENING'){
-                preview = [{
-                    Name: "Screening",
-                    TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
-                    IsCommon: false,
-                    IsSelected: false,
-                    Data: angular.extend({ Title: "Screening Form",
-                        loanNumber:  $filter('ordinal')( vm.loanCycle),
-                        clientName: vm.clientScreening.client.first_name + " " +
-                            vm.clientScreening.client.last_name + " " +
-                            vm.clientScreening.client.grandfather_name}, vm.clientScreening)
-                }];
-                PrintPreviewService.show(preview);
-            }else if(type === 'ACAT_CROP'){
-                preview = [{
-                    Name: "ACAT Summary",
-                    TemplateUrl: "app/views/loan_management/client_management/printables/client.acat.summary.html",
-                    IsCommon: false,
-                    IsSelected: false,
-                    Data: angular.extend({ Title: "ACAT SUMMARY" ,
-                        loanNumber:  $filter('ordinal')( vm.loanCycle),
-                        clientName: vm.clientACATs.client.first_name + " " +
-                            vm.clientACATs.client.last_name + " " +
-                            vm.clientACATs.client.grandfather_name}, vm.selectedClientACAT)
-                }];
-                PrintPreviewService.show(preview);
-            }else if(type === 'ACAT_TOTAL'){
-                preview = [{
-                    Name: "ACAT Total Summary",
-                    TemplateUrl: "app/views/loan_management/client_management/printables/client.acat.total.html",
-                    IsCommon: false,
-                    IsSelected: false,
-                    Data: angular.extend({ Title: "ACAT And Loan Proposal Summary",
-                        loanNumber:  $filter('ordinal')( vm.loanCycle),
-                        clientName: vm.clientACATs.client.first_name + " " +
-                            vm.clientACATs.client.last_name + " " +
-                            vm.clientACATs.client.grandfather_name}, vm.clientACATs,{loanProposals: vm.clientLoanProposals})
-                }];
-                PrintPreviewService.show(preview);
-            } else{
-                preview = [{
-                    Name: "Loan Application",
-                    TemplateUrl: "app/views/loan_management/client_management/printables/client.screening.html",
-                    IsCommon: false,
-                    IsSelected: false,
-                    Data: angular.extend({ Title: "Loan Application Form", loanNumber:  $filter('ordinal')( vm.loanCycle),
-                        clientName: vm.client.loan_application.client.first_name + " " +
-                            vm.client.loan_application.client.last_name + " " +
-                            vm.client.loan_application.client.grandfather_name}, vm.client.loan_application)
-                }];
-                PrintPreviewService.show(preview);
-            }
-
-
-        }
-
-        function _styleLabelByStatus(clientStatus) {
-            var style = '';
-            if(_.isUndefined(clientStatus))
-                return '';
-            switch (clientStatus.toLowerCase()){
-                case  'new':
-                    style =  'label bg-gray';
-                    break;
-                case  'submitted':
-                    style =  'label bg-primary-dark';
-                    break;
-                case  'approved':
-                    style =  'label bg-green-dark';
-                    break;
-                case 'screening_inprogress':
-                case 'declined_under_review':
-                    style =  'label label-warning';
-                    break;
-                case 'loan_application_accepted':
-                    style =  'label bg-info-dark';
-                    break;
-                case 'eligible':
-                    style =  'label label-success';
-                    break;
-                case 'ineligible':
-                case 'declined_final':
-                    style =  'label label-danger';
-                    break;
-                case 'loan_application_new':
-                    style =  'label bg-purple-dark';
-                    break;
-                default:
-                    style =  'label label-inverse';
-            }
-            return style;
-        }
-
 
     }
 
@@ -6532,6 +6532,131 @@ var INDICATOR = {
 
 })(window.angular);
 
+/**
+ * Created by Yonas on 8/16/2018.
+ */
+(function(angular) {
+    "use strict";
+
+    angular
+        .module('app.profile')
+        .controller('ProfileController', ProfileController);
+
+    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService','$state'];
+
+    function ProfileController( ProfileService,   blockUI,AlertService ,$state) {
+        var vm = this;
+        vm.updateProfile = _updateUserProfile;
+        vm.changePassword = _changePassword;
+        vm.resetCredentials = _resetCredentials;
+        vm.credentials = undefined;
+
+        vm.user = ProfileService.GetUserAccount();
+
+
+        function _resetCredentials() {
+            $state.reload();
+        }
+
+        function _updateUserProfile(user) {
+            var profile = {
+                _id:user._id,
+                title:user.title,
+                email: user.email,
+                first_name : user.first_name,
+                last_name:user.last_name,
+                grandfather_name:user.grandfather_name,
+                phone:user.phone
+                // picture:""
+            };
+            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
+            myBlockUI.stop();
+            ProfileService.UpdateProfile(profile,vm.picFile).then(function (response) {
+                myBlockUI.start();
+                AlertService.showSuccess("Profile Information","User account information successfully updated");
+            },function (error) {
+                myBlockUI.stop();
+                var message = error.data.error.message;
+                AlertService.showError("User account information could not be updated",message);
+            });
+        }
+
+
+        function _changePassword(user) {
+            let profile = {
+                _id:user._id,
+                old_password:user.old_password,
+                new_password: user.new_password
+            };
+            if(profile.old_password === profile.new_password){
+                AlertService.showSuccess("Changer le mot de passe","Le nouveau mot de passe doit être différent de votre mot de passe précédent." );
+            }else{
+                var myBlockUI = blockUI.instances.get('credentialFormBlockUI');
+                myBlockUI.start();
+                ProfileService.ChangePassword(profile).then(function () {
+                    myBlockUI.stop();
+                    AlertService.showSuccess("Changer le mot de passe","Mot de passe modifié avec succès, connectez-vous avec le nouveau mot de passe!" );
+                //    AUTO LOGOUT
+                },function (error) {
+                    myBlockUI.stop();
+                    var message = error.data.error.message;
+                    AlertService.showError("Impossible de changer le mot de passe, veuillez contacter l'administrateur",message);
+                });
+            }
+        }
+    }
+})(window.angular);
+/**
+ * Created by Yonas on 8/17/2018.
+ */
+(function(angular) {
+    'use strict';
+    angular.module('app.profile')
+
+        .service('ProfileService', ProfileService);
+
+    ProfileService.$inject = ['$http','CommonService','AuthService'];
+
+    function ProfileService($http, CommonService,AuthService) {
+        return {
+            GetUserAccount: _getUserAccount,
+            UpdateProfile: _updateProfile,
+            ChangePassword: _changePassword
+        };
+        function _getUserAccount(){
+            var user = AuthService.GetCurrentUser();
+            return _.isUndefined(user.account)? user.admin:user.account;
+        }
+
+        function _updateProfile(account,picture){
+            let userFormData = new FormData();
+            userFormData.append('first_name', account.first_name);
+            userFormData.append('last_name', account.last_name);
+            userFormData.append('grandfather_name', account.grandfather_name);
+            userFormData.append('title', account.title);
+            userFormData.append('email', account.email);
+            userFormData.append('phone', account.phone);
+
+            if(!_.isUndefined(picture)){
+                userFormData.append('picture', picture);
+            }
+
+            return $http({
+                url: CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id) + '/profile',
+                method: 'PUT',
+                data: userFormData,
+                headers: { 'Content-Type': undefined},
+                transformRequest: angular.identity
+            });
+        }
+        function _changePassword(userInfo){
+            var user = AuthService.GetCurrentUser();
+            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id) + '/passwords',
+                {old_password: userInfo.old_password, new_password:userInfo.new_password});
+        }
+    }
+
+})(window.angular);
 (function(angular) {
     "use strict";
 
@@ -6858,131 +6983,6 @@ var INDICATOR = {
 
 })(window.angular);
 /**
- * Created by Yonas on 8/16/2018.
- */
-(function(angular) {
-    "use strict";
-
-    angular
-        .module('app.profile')
-        .controller('ProfileController', ProfileController);
-
-    ProfileController.$inject = ['ProfileService',   'blockUI', 'AlertService','$state'];
-
-    function ProfileController( ProfileService,   blockUI,AlertService ,$state) {
-        var vm = this;
-        vm.updateProfile = _updateUserProfile;
-        vm.changePassword = _changePassword;
-        vm.resetCredentials = _resetCredentials;
-        vm.credentials = undefined;
-
-        vm.user = ProfileService.GetUserAccount();
-
-
-        function _resetCredentials() {
-            $state.reload();
-        }
-
-        function _updateUserProfile(user) {
-            var profile = {
-                _id:user._id,
-                title:user.title,
-                email: user.email,
-                first_name : user.first_name,
-                last_name:user.last_name,
-                grandfather_name:user.grandfather_name,
-                phone:user.phone
-                // picture:""
-            };
-            var myBlockUI = blockUI.instances.get('UserProfileBlockUI');
-            myBlockUI.stop();
-            ProfileService.UpdateProfile(profile,vm.picFile).then(function (response) {
-                myBlockUI.start();
-                AlertService.showSuccess("Profile Information","User account information successfully updated");
-            },function (error) {
-                myBlockUI.stop();
-                var message = error.data.error.message;
-                AlertService.showError("User account information could not be updated",message);
-            });
-        }
-
-
-        function _changePassword(user) {
-            let profile = {
-                _id:user._id,
-                old_password:user.old_password,
-                new_password: user.new_password
-            };
-            if(profile.old_password === profile.new_password){
-                AlertService.showSuccess("Changer le mot de passe","Le nouveau mot de passe doit être différent de votre mot de passe précédent." );
-            }else{
-                var myBlockUI = blockUI.instances.get('credentialFormBlockUI');
-                myBlockUI.start();
-                ProfileService.ChangePassword(profile).then(function () {
-                    myBlockUI.stop();
-                    AlertService.showSuccess("Changer le mot de passe","Mot de passe modifié avec succès, connectez-vous avec le nouveau mot de passe!" );
-                //    AUTO LOGOUT
-                },function (error) {
-                    myBlockUI.stop();
-                    var message = error.data.error.message;
-                    AlertService.showError("Impossible de changer le mot de passe, veuillez contacter l'administrateur",message);
-                });
-            }
-        }
-    }
-})(window.angular);
-/**
- * Created by Yonas on 8/17/2018.
- */
-(function(angular) {
-    'use strict';
-    angular.module('app.profile')
-
-        .service('ProfileService', ProfileService);
-
-    ProfileService.$inject = ['$http','CommonService','AuthService'];
-
-    function ProfileService($http, CommonService,AuthService) {
-        return {
-            GetUserAccount: _getUserAccount,
-            UpdateProfile: _updateProfile,
-            ChangePassword: _changePassword
-        };
-        function _getUserAccount(){
-            var user = AuthService.GetCurrentUser();
-            return _.isUndefined(user.account)? user.admin:user.account;
-        }
-
-        function _updateProfile(account,picture){
-            let userFormData = new FormData();
-            userFormData.append('first_name', account.first_name);
-            userFormData.append('last_name', account.last_name);
-            userFormData.append('grandfather_name', account.grandfather_name);
-            userFormData.append('title', account.title);
-            userFormData.append('email', account.email);
-            userFormData.append('phone', account.phone);
-
-            if(!_.isUndefined(picture)){
-                userFormData.append('picture', picture);
-            }
-
-            return $http({
-                url: CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.Account,account._id) + '/profile',
-                method: 'PUT',
-                data: userFormData,
-                headers: { 'Content-Type': undefined},
-                transformRequest: angular.identity
-            });
-        }
-        function _changePassword(userInfo){
-            var user = AuthService.GetCurrentUser();
-            return $http.put(CommonService.buildUrlWithParam(API.Service.Users,API.Methods.Users.UserUpdate,user._id) + '/passwords',
-                {old_password: userInfo.old_password, new_password:userInfo.new_password});
-        }
-    }
-
-})(window.angular);
-/**
  * Created by Yoni on 3/5/2018.
  */
 (function(angular) {
@@ -7087,10 +7087,10 @@ var INDICATOR = {
                 ACAT_COST_LIST_TYPE.GROUPED :  vm.acat.chemicals_costs.linear.length > 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
             vm.acat.labour_cost.list_type = vm.acat.labour_costs.grouped.length > 0 ?
-                ACAT_COST_LIST_TYPE.GROUPED : vm.acat.labour_costs.grouped.length > 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+                ACAT_COST_LIST_TYPE.GROUPED : vm.acat.labour_costs.linear.length > 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
             vm.acat.other_cost.list_type = vm.acat.other_costs.grouped.length > 0 ?
-                ACAT_COST_LIST_TYPE.GROUPED :vm.acat.other_costs.grouped.length > 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
+                ACAT_COST_LIST_TYPE.GROUPED :vm.acat.other_costs.linear.length > 0 ? ACAT_COST_LIST_TYPE.LINEAR:'NA';
 
         }
 
