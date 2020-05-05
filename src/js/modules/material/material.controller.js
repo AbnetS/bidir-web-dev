@@ -193,7 +193,7 @@
 
 
         $scope.submit = function() {
-          alert('submit');
+          console.log('submit');
         };
 
         var vals = ['Apple', 'Banana', 'Mango', 'Grape', 'Melon', 'Strawberry', 'Kiwi'];
@@ -536,7 +536,7 @@
               .position($scope.getToastPosition());
 
         $mdToast.show(toast).then(function() {
-          alert('You clicked \'OK\'.');
+          console.log('You clicked \'OK\'.');
         });
       };
     }

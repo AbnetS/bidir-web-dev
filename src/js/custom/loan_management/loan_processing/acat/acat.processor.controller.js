@@ -114,7 +114,6 @@
             vm.visibility.showCropACAT = true;//show client acat
             vm.clientAcat = clientAcat;
             vm.selectedSubsection = vm.clientAcat.sections[0].sub_sections[0].sub_sections[1];
-            debugger
         }
 
         function fetchCropsList() {
