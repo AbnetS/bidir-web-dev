@@ -129,8 +129,8 @@
                 vm.branches =  AuthService.GetAccessBranches();
                 if(vm.isEdit){
                     setBranchesSelectedValue(vm.branches);
-                    myLoadingBlockUI.stop();
                 }
+                myLoadingBlockUI.stop();
             }
 
         }

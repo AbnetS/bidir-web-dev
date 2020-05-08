@@ -158,7 +158,7 @@
         function _statusStyle(status){
             var style = '';
             switch (status){
-                case 'active' || 'active ':
+                case 'active':
                     style =  'label label-success';
                     break;
                 case 'inactive':

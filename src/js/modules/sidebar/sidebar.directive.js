@@ -54,8 +54,10 @@
 
           // Normalize state when resize to mobile
           $win.on('resize.sidebar', function() {
-            if( ! Utils.isMobile() )
-          	asideToggleOff();
+            if( ! Utils.isMobile() ){
+              asideToggleOff();
+            }
+          	
           });
 
           // Adjustment on route changes
