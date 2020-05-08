@@ -14,7 +14,6 @@
             'app.loadingbar',
             'app.translate',
             'app.settings',
-            'app.maps',
             'app.utils',
             'app.material'
         ]).run(appRun);
