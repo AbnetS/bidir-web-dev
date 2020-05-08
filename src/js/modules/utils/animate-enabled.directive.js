@@ -12,11 +12,11 @@
 
     animateEnabled.$inject = ['$animate'];
     function animateEnabled ($animate) {
-        var directive = {
+
+        return {
             link: link,
             restrict: 'A'
         };
-        return directive;
 
         function link(scope, element, attrs) {
           scope.$watch(function () {

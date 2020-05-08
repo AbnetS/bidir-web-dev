@@ -11,11 +11,10 @@
 
     triggerResize.$inject = ['$window', '$timeout'];
     function triggerResize ($window, $timeout) {
-        var directive = {
+        return  {
             link: link,
             restrict: 'A'
         };
-        return directive;
 
         function link(scope, element, attributes) {
           element.on('click', function(){

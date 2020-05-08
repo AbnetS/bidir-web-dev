@@ -12,11 +12,10 @@
 
     now.$inject = ['dateFilter', '$interval'];
     function now (dateFilter, $interval) {
-        var directive = {
+        return {
             link: link,
             restrict: 'EA'
         };
-        return directive;
 
         function link(scope, element, attrs) {
           var format = attrs.format;

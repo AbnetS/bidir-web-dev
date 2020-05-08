@@ -12,11 +12,10 @@
 
     toggleFullscreen.$inject = ['Browser'];
     function toggleFullscreen (Browser) {
-        var directive = {
+        return {
             link: link,
             restrict: 'A'
         };
-        return directive;
 
         function link(scope, element) {
           // Not supported under IE

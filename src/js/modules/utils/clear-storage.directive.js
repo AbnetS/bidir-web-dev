@@ -12,14 +12,14 @@
 
     resetKey.$inject = ['$state', '$localStorage'];
     function resetKey ($state, $localStorage) {
-        var directive = {
+
+        return {
             link: link,
             restrict: 'A',
             scope: {
-              resetKey: '@'
+                resetKey: '@'
             }
         };
-        return directive;
 
         function link(scope, element) {
           element.on('click', function (e) {

@@ -12,15 +12,12 @@
             'app.sidebar',
             'app.preloader',
             'app.loadingbar',
-            'app.translate',
             'app.settings',
             'app.utils',
             'app.material'
-        ]).run(appRun);
+        ]).run(function appRun(){});
 
-    function appRun($rootScope, AuthService, $http,$location){
 
-    }
         
 })();
 

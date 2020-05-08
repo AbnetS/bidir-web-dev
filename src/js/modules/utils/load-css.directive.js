@@ -11,11 +11,10 @@
         .directive('loadCss', loadCss);
 
     function loadCss () {
-        var directive = {
+        return {
             link: link,
             restrict: 'A'
         };
-        return directive;
 
         function link(scope, element, attrs) {
           element.on('click', function (e) {
