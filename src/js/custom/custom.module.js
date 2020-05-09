@@ -39,7 +39,6 @@
 
             }else{
                 $rootScope.currentUser = AuthService.GetCurrentUser();
-                // console.log("currentUser",$rootScope.currentUser);
                 $http.defaults.headers.common['Authorization'] = 'Bearer ' + AuthService.GetToken();
             }
         });

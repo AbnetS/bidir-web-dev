@@ -6,12 +6,8 @@
 
     angular
         .module('app.welcomePage')
-        .controller('WelcomeController', WelcomeController);
+        .controller('WelcomeController', function WelcomeController( ) {});
 
-    WelcomeController.$inject = ['EnvironmentConfig','AuthService'];
 
-    function WelcomeController( EnvironmentConfig ,AuthService) {
-        var vm = this;
-    }
 
 }(window.angular));
